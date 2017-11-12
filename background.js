@@ -8,7 +8,7 @@ const opera       = window.hasOwnProperty('opr')          ? true : false;
 const brauzer     = firefox ? browser : chrome;
 const version     = brauzer.runtime.getManifest().version;
 
-const execMethod = firefox ?
+const execMethod  = firefox ?
 (method, callback, options) => {
 	return method(options).then(callback);
 } :
