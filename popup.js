@@ -70,7 +70,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 		brauzer.runtime.openOptionsPage();
 	});
 	home.addEventListener('click', event => {
-		brauzer.runtime.sendMessage({target: 'background', subject: 'tabs', action: 'new', data: {url: 'https://github.com/zluca'}});
+		brauzer.runtime.sendMessage({target: 'background', subject: 'tabs', action: 'new', data: {url: 'https://github.com/zluca/Sidebar'}});
 	});
 });
 
