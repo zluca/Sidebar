@@ -338,6 +338,10 @@ function init() {
 							beacon = sites[data.to];
 						siteContainer.insertBefore(sites[data.from], beacon);
 					}
+					for (let i = 0, sites = siteContainer.children, l = sites.length; i < l; i++) {
+						sites[i].dataset.index = i;
+						sites[i].id            = `site-${i}`;
+					}
 				},
 				remove        : _ => {
 					const count = status.options.rows * status.options.columns;
