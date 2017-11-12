@@ -677,7 +677,7 @@ const messageHandler = {
 					if (options.leftBar.method.value === 'window')
 						removeSidebarWindow('leftBar');
 					else if (options.leftBar.method.value === 'iframe')
-						send('content', 'options', 'removeIframe', {side : 'leftBar'});
+						send('content', 'iframe', 'remove', {side : 'leftBar'});
 					setOption('leftBar', 'method', 'native');
 					setIcon();
 				}
