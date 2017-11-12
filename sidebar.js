@@ -26,7 +26,6 @@ const status           = {
 	bookmarkFolders  : [],
 	historyInfo       : {
 		lastDate : 0,
-		lastId   : 'hist-today',
 		lastNum  : 0
 	},
 	activeTab           : null,
