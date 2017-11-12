@@ -1,0 +1,7 @@
+{
+    "browser"    : true,
+    "devel"      : true,
+    "esversion"  : 6,
+    "strict"     : true,
+    "predef"     : ["chrome", "browser", "opr"]
+}
