@@ -1,0 +1,67 @@
+{
+	"manifest_version"   : 2,
+	"name"               : "__MSG_extName__",
+	"version"            : "0.2",
+	"description"        : "__MSG_extDescription__",
+	"developer": {
+		"name": "zluka",
+		"url": "https://github.com/zluca/"
+	},
+	"homepage_url"       : "https://github.com/zluca/",
+	"default_locale"     : "en",
+	"icons": {
+		"64": "icons/default-64.png"
+  	},
+	"permissions": [
+		"<all_urls>",
+		"alarms",
+		"bookmarks",
+		"downloads",
+		"downloads.open",
+		"history",
+		"notifications",
+		"storage",
+		"tabs",
+		"topSites",
+		"unlimitedStorage",
+		"webRequest"
+	],
+	"content_scripts": [
+		{
+			"run_at"   : "document_start",
+			"matches"  : ["<all_urls>"],
+			"js"       : ["content.js"],
+			"css"      : ["content.css"]
+		}
+	],
+	"web_accessible_resources": [
+		"sidebar.html",
+		"dialog.html"
+	],
+	"sidebar_action": {
+		"default_icon"  : "icons/default-64.png",
+		"default_title" : "Sidebar+",
+		"default_panel" : "sidebar.html#leftBar-native"
+	},
+	"background": {
+		"page": "background.html"
+	},
+	"browser_action": {
+		"default_icon"  : "icons/right.svg",
+		"default_title" : "__MSG_extTitle__",
+		"default_popup" : "popup.html"
+	},
+	"options_ui": {
+		"page": "options.html#leftBar"
+	},
+	"chrome_url_overrides" : {
+    	"newtab": "startpage.html"
+	},
+	"applications": {
+	  "gecko": {
+	    "id": "sidebar@example.com",
+	    "strict_min_version": "51.0"
+	  }
+	}
+}
+

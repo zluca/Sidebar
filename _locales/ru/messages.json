@@ -1,0 +1,718 @@
+{
+	"extName" : {
+		"message"       : "Sidebar+",
+		"description"   : "extension name"
+	},
+	"extDescription" : {
+		"message"       : "Боковая панель для браузеров на основе Chromium",
+		"description"   : "extension description"
+	},
+	"extTitle" : {
+		"message"       : "Sidebar+",
+		"description"   : ""
+	},
+	"extRightBar" : {
+		"message"       : "Правая панель активна",
+		"description"   : ""
+	},
+	"extLeftBar" : {
+		"message"       : "Левая панель активна",
+		"description"   : ""
+	},
+	"extBoth" : {
+		"message"       : "Обе панели активны",
+		"description"   : ""
+	},
+	"extNone" : {
+		"message"       : "Обе панели отключены",
+		"description"   : ""
+	},
+
+	"sbControlsWideTitle" : {
+		"message"       : "Сворачивать панель по ширине иконок",
+		"description"   : ""
+	},
+	"sbControlsNarrowTitle" : {
+		"message"       : "Сворачивать панель в тонкую линию",
+		"description"   : ""
+	},
+	"sbControlsFixedTitle" : {
+		"message"       : "Закрепить панель",
+		"description"   : ""
+	},
+	"sbControlsUnfixedTitle" : {
+		"message"       : "Открепить панель",
+		"description"   : ""
+	},
+	"sbControlsTabsTitle" : {
+		"message"       : "Вкладки",
+		"description"   : ""
+	},
+	"sbControlsBookmarksTitle" : {
+		"message"       : "Закладки",
+		"description"   : ""
+	},
+	"sbControlsHistoryTitle" : {
+		"message"       : "История",
+		"description"   : ""
+	},
+	"sbControlsDownloadsTitle" : {
+		"message"       : "Закачки",
+		"description"   : ""
+	},
+	"sbControlsRssTitle" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+
+	"tabsNewText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"tabsNewTitle" : {
+		"message"       : "Новая вкладка",
+		"description"   : ""
+	},
+	"tabsControlsReload" : {
+		"message"       : "Перезагрузить",
+		"description"   : ""
+	},
+	"tabsControlsPin" : {
+		"message"       : "Закрепить",
+		"description"   : ""
+	},
+	"tabsControlsUnpin" : {
+		"message"       : "Открепить",
+		"description"   : ""
+	},
+	"tabsControlsClose" : {
+		"message"       : "Закрыть",
+		"description"   : ""
+	},
+	"tabsControlsCloseAll" : {
+		"message"       : "Закрыть папку",
+		"description"   : ""
+	},
+	"tabsPlainModeButton" : {
+		"message"       : "Не сортировать вкладки",
+		"description"   : ""
+	},
+	"tabsDomainModeButton" : {
+		"message"       : "Группировать вкладки по домену",
+		"description"   : ""
+	},
+	"tabsTreeModeButton" : {
+		"message"       : "Отображать вкладки в виде дерева",
+		"description"   : ""
+	},
+	"bkBookmarkThisText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"bkBookmarkThisTitle" : {
+		"message"       : "Сделать закладку",
+		"description"   : ""
+	},
+	"bkMoveBookmark" : {
+		"message"       : "Переместить закладку",
+		"description"   : ""
+	},
+	"bkDeleteBookmark" : {
+		"message"       : "Удалить закладку",
+		"description"   : ""
+	},
+	"bkDeleteBookmarkFolder" : {
+		"message"       : "Удалить папку",
+		"description"   : ""
+	},
+	"bkSearchPlaceholder" : {
+		"message"       : "Искать",
+		"description"   : ""
+	},
+
+	"hsGetMoreText" : {
+		"message"       : "Дальше",
+		"description"   : ""
+	},
+	"hsGetMoreTitle" : {
+		"message"       : "Показать предыдущюю историю",
+		"description"   : ""
+	},
+	"hsSearchPlaceholder" : {
+		"message"       : "Искать",
+		"description"   : ""
+	},
+
+	"dlControlsPause" : {
+		"message"       : "Пауза",
+		"description"   : ""
+	},
+	"dlControlsResume" : {
+		"message"       : "Продолжить",
+		"description"   : ""
+	},
+	"dlControlsReload" : {
+		"message"       : "Перезакачать",
+		"description"   : ""
+	},
+	"dlControlsCancel" : {
+		"message"       : "Отмена",
+		"description"   : ""
+	},
+	"dlControlsDelete" : {
+		"message"       : "Удалить",
+		"description"   : ""
+	},
+
+
+	"rssNew" : {
+		"message"       : "Добавить RSS канал",
+		"description"   : ""
+	},
+	"rssControlsOptions" : {
+		"message"       : "Редактировать канал",
+		"description"   : ""
+	},
+	"rssControlsMarkRead" : {
+		"message"       : "Отметить как прочтённое",
+		"description"   : ""
+	},
+	"rssControlsMarkReadAll" : {
+		"message"       : "Отметить канал как прочтённый",
+		"description"   : ""
+	},
+	"rssControlsMarkReadAllFeeds" : {
+		"message"       : "Отметить все каналы как прочтённые",
+		"description"   : ""
+	},
+	"rssControlsHideReaded" : {
+		"message"       : "Не показывать прочтённые",
+		"description"   : ""
+	},
+	"rssControlsShowReaded" : {
+		"message"       : "Показывать прочтённые",
+		"description"   : ""
+	},
+	"rssControlsDeleteItem" : {
+		"message"       : "Удалить",
+		"description"   : ""
+	},
+	"rssControlsReload"          : {
+		"message"       : "Обновить канал",
+		"description"   : ""
+	},
+	"rssReloadAll"          : {
+		"message"       : "Обновить все каналы",
+		"description"   : ""
+	},
+	"rssPlainModeButton" : {
+		"message"       : "Сортировать по времени",
+		"description"   : ""
+	},
+	"rssDomainModeButton" : {
+		"message"       : "Группировать по каналам",
+		"description"   : ""
+	},
+
+	"optHeaderText" : {
+		"message"       : "Настройки Sidebar+",
+		"description"   : "header of options window"
+	},
+	"optSaveText" : {
+		"message"       : "Сохранить",
+		"description"   : "Save button text"
+	},
+	"optCancelText" : {
+		"message"       : "Отмена",
+		"description"   : "Cancel button text"
+	},
+
+	"optServicesButton" : {
+		"message"       : "Сервисы",
+		"description"   : "header of Services options"
+	},
+	"optServicesText" : {
+		"message"       : "Отключите неиспользуемые сервисы для лучшего быстродействия.",
+		"description"   : ""
+	},
+	"optServicesTabsLabel" : {
+		"message"       : "Вкладки",
+		"description"   : ""
+	},
+	"optServicesDownloadsLabel" : {
+		"message"       : "Закачки",
+		"description"   : ""
+	},
+	"optServicesBookmarksLabel" : {
+		"message"       : "Закладки",
+		"description"   : ""
+	},
+	"optServicesHistoryLabel" : {
+		"message"       : "История",
+		"description"   : ""
+	},
+	"optServicesRSSLabel" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+
+	"optThemeButton" : {
+		"message"       : "Тема",
+		"description"   : "header of Theme options"
+	},
+	"optThemeFontSizeLabel" : {
+		"message"       : "Размер шрифта боковой панели",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorLabel" : {
+		"message"       : "Цвет фона боковой панели",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorActiveLabel" : {
+		"message"       : "Цвет фона активного элемента",
+		"description"   : ""
+	},
+	"optThemeFontColorLabel" : {
+		"message"       : "Цвет шрифта боковой панели",
+		"description"   : ""
+	},
+	"optThemeFontColorActiveLabel" : {
+		"message"       : "Цвет активного элемента боковой панели",
+		"description"   : ""
+	},
+	"optThemeFontColorInactiveLabel" : {
+		"message"       : "Цвет неактивных элементов",
+		"description"   : ""
+	},
+	"optThemeBorderColorLabel" : {
+		"message"       : "Цвет границы боковой панели",
+		"description"   : ""
+	},
+	"optThemeBorderColorActiveLabel" : {
+		"message"       : "Цвет границы активного элемента",
+		"description"   : ""
+	},
+	"optThemeSidebarImageLabel" : {
+		"message"       : "Фоновая картинка боковой панели",
+		"description"   : ""
+	},
+	"optThemeStartpageImageLabel" : {
+		"message"       : "Фоновая картинка стартовой страницы",
+		"description"   : ""
+	},
+
+	"optMiscButton" : {
+		"message"       : "Разное",
+		"description"   : "header of Misc options"
+	},
+	"optMiscLimitHistoryLabel" : {
+		"message"       : "Максимум истории подгружаемой за один раз",
+		"description"   : ""
+	},
+	"optMiscMaxSavedRssPerFeedLabel" : {
+		"message"       : "Максимум статей хранящихся в одном RSS канале",
+		"description"   : ""
+	},
+	"optMiscRssUpdatePeriodLabel" : {
+		"message"       : "Период обновления RSS",
+		"description"   : ""
+	},
+
+	"optWarningsButton" : {
+		"message"       : "Предупреждения",
+		"description"   : ""
+	},
+	"optWarningsText" : {
+		"message"       : "Предпреждать меня перед...",
+		"description"   : ""
+	},
+	"optWarningsDeleteBookmarkLabel" : {
+		"message"       : "Удалением закрадки",
+		"description"   : ""
+	},
+	"optWarningsDeleteBookmarkFolderLabel" : {
+		"message"       : "Удалением папки закладок",
+		"description"   : ""
+	},
+	"optWarningsDeleteSiteLabel" : {
+		"message"       : "Удалением сайта с начальной страницы",
+		"description"   : ""
+	},
+	"optWarningsDeleteRssFeedLabel" : {
+		"message"       : "Удалением RSS канала",
+		"description"   : ""
+	},
+	"optWarningsCloseDomainFolderLabel" : {
+		"message"       : "Закрытием множества вкладок",
+		"description"   : ""
+	},
+
+	"optStartPageButton" : {
+		"message"       : "Стартовая страница",
+		"description"   : ""
+	},
+	"optStartPageText" : {
+		"message"       : "Настройки стартовой страницы",
+		"description"   : ""
+	},
+	"optStartPageRowsLabel" : {
+		"message"       : "Строки",
+		"description"   : ""
+	},
+	"optStartPageColumnsLabel" : {
+		"message"       : "Столбцы",
+		"description"   : ""
+	},
+	"optStartPageMarginVLabel" : {
+		"message"       : "Вертикальный зазор",
+		"description"   : ""
+	},
+	"optStartPageMarginHLabel" : {
+		"message"       : "Горизонтальный зазор",
+		"description"   : ""
+	},
+	"optStartPagePaddingLabel" : {
+		"message"       : "Круговой отступ",
+		"description"   : ""
+	},
+	"optStartPageSearchEnabledLabel" : {
+		"message"       : "Включить поиск",
+		"description"   : ""
+	},
+	"optStartPagewikiSearchLangLabel" : {
+		"message"       : "Язык поиска в Википедии",
+		"description"   : ""
+	},
+	"optStartPageTranslateFromLabel" : {
+		"message"       : "Переводить с",
+		"description"   : ""
+	},
+	"optStartPageTranslateToLabel" : {
+		"message"       : "Переводить на",
+		"description"   : ""
+	},
+
+
+	"popupFormTextLeftBar" : {
+		"message"       : "Левая панель:",
+		"description"   : ""
+	},
+	"popupFormTextRightBar" : {
+		"message"       : "Правая панель:",
+		"description"   : ""
+	},
+	"popupLabelTextIframe" : {
+		"message"       : "Фрейм",
+		"description"   : ""
+	},
+	"popupLabelTextNative" : {
+		"message"       : "Нативно",
+		"description"   : ""
+	},
+	"popupLabelTextWindow" : {
+		"message"       : "Окно",
+		"description"   : ""
+	},
+	"popupLabelTextDisabled" : {
+		"message"       : "Отключено",
+		"description"   : ""
+	},
+	"popupButtonHomeTitle" : {
+		"message"       : "Домашняя страница",
+		"description"   : ""
+	},
+	"popupButtonOptionsTitle" : {
+		"message"       : "Настройки",
+		"description"   : ""
+	},
+
+	"notificationRssNewFeedErrorTitle" : {
+		"message"       : "Ошибка RSS",
+		"description"   : ""
+	},
+	"notificationRssNewFeedErrorText" : {
+		"message"       : "Невозможно найти RSS по адресу ",
+		"description"   : ""
+	},
+	"notificationRssFeedExistErrorTitle" : {
+		"message"       : "Ошибка RSS",
+		"description"   : ""
+	},
+	"notificationRssFeedExistErrorTitle" : {
+		"message"       : "Вы уже подписаны на ",
+		"description"   : ""
+	},
+
+	"startpagePageTitle" : {
+		"message"       : "Стартовая страница",
+		"description"   : ""
+	},
+	"startpageEditButtonTitle" : {
+		"message"       : "Редактировать сайт",
+		"description"   : ""
+	},
+	"startpageAddNewSiteTitle" : {
+		"message"       : "Добавить новый сайт",
+		"description"   : ""
+	},
+	"startpageSearchPlaceholder" : {
+		"message"       : "Искать",
+		"description"   : "text shown in input search field"
+	},
+	"startpageTranslatePlaceholder" : {
+		"message"       : "Перевести",
+		"description"   : ""
+	},
+	"startpageBuyPlaceholder" : {
+		"message"       : "Купить",
+		"description"   : ""
+	},
+	"startpageSearchButtonTitle" : {
+		"message"       : "Начать",
+		"description"   : ""
+	},
+	"startpageDuckDuckGoLabel" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"startpageGoogleLabel" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"startpageYandexLabel" : {
+		"message"       : "Яндекс",
+		"description"   : ""
+	},
+	"startpageBingLabel" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"startpageYahooLabel" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"startpageWikipediaLabel" : {
+		"message"       : "Википедия",
+		"description"   : ""
+	},
+	"startpageMdnLabel" : {
+		"message"       : "MDN",
+		"description"   : ""
+	},
+	"startpageStackoverflowLabel" : {
+		"message"       : "stackOverflow",
+		"description"   : ""
+	},
+	"startpageAmazonLabel" : {
+		"message"       : "Amazon",
+		"description"   : ""
+	},
+	"startpageEbayLabel" : {
+		"message"       : "Ebay",
+		"description"   : ""
+	},
+	"startpageAliexpressLabel" : {
+		"message"       : "AliExpress",
+		"description"   : ""
+	},
+	"startpageGoogleTranslateLabel" : {
+		"message"       : "Гугл переводить",
+		"description"   : ""
+	},
+	"startpageYandexTranslateLabel" : {
+		"message"       : "Яндекс перевод",
+		"description"   : ""
+	},
+
+
+	"dialogConfirmationTitle" : {
+		"message"       : "Требуется подтверждение",
+		"description"   : ""
+	},
+	"dialogUserInputTitle" : {
+		"message"       : "Требуется информация",
+		"description"   : ""
+	},
+
+	"dialogAskAgainWarning" : {
+		"message"       : "Всегда спрашивать",
+		"description"   : ""
+	},
+	"dialogConfirmButton" : {
+		"message"       : "Подтвердить",
+		"description"   : ""
+	},
+	"dialogCancelButton" : {
+		"message"       : "Отменить",
+		"description"   : ""
+	},
+	"dialogSaveButton" : {
+		"message"       : "Сохранить",
+		"description"   : ""
+	},
+	"dialogDeleteButton" : {
+		"message"       : "Удалить",
+		"description"   : ""
+	},
+
+	"dialogSiteNewHeader" : {
+		"message"       : "Добавить сайт",
+		"description"   : ""
+	},
+	"dialogEditSiteHeader" : {
+		"message"       : "Изменить настройки сайта",
+		"description"   : ""
+	},
+	"dialogEditSiteUrlLabel" : {
+		"message"       : "Адрес:",
+		"description"   : ""
+	},
+	"dialogEditSiteUrlPlaceholder" : {
+		"message"       : "Введите адрес сайта",
+		"description"   : ""
+	},
+	"dialogEditSiteTextLabel" : {
+		"message"       : "Текст:",
+		"description"   : ""
+	},
+	"dialogEditSiteColorLabel" : {
+		"message"       : "Цвет:",
+		"description"   : ""
+	},
+	"dialogSiteDeleteHeader" : {
+		"message"       : "Удаление сайта",
+		"description"   : ""
+	},
+	"dialogSiteDeleteText" : {
+		"message"       : "Удалить \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogTabsCloseDomainHeader" : {
+		"message"       : "Закрыть домен",
+		"description"   : ""
+	},
+	"dialogTabsCloseDomainAlertText" : {
+		"message"       : "Закрыть все вкладки в домене \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkDeleteHeader" : {
+		"message"       : "Удаление закладки",
+		"description"   : ""
+	},
+	"dialogBookmarkDeleteAlertText" : {
+		"message"       : "Удалить закладку \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkFolderDeleteHeader" : {
+		"message"       : "Удаление папки",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderDeleteAlertText" : {
+		"message"       : "Удалить папку \"$name$\" ? Все вложенные вкладки также будут удалены.",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogRSSNewHeader" : {
+		"message"       : "Новая RSS подписка",
+		"description"   : ""
+	},
+	"dialogRSSNewUrlLabel" : {
+		"message"       : "Адрес:",
+		"description"   : ""
+	},
+	"dialogRSSNewUrlPlaceholder" : {
+		"message"       : "Введите адрес сюда",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedHeader" : {
+		"message"       : "Редактировать RSS канал",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedTitleLabel" : {
+		"message"       : "Заголовок:",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedDescriptionLabel" : {
+		"message"       : "Описание:",
+		"description"   : ""
+	},
+	"dialogRSSFeedDeleteHeader" : {
+		"message"       : "Удаление RSS канала",
+		"description"   : ""
+	},
+	"dialogRSSFeedDeleteAlertText" : {
+		"message"       : "Удалить RSS канал \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDownloadDeleteHeader" : {
+		"message"       : "Удаление закачки",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteAlert" : {
+		"message"       : "Удалить \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDownloadDeleteFromHistoryLabel" : {
+		"message"       : "Удалить из истории",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteFileLabel" : {
+		"message"       : "Удалить файл с диска",
+		"description"   : ""
+	},
+
+	"dialogBookmarkRootFolder" : {
+		"message"       : "Закладки",
+		"description"   : ""
+	},
+	"dialogNewBookmarkHeader" : {
+		"message"       : "Новая закладка",
+		"description"   : ""
+	},
+	"dialogNewBookmarkDefaultTitle" : {
+		"message"       : "Новая закладка",
+		"description"   : ""
+	},
+	"dialogNewBookmarkTitleLabel" : {
+		"message"       : "Название:",
+		"description"   : ""
+	},
+	"dialogNewBookmarkUrlLabel" : {
+		"message"       : "Адрес:",
+		"description"   : ""
+	},
+	"dialogNewBookmarkFoldersLabel" : {
+		"message"       : "Папки:",
+		"description"   : ""
+	}
+
+}

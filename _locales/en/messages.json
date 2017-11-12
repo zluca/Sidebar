@@ -1,0 +1,717 @@
+{
+	"extName" : {
+		"message"       : "Sidebar+",
+		"description"   : "extension name"
+	},
+	"extDescription" : {
+		"message"       : "Sidebar for Chromium",
+		"description"   : "extension description"
+	},
+	"extTitle" : {
+		"message"       : "Sidebar+",
+		"description"   : ""
+	},
+	"extRightBar" : {
+		"message"       : "RightBar active",
+		"description"   : ""
+	},
+	"extLeftBar" : {
+		"message"       : "LeftBar active",
+		"description"   : ""
+	},
+	"extBoth" : {
+		"message"       : "Both sidebars active",
+		"description"   : ""
+	},
+	"extNone" : {
+		"message"       : "Both sidebars disabled",
+		"description"   : ""
+	},
+
+	"sbControlsWideTitle" : {
+		"message"       : "Collapse sidebar to icons width",
+		"description"   : ""
+	},
+	"sbControlsNarrowTitle" : {
+		"message"       : "Collapse sidebar to thin line",
+		"description"   : ""
+	},
+	"sbControlsFixedTitle" : {
+		"message"       : "Pin this view",
+		"description"   : ""
+	},
+	"sbControlsUnfixedTitle" : {
+		"message"       : "Unpin this view",
+		"description"   : ""
+	},
+	"sbControlsTabsTitle" : {
+		"message"       : "Tabs",
+		"description"   : ""
+	},
+	"sbControlsBookmarksTitle" : {
+		"message"       : "Bookmarks",
+		"description"   : ""
+	},
+	"sbControlsHistoryTitle" : {
+		"message"       : "History",
+		"description"   : ""
+	},
+	"sbControlsDownloadsTitle" : {
+		"message"       : "Downloads",
+		"description"   : ""
+	},
+	"sbControlsRssTitle" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+
+	"tabsNewText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"tabsNewTitle" : {
+		"message"       : "Create new tab",
+		"description"   : ""
+	},
+	"tabsControlsReload" : {
+		"message"       : "Reload",
+		"description"   : ""
+	},
+	"tabsControlsPin" : {
+		"message"       : "Pin",
+		"description"   : ""
+	},
+	"tabsControlsUnpin" : {
+		"message"       : "Unpin",
+		"description"   : ""
+	},
+	"tabsControlsClose" : {
+		"message"       : "Close",
+		"description"   : ""
+	},
+	"tabsControlsCloseAll" : {
+		"message"       : "Close folder",
+		"description"   : ""
+	},
+	"tabsPlainModeButton" : {
+		"message"       : "Do not sort tabs",
+		"description"   : ""
+	},
+	"tabsDomainModeButton" : {
+		"message"       : "Group tabs by domain",
+		"description"   : ""
+	},
+	"tabsTreeModeButton" : {
+		"message"       : "Organize tabs in tree view",
+		"description"   : ""
+	},
+	"bkBookmarkThisText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"bkBookmarkThisTitle" : {
+		"message"       : "Bookmark this tab",
+		"description"   : ""
+	},
+	"bkMoveBookmark" : {
+		"message"       : "Move bookmark",
+		"description"   : ""
+	},
+	"bkDeleteBookmark" : {
+		"message"       : "Delete bookmark",
+		"description"   : ""
+	},
+	"bkDeleteBookmarkFolder" : {
+		"message"       : "Delete folder",
+		"description"   : ""
+	},
+	"bkSearchPlaceholder" : {
+		"message"       : "Search",
+		"description"   : ""
+	},
+
+	"hsGetMoreText" : {
+		"message"       : "Show more",
+		"description"   : "text on 'Get more history' button"
+	},
+	"hsGetMoreTitle" : {
+		"message"       : "Show more history entries",
+		"description"   : ""
+	},
+	"hsSearchPlaceholder" : {
+		"message"       : "Search",
+		"description"   : ""
+	},
+
+	"dlControlsPause" : {
+		"message"       : "Pause",
+		"description"   : ""
+	},
+	"dlControlsResume" : {
+		"message"       : "Resume",
+		"description"   : ""
+	},
+	"dlControlsReload" : {
+		"message"       : "Reload",
+		"description"   : ""
+	},
+	"dlControlsCancel" : {
+		"message"       : "Cancel",
+		"description"   : ""
+	},
+	"dlControlsDelete" : {
+		"message"       : "Delete",
+		"description"   : ""
+	},
+
+
+	"rssNew" : {
+		"message"       : "Add new RSS feed",
+		"description"   : "text that shows when you hold mouse over 'add new RSS' button"
+	},
+	"rssControlsOptions" : {
+		"message"       : "Edit feed properties",
+		"description"   : ""
+	},
+	"rssControlsMarkRead" : {
+		"message"       : "Mark as readed",
+		"description"   : ""
+	},
+	"rssControlsMarkReadAll" : {
+		"message"       : "Mark feed as readed",
+		"description"   : ""
+	},
+	"rssControlsMarkReadAllFeeds" : {
+		"message"       : "Mark all feeds as readed",
+		"description"   : ""
+	},
+	"rssControlsHideReaded" : {
+		"message"       : "Hide readed items",
+		"description"   : ""
+	},
+	"rssControlsShowReaded" : {
+		"message"       : "Show readed items",
+		"description"   : ""
+	},
+	"rssControlsDeleteItem" : {
+		"message"       : "Delete",
+		"description"   : ""
+	},
+	"rssControlsReload"          : {
+		"message"       : "Update feed",
+		"description"   : ""
+	},
+	"rssReloadAll"          : {
+		"message"       : "Update all feeds",
+		"description"   : ""
+	},
+	"rssPlainModeButton" : {
+		"message"       : "Sort rss elements by time",
+		"description"   : ""
+	},
+	"rssDomainModeButton" : {
+		"message"       : "Group rss elements by feed",
+		"description"   : ""
+	},
+
+	"optHeaderText" : {
+		"message"       : "Sidebar+ options",
+		"description"   : "header of options window"
+	},
+	"optSaveText" : {
+		"message"       : "Save",
+		"description"   : "Save button text"
+	},
+	"optCancelText" : {
+		"message"       : "Cancel",
+		"description"   : "Cancel button text"
+	},
+
+	"optServicesButton" : {
+		"message"       : "Services",
+		"description"   : "header of Services options"
+	},
+	"optServicesText" : {
+		"message"       : "Disable unused services for better performance.",
+		"description"   : ""
+	},
+	"optServicesTabsLabel" : {
+		"message"       : "Tabs",
+		"description"   : ""
+	},
+	"optServicesDownloadsLabel" : {
+		"message"       : "Downloads",
+		"description"   : ""
+	},
+	"optServicesBookmarksLabel" : {
+		"message"       : "Bookmarks",
+		"description"   : ""
+	},
+	"optServicesHistoryLabel" : {
+		"message"       : "History",
+		"description"   : ""
+	},
+	"optServicesRSSLabel" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+
+	"optThemeButton" : {
+		"message"       : "Theme",
+		"description"   : "header of Theme options"
+	},
+	"optThemeFontSizeLabel" : {
+		"message"       : "Sidebar font size",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorLabel" : {
+		"message"       : "Sidebar background color",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorActiveLabel" : {
+		"message"       : "Sidebar active element background color",
+		"description"   : ""
+	},
+	"optThemeFontColorLabel" : {
+		"message"       : "Sidebar font color",
+		"description"   : ""
+	},
+	"optThemeFontColorActiveLabel" : {
+		"message"       : "Sidebar active element font color",
+		"description"   : ""
+	},
+	"optThemeFontColorInactiveLabel" : {
+		"message"       : "Placeholders and inactive elements",
+		"description"   : ""
+	},
+	"optThemeBorderColorLabel" : {
+		"message"       : "Sidebar border color",
+		"description"   : ""
+	},
+	"optThemeBorderColorActiveLabel" : {
+		"message"       : "Sidebar active element border color",
+		"description"   : ""
+	},
+	"optThemeSidebarImageLabel" : {
+		"message"       : "Sidebar background image",
+		"description"   : ""
+	},
+	"optThemeStartpageImageLabel" : {
+		"message"       : "Startpage background image",
+		"description"   : ""
+	},
+
+	"optMiscButton" : {
+		"message"       : "Misc",
+		"description"   : "header of Misc options"
+	},
+	"optMiscLimitHistoryLabel" : {
+		"message"       : "Maximum history entries showed at once",
+		"description"   : ""
+	},
+	"optMiscMaxSavedRssPerFeedLabel" : {
+		"message"       : "Maximum saved RSS items",
+		"description"   : ""
+	},
+	"optMiscRssUpdatePeriodLabel" : {
+		"message"       : "RSS update period",
+		"description"   : ""
+	},
+
+	"optWarningsButton" : {
+		"message"       : "Warnings",
+		"description"   : ""
+	},
+	"optWarningsText" : {
+		"message"       : "Ask me before...",
+		"description"   : ""
+	},
+	"optWarningsDeleteBookmarkLabel" : {
+		"message"       : "Delete bookmark",
+		"description"   : ""
+	},
+	"optWarningsDeleteBookmarkFolderLabel" : {
+		"message"       : "Delete bookmark folder",
+		"description"   : ""
+	},
+	"optWarningsDeleteSiteLabel" : {
+		"message"       : "Delete site from start page",
+		"description"   : ""
+	},
+	"optWarningsDeleteRssFeedLabel" : {
+		"message"       : "Delete RSS feed",
+		"description"   : ""
+	},
+	"optWarningsCloseDomainFolderLabel" : {
+		"message"       : "Close multiple tabs",
+		"description"   : ""
+	},
+
+	"optStartPageButton" : {
+		"message"       : "Start Page",
+		"description"   : ""
+	},
+	"optStartPageText" : {
+		"message"       : "Start Page settings",
+		"description"   : ""
+	},
+	"optStartPageRowsLabel" : {
+		"message"       : "Rows",
+		"description"   : ""
+	},
+	"optStartPageColumnsLabel" : {
+		"message"       : "Columns",
+		"description"   : ""
+	},
+	"optStartPageMarginVLabel" : {
+		"message"       : "Vertical gap",
+		"description"   : ""
+	},
+	"optStartPageMarginHLabel" : {
+		"message"       : "Horizontal gap",
+		"description"   : ""
+	},
+	"optStartPagePaddingLabel" : {
+		"message"       : "Padding",
+		"description"   : ""
+	},
+	"optStartPageSearchEnabledLabel" : {
+		"message"       : "Enable search",
+		"description"   : ""
+	},
+	"optStartPagewikiSearchLangLabel" : {
+		"message"       : "Wikipedia search language",
+		"description"   : ""
+	},
+	"optStartPageTranslateFromLabel" : {
+		"message"       : "Translate from",
+		"description"   : ""
+	},
+	"optStartPageTranslateToLabel" : {
+		"message"       : "Translate to",
+		"description"   : ""
+	},
+
+
+	"popupFormTextLeftBar" : {
+		"message"       : "LeftBar:",
+		"description"   : ""
+	},
+	"popupFormTextRightBar" : {
+		"message"       : "RightBar:",
+		"description"   : ""
+	},
+	"popupLabelTextIframe" : {
+		"message"       : "Iframe",
+		"description"   : ""
+	},
+	"popupLabelTextNative" : {
+		"message"       : "Native",
+		"description"   : ""
+	},
+	"popupLabelTextWindow" : {
+		"message"       : "Window",
+		"description"   : ""
+	},
+	"popupLabelTextDisabled" : {
+		"message"       : "Disabled",
+		"description"   : ""
+	},
+	"popupButtonHomeTitle" : {
+		"message"       : "Homepage",
+		"description"   : ""
+	},
+	"popupButtonOptionsTitle" : {
+		"message"       : "Options",
+		"description"   : ""
+	},
+
+	"notificationRssNewFeedErrorTitle" : {
+		"message"       : "RSS error",
+		"description"   : ""
+	},
+	"notificationRssNewFeedErrorText" : {
+		"message"       : "Cannot find valid RSS feed on ",
+		"description"   : ""
+	},
+	"notificationRssFeedExistErrorTitle" : {
+		"message"       : "RSS error",
+		"description"   : ""
+	},
+	"notificationRssFeedExistErrorTitle" : {
+		"message"       : "You already subscribed on ",
+		"description"   : ""
+	},
+
+	"startpagePageTitle" : {
+		"message"       : "Start page",
+		"description"   : ""
+	},
+	"startpageEditButtonTitle" : {
+		"message"       : "Edit site",
+		"description"   : ""
+	},
+	"startpageAddNewSiteTitle" : {
+		"message"       : "Add new site",
+		"description"   : ""
+	},
+	"startpageSearchPlaceholder" : {
+		"message"       : "Search",
+		"description"   : ""
+	},
+	"startpageTranslatePlaceholder" : {
+		"message"       : "Translate",
+		"description"   : ""
+	},
+	"startpageBuyPlaceholder" : {
+		"message"       : "Buy",
+		"description"   : ""
+	},
+	"startpageSearchButtonTitle" : {
+		"message"       : "Start",
+		"description"   : ""
+	},
+	"startpageDuckDuckGoLabel" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"startpageGoogleLabel" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"startpageYandexLabel" : {
+		"message"       : "Yandex",
+		"description"   : ""
+	},
+	"startpageBingLabel" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"startpageYahooLabel" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"startpageWikipediaLabel" : {
+		"message"       : "Wikipedia",
+		"description"   : ""
+	},
+	"startpageMdnLabel" : {
+		"message"       : "MDN",
+		"description"   : ""
+	},
+	"startpageStackoverflowLabel" : {
+		"message"       : "stackOverflow",
+		"description"   : ""
+	},
+	"startpageAmazonLabel" : {
+		"message"       : "Amazon",
+		"description"   : ""
+	},
+	"startpageEbayLabel" : {
+		"message"       : "Ebay",
+		"description"   : ""
+	},
+	"startpageAliexpressLabel" : {
+		"message"       : "AliExpress",
+		"description"   : ""
+	},
+	"startpageGoogleTranslateLabel" : {
+		"message"       : "Google Translate",
+		"description"   : ""
+	},
+	"startpageYandexTranslateLabel" : {
+		"message"       : "Yandex Translate",
+		"description"   : ""
+	},
+
+
+	"dialogConfirmationTitle" : {
+		"message"       : "Confirmation requared",
+		"description"   : ""
+	},
+	"dialogUserInputTitle" : {
+		"message"       : "Information requared",
+		"description"   : ""
+	},
+
+	"dialogAskAgainWarning" : {
+		"message"       : "Always ask",
+		"description"   : ""
+	},
+	"dialogConfirmButton" : {
+		"message"       : "Confirm",
+		"description"   : ""
+	},
+	"dialogCancelButton" : {
+		"message"       : "Cancel",
+		"description"   : ""
+	},
+	"dialogSaveButton" : {
+		"message"       : "Save",
+		"description"   : ""
+	},
+	"dialogDeleteButton" : {
+		"message"       : "Delete",
+		"description"   : ""
+	},
+
+	"dialogSiteNewHeader" : {
+		"message"       : "Add new site",
+		"description"   : ""
+	},
+	"dialogEditSiteHeader" : {
+		"message"       : "Edit site properties",
+		"description"   : ""
+	},
+	"dialogEditSiteUrlLabel" : {
+		"message"       : "Url:",
+		"description"   : ""
+	},
+	"dialogEditSiteUrlPlaceholder" : {
+		"message"       : "Enter site URL",
+		"description"   : ""
+	},
+	"dialogEditSiteTextLabel" : {
+		"message"       : "Text:",
+		"description"   : ""
+	},
+	"dialogEditSiteColorLabel" : {
+		"message"       : "Color:",
+		"description"   : ""
+	},
+	"dialogSiteDeleteHeader" : {
+		"message"       : "Site deletion",
+		"description"   : ""
+	},
+	"dialogSiteDeleteText" : {
+		"message"       : "Delete \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogTabsCloseDomainHeader" : {
+		"message"       : "Close domain",
+		"description"   : ""
+	},
+	"dialogTabsCloseDomainAlertText" : {
+		"message"       : "Close all tabs in \"$name$\" domain?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkDeleteHeader" : {
+		"message"       : "Bookmark deletion",
+		"description"   : ""
+	},
+	"dialogBookmarkDeleteAlertText" : {
+		"message"       : "Do you really want to delete \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkFolderDeleteHeader" : {
+		"message"       : "Folder deletion",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderDeleteAlertText" : {
+		"message"       : "Do you really want to delete folder \"$name$\" ? All it's content will be lost.",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogRSSNewHeader" : {
+		"message"       : "New RSS subscription",
+		"description"   : ""
+	},
+	"dialogRSSNewUrlLabel" : {
+		"message"       : "Url:",
+		"description"   : ""
+	},
+	"dialogRSSNewUrlPlaceholder" : {
+		"message"       : "Enter feed url here",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedHeader" : {
+		"message"       : "Edit RSS feed",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedTitleLabel" : {
+		"message"       : "Title:",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedDescriptionLabel" : {
+		"message"       : "Description:",
+		"description"   : ""
+	},
+	"dialogRSSFeedDeleteHeader" : {
+		"message"       : "RSS feed deletion",
+		"description"   : ""
+	},
+	"dialogRSSFeedDeleteAlertText" : {
+		"message"       : "Do you really want to delete feed \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDownloadDeleteHeader" : {
+		"message"       : "Download history deletion",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteAlert" : {
+		"message"       : "Do you really want to delete \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDownloadDeleteFromHistoryLabel" : {
+		"message"       : "Delete from download history",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteFileLabel" : {
+		"message"       : "Remove file from disc",
+		"description"   : ""
+	},
+	"dialogBookmarkRootFolder" : {
+		"message"       : "Bookmarks",
+		"description"   : ""
+	},
+	"dialogNewBookmarkHeader" : {
+		"message"       : "New bookmark",
+		"description"   : ""
+	},
+	"dialogNewBookmarkDefaultTitle" : {
+		"message"       : "New page",
+		"description"   : ""
+	},
+	"dialogNewBookmarkTitleLabel" : {
+		"message"       : "Title:",
+		"description"   : ""
+	},
+	"dialogNewBookmarkUrlLabel" : {
+		"message"       : "Url:",
+		"description"   : ""
+	},
+	"dialogNewBookmarkFoldersLabel" : {
+		"message"       : "Folders:",
+		"description"   : ""
+	}
+
+}

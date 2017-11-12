@@ -1,0 +1,32 @@
+#tabs-new>.button>span {
+	-webkit-mask-image: url(icons/new.svg);
+	mask-image: url(icons/new.svg);
+}
+
+.domain .folder.domain-view {
+	margin-bottom: .5rem;
+}
+.item.active {
+	font-weight: bold;
+}
+.item.active:hover {
+	background-color: var(--border-color-active);
+}
+.item.pinned {
+	background-color: var(--background-color-active);
+}
+
+.plain .item #tabs-pin {
+	display: inline-block;
+}
+.item.pinned #tabs-pin {
+	display: none;
+}
+
+.plain .item.pinned #tabs-unpin,
+.item #tabs-close,
+.item #tabs-reload,
+.folder-name #tabs-closeAll {
+	display: inline-block;
+}
+

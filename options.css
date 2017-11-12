@@ -1,0 +1,137 @@
+:root {
+	font-size: 10px;
+	--font-color: #444;
+	--font-color-active: #000;
+	--font-color-inactive: #999;
+	--border-color: #eee;
+	--border-color-active: #ccc;
+	--background-color : #fcfcfc;
+	--background-color-active: #e3ecf1;
+	background-color: var(--background-color);
+}
+* {
+	margin: 0;
+	padding: 0;
+}
+body {
+	margin: 0;
+	font-family: "DejaVu Sans", "Arial", "Helvetica", "Verdana", sans-serif;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	background-color: var(--background-color);
+	border-width: 0.05rem;
+	border-style: solid;
+	border-color: var(--border-color);
+	padding: 1.5rem 1rem;
+	user-select: none;
+	word-wrap: break-word;
+	max-width: 50rem;
+}
+
+header {
+	font-size: 2.4rem;
+	text-align: center;
+}
+
+nav {
+	display: flex;
+	flex-flow: row;
+	width: auto;
+	margin: 1rem 0;
+}
+nav>span {
+	color: var(--font-color-inactive);
+	font-size: 1.6rem;
+	text-align: center;
+	min-width: 3rem;
+	padding: 0.2rem 0.4rem;
+	white-space: nowrap;
+}
+nav>span:hover {
+	color: var(--font-color-active);
+	cursor: pointer;
+}
+.misc #misc-button,
+.theme #theme-button,
+.services #services-button,
+.warnings #warnings-button,
+.startPage #startPage-button {
+	color: var(--font-color);
+	cursor: normal;
+}
+
+section {
+	margin: 1rem 0 2rem 0;
+	display: none;
+	grid-template-columns: min-content auto;
+	grid-row-gap: 1rem;
+	grid-column-gap: 0.8rem;
+	align-items: center;
+	font-size: 1.8rem;
+}
+form {
+	grid-column-start: 1;
+	grid-column-end: 3;
+	display: grid;
+	grid-template-columns: min-content auto;
+	grid-row-gap: 1rem;
+	grid-column-gap: 0.8rem;
+	align-items: center;
+	margin-left: 2rem;
+}
+p {
+	grid-column-start: 1;
+	grid-column-end: 3;
+	margin: 1rem 0 0 0;
+}
+label {
+	justify-self: left;
+}
+input.text {
+	width: 3rem;
+	height: 1.6rem;
+	padding: 0;
+	margin: 0;
+	border-color: transparent;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input {
+	justify-self: right;
+	text-align: right;
+}
+input[type="file"] {
+	display: none;
+}
+.leftBar #leftBar-section,
+.rightBar #rightBar-section,
+.misc #misc-section,
+.theme #theme-section,
+.services #services-section,
+.warnings #warnings-section,
+.startpage #startpage-section {
+	display: grid;
+}
+
+footer {
+	font-size: 1.6rem;
+	text-align: right;
+}
+footer>span {
+	margin: 0.5rem 0 0.5rem 1rem;
+	padding: 0.1rem 1rem;
+	min-width: 4rem;
+	border-style: solid;
+	border-color: var(--border-color);
+	border-width: 0.05rem;
+	color: var(--font-color);
+	cursor: pointer;
+	text-align: center;
+}
+footer>span:hover {
+	color: var(--font-color-active);
+	border-color: var(--border-color-active);
+}

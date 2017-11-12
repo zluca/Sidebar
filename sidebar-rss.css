@@ -1,0 +1,40 @@
+.hide-readed>.folder-name #rss-showReaded,
+.unreaded>.folder-name #rss-markReadAll,
+.item.rss-item.unreaded #rss-markRead,
+.item #rss-delete,
+.folder-name #rss-hideReaded,
+.hide-readed.folder-name #rss-showReaded,
+.folder-name #rss-options,
+.plain.hide-readed #rss-showReadedAll,
+.plain.show-readed #rss-hideReadedAll,
+.plain #rss-markRealAll,
+#rss-reloadAll,
+.folder-name #rss-reload {
+	display: inline-block;
+}
+#rss-plain-show-readed,
+#rss-plain-hide-readed {
+	display: none;
+}
+
+.item.unreaded {
+	font-weight: bold;
+}
+.hide-readed.folder .item,
+.hide-readed.plain .item,
+.hide-readed.folder #rss-hideReaded,
+.folder #rss-showReaded,
+.folder.hide-readed .controls .button,
+.show-readed .bottom-bar #rss-showReadedAll,
+.hide-readed .bottom-bar #rss-hideReadedAll {
+	display: none;
+}
+.hide-readed.folder .unreaded,
+.hide-readed.plain .unreaded,
+.folder.hide-readed .folder-name {
+	display: block;
+}
+.unreaded>.folder-name {
+	font-weight: bold;
+	color: var(--font-color-active);
+}

@@ -1,0 +1,13 @@
+#bookmarks-bookmarkThis>.button>span {
+	-webkit-mask-image: url(icons/new.svg);
+	mask-image: url(icons/new.svg);
+}
+#bookmarks>.bottom-bar>.button {
+	-webkit-mask-image: url(icons/search.svg);
+	mask-image: url(icons/search.svg);
+}
+.item #bookmarks-delete,
+.item #bookmarks-move,
+.folder-name #bookmarks-deleteFolder {
+	display: inline-block;
+}
