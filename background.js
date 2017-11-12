@@ -1281,13 +1281,13 @@ const init = {
 					makeFolder(folder);
 			if (folder.children)
 				for (let i = 0, l = folder.children.length; i < l; i++) {
-					if (folder.children[i].hasOwnProperty('url')) {
-						if (!/place:/.test(folder.children[i].url))
-							createById('bookmarks', folder.children[i], 'last');
-					}
-					else {
-						parseTree(folder.children[i]);
-					}
+					if (folder.children[i].hasOwnProperty('url'))
+						if (folder.children[i].url !== undefined)
+							if (!/place:/.test(folder.children[i].url)) {
+								createById('bookmarks', folder.children[i], 'last');
+								continue;
+							}
+					parseTree(folder.children[i]);
 				}
 		};
 
