@@ -1295,19 +1295,8 @@ const init = {
 				if (folder.parentId !== undefined)
 					makeFolder(folder);
 			if (folder.children)
-				for (let i = 0, l = folder.children.length; i < l; i++) {
+				for (let i = 0, l = folder.children.length; i < l; i++)
 					detector(folder.children[i]);
-					// console.log(folder.children[i]);
-					// console.log(detectType(folder.children[i]));
-					// if (detectType(folder.children[i]))
-					// // if (folder.children[i].hasOwnProperty('url'))
-					// // 	if (folder.children[i].url !== undefined)
-					// 		if (!/^place:/.test(folder.children[i].url)) {
-					// 			createById('bookmarks', folder.children[i], 'last');
-					// 			continue;
-					// 		}
-					// parseTree(folder.children[i]);
-				}
 		};
 
 		execMethod(brauzer.bookmarks.getTree, parseTree);
