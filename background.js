@@ -2338,10 +2338,14 @@ function getFolderById(mode, id) {
 }
 
 function domainFromUrl(url) {
-	// return url.match(/(^https?:\/\/)?[\da-z\.-]+\.\w*/)[0];
-	if (url)
-		return url.match(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i)[0];
-	else return 'default';
+	if (!url)
+		return 'default';
+	else {
+		const domain = url.match(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
+		if (domain)
+			return domain[0];
+		return 'default';
+	}
 }
 
 function colorFromUrl(url) {
