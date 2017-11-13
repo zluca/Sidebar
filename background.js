@@ -1269,6 +1269,21 @@ const init = {
 		};
 
 		const parseTree = folder => {
+
+			const detector = firefox ?
+				child => {
+					if (child.type === 'folder')
+						parseTree(child);
+					else if (child.type === 'bookmark')
+						if (!/^place:/.test(child.url))
+							createById('bookmarks', child, 'last');
+				} :
+				child => {
+					if (child.hasOwnProperty('url'))
+						createById('bookmarks', child, 'last');
+					else parseTree(child);
+				};
+
 			if (Array.isArray(folder)) {
 				parseTree(folder[0]);
 				setMessageHandler();
@@ -1281,13 +1296,17 @@ const init = {
 					makeFolder(folder);
 			if (folder.children)
 				for (let i = 0, l = folder.children.length; i < l; i++) {
-					if (folder.children[i].hasOwnProperty('url'))
-						if (folder.children[i].url !== undefined)
-							if (!/place:/.test(folder.children[i].url)) {
-								createById('bookmarks', folder.children[i], 'last');
-								continue;
-							}
-					parseTree(folder.children[i]);
+					detector(folder.children[i]);
+					// console.log(folder.children[i]);
+					// console.log(detectType(folder.children[i]));
+					// if (detectType(folder.children[i]))
+					// // if (folder.children[i].hasOwnProperty('url'))
+					// // 	if (folder.children[i].url !== undefined)
+					// 		if (!/^place:/.test(folder.children[i].url)) {
+					// 			createById('bookmarks', folder.children[i], 'last');
+					// 			continue;
+					// 		}
+					// parseTree(folder.children[i]);
 				}
 		};
 
@@ -2094,17 +2113,19 @@ function getI18n(message) {
 function favFromUrl(url) {
 	if (!url)
 		return defaultIcon;
-	else if (/chrome:/i.test(url)) {
+	else if (/^chrome:/i.test(url)) {
 		if (opera)
 			return `chrome://favicon/${url}`;
 		else
 			return defaultIcon;
 	}
-	else if (/about:/i.test(url))
+	else if (/^about:/i.test(url))
 		return defaultIcon;
 	else {
-		const fav = url.match(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
-		if (!fav)
+		// const fav = url.match(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
+		const domain = domainFromUrl(url);
+		console.log(domain);
+		if (!domain)
 			return defaultIcon;
 		else if (firefox) {
 			const color = colorFromUrl(url);
@@ -2112,7 +2133,7 @@ function favFromUrl(url) {
 			return `data:image/svg+xml;base64,${btoa(svg)}`;
 		}
 		else
-			return `chrome://favicon/${fav[0].replace('http://', 'https://')}`;
+			return `chrome://favicon/${domain.replace('http://', 'https://')}`;
 	}
 }
 
@@ -2329,7 +2350,10 @@ function getFolderById(mode, id) {
 }
 
 function domainFromUrl(url) {
-	return url.match(/(^https?:\/\/)?[\da-z\.-]+\.\w*/)[0];
+	// return url.match(/(^https?:\/\/)?[\da-z\.-]+\.\w*/)[0];
+	if (url)
+		return url.match(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i)[0];
+	else return 'default';
 }
 
 function colorFromUrl(url) {
