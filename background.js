@@ -57,7 +57,6 @@ const i18n = {
 		translatePlaceholder        : getI18n('startpageTranslatePlaceholder'),
 		buyPlaceholder              : getI18n('startpageBuyPlaceholder'),
 		searchButtonTitle           : getI18n('startpageSearchButtonTitle'),
-		wikiDomainPrefix            : getI18n('startpageWikiDomainPrefix'),
 		searchEngineDuckDuckGo      : getI18n('startpageDuckDuckGoLabel'),
 		searchEngineGoogle          : getI18n('startpageGoogleLabel'),
 		searchEngineYandex          : getI18n('startpageYandexLabel'),

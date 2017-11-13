@@ -438,7 +438,7 @@
 		"message"       : "RSS error",
 		"description"   : ""
 	},
-	"notificationRssFeedExistErrorTitle" : {
+	"notificationRssFeedExistErrorText" : {
 		"message"       : "You already subscribed on ",
 		"description"   : ""
 	},

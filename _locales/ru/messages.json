@@ -438,7 +438,7 @@
 		"message"       : "Ошибка RSS",
 		"description"   : ""
 	},
-	"notificationRssFeedExistErrorTitle" : {
+	"notificationRssFeedExistErrorText" : {
 		"message"       : "Вы уже подписаны на ",
 		"description"   : ""
 	},
