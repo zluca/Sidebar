@@ -1825,7 +1825,6 @@ const init = {
 						feed.title       = title;
 						feed.view        = 'domain';
 						feed.description = desc;
-						// feed.domain      = makeDomain(favUrl ? favUrl : rssUrl, fav, 'rss');
 						feed.domain      = makeDomain(rssUrl, fav, 'rss');
 						feed.url         = rssUrl;
 						feed.fav         = fav;
@@ -2099,6 +2098,17 @@ function getI18n(message) {
 }
 
 function favFromUrl(url) {
+
+	const favMaker = firefox ?
+		_ => {
+			const color = colorFromUrl(url);
+			const svg   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">	<polygon fill="${color}" points="0,0 0,64 64,64 64,0"/></svg>`;
+			return `data:image/svg+xml;base64,${btoa(svg)}`;
+		} :
+		domain => {
+			return `chrome://favicon/${domain.replace('http://', 'https://')}`;
+		};
+
 	if (!url)
 		return defaultIcon;
 	else if (/^chrome:/i.test(url)) {
@@ -2110,18 +2120,11 @@ function favFromUrl(url) {
 	else if (/^about:/i.test(url))
 		return defaultIcon;
 	else {
-		// const fav = url.match(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
 		const domain = domainFromUrl(url);
 		console.log(domain);
 		if (!domain)
 			return defaultIcon;
-		else if (firefox) {
-			const color = colorFromUrl(url);
-			const svg   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">	<polygon fill="${color}" points="0,0 0,64 64,64 64,0"/></svg>`;
-			return `data:image/svg+xml;base64,${btoa(svg)}`;
-		}
-		else
-			return `chrome://favicon/${domain.replace('http://', 'https://')}`;
+		return favMaker(domain);
 	}
 }
 
