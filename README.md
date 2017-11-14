@@ -14,3 +14,17 @@ WebExtension that imprement Sidebar into browser.
 
 - Open about:debugging
 - Click "Load Temporary Add-on"
+
+### Install from store
+
+**Chromium**
+
+https://chrome.google.com/webstore/detail/sidebar%20/dnafkfkoknddnkdajibiigkopoelnhei
+
+**Firefox**
+
+none yet
+
+**Opera**
+
+none yet
