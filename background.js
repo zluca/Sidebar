@@ -130,7 +130,7 @@ const data = {
 	},
 	initDone        : false,
 	extensionUrl    : brauzer.extension.getURL('/'),
-	defaultStartPage: firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
+	defaultStartPage: firefox ? `${brauzer.extension.getURL('/')}startpage.html` : opera ? 'chrome://startpage/' : 'chrome://newtab/',
 	leftBar         : {
 		windowId      : -1,
 		tabId         : -1
