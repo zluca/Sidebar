@@ -23,3 +23,14 @@ none yet
 
 **Opera:**
 none yet
+
+### Remove tabs
+
+**Chrome and Opera**
+no idea
+
+**Firefox**
+- Create "Chrome" folder inside your profile folder
+- Create file "userChrome.css" inside "Chrome" folder
+- Copypaste "#TabsToolbar {visibility: collapse;}" info "userChrome.css"
+- Restart Firefox
