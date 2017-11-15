@@ -2190,7 +2190,7 @@ function createDialogWindow(type, dialogData) {
 	data.dialogType = type;
 	const activeTab = getById('tabs', data.activeTabId);
 	if (!activeTab) return;
-	if (/^https?:|^ftp:|^file:|^chrome:\/\/newtab|^chrome:\/\/startpage|startpage.html$/.test(activeTab.url))
+	if (/^https?:|^ftp:|^file:|^chrome:\/\/newtab|^chrome:\/\/startpage|^moz-extension:\/\/.*startpage.html$/.test(activeTab.url))
 		sendToTab(data.activeTabId, 'content', 'dialog', 'create', type);
 	else
 		brauzer.tabs.create({url: data.defaultStartPage});
