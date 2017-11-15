@@ -365,8 +365,6 @@ ul {
 }
 .hover .tree>#tabs-0>.folder>.item,
 .fixed .tree>#tabs-0>.folder>.item {
-	padding-left: 1.6rem;
-	margin-left: 0;
 	border-left: none;
 }
 .hover .folder>.folder,
@@ -376,7 +374,6 @@ ul {
 }
 .hover .tree>#tabs-0>.folder,
 .fixed .tree>#tabs-0>.folder {
-	margin-left: 0;
 	border-left: none;
 }
 .folder.folded>.folder,
