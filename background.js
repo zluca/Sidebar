@@ -1029,9 +1029,20 @@ const init = {
 			return createById('tabs', tab, 'last');
 		};
 
+		const folderTitleMaker = firefox ?
+			url => {
+				if (/^about:/.test(url))
+					return 'about:';
+				else if (url === data.defaultStartPage)
+					return i18n.startpage.pageTitle;
+				else
+					return url.split('//', 2).pop().split('/', 2).shift();
+			} :
+			url => url.split('//', 2).pop().split('/', 2).shift();
+
 		const makeFolder = tab => {
 			const id    = makeDomain(tab.url, tab.favIconUrl);
-			const title = tab.url.split('//', 2).pop().split('/', 2).shift();
+			const title = folderTitleMaker(tab.url);
 			let folder  = createFolderById('tabs', id, 'last');
 			if (folder) {
 				folder.pid        = 0;
@@ -2121,7 +2132,6 @@ function favFromUrl(url) {
 		return defaultIcon;
 	else {
 		const domain = domainFromUrl(url);
-		console.log(domain);
 		if (!domain)
 			return defaultIcon;
 		return favMaker(domain);
@@ -2153,9 +2163,9 @@ function makeDomain(url, fav, prefix = '') {
 	let id;
 	if (!url)
 		id = 'default';
-	else if (/about:/.test(url))
+	else if (/^about:/.test(url))
 		id = 'about';
-	else if (url.match(`${data.extensionUrl}startpage.html`))
+	else if (url.match(data.defaultStartPage))
 		id = 'StartPage';
 	else {
 		id = url.split('//', 2).pop();
