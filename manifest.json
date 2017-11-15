@@ -56,12 +56,6 @@
 	},
 	"chrome_url_overrides" : {
     	"newtab": "startpage.html"
-	},
-	"applications": {
-	  "gecko": {
-	    "id": "sidebar@example.com",
-	    "strict_min_version": "51.0"
-	  }
 	}
 }
 
