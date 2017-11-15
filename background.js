@@ -1013,21 +1013,22 @@ const init = {
 			};
 		};
 
-		const createTab = tab => {
-			if (tab.url.match(`${data.extensionUrl}sidebar.html`))
-				return false;
-			makeFolder(tab);
-			return createById('tabs', tab, 'last');
-		};
+		const createTab = opera ?
+			tab => {
+				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
+					return false;
+				if (tab.url === data.defaultStartPage)
+					brauzer.tabs.update(tab.id, {url: `${data.extensionUrl}startpage.html`});
+				makeFolder(tab);
+				return createById('tabs', tab, 'last');
+			} :
+			tab => {
+				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
+					return false;
+				makeFolder(tab);
+				return createById('tabs', tab, 'last');
+			};
 
-		const createTabOpera = tab => {
-			if (tab.url.match(`${data.extensionUrl}sidebar.html`))
-				return false;
-			if (tab.url === data.defaultStartPage)
-				brauzer.tabs.update(tab.id, {url: `${data.extensionUrl}startpage.html`});
-			makeFolder(tab);
-			return createById('tabs', tab, 'last');
-		};
 
 		const folderTitleMaker = firefox ?
 			url => {
@@ -1038,7 +1039,11 @@ const init = {
 				else
 					return url.split('//', 2).pop().split('/', 2).shift();
 			} :
-			url => url.split('//', 2).pop().split('/', 2).shift();
+			url => {
+				if (url === data.defaultStartPage)
+					return i18n.startpage.pageTitle;
+				return url.split('//', 2).pop().split('/', 2).shift();
+			};
 
 		const makeFolder = tab => {
 			const id    = makeDomain(tab.url, tab.favIconUrl);
@@ -1095,10 +1100,7 @@ const init = {
 
 		execMethod(brauzer.tabs.query, tabsQuery, {});
 
-		if (opera)
-			brauzer.tabs.onCreated.addListener(createTabOpera);
-		else
-			brauzer.tabs.onCreated.addListener(createTab);
+		brauzer.tabs.onCreated.addListener(createTab);
 
 		brauzer.tabs.onActivated.addListener(tabInfo => {
 			const tab = getById('tabs', tabInfo.tabId);
@@ -2129,6 +2131,8 @@ function favFromUrl(url) {
 			return defaultIcon;
 	}
 	else if (/^about:/i.test(url))
+		return defaultIcon;
+	else if (data.defaultStartPage === url)
 		return defaultIcon;
 	else {
 		const domain = domainFromUrl(url);
