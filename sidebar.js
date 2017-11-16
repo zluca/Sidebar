@@ -123,7 +123,7 @@ const i18n = {
 	rss         : null
 };
 
-send('background', 'request', 'mode', {'side': status.side, 'method': status.method}, fullInit);
+send('background', 'request', 'mode', {'side': status.side, 'method': status.method, needResponse: true}, fullInit);
 
 const messageHandler = {
 	options  : {
@@ -510,7 +510,7 @@ const initBlock = {
 			if (value.length > 1) {
 				if (lastSearch !== value) {
 					lastSearch = value;
-					send('background', 'bookmarks', 'search', {'request': value}, response => {
+					send('background', 'bookmarks', 'search', {'request': value, needResponse: true}, response => {
 						while (bookmarksSearchResults.firstChild)
 							bookmarksSearchResults.removeChild(bookmarksSearchResults.firstChild);
 						insertBookmarks(response, 'search');
@@ -646,7 +646,7 @@ const initBlock = {
 			if (value.length > 1) {
 				if (lastSearch !== value) {
 					lastSearch = value;
-					send('background', 'history', 'search', {'request': value}, response => {
+					send('background', 'history', 'search', {'request': value, needResponse: true}, response => {
 						while (historySearchResults.firstChild)
 							historySearchResults.removeChild(historySearchResults.firstChild);
 						insertHistoryes(response, 'search');

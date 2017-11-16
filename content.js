@@ -152,7 +152,7 @@ function checkDocument() {
 }
 
 function setStatus() {
-	send('background', 'request', 'status', '', response => {
+	send('background', 'request', 'status', {needResponse: true}, response => {
 		if (!response)
 			return setTimeout(setStatus, 200);
 		status.leftBar           = response.leftBar;
@@ -226,7 +226,7 @@ function setSideBarFixed(side, value = -1) {
 			timer.over = setTimeout(_ => {
 				if (!status[side].over)
 					return timer.clean('over');
-				send('background', 'set', 'hover', {side: side, hover: 'add'}, _ => {
+				send('background', 'set', 'hover', {side: side, hover: 'add', needResponse: true}, _ => {
 					status[side].hover = true;
 					setSideBarWidth(side, -1);
 				});

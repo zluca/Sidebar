@@ -13,7 +13,7 @@ function send(target, subject, action, data, callback) {
 init();
 
 function init() {
-	send('background', 'request', 'startpage', {}, response => {
+	send('background', 'request', 'startpage', {needResponse: true}, response => {
 
 		if (!response) return setTimeout(init, 200);
 

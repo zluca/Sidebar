@@ -5,7 +5,7 @@
 const firefox = (typeof InstallTrigger !== 'undefined') ? true : false;
 const brauzer = firefox ? browser : chrome;
 
-brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: 'popup', data: ''}, response => {
+brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: 'popup', data: {needResponse: true}}, response => {
 
 	// console.log(response);
 

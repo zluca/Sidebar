@@ -8,7 +8,7 @@ const brauzer = firefox ? browser : chrome;
 const type    = decodeURIComponent(document.location.hash).replace('#', '');
 const doc     = document.documentElement;
 
-brauzer.runtime.sendMessage({'target': 'background', 'subject': 'request', 'action': 'dialog', 'data': ''}, response => {
+brauzer.runtime.sendMessage({'target': 'background', 'subject': 'request', 'action': 'dialog', 'data': {needResponse: true}}, response => {
 	makeDialogWindow(response.data, response.warnings, response.theme);
 });
 

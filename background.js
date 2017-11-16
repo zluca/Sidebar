@@ -806,9 +806,6 @@ const messageHandler = {
 	},
 
 	site : {
-		init : (message, sender, sendResponse) => {
-			sendResponse(data.speadDial);
-		},
 		change : (message, sender, sendResponse) => {
 			const site = data.speadDial[message.data.index];
 			if (site) {
@@ -877,7 +874,9 @@ function checkForInit() {
 		if (message.hasOwnProperty('target'))
 			if (message.target === 'background') {
 				messageHandler[message.subject][message.action](message, sender, sendResponse);
-				return true;
+				if (message.hasOwnProperty('data'))
+					if (message.data.hasOwnProperty('needResponse'))
+						return true;
 			}
 	});
 	initWindow();
