@@ -8,7 +8,7 @@ const brauzer = firefox ? browser : chrome;
 const type    = decodeURIComponent(document.location.hash).replace('#', '');
 const doc     = document.documentElement;
 
-brauzer.runtime.sendMessage({'target': 'background', 'subject': 'request', 'action': 'dialog', 'data': {needResponse: true}}, response => {
+send('background', 'request', 'dialog', {needResponse: true}, response => {
 	makeDialogWindow(response.data, response.warnings, response.theme);
 });
 
@@ -193,7 +193,7 @@ function makeDialogWindow(data, warnings, colors) {
 	};
 
 	const removeDialogWindow = _ => {
-		send('background', 'dialog', 'remove', '');
+		send('background', 'dialog', 'remove', {});
 	};
 
 	const getI18n = (message, subs) => {
@@ -232,7 +232,7 @@ function makeDialogWindow(data, warnings, colors) {
 					if (inputUrl.value.length > 2) {
 						if (lastValue !== inputUrl.value) {
 							lastValue = inputUrl.value;
-							send('background', 'history', 'search', {'request': inputUrl.value, 'maxResults': 10}, response => showCompleter(response));
+							send('background', 'history', 'search', {request: inputUrl.value, maxResults: 10, needResponse: true}, response => showCompleter(response));
 						}
 					}
 					else
@@ -247,7 +247,6 @@ function makeDialogWindow(data, warnings, colors) {
 							{
 								'url'   : url,
 								'index' : data.index,
-								// 'title' : inputTitle.value,
 								'color' : inputColor.value,
 							}
 						);
