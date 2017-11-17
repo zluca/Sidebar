@@ -2,7 +2,6 @@
 
 'use strict';
 
-const defaultIcon = 'icons/default.svg';
 const firefox     = typeof InstallTrigger !== 'undefined' ? true : false;
 const opera       = window.hasOwnProperty('opr')          ? true : false;
 const brauzer     = firefox ? browser : chrome;
@@ -131,6 +130,9 @@ const data = {
 	initDone        : false,
 	extensionUrl    : brauzer.extension.getURL('/'),
 	defaultStartPage: firefox ? `${brauzer.extension.getURL('/')}startpage.html` : opera ? 'chrome://startpage/' : 'chrome://newtab/',
+	defaultIcon     : 'icons/default.svg',
+	systemIcon      : 'icons/wrench.svg',
+	startPageIcon   : 'icons/startpage.svg',
 	leftBar         : {
 		windowId      : -1,
 		tabId         : -1
@@ -1798,7 +1800,7 @@ const init = {
 			const rssUrl = urlFromUser(url);
 			for (let i = data.rssFolders.length - 1; i >= 0; i--)
 				if (data.rssFolders[i].url === rssUrl)
-					return brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': defaultIcon, 'title': i18n.notification.rssFeedExistErrorTitle, 'message':  `${i18n.notification.rssFeedExistErrorText}
+					return brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.defaultIcon, 'title': i18n.notification.rssFeedExistErrorTitle, 'message':  `${i18n.notification.rssFeedExistErrorText}
 							${data.rssFolders[i].title}`});
 			const xhttp  = new XMLHttpRequest();
 			xhttp.open("GET", rssUrl, true);
@@ -1851,7 +1853,7 @@ const init = {
 						brauzer.storage.local.set({'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId});
 					}
 					else
-						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': defaultIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
+						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.defaultIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
 							${url}`});
 				}
 
@@ -2111,8 +2113,6 @@ function getI18n(message) {
 
 function favFromUrl(url) {
 
-	const systemIcon    = 'icons/wrench.svg';
-	const startPageIcon = 'icons/startpage.svg';
 	const favMaker      = firefox ?
 		_ => {
 			const color = colorFromUrl(url);
@@ -2124,21 +2124,21 @@ function favFromUrl(url) {
 		};
 
 	if (!url)
-		return defaultIcon;
+		return data.defaultIcon;
 	else if (data.defaultStartPage === url)
-		return startPageIcon;
+		return data.startPageIcon;
 	else if (/^chrome:/i.test(url)) {
 		if (opera)
 			return `chrome://favicon/${url}`;
 		else
-			return systemIcon;
+			return data.systemIcon;
 	}
 	else if (/^about:/i.test(url))
-		return systemIcon;
+		return data.systemIcon;
 	else {
 		const domain = domainFromUrl(url);
 		if (!domain)
-			return defaultIcon;
+			return data.defaultIcon;
 		return favMaker(domain);
 	}
 }
@@ -2147,12 +2147,12 @@ function favFromFav(fav) {
 	if (!fav)
 		return false;
 	else if (/about:/.test(fav))
-		return defaultIcon;
+		return data.systemIcon;
 	else if (/chrome:/.test(fav)) {
 		if (opera)
 			return `chrome://favicon/${fav}`;
 		else
-			return defaultIcon;
+			return data.systemIcon;
 	}
 	else
 		return fav;
