@@ -2111,7 +2111,9 @@ function getI18n(message) {
 
 function favFromUrl(url) {
 
-	const favMaker = firefox ?
+	const systemIcon    = 'icons/wrench.svg';
+	const startPageIcon = 'icons/startpage.svg';
+	const favMaker      = firefox ?
 		_ => {
 			const color = colorFromUrl(url);
 			const svg   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">	<polygon fill="${color}" points="0,0 0,64 64,64 64,0"/></svg>`;
@@ -2123,16 +2125,16 @@ function favFromUrl(url) {
 
 	if (!url)
 		return defaultIcon;
+	else if (data.defaultStartPage === url)
+		return startPageIcon;
 	else if (/^chrome:/i.test(url)) {
 		if (opera)
 			return `chrome://favicon/${url}`;
 		else
-			return defaultIcon;
+			return systemIcon;
 	}
 	else if (/^about:/i.test(url))
-		return defaultIcon;
-	else if (data.defaultStartPage === url)
-		return defaultIcon;
+		return systemIcon;
 	else {
 		const domain = domainFromUrl(url);
 		if (!domain)
