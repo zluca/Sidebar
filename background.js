@@ -1030,21 +1030,13 @@ const init = {
 				return createById('tabs', tab, 'last');
 			};
 
-
-		const folderTitleMaker = firefox ?
-			url => {
-				if (/^about:/.test(url))
-					return 'about:';
-				else if (url === data.defaultStartPage)
-					return i18n.startpage.pageTitle;
-				else
-					return url.split('//', 2).pop().split('/', 2).shift();
-			} :
-			url => {
-				if (url === data.defaultStartPage)
-					return i18n.startpage.pageTitle;
-				return url.split('//', 2).pop().split('/', 2).shift();
-			};
+		const folderTitleMaker = url => {
+			if (/^chrome:|^about:/.test(url))
+				return 'system';
+			if (url === data.defaultStartPage)
+				return i18n.startpage.pageTitle;
+			return url.split('//', 2).pop().split('/', 2).shift();
+		};
 
 		const makeFolder = tab => {
 			const id    = makeDomain(tab.url, tab.favIconUrl);
@@ -2127,14 +2119,12 @@ function favFromUrl(url) {
 		return data.defaultIcon;
 	else if (data.defaultStartPage === url)
 		return data.startPageIcon;
-	else if (/^chrome:/i.test(url)) {
+	else if (/^chrome:|^about:/i.test(url)) {
 		if (opera)
 			return `chrome://favicon/${url}`;
 		else
 			return data.systemIcon;
 	}
-	else if (/^about:/i.test(url))
-		return data.systemIcon;
 	else {
 		const domain = domainFromUrl(url);
 		if (!domain)
@@ -2146,9 +2136,7 @@ function favFromUrl(url) {
 function favFromFav(fav) {
 	if (!fav)
 		return false;
-	else if (/about:/.test(fav))
-		return data.systemIcon;
-	else if (/chrome:/.test(fav)) {
+	else if (/^chrome:|^about:/.test(fav)) {
 		if (opera)
 			return `chrome://favicon/${fav}`;
 		else
@@ -2165,13 +2153,13 @@ function urlFromUser(url) {
 }
 
 function makeDomain(url, fav, prefix = '') {
-	let id;
+	let id = '';
 	if (!url)
 		id = 'default';
-	else if (/^about:/.test(url))
-		id = 'about';
 	else if (url.match(data.defaultStartPage))
 		id = 'StartPage';
+	else if (/^about:|^chrome:/.test(url))
+		id = 'system';
 	else {
 		id = url.split('//', 2).pop();
 		id = id.split('/', 2).shift();
