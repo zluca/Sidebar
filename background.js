@@ -1422,11 +1422,11 @@ const init = {
 			execMethod(brauzer.history.search, searchHandler, searchObject);
 		};
 
-		const search = (sendResponse, request, maxResults = options.misc.limitHistory.value) => {
+		const search = (sendResponse, request) => {
 
 			const searchHandler = history => {
 				let results = [];
-				for (let i = 0, l = history.length; i < l; i++) {
+				for (let i = 0, l = history.length; i < l && i < options.misc.limitHistory.value; i++) {
 					results.push({
 						url    : history[i].url,
 						domain : makeDomain(history[i].url),
@@ -1440,7 +1440,7 @@ const init = {
 				sendResponse(results);
 			};
 
-			const searchObject = {'text': request, 'maxResults': maxResults, 'startTime': 0};
+			const searchObject = {'text': request, 'maxResults': options.misc.limitHistory.value, 'startTime': 0};
 
 			execMethod(brauzer.history.search, searchHandler, searchObject);
 		};
