@@ -87,7 +87,6 @@ const data = {
 	historyFoldersId   : [],
 	historyLastTime    : Date.now(),
 	historyEnd         : false,
-	historyTemp        : [],
 	downloads          : [],
 	downloadsId        : [],
 	rss                : [],
