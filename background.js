@@ -18,8 +18,8 @@ const execMethod  = firefox ?
 const sidebarAction =
 	firefox ?
 		browser.hasOwnProperty('sidebarAction') ?
-			browser.sidebarAction : null :
-	opera ?
+			browser.sidebarAction : null
+	: opera ?
 		opr.hasOwnProperty('sidebarAction') ?
 			opr.sidebarAction : null
 	: null;
