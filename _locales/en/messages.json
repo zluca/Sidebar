@@ -260,6 +260,10 @@
 		"message"       : "Theme",
 		"description"   : "header of Theme options"
 	},
+	"optThemeText" : {
+		"message"       : "Sidebar theme.",
+		"description"   : ""
+	},
 	"optThemeFontSizeLabel" : {
 		"message"       : "Sidebar font size",
 		"description"   : ""
@@ -304,6 +308,10 @@
 	"optMiscButton" : {
 		"message"       : "Misc",
 		"description"   : "header of Misc options"
+	},
+	"optMiscText" : {
+		"message"       : "Miscellaneous options.",
+		"description"   : ""
 	},
 	"optMiscLimitHistoryLabel" : {
 		"message"       : "Maximum history entries showed at once",

@@ -260,6 +260,10 @@
 		"message"       : "Тема",
 		"description"   : "header of Theme options"
 	},
+	"optThemeText" : {
+		"message"       : "Настройка темы.",
+		"description"   : ""
+	},
 	"optThemeFontSizeLabel" : {
 		"message"       : "Размер шрифта боковой панели",
 		"description"   : ""
@@ -304,6 +308,10 @@
 	"optMiscButton" : {
 		"message"       : "Разное",
 		"description"   : "header of Misc options"
+	},
+	"optMiscText" : {
+		"message"       : "Всякие разные опции.",
+		"description"   : ""
 	},
 	"optMiscLimitHistoryLabel" : {
 		"message"       : "Максимум истории подгружаемой за один раз",

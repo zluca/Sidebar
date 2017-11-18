@@ -36,6 +36,7 @@ header {
 nav {
 	display: flex;
 	flex-flow: row;
+	flex-wrap: wrap;
 	width: auto;
 	margin: 1rem 0;
 }
