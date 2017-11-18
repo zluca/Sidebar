@@ -24,23 +24,6 @@ const sidebarAction =
 			opr.sidebarAction : null
 	: null;
 
-if (sidebarAction !== null) {
-	let port;
-	brauzer.runtime.onConnect.addListener(p => {
-		port = p;
-		port.onDisconnect.addListener(_ => {
-			if (options.leftBar.method.value === 'native') {
-				setOption('leftBar', 'method', 'disabled');
-				setIcon();
-			}
-			else if (options.rightBar.method.value === 'native') {
-				setOption('rightBar', 'method', 'disabled');
-				setIcon();
-			}
-		});
-	});
-}
-
 const i18n = {
 	notification: {
 		rssNewFeedErrorTitle       : getI18n('notificationRssNewFeedErrorTitle'),
@@ -181,24 +164,24 @@ const optionsHandler = {
 	},
 	service: (section, option, newValue) => {
 		if (newValue) {
-			init[option]();
+			init[option](true);
 			send('sidebar', 'options', 'services', {'service': option, 'enabled': true});
 		}
 		else {
 			const firstEnabledService = side => {
 				for (let services = ['tabs', 'bookmarks', 'history', 'downloads', 'rss'], i = services.length - 1; i >= 0; i--) {
-					if (options.services[services[i]].value) {
+					if (options.services[services[i]].value && services[i] !== option) {
 						setOption(side, 'mode', services[i]);
-						send(side, 'options', 'mode', modeData[services[i]]());
+						send(side, 'options', 'mode', {value: services[i], data: modeData[services[i]]()});
 						break;
 					}
 				}
 			};
-			if (options.leftBar.mode.value === newValue)
+			if (options.leftBar.mode.value === option)
 				firstEnabledService('leftBar');
-			if (options.rightBar.mode.value === newValue)
+			if (options.rightBar.mode.value === option)
 				firstEnabledService('rightBar');
-			deinit[option]();
+			init[option](false);
 			send('sidebar', 'options', 'services', {'service': option, 'enabled': false});
 		}
 		brauzer.storage.local.set({'options': options});
@@ -305,31 +288,31 @@ const options = {
 		tabs      : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar'],
+			targets : [],
 			handler : 'service'
 		},
 		bookmarks : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar'],
+			targets : [],
 			handler : 'service'
 		},
 		history   : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar'],
+			targets : [],
 			handler : 'service'
 		},
 		downloads : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar'],
+			targets : [],
 			handler : 'service'
 		},
 		rss       : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar'],
+			targets : [],
 			handler : 'service'
 		}
 	},
@@ -520,62 +503,6 @@ const options = {
 
 const optionsShort = {};
 
-const gettingStorage = res => {
-
-	const starter = _ => {
-		for (let section in options) {
-			optionsShort[section] = {};
-			for (let option in options[section])
-				optionsShort[section][option] = options[section][option].value;
-		}
-		for (let service in options.services)
-			if (options.services[service])
-				init[service]();
-			else
-				data.init[service] = true;
-	};
-
-	if (res.hasOwnProperty('version'))
-		if (res.version === version) {
-			options.leftBar      = res.options.leftBar;
-			options.rightBar     = res.options.rightBar;
-			options.services     = res.options.services;
-			options.misc         = res.options.misc;
-			options.theme        = res.options.theme;
-			options.warnings     = res.options.warnings;
-			options.startpage    = res.options.startpage;
-			return starter();
-		}
-	// set defaults
-	for (let service of ['tabs', 'bookmarks', 'history', 'downloads']) {
-		if (!brauzer.hasOwnProperty(service)) {
-			options.services[service].value  = false;
-			options.services[service].hidden = true;
-		}
-	}
-
-	options.startpage.translateFrom.value  = brauzer.i18n.getUILanguage().split('-')[0];
-	options.startpage.wikiSearchLang.value = brauzer.i18n.getUILanguage().split('-')[0];
-	if (sidebarAction) {
-		options.leftBar.method.values.push('native');
-		if (firefox)
-			options.rightBar.method.values.push('native');
-	}
-	options.startpage.rows.value    = Math.ceil(window.screen.height / 400);
-	options.startpage.columns.value = Math.ceil(window.screen.width  / 400);
-	const top = topSites => {
-		for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
-			data.speadDial.push(makeSite(i, topSites[i]));
-		brauzer.storage.local.set({'options': options});
-		brauzer.storage.local.set({'speadDial': data.speadDial});
-		brauzer.storage.local.set({'version': version});
-		starter();
-	};
-	execMethod(brauzer.topSites.get, top);
-};
-
-execMethod(brauzer.storage.local.get, gettingStorage, ['options', 'version']);
-
 const modeData = {
 	tabs       : _ => {
 		return {
@@ -584,7 +511,6 @@ const modeData = {
 			tabs           : data.tabs,
 			tabsFolders    : data.tabsFolders,
 			activeTabId    : data.activeTabId
-			// activeWindow   : data.activeWindow
 		};
 	},
 	bookmarks  : _ => {
@@ -620,27 +546,6 @@ const modeData = {
 			rssFolders       : data.rssFolders
 		};
 	}
-};
-
-const sideBarData = side => {
-
-	return {
-		'mode'     : options[side].mode.value,
-		'wide'     : options[side].wide.value,
-		'fixed'    : options[side].fixed.value,
-		'width'    : options[side].width.value,
-		'data'     : modeData[options[side].mode.value](),
-		'info'     : data.info,
-		'domains'  : data.domains,
-		'i18n'     : {
-						'header' : i18n.header,
-						'mode'   : i18n[options[side].mode.value]
-					 },
-		'services' : optionsShort.services,
-		'warnings' : optionsShort.warnings,
-		'misc'     : optionsShort.misc,
-		'theme'    : optionsShort.theme
-	};
 };
 
 const defaultTabsHandler = {
@@ -859,6 +764,79 @@ const fillItem = {
 	}
 };
 
+const gettingStorage = res => {
+
+	const starter = _ => {
+		for (let section in options) {
+			optionsShort[section] = {};
+			for (let option in options[section])
+				optionsShort[section][option] = options[section][option].value;
+		}
+		for (let service in options.services)
+			if (options.services[service])
+				init[service](true);
+			else
+				data.init[service] = true;
+	};
+
+	if (res.hasOwnProperty('version'))
+		if (res.version === version) {
+			options.leftBar      = res.options.leftBar;
+			options.rightBar     = res.options.rightBar;
+			options.services     = res.options.services;
+			options.misc         = res.options.misc;
+			options.theme        = res.options.theme;
+			options.warnings     = res.options.warnings;
+			options.startpage    = res.options.startpage;
+			return starter();
+		}
+	// set defaults
+	for (let service of ['tabs', 'bookmarks', 'history', 'downloads']) {
+		if (!brauzer.hasOwnProperty(service)) {
+			options.services[service].value  = false;
+			options.services[service].hidden = true;
+		}
+	}
+
+	options.startpage.translateFrom.value  = brauzer.i18n.getUILanguage().split('-')[0];
+	options.startpage.wikiSearchLang.value = brauzer.i18n.getUILanguage().split('-')[0];
+	if (sidebarAction) {
+		options.leftBar.method.values.push('native');
+		if (firefox)
+			options.rightBar.method.values.push('native');
+	}
+	options.startpage.rows.value    = Math.ceil(window.screen.height / 400);
+	options.startpage.columns.value = Math.ceil(window.screen.width  / 400);
+	const top = topSites => {
+		for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
+			data.speadDial.push(makeSite(i, topSites[i]));
+		brauzer.storage.local.set({'options': options});
+		brauzer.storage.local.set({'speadDial': data.speadDial});
+		brauzer.storage.local.set({'version': version});
+		starter();
+	};
+	execMethod(brauzer.topSites.get, top);
+};
+
+if (sidebarAction !== null) {
+	let port;
+	brauzer.runtime.onConnect.addListener(p => {
+		port = p;
+		port.onDisconnect.addListener(_ => {
+			if (options.leftBar.method.value === 'native') {
+				setOption('leftBar', 'method', 'disabled');
+				setIcon();
+			}
+			else if (options.rightBar.method.value === 'native') {
+				setOption('rightBar', 'method', 'disabled');
+				setIcon();
+			}
+		});
+	});
+}
+
+execMethod(brauzer.storage.local.get, gettingStorage, ['options', 'version']);
+
 function initWindow() {
 	if (options.leftBar.method.value === 'window')
 		createSidebarWindow('leftBar');
@@ -885,40 +863,6 @@ function checkForInit() {
 	setIcon();
 }
 
-const deinit = {
-	startpage : _ => {
-		messageHandler.startpage = null;
-		messageHandler.site      = null;
-		i18n.startpage           = null;
-	},
-	tabs      : _ => {
-		messageHandler.tabs      = defaultTabsHandler;
-		i18n.tabs                = null;
-		fillItem.tabs            = null;
-	},
-	bookmarks : _ => {
-		messageHandler.bookmarks = null;
-		i18n.bookmarks           = null;
-		fillItem.bookmarks       = null;
-	},
-	history   : _ => {
-		messageHandler.history   = null;
-		i18n.history             = null;
-		fillItem.history         = null;
-	},
-	downloads : _ => {
-		messageHandler.downloads = null;
-		i18n.downloads           = null;
-		fillItem.downloads       = null;
-	},
-	rss       : _ => {
-		messageHandler.rss       = null;
-		i18n.rss                 = null;
-		fillItem.rss             = null;
-		brauzer.alarms.clearAll();
-	}
-};
-
 const init = {
 
 	startpage: _ => {
@@ -932,40 +876,9 @@ const init = {
 		execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
 	},
 
-	tabs: _ => {
+	tabs: start => {
 
-		i18n.tabs = {
-			newText    : getI18n('tabsNewText'),
-			newTitle   : getI18n('tabsNewTitle'),
-			new        : getI18n('tabsNewTitle'),
-			reload     : getI18n('tabsControlsReload'),
-			pin        : getI18n('tabsControlsPin'),
-			unpin      : getI18n('tabsControlsUnpin'),
-			close      : getI18n('tabsControlsClose'),
-			closeAll   : getI18n('tabsControlsCloseAll'),
-			plain      : getI18n('tabsPlainModeButton'),
-			domain     : getI18n('tabsDomainModeButton'),
-			tree       : getI18n('tabsTreeModeButton')
-		};
-
-		fillItem.tabs = (newItem, item) => {
-			const domain = makeDomain(item.url, item.favIconUrl);
-			if (item.active)
-				data.activeTabId  = item.id;
-			newItem.pid        = domain;
-			newItem.domain     = domain;
-			newItem.pinned     = item.pinned;
-			newItem.index      = item.index;
-			newItem.status     = item.status;
-			newItem.openerId   = /^chrome:|^about:|startpage.html$/.test(item.url) ? 0 : item.openerTabId || 0;
-			newItem.url        = item.url;
-			newItem.title      = item.title;
-			newItem.discarded  = item.discarded;
-			newItem.windowId   = item.windowId;
-			return newItem;
-		};
-
-		const setMessageHandler = _ => {
+		const initTabs = _ => {
 			messageHandler.tabs = {
 				new : (message, sender, sendResponse) => {
 					const newUrl = message.data.url === '' ? data.defaultStartPage : message.data.url;
@@ -1012,25 +925,32 @@ const init = {
 					brauzer.tabs.update(message.data.id, {pinned: false});
 				}
 			};
-		};
 
-		const createTab = opera ?
-			tab => {
-				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
-					return false;
-				if (tab.url === data.defaultStartPage)
-					brauzer.tabs.update(tab.id, {url: `${data.extensionUrl}startpage.html`});
-				makeFolder(tab);
-				return createById('tabs', tab, 'last');
-			} :
-			tab => {
-				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
-					return false;
-				makeFolder(tab);
-				return createById('tabs', tab, 'last');
+			i18n.tabs = {
+				newText    : getI18n('tabsNewText'),
+				newTitle   : getI18n('tabsNewTitle'),
+				new        : getI18n('tabsNewTitle'),
+				reload     : getI18n('tabsControlsReload'),
+				pin        : getI18n('tabsControlsPin'),
+				unpin      : getI18n('tabsControlsUnpin'),
+				close      : getI18n('tabsControlsClose'),
+				closeAll   : getI18n('tabsControlsCloseAll'),
+				plain      : getI18n('tabsPlainModeButton'),
+				domain     : getI18n('tabsDomainModeButton'),
+				tree       : getI18n('tabsTreeModeButton')
 			};
 
-		const folderTitleMaker = url => {
+			brauzer.tabs.onCreated.addListener(createTab);
+			brauzer.tabs.onActivated.addListener(onActivated);
+			brauzer.tabs.onUpdated.addListener(onUpdated);
+			brauzer.tabs.onRemoved.addListener(onRemoved);
+			brauzer.tabs.onMoved.addListener(onMoved);
+
+			data.init.tabs = true;
+			checkForInit();
+		};
+
+		const folderTitleMaker  = url => {
 			if (/^chrome:|^about:/.test(url))
 				return 'system';
 			if (url === data.defaultStartPage)
@@ -1038,7 +958,7 @@ const init = {
 			return url.split('//', 2).pop().split('/', 2).shift();
 		};
 
-		const makeFolder = tab => {
+		const makeFolder        = tab => {
 			const id    = makeDomain(tab.url, tab.favIconUrl);
 			const title = folderTitleMaker(tab.url);
 			let folder  = createFolderById('tabs', id, 'last');
@@ -1066,7 +986,7 @@ const init = {
 			return false;
 		};
 
-		const checkCount = folder => {
+		const checkCount        = folder => {
 			const length  = folder.itemsId.length;
 			const oldView = folder.view;
 			if (length === 0) {
@@ -1083,19 +1003,23 @@ const init = {
 			}
 		};
 
-		const tabsQuery = tabs => {
-			for (let i = 0, l = tabs.length; i < l; i++)
-				createTab(tabs[i], true);
-			setMessageHandler();
-			data.init.tabs = true;
-			checkForInit();
-		};
+		const createTab         = opera ?
+			tab => {
+				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
+					return false;
+				if (tab.url === data.defaultStartPage)
+					brauzer.tabs.update(tab.id, {url: `${data.extensionUrl}startpage.html`});
+				makeFolder(tab);
+				return createById('tabs', tab, 'last');
+			} :
+			tab => {
+				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
+					return false;
+				makeFolder(tab);
+				return createById('tabs', tab, 'last');
+			};
 
-		execMethod(brauzer.tabs.query, tabsQuery, {});
-
-		brauzer.tabs.onCreated.addListener(createTab);
-
-		brauzer.tabs.onActivated.addListener(tabInfo => {
+		const onActivated       = tabInfo => {
 			const tab = getById('tabs', tabInfo.tabId);
 			if (tab) {
 				data.activeTabId = tabInfo.tabId;
@@ -1125,9 +1049,9 @@ const init = {
 					});
 				}
 			}
-		});
+		};
 
-		brauzer.tabs.onUpdated.addListener((id, info, tab) => {
+		const onUpdated         = (id, info, tab) => {
 			const oldTab = getById('tabs', id);
 			if (!oldTab) return;
 			const pid    = oldTab.pid;
@@ -1182,9 +1106,9 @@ const init = {
 					send('sidebar', 'tabs', 'fav', {'id': pid, 'fav': domain.fav});
 				}
 			}
-		});
+		};
 
-		brauzer.tabs.onRemoved.addListener(id => {
+		const onRemoved         = id => {
 			const tab = getById('tabs', id);
 			if (tab) {
 				const folder      = getFolderById('tabs', tab.pid);
@@ -1200,36 +1124,59 @@ const init = {
 						data.tabs[i].openerId = newOpenerId;
 				send('sidebar', 'tabs', 'removed', {'id': id});
 			}
-		});
+		};
 
-		brauzer.tabs.onMoved.addListener((id, moveInfo) => {
+		const onMoved           = (id, moveInfo) => {
 			moveFromTo('tabs', moveInfo.fromIndex, moveInfo.toIndex);
 			send('sidebar', 'tabs', 'moved', {'id': id, 'fromIndex': moveInfo.fromIndex, 'toIndex': moveInfo.toIndex});
-		});
+		};
 
+		const getTabs           = tabs => {
+			for (let i = 0, l = tabs.length; i < l; i++)
+				createTab(tabs[i], true);
+			initTabs();
+		};
+
+		if (start) {
+			fillItem.tabs = (newItem, item) => {
+				const domain = makeDomain(item.url, item.favIconUrl);
+				if (item.active)
+					data.activeTabId  = item.id;
+				newItem.pid        = domain;
+				newItem.domain     = domain;
+				newItem.pinned     = item.pinned;
+				newItem.index      = item.index;
+				newItem.status     = item.status;
+				newItem.openerId   = /^chrome:|^about:|startpage.html$/.test(item.url) ? 0 : item.openerTabId || 0;
+				newItem.url        = item.url;
+				newItem.title      = item.title;
+				newItem.discarded  = item.discarded;
+				newItem.windowId   = item.windowId;
+				return newItem;
+			};
+
+			execMethod(brauzer.tabs.query, getTabs, {});
+		}
+		else {
+			i18n.tabs           = {};
+			fillItem.tabs       = null;
+			messageHandler.tabs = defaultTabsHandler;
+			data.tabs           = [];
+			data.tabsId         = [];
+			data.tabsFolders    = [];
+			data.tabsFoldersId  = [];
+			brauzer.tabs.onCreated.removeListener(createTab);
+			brauzer.tabs.onActivated.removeListener(onActivated);
+			brauzer.tabs.onUpdated.removeListener(onUpdated);
+			brauzer.tabs.onRemoved.removeListener(onRemoved);
+			brauzer.tabs.onMoved.removeListener(onMoved);
+			data.init.tabs      = false;
+		}
 	},
 
-	bookmarks: _ => {
+	bookmarks: start => {
 
-		i18n.bookmarks = {
-			bookmarkThisText   : getI18n('bkBookmarkThisText'),
-			bookmarkThisTitle  : getI18n('bkBookmarkThisTitle'),
-			move               : getI18n('bkMoveBookmark'),
-			delete             : getI18n('bkDeleteBookmark'),
-			deleteFolder       : getI18n('bkDeleteBookmarkFolder'),
-			searchPlaceholder  : getI18n('bkSearchPlaceholder')
-		};
-
-		fillItem.bookmarks = (newItem, item) => {
-			newItem.pid     = item.parentId;
-			newItem.domain  = makeDomain(item.url);
-			newItem.title   = item.title;
-			newItem.index   = item.index;
-			newItem.url     = item.url;
-			return newItem;
-		};
-
-		const setMessageHandler = _ => {
+		const initBookmarks = _ => {
 			messageHandler.bookmarks = {
 				deleteItem : (message, sender, sendResponse) => {
 					brauzer.bookmarks.remove(message.data.id);
@@ -1258,9 +1205,26 @@ const init = {
 					return true;
 				}
 			};
+
+			i18n.bookmarks = {
+				bookmarkThisText   : getI18n('bkBookmarkThisText'),
+				bookmarkThisTitle  : getI18n('bkBookmarkThisTitle'),
+				move               : getI18n('bkMoveBookmark'),
+				delete             : getI18n('bkDeleteBookmark'),
+				deleteFolder       : getI18n('bkDeleteBookmarkFolder'),
+				searchPlaceholder  : getI18n('bkSearchPlaceholder')
+			};
+
+			brauzer.bookmarks.onCreated.addListener(onCreated);
+			brauzer.bookmarks.onChanged.addListener(onChanged);
+			brauzer.bookmarks.onMoved.addListener(onMoved);
+			brauzer.bookmarks.onRemoved.addListener(onRemoved);
+
+			data.init.bookmarks = true;
+			checkForInit();
 		};
 
-		const makeFolder = folder => {
+		const makeFolder    = folder => {
 			let newFolder = getFolderById('bookmarks', folder.id);
 			if (!newFolder) {
 				newFolder           = createFolderById('bookmarks', folder.id, 'last');
@@ -1273,7 +1237,7 @@ const init = {
 			return newFolder;
 		};
 
-		const parseTree = folder => {
+		const parseTree     = folder => {
 
 			const detector = firefox ?
 				child => {
@@ -1291,10 +1255,7 @@ const init = {
 
 			if (Array.isArray(folder)) {
 				parseTree(folder[0]);
-				setMessageHandler();
-				data.init.bookmarks = true;
-				checkForInit();
-				return;
+				return initBookmarks();
 			}
 			if (folder.hasOwnProperty('parentId'))
 				if (folder.parentId !== undefined)
@@ -1304,16 +1265,14 @@ const init = {
 					detector(folder.children[i]);
 		};
 
-		execMethod(brauzer.bookmarks.getTree, parseTree);
-
-		brauzer.bookmarks.onCreated.addListener((id, bookmark) => {
+		const onCreated     = (id, bookmark) => {
 			if (bookmark.url)
 				send('sidebar', 'bookmarks', 'createdBookmark', {'item': createById('bookmarks', bookmark, 'last')});
 			else
 				send('sidebar', 'bookmarks', 'createdFolder', {'item': makeFolder(bookmark)});
-		});
+		};
 
-		brauzer.bookmarks.onChanged.addListener((id, info) => {
+		const onChanged     = (id, info) => {
 			const bookmark = getById('bookmarks', id);
 			if (bookmark) {
 				if (bookmark.url) {
@@ -1325,16 +1284,16 @@ const init = {
 					send('sidebar', 'bookmarks', 'changedFolder', {'id': id, 'title': info.title});
 				}
 			}
-		});
+		};
 
-		brauzer.bookmarks.onMoved.addListener((id, info) => {
+		const onMoved       = (id, info) => {
 			const bookmark = getById('bookmarks', id);
 			bookmark.pid   = info.parentId;
 			bookmark.index = info.index;
 			send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'index': info.index});
-		});
+		};
 
-		brauzer.bookmarks.onRemoved.addListener((id, info) => {
+		const onRemoved     = (id, info) => {
 			let bookmark = getById('bookmarks', id);
 			if (bookmark) {
 				deleteById('bookmarks', id);
@@ -1347,30 +1306,39 @@ const init = {
 					send('sidebar', 'bookmarks', 'folderRemoved', {'id': id});
 				}
 			}
-		});
+		};
 
+		if (start) {
+			fillItem.bookmarks = (newItem, item) => {
+				newItem.pid     = item.parentId;
+				newItem.domain  = makeDomain(item.url);
+				newItem.title   = item.title;
+				newItem.index   = item.index;
+				newItem.url     = item.url;
+				return newItem;
+			};
+
+			execMethod(brauzer.bookmarks.getTree, parseTree);
+		}
+		else {
+			i18n.bookmarks           = {};
+			fillItem.bookmarks       = null;
+			messageHandler.bookmarks = null;
+			data.bookmarks           = [];
+			data.bookmarksId         = [];
+			data.bookmarksFolders    = [];
+			data.bookmarksFoldersId  = [];
+			brauzer.bookmarks.onCreated.removeListener(onCreated);
+			brauzer.bookmarks.onChanged.removeListener(onChanged);
+			brauzer.bookmarks.onMoved.removeListener(onMoved);
+			brauzer.bookmarks.onRemoved.removeListener(onRemoved);
+			data.init.bookmarks      = false;
+		}
 	},
 
-	history: _ => {
+	history: start => {
 
-		i18n.history = {
-			getMoreText        : getI18n('hsGetMoreText'),
-			getMoreTitle       : getI18n('hsGetMoreTitle'),
-			searchPlaceholder  : getI18n('hsSearchPlaceholder')
-		};
-
-		fillItem.history = (newItem, item) => {
-			let title      = new Date(item.lastVisitTime);
-			title          = title.toLocaleDateString();
-			const pid      = title.replace(/\./g, '');
-			newItem.url    = item.url;
-			newItem.domain = makeDomain(item.url);
-			newItem.title  = item.title || item.url;
-			newItem.pid    = pid;
-			return newItem;
-		};
-
-		const setMessageHandler = _ => {
+		const initHistory = _ => {
 			messageHandler.history = {
 				getMore : (message, sender, sendResponse) => {
 					searchMore(true);
@@ -1380,6 +1348,18 @@ const init = {
 					return true;
 				}
 			};
+
+			i18n.history = {
+				getMoreText        : getI18n('hsGetMoreText'),
+				getMoreTitle       : getI18n('hsGetMoreTitle'),
+				searchPlaceholder  : getI18n('hsSearchPlaceholder')
+			};
+
+			brauzer.history.onVisited.addListener(onVisited);
+			brauzer.history.onVisitRemoved.addListener(onVisitRemoved);
+
+			data.init.history = true;
+			checkForInit();
 		};
 
 		const searchMore = (sendData = false) => {
@@ -1410,11 +1390,8 @@ const init = {
 					dataToSend.historyEnd = data.historyEnd;
 					send('sidebar', 'history', 'gotMore', dataToSend);
 				}
-				else {
-					setMessageHandler();
-					data.init.history = true;
-					checkForInit();
-				}
+				else
+					initHistory();
 			};
 
 			const searchObject = {text: '', maxResults: options.misc.limitHistory.value, startTime: 0, endTime: data.historyLastTime};
@@ -1460,15 +1437,14 @@ const init = {
 			return folder;
 		};
 
-		searchMore(false);
-
-		brauzer.history.onVisited.addListener(item => {
+		const onVisited = item => {
 			const hs = getById('history', item.id);
 			if (hs)
 				deleteById('history', item.id);
 			send('sidebar', 'history', 'new', {'item': createById('history', item, 'first'), 'folder': makeHistoryFolder(item, 'first')});
-		});
-		brauzer.history.onVisitRemoved.addListener(info => {
+		};
+
+		const onVisitRemoved = info => {
 			const urls = info.urls;
 			if (info.allHistory) {
 				data.historyId = [];
@@ -1490,66 +1466,40 @@ const init = {
 				}
 				send('sidebar', 'history', 'removed', {'ids': removedIds});
 			}
-		});
-
-	},
-
-	downloads: _ => {
-
-		i18n.downloads = {
-			pause  : getI18n('dlControlsPause'),
-			resume : getI18n('dlControlsResume'),
-			reload : getI18n('dlControlsReload'),
-			stop   : getI18n('dlControlsCancel'),
-			delete : getI18n('dlControlsDelete')
 		};
 
-		fillItem.downloads = (newItem, item) => {
 
-			const checkDownloadState = id => {
-				setTimeout(_ => {
-
-					const updateDown = download => {
-						const index = data.downloadsId.indexOf(download[0].id);
-						data.downloads[index].bytesReceived   = download[0].bytesReceived;
-						data.downloads[index].progressPercent = `${(100 * download[0].bytesReceived / download[0].totalBytes).toFixed(2)}%`;
-						data.downloads[index].progressNumbers = `${beautySize(download[0].bytesReceived)} / ${beautySize(download[0].totalBytes)}`;
-						send('sidebar', 'downloads', 'progress', {'item': data.downloads[index]});
-						if (download[0].state === 'in_progress')
-							checkDownloadState(id);
-						else
-							setDownloadsCount.delete();
-					};
-
-					execMethod(brauzer.downloads.search, updateDown, {'id': id});
-				}, 200);
+		if (start) {
+			fillItem.history = (newItem, item) => {
+				let title      = new Date(item.lastVisitTime);
+				title          = title.toLocaleDateString();
+				const pid      = title.replace(/\./g, '');
+				newItem.url    = item.url;
+				newItem.domain = makeDomain(item.url);
+				newItem.title  = item.title || item.url;
+				newItem.pid    = pid;
+				return newItem;
 			};
 
-			let filename = item.filename.split('/').pop();
-			if (!filename)
-				filename = item.url.split('/').pop();
-			let url = item.finalUrl;
-			if (!url)
-				url = item.url;
-			if (item.state === 'in_progress') {
-				setDownloadsCount.add();
-				checkDownloadState(item.id);
-			}
-			newItem.paused          = item.paused;
-			newItem.filename        = decodeURIComponent(filename);
-			newItem.totalBytes      = item.totalBytes;
-			newItem.bytesReceived   = item.bytesReceived;
-			newItem.progressPercent = `${(100 * item.bytesReceived / item.totalBytes).toFixed(2)}%`;
-			newItem.progressNumbers = `${beautySize(item.bytesReceived)} / ${beautySize(item.totalBytes)}`;
-			newItem.fileSize        = beautySize(item.fileSize);
-			newItem.canResume       = item.canResume;
-			newItem.url             = decodeURIComponent(url);
-			newItem.state           = item.state;
-			newItem.exists          = item.exists;
-			return newItem;
-		};
+			searchMore(false);
+		}
+		else {
+			i18n.history           = {};
+			fillItem.history       = null;
+			messageHandler.history = null;
+			data.history           = [];
+			data.historyId         = [];
+			data.historyFolders    = [];
+			data.historyFoldersId  = [];
+			brauzer.history.onVisited.removeListener(onVisited);
+			brauzer.history.onVisitRemoved.removeListener(onVisitRemoved);
+			data.init.history      = false;
+		}
+	},
 
-		const setMessageHandler = _ => {
+	downloads: start => {
+
+		const initDownloads = _ => {
 			messageHandler.downloads = {
 				pause : (message, sender, sendResponse) => {
 					brauzer.downloads.pause(message.data.id);
@@ -1574,6 +1524,21 @@ const init = {
 					brauzer.downloads.removeFile(message.data.id);
 				}
 			};
+
+			i18n.downloads           = {
+				pause  : getI18n('dlControlsPause'),
+				resume : getI18n('dlControlsResume'),
+				reload : getI18n('dlControlsReload'),
+				stop   : getI18n('dlControlsCancel'),
+				delete : getI18n('dlControlsDelete')
+			};
+
+			brauzer.downloads.onCreated.addListener(onCreated);
+			brauzer.downloads.onErased.addListener(onErased);
+			brauzer.downloads.onChanged.addListener(onChanged);
+
+			data.init.downloads = true;
+			checkForInit();
 		};
 
 
@@ -1619,26 +1584,16 @@ const init = {
 			}
 		};
 
-		const insertDown = downloads => {
-			for (let i = 0, l = downloads.length; i < l; i ++)
-				createById('downloads', downloads[i], 'last');
-			setMessageHandler();
-			data.init.downloads = true;
-			checkForInit();
+		const onCreated = download => {
+			send('sidebar', 'downloads', 'created', {'item': createById('downloads', download, 'last')});
 		};
 
-		execMethod(brauzer.downloads.search, insertDown, {});
-
-		brauzer.downloads.onCreated.addListener(download => {
-			send('sidebar', 'downloads', 'created', {'item': createById('downloads', download, 'last')});
-		});
-
-		brauzer.downloads.onErased.addListener(id => {
+		const onErased = id => {
 			deleteById('downloads', id);
 			send('sidebar', 'downloads', 'erased', {'id': id});
-		});
+		};
 
-		brauzer.downloads.onChanged.addListener(delta => {
+		const onChanged = delta => {
 			const index = data.downloadsId.indexOf(delta.id);
 			if (delta.hasOwnProperty('paused')) {
 				data.downloads[index].paused = delta.paused.current;
@@ -1658,53 +1613,78 @@ const init = {
 				data.downloads[index].filename = delta.filename.current.split('/').pop();
 				send('sidebar', 'downloads', 'filename', {'id': delta.id, 'filename': data.downloads[index].filename});
 			}
-		});
+		};
 
+		const getDownloads = downloads => {
+			for (let i = 0, l = downloads.length; i < l; i ++)
+				createById('downloads', downloads[i], 'last');
+			initDownloads();
+		};
+
+		if (start) {
+			fillItem.downloads       = (newItem, item) => {
+
+				const checkDownloadState = id => {
+					setTimeout(_ => {
+
+						const updateDown = download => {
+							const index = data.downloadsId.indexOf(download[0].id);
+							data.downloads[index].bytesReceived   = download[0].bytesReceived;
+							data.downloads[index].progressPercent = `${(100 * download[0].bytesReceived / download[0].totalBytes).toFixed(2)}%`;
+							data.downloads[index].progressNumbers = `${beautySize(download[0].bytesReceived)} / ${beautySize(download[0].totalBytes)}`;
+							send('sidebar', 'downloads', 'progress', {'item': data.downloads[index]});
+							if (download[0].state === 'in_progress')
+								checkDownloadState(id);
+							else
+								setDownloadsCount.delete();
+						};
+
+						execMethod(brauzer.downloads.search, updateDown, {'id': id});
+					}, 200);
+				};
+
+				let filename = item.filename.split('/').pop();
+				if (!filename)
+					filename = item.url.split('/').pop();
+				let url = item.finalUrl;
+				if (!url)
+					url = item.url;
+				if (item.state === 'in_progress') {
+					setDownloadsCount.add();
+					checkDownloadState(item.id);
+				}
+				newItem.paused          = item.paused;
+				newItem.filename        = decodeURIComponent(filename);
+				newItem.totalBytes      = item.totalBytes;
+				newItem.bytesReceived   = item.bytesReceived;
+				newItem.progressPercent = `${(100 * item.bytesReceived / item.totalBytes).toFixed(2)}%`;
+				newItem.progressNumbers = `${beautySize(item.bytesReceived)} / ${beautySize(item.totalBytes)}`;
+				newItem.fileSize        = beautySize(item.fileSize);
+				newItem.canResume       = item.canResume;
+				newItem.url             = decodeURIComponent(url);
+				newItem.state           = item.state;
+				newItem.exists          = item.exists;
+				return newItem;
+			};
+
+			execMethod(brauzer.downloads.search, getDownloads, {});
+		}
+		else {
+			i18n.downloads           = null;
+			fillItem.downloads       = null;
+			messageHandler.downloads = null;
+			data.downloads           = [];
+			data.downloadsId         = [];
+			brauzer.downloads.onCreated.removeListener(onCreated);
+			brauzer.downloads.onErased.removeListener(onErased);
+			brauzer.downloads.onChanged.removeListener(onChanged);
+			data.init.downloads      = false;
+		}
 	},
 
-	rss: _ => {
+	rss: start => {
 
-		i18n.rss = {
-			options          : getI18n('rssControlsOptions'),
-			markRead         : getI18n('rssControlsMarkRead'),
-			markReadAll      : getI18n('rssControlsMarkReadAll'),
-			markReadAllFeeds : getI18n('rssControlsMarkReadAllFeeds'),
-			hideReaded       : getI18n('rssControlsHideReaded'),
-			showReaded       : getI18n('rssControlsShowReaded'),
-			hideReadedAll    : getI18n('rssControlsHideReaded'),
-			showReadedAll    : getI18n('rssControlsShowReaded'),
-			delete           : getI18n('rssControlsDeleteItem'),
-			reload           : getI18n('rssControlsReload'),
-			new              : getI18n('rssNew'),
-			reloadAll        : getI18n('rssReloadAll'),
-			plain            : getI18n('rssPlainModeButton'),
-			domain           : getI18n('rssDomainModeButton')
-		};
-
-		fillItem.rss = (newItem, item) => {
-			newItem.readed      = item.readed;
-			newItem.title       = item.title;
-			newItem.link        = item.link;
-			newItem.description = item.description.substring(0, 600);
-			newItem.pid         = item.pid;
-			newItem.domain      = item.domain;
-			newItem.date        = item.date;
-			data.info.rssUnreaded++;
-			const feed  = getFolderById('rss', item.pid);
-			feed.readed = false;
-			let success = false;
-			for (let i = 0, l = feed.itemsId.length; i < l; i++)
-				if (item.date < feed.itemsId[i].date) {
-					feed.itemsId.splice(i, 0, item.id);
-					success = true;
-					break;
-				}
-			if (!success)
-				feed.itemsId.push(item.id);
-			return newItem;
-		};
-
-		const setMessageHandler = _ => {
+		const initRss = _ => {
 			messageHandler.rss = {
 				rssReaded : (message, sender, sendResponse) => {
 					rssSetReaded('rssItem', getById('rss', message.data.id));
@@ -1778,6 +1758,26 @@ const init = {
 						update[options.misc.rssMode.value](data.rssFoldersId[i]);
 				}
 			};
+
+			i18n.rss = {
+				options          : getI18n('rssControlsOptions'),
+				markRead         : getI18n('rssControlsMarkRead'),
+				markReadAll      : getI18n('rssControlsMarkReadAll'),
+				markReadAllFeeds : getI18n('rssControlsMarkReadAllFeeds'),
+				hideReaded       : getI18n('rssControlsHideReaded'),
+				showReaded       : getI18n('rssControlsShowReaded'),
+				hideReadedAll    : getI18n('rssControlsHideReaded'),
+				showReadedAll    : getI18n('rssControlsShowReaded'),
+				delete           : getI18n('rssControlsDeleteItem'),
+				reload           : getI18n('rssControlsReload'),
+				new              : getI18n('rssNew'),
+				reloadAll        : getI18n('rssReloadAll'),
+				plain            : getI18n('rssPlainModeButton'),
+				domain           : getI18n('rssDomainModeButton')
+			};
+
+			data.init.rss = true;
+			checkForInit();
 		};
 
 		const guidFromUrl = url => {
@@ -2018,7 +2018,7 @@ const init = {
 			send('sidebar', 'info', 'rssUnreaded', {'unreaded': data.info.rssUnreaded});
 		};
 
-		const gettingStorage = res => {
+		const getRss = res => {
 			if (res.hasOwnProperty('rssFolders'))
 				if (res.hasOwnProperty('rssFoldersId'))
 					if (res.hasOwnProperty('rss')) {
@@ -2032,7 +2032,7 @@ const init = {
 						}
 						rssSetReaded('count');
 					}
-			setMessageHandler();
+			initRss();
 			brauzer.alarms.onAlarm.addListener(alarm => {
 				if (/rss-update\*\*/i.test(alarm.name)) {
 					const id    = alarm.name.split('**').pop();
@@ -2041,14 +2041,69 @@ const init = {
 						updateRssFeed(id);
 				}
 			});
-			data.init.rss = true;
-			checkForInit();
 		};
 
-		execMethod(brauzer.storage.local.get, gettingStorage, ['rss', 'rssId', 'rssFolders', 'rssFoldersId']);
+		if (start) {
+			fillItem.rss = (newItem, item) => {
+				newItem.readed      = item.readed;
+				newItem.title       = item.title;
+				newItem.link        = item.link;
+				newItem.description = item.description.substring(0, 600);
+				newItem.pid         = item.pid;
+				newItem.domain      = item.domain;
+				newItem.date        = item.date;
+				data.info.rssUnreaded++;
+				const feed  = getFolderById('rss', item.pid);
+				feed.readed = false;
+				let success = false;
+				for (let i = 0, l = feed.itemsId.length; i < l; i++)
+					if (item.date < feed.itemsId[i].date) {
+						feed.itemsId.splice(i, 0, item.id);
+						success = true;
+						break;
+					}
+				if (!success)
+					feed.itemsId.push(item.id);
+				return newItem;
+			};
+
+			execMethod(brauzer.storage.local.get, getRss, ['rss', 'rssId', 'rssFolders', 'rssFoldersId']);
+		}
+		else {
+			i18n.rss            = null;
+			messageHandler.rss  = null;
+			fillItem.rss        = null;
+			data.rss            = [];
+			data.rssId          = [];
+			data.rssFolders     = [];
+			data.rssFoldersId   = [];
+			brauzer.alarms.clearAll();
+			data.init.rss       = false;
+		}
 
 	}
 };
+
+function sideBarData(side) {
+
+	return {
+		'mode'     : options[side].mode.value,
+		'wide'     : options[side].wide.value,
+		'fixed'    : options[side].fixed.value,
+		'width'    : options[side].width.value,
+		'data'     : modeData[options[side].mode.value](),
+		'info'     : data.info,
+		'domains'  : data.domains,
+		'i18n'     : {
+						'header' : i18n.header,
+						'mode'   : i18n[options[side].mode.value]
+					 },
+		'services' : optionsShort.services,
+		'warnings' : optionsShort.warnings,
+		'misc'     : optionsShort.misc,
+		'theme'    : optionsShort.theme
+	};
+}
 
 function send(target, subject, action, dataToSend) {
 
