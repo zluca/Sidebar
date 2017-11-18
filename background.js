@@ -95,6 +95,8 @@ const data = {
 	rssFoldersId       : [],
 	domains            : [],
 	domainsId          : [],
+	favs               : [],
+	favsId             : [],
 	speadDial          : [],
 	info               : {
 		rssUnreaded    : 0,
@@ -2157,6 +2159,10 @@ function getI18n(message) {
 	return brauzer.i18n.getMessage(message);
 }
 
+function makeFav(id, url, favIconUrl) {
+	let fav = getById('fav', id);
+}
+
 function favFromUrl(url) {
 
 	const favMaker      = firefox ?
@@ -2214,12 +2220,8 @@ function makeDomain(url, fav, prefix = '') {
 		id = 'StartPage';
 	else if (/^about:|^chrome:/.test(url))
 		id = 'system';
-	else {
-		id = url.split('//', 2).pop();
-		id = id.split('/', 2).shift();
-		id = id.replace(/\./g, '');
-		id = prefix + id;
-	}
+	else
+		id = prefix + url.split('//', 2).pop().split('/', 2).shift().replace(/\./g, '');
 	let domain = getById('domains', id);
 	if (!domain) {
 		domain = createById('domains', {'id': id, 'fav': fav ? favFromFav(fav) : favFromUrl(url)}, 'last');
