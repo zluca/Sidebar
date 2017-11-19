@@ -64,6 +64,16 @@ a:visited {
 	background-image: url('icons/loader.svg')!important;
 
 }
+.folder.domain-view .loading.item {
+	padding-left: 1.4rem!important;
+}
+.folder.domain-view .loading::before {
+	top: .1rem;
+	left: .2rem;
+	width: .8rem;
+	height: .8rem;
+	background-size: .8rem .8rem;
+}
 @keyframes spin {
 	100% {
 		transform:rotate(360deg);
@@ -173,10 +183,10 @@ a:visited {
 	padding: 0;
 }
 
-.leftBar .button {
+.leftBar #controls .button {
 	margin-left: .4rem;
 }
-.rightBar .button {
+.rightBar #controls .button {
 	margin-right: .4rem;
 }
 
@@ -321,7 +331,6 @@ ul {
 .item-button>.button {
 	width: .9rem;
 	height: .9rem;
-	// background-color: var(--font-color);
 }
 
 .controls {
@@ -342,6 +351,9 @@ ul {
 	height: .9rem;
 	margin-left: .1rem;
 	display: none;
+}
+.controls>span:first-child {
+	margin-left: 0;
 }
 .domain-view .folder-name,
 #bookmarks .folder-name,
