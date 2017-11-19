@@ -183,10 +183,12 @@ a:visited {
 	padding: 0;
 }
 
-.leftBar #controls .button {
+.leftBar #controls .button,
+.leftBar .bottom-bar .button {
 	margin-left: .4rem;
 }
-.rightBar #controls .button {
+.rightBar #controls .button,
+.rightBar .bottom-bar .button {
 	margin-right: .4rem;
 }
 
@@ -349,7 +351,7 @@ ul {
 .controls>span {
 	width: .9rem;
 	height: .9rem;
-	margin-left: .1rem;
+	margin-left: .2rem;
 	display: none;
 }
 .controls>span:first-child {
