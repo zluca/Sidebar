@@ -8,9 +8,19 @@
 }
 .item.active {
 	font-weight: bold;
+	font-size: 1rem;
+	line-height: 1rem;
+	padding-top: .2rem;
+	padding-bottom: .2rem;
+	background-color: var(--background-color-active);
+	background-size: 1.2rem 1.2rem;
+	background-position-y: .1rem;
 }
 .item.active:hover {
 	background-color: var(--border-color-active);
+}
+.item.active>.controls {
+	margin-top: .15rem;
 }
 .item.pinned {
 	background-color: var(--background-color-active);
