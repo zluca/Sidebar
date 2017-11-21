@@ -53,6 +53,12 @@ const i18n = {
 		searchEngineGoogleTranslate : getI18n('startpageGoogleTranslateLabel'),
 		searchEngineYandexTranslate : getI18n('startpageYandexTranslateLabel')
 	},
+	domains: {
+		default   : getI18n('domainsDefault'),
+		startpage : getI18n('domainsStartPage'),
+		system    : getI18n('domainsSystem'),
+		extension : getI18n('domainsExtension')
+	},
 	header: {
 		wide      : getI18n('sbControlsWideTitle'),
 		narrow    : getI18n('sbControlsNarrowTitle'),
@@ -105,6 +111,7 @@ const data = {
 	},
 	init               : {
 		'startpage' : false,
+		'favs'      : false,
 		'tabs'      : false,
 		'bookmarks' : false,
 		'history'   : false,
@@ -116,7 +123,7 @@ const data = {
 	defaultStartPage: firefox ? `${brauzer.extension.getURL('/')}startpage.html` : opera ? 'chrome://startpage/' : 'chrome://newtab/',
 	defaultIcon     : 'icons/default.svg',
 	systemIcon      : 'icons/wrench.svg',
-	startPageIcon   : 'icons/startpage.svg',
+	startpageIcon   : 'icons/startpage.svg',
 	leftBar         : {
 		windowId      : -1,
 		tabId         : -1
@@ -280,7 +287,13 @@ const options = {
 		hidden : {}
 	},
 	services: {
-		startpage  : {
+		startpage : {
+			value   : true,
+			type    : 'boolean',
+			targets : [],
+			hidden  : true
+		},
+		favs      : {
 			value   : true,
 			type    : 'boolean',
 			targets : [],
@@ -621,7 +634,6 @@ const messageHandler = {
 			setOption(section, option, value);
 			for (let i = options[section][option].targets.length - 1; i >= 0; i--)
 				send(options[section][option].targets[i], 'options', option, {'section': section, 'option': option, value: value});
-			brauzer.storage.local.set({'options': options});
 		},
 	},
 
@@ -708,7 +720,6 @@ const messageHandler = {
 	startpage : {
 		search : (message, sender, sendResponse) => {
 			setOption('startpage', 'searchEngine', message.data.engine);
-			brauzer.storage.local.set({'options': options});
 			send('startpage', 'search', 'engine', optionsShort.startpage.searchEngine);
 		}
 	},
@@ -760,8 +771,13 @@ const fillItem = {
 	downloads  : null,
 	rss        : null,
 	domains    : (newItem, item) => {
-		newItem.fav = item.fav;
+		newItem.fav   = item.fav;
+		newItem.title = item.title;
 		return newItem;
+	},
+	favs      : (newItem, item) => {
+		newItem.fav = item.fav;
+		return newItem.fav;
 	}
 };
 
@@ -773,6 +789,7 @@ const gettingStorage = res => {
 			for (let option in options[section])
 				optionsShort[section][option] = options[section][option].value;
 		}
+		init.favs(true);
 		for (let service in options.services)
 			if (options.services[service])
 				init[service](true);
@@ -877,6 +894,21 @@ const init = {
 		execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
 	},
 
+	favs: _ => {
+		if (data.init.favs)
+			return;
+		const gettingStorage = res => {
+			if (res.favs) {
+				data.favs      = res.favs;
+				data.favsId    = res.favsId;
+			}
+			data.init.favs = true;
+			checkForInit();
+		};
+
+		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId']);
+	},
+
 	tabs: start => {
 
 		const initTabs = _ => {
@@ -951,30 +983,21 @@ const init = {
 			checkForInit();
 		};
 
-		const folderTitleMaker  = url => {
-			if (/^chrome:|^about:/.test(url))
-				return 'system';
-			if (url === data.defaultStartPage)
-				return i18n.startpage.pageTitle;
-			return url.split('//', 2).pop().split('/', 2).shift();
-		};
-
 		const makeFolder        = tab => {
-			const id    = makeDomain(tab.url, tab.favIconUrl);
-			const title = folderTitleMaker(tab.url);
-			let folder  = createFolderById('tabs', id, 'last');
+			const domain = makeDomain(tab.url, tab.favIconUrl);
+			let folder   = createFolderById('tabs', domain.id, 'last');
 			if (folder) {
 				folder.pid        = 0;
-				folder.title      = title;
+				folder.title      = domain.title;
 				folder.folded     = false;
 				folder.view       = 'hidden';
-				folder.domain     = id;
+				folder.domain     = domain.id;
 				folder.itemsId    = [tab.id];
 				send('sidebar', 'tabs', 'newFolder', folder);
 				return folder;
 			}
 			else {
-				folder = getFolderById('tabs', id);
+				folder = getFolderById('tabs', domain.id);
 				if (folder) {
 					const index = folder.itemsId.indexOf(tab.id);
 					if (index === -1) {
@@ -1102,10 +1125,8 @@ const init = {
 			}
 			if (info.hasOwnProperty('favIconUrl')) {
 				const domain = getById('domains', pid);
-				if (domain) {
-					domain.fav = favFromFav(info.favIconUrl);
-					send('sidebar', 'tabs', 'fav', {'id': pid, 'fav': domain.fav});
-				}
+				if (domain)
+					domain.fav = makeFav(domain.id, null, info.favIconUrl, true);
 			}
 		};
 
@@ -1140,7 +1161,7 @@ const init = {
 
 		if (start) {
 			fillItem.tabs = (newItem, item) => {
-				const domain = makeDomain(item.url, item.favIconUrl);
+				const domain = makeDomain(item.url, item.favIconUrl).id;
 				if (item.active)
 					data.activeTabId  = item.id;
 				newItem.pid        = domain;
@@ -1198,7 +1219,7 @@ const init = {
 							result.push({
 								url      : bookmarkItems[i].url,
 								title    : bookmarkItems[i].title,
-								domain   : makeDomain(bookmarkItems[i].url)
+								domain   : makeDomain(bookmarkItems[i].url).id
 							});
 						sendResponse(result);
 					};
@@ -1312,7 +1333,7 @@ const init = {
 		if (start) {
 			fillItem.bookmarks = (newItem, item) => {
 				newItem.pid     = item.parentId;
-				newItem.domain  = makeDomain(item.url);
+				newItem.domain  = makeDomain(item.url).id;
 				newItem.title   = item.title;
 				newItem.index   = item.index;
 				newItem.url     = item.url;
@@ -1405,13 +1426,14 @@ const init = {
 			const searchHandler = history => {
 				let results = [];
 				for (let i = 0, l = history.length; i < l && i < options.misc.limitHistory.value; i++) {
+					const domain = makeDomain(history[i].url);
 					results.push({
 						url    : history[i].url,
-						domain : makeDomain(history[i].url),
+						domain : domain.id,
 						title  : history[i].title || history[i].url,
 						id     : history[i].id,
 						pid    : 'search-results',
-						fav    : favFromUrl(history[i].url),
+						fav    : domain.fav,
 						color  : colorFromUrl(history[i].url)
 					});
 				}
@@ -1476,7 +1498,7 @@ const init = {
 				title          = title.toLocaleDateString();
 				const pid      = title.replace(/\./g, '');
 				newItem.url    = item.url;
-				newItem.domain = makeDomain(item.url);
+				newItem.domain = makeDomain(item.url).id;
 				newItem.title  = item.title || item.url;
 				newItem.pid    = pid;
 				return newItem;
@@ -1832,13 +1854,14 @@ const init = {
 						feed.title       = title;
 						feed.view        = 'domain';
 						feed.description = desc;
-						feed.domain      = makeDomain(rssUrl, fav, 'rss');
+						feed.domain      = makeDomain(rssUrl, fav, 'rss').id;
 						feed.url         = rssUrl;
 						feed.fav         = fav;
 						feed.itemsId     = [];
 						feed.hideReaded  = false;
 						feed.readed      = true;
 						feed.lastUpdate  = Date.now();
+						makeFav(feed.domain, null, fav);
 						if (options.misc.rssMode.value === 'domain')
 							send('sidebar', 'rss', 'createdFeed', {'feed': feed});
 						injectRss(xmlDoc, feed);
@@ -2159,75 +2182,81 @@ function getI18n(message) {
 	return brauzer.i18n.getMessage(message);
 }
 
-function makeFav(id, url, favIconUrl) {
-	let fav = getById('fav', id);
-}
-
-function favFromUrl(url) {
-
-	const favMaker      = firefox ?
-		_ => {
-			const color = colorFromUrl(url);
-			const svg   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">	<polygon fill="${color}" points="0,0 0,64 64,64 64,0"/></svg>`;
-			return `data:image/svg+xml;base64,${btoa(svg)}`;
-		} :
-		domain => {
-			return `chrome://favicon/${domain.replace('http://', 'https://')}`;
-		};
-
-	if (!url)
-		return data.defaultIcon;
-	else if (data.defaultStartPage === url)
-		return data.startPageIcon;
-	else if (/^chrome:|^about:/i.test(url)) {
-		if (opera)
-			return `chrome://favicon/${url}`;
-		else
-			return data.systemIcon;
-	}
-	else {
-		const domain = domainFromUrl(url);
-		if (!domain)
-			return data.defaultIcon;
-		return favMaker(domain);
-	}
-}
-
-function favFromFav(fav) {
-	if (!fav)
-		return false;
-	else if (/^chrome:|^about:/.test(fav)) {
-		if (opera)
-			return `chrome://favicon/${fav}`;
-		else
-			return data.systemIcon;
-	}
-	else
-		return fav;
-}
-
 function urlFromUser(url) {
 	if (!/^https?:\/\/|^ftp:\/\//.test(url))
 		return 'https://' + url.replace(/^\/*/, '');
 	else return url;
 }
 
+function makeFav(id, url, favIconUrl, update = false) {
+
+	const favFromUrl = firefox ?
+		_ => {
+			const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><polygon fill="${colorFromUrl(url)}" points="0,0 0,64 64,64 64,0"/></svg>`;
+			return `data:image/svg+xml;base64,${btoa(svg)}`;
+		} :
+		_ => `chrome://favicon/${url}`;
+
+	const updateFav= {
+		truetrue   : _ => {
+			fav.fav = favIconUrl;
+			return favIconUrl;
+		},
+		truefalse  : _ => {
+			fav = createById('favs', {id: id, fav: favIconUrl}, 'last');
+			return favIconUrl;
+		} ,
+		falsetrue  : _ => {
+			fav.fav = favFromUrl();
+			return fav.fav;
+		} ,
+		falsefalse : _ => {
+			fav = createById('favs', {id: id, fav: favFromUrl()}, 'last');
+			return fav.fav;
+		} ,
+	};
+
+	let fav = getById('favs', id);
+	let favIcon = '';
+	if (id === 'default')
+		favIcon = data.defaultIcon;
+	else if (id === 'startpage')
+		favIcon = data.startpageIcon;
+	else if (id === 'system')
+		favIcon = data.systemIcon;
+	else if (id === 'extension')
+		favIcon = data.defaultIcon;
+	else
+		favIcon = updateFav[`${typeof favIconUrl === 'string'}${fav !== false}`]();
+	if (update)
+		send('sidebar', 'info', 'updateDomain', {'id': id, 'fav': favIcon});
+	brauzer.storage.local.set({'favs': data.favs, 'favsId': data.favsId});
+	return favIcon;
+}
+
 function makeDomain(url, fav, prefix = '') {
-	let id = '';
+	let id    = '';
+	let title = '';
 	if (!url)
 		id = 'default';
-	else if (url.match(data.defaultStartPage))
-		id = 'StartPage';
+	else if (url === data.defaultStartPage)
+		id = 'startpage';
 	else if (/^about:|^chrome:/.test(url))
 		id = 'system';
-	else
-		id = prefix + url.split('//', 2).pop().split('/', 2).shift().replace(/\./g, '');
+	else if (/^chrome-extension:|^moz-extension:/i.test(url))
+		id = 'extension';
+	if (id !== '')
+		title = i18n.domains[id];
+	else {
+		id    = prefix + url.split('//', 2).pop().split('/', 2).shift().replace(/\./g, '');
+		title = domainFromUrl(url, true);
+	}
 	let domain = getById('domains', id);
 	if (!domain) {
-		domain = createById('domains', {'id': id, 'fav': fav ? favFromFav(fav) : favFromUrl(url)}, 'last');
+		domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), title: title}, 'last');
 		send('sidebar', 'info', 'newDomain', {'domain': domain});
 	}
-	return id;
+	return domain;
 }
 
 function createDialogWindow(type, dialogData) {
@@ -2261,7 +2290,6 @@ function createSidebarWindow(side) {
 					data[side].tabId = -1;
 					if (options[side].method.value === 'window') {
 						setOption(side, 'method', 'disabled');
-						brauzer.storage.local.set({'options': options});
 						setIcon();
 					}
 				}
@@ -2399,15 +2427,20 @@ function getFolderById(mode, id) {
 	else return null;
 }
 
-function domainFromUrl(url) {
+function domainFromUrl(url, noProtocol = false) {
 	if (!url)
 		return 'default';
-	else {
-		const domain = url.match(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
+	else if (!noProtocol) {
+		const domain = url.match(/^(.*:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
 		if (domain)
 			return domain[0];
-		return 'default';
 	}
+	else {
+		const domain = url.match(/([\da-z\.-]+)\.([a-z\.]{2,6})/i);
+		if (domain)
+			return domain[0];
+	}
+	return 'default';
 }
 
 function colorFromUrl(url) {
@@ -2435,8 +2468,7 @@ function makeSite(index, site) {
 
 	if (site) {
 		const url  = urlFromUser(site.url);
-		let domen  = site.url.replace('www.', '').replace(/^https?:\/\//, '').match(/[\da-z\.-]+/i);
-		domen      = domen ? domen[0].replace('/', '') : '';
+		let domen  = domainFromUrl(site.url, true).replace('/', '');
 		domen      = domen.split('.', 6);
 		let text   = ' ' + domen[0];
 		const l    = domen.length;

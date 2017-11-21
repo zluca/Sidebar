@@ -48,6 +48,8 @@ const status           = {
 	rssId               : [],
 	rssFolders          : [],
 	rssFoldersId        : [],
+	domains             : [],
+	domainsId           : [],
 	info                : {
 		rssUnreaded    : 0,
 		downloadStatus : ''
@@ -61,9 +63,6 @@ doc.classList.add(status.side);
 if (status.method === 'native') {
 	const port = brauzer.runtime.connect({name: 'sidebar-alive'});
 }
-const domainStyle      = document.createElement('style');
-domainStyle.id         = 'domain-style';
-document.head.appendChild(domainStyle);
 
 const controls = {
 	header: {
@@ -202,7 +201,11 @@ const messageHandler = {
 			button.rss.lastChild.textContent = data.unreaded || ' ';
 		},
 		newDomain      : data => {
-			setDomainStyle([data.domain], 'append');
+			setDomainStyle.update([data.domain]);
+		},
+		updateDomain   : data => {
+			if (data.hasOwnProperty('fav'))
+				setDomainStyle.update([data]);
 		},
 		downloadStatus : data => {
 			setDownloadStatus[data]();
@@ -251,16 +254,6 @@ const initBlock = {
 							insertFolders([data.folder], 'tabs');
 				}
 				insertTabs([data.tab]);
-			},
-			fav         : data => {
-				setDomainStyle([data], 'append');
-				// remove selector;
-				const tabs = document.querySelectorAll('.domain-default,.domain-undefined');
-				for (let i = tabs.length - 1; i >= 0; i--)
-					if (tabs[i].title.match(data.domain)) {
-						tabs[i].classList.add(`domain-${data.domain}`);
-						tabs[i].classList.remove('domain-default');
-					}
 			},
 			removed      : data => {
 				const removing = {
@@ -707,7 +700,7 @@ const initBlock = {
 
 		const historyTotalWipe = _ => {
 			//
-			for (let hist = document.getElementsByClass('history'), i = hist.length - 1; i >= 0; i--)
+			for (let hist = document.getElementsByClassName('history'), i = hist.length - 1; i >= 0; i--)
 				hist[i].parentNode.removeChild(hist[i]);
 		};
 
@@ -1171,7 +1164,7 @@ function fullInit(response) {
 		setFixed(status.fixed);
 	}
 
-	setDomainStyle(response.domains, 'rewrite');
+	setDomainStyle.rewrite(response.domains);
 	blockInit(response.mode, response.data);
 
 	brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -1193,13 +1186,11 @@ function setRssUnreaded(count) {
 }
 
 const setDownloadStatus = {
-	// if (state === 'progress') {
 	progress : _ => {
 		if (status.info.downloadStatus === 'progress') return;
 		button.downloads.classList.add('updating');
 		status.info.downloadStatus = 'progress';
 	},
-	// else if (state === 'idle') {
 	idle : _ => {
 		if (status.info.downloadStatus !== 'progress') return;
 		button.downloads.classList.remove('updating');
@@ -1249,27 +1240,39 @@ function insertFolders(items, mode, noTitle = false) {
 	}
 }
 
-function setDomainStyle(items, mode) {
-	const addStyle = {
-		rewrite : _ => {
-			domainStyle.textContent = styleText;
-		},
-		append  : _ => {
-			domainStyle.textContent += styleText;
-		}
-	};
-	let styleText = '';
-	for (let i = items.length - 1; i >= 0; i--)
-		styleText += `.domain-${items[i].id} {background-image: url(${items[i].fav});}`;
-	addStyle[mode]();
+function setStyle(item) {
+	const style       = createById('domains', item.id);
+	style.textContent = `.domain-${item.id}{background-image: url(${item.fav})}`;
+	document.head.appendChild(style);
 }
+
+const setDomainStyle = {
+	rewrite : items => {
+		for (let i = status.domains.length - 1; i >= 0; i--)
+			document.head.removeChild(status.domains[i]);
+		status.domains   = [];
+		status.domainsId = [];
+		for (let i = items.length - 1; i >= 0; i--)
+			setStyle(items[i]);
+	},
+	update  : items => {
+		for (let i = items.length - 1; i >= 0; i--) {
+			const style = getById('domains', items[i].id);
+			if (style !== false)
+				style.textContent = `.domain-${items[i].id}{background-image: url(${items[i].fav})}`;
+			else
+				setStyle(items[i]);
+		}
+	}
+};
 
 const element = {
 	tabs:      'a',
 	bookmarks: 'a',
 	history:   'a',
 	downloads: 'li',
-	rss:       'a'
+	rss:       'a',
+	domains:   'style'
 };
 
 function createById(mode, id) {
@@ -1286,7 +1289,7 @@ function getById(mode, id) {
 	if (index !== -1)
 		return status[mode][index];
 	else
-		return null;
+		return false;
 }
 
 function removeById(mode, id) {
@@ -1295,7 +1298,6 @@ function removeById(mode, id) {
 		status[mode][index].parentNode.removeChild(status[mode][index]);
 		status[mode].splice(index, 1);
 		status[`${mode}Id`].splice(index, 1);
-		// if (mode === 'rss') status.rssData.splice(index, 1);
 	}
 }
 
@@ -1375,7 +1377,6 @@ function makeItemButton(type, block) {
 		button.appendChild(icon);
 	}
 	return item;
-	// block[section].appendChild(item);
 }
 
 const buttonsEvents = {

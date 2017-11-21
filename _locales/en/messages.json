@@ -720,6 +720,22 @@
 	"dialogNewBookmarkFoldersLabel" : {
 		"message"       : "Folders:",
 		"description"   : ""
-	}
+	},
 
+	"domainsDefault" : {
+		"message"       : "Unknown",
+		"description"   : ""
+	},
+	"domainsStartPage" : {
+		"message"       : "Startpage",
+		"description"   : ""
+	},
+	"domainsSystem" : {
+		"message"       : "System",
+		"description"   : ""
+	},
+	"domainsExtension" : {
+		"message"       : "Extensions",
+		"description"   : ""
+	}
 }

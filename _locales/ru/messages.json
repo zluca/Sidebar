@@ -721,6 +721,22 @@
 	"dialogNewBookmarkFoldersLabel" : {
 		"message"       : "Папки:",
 		"description"   : ""
-	}
+	},
 
+	"domainsDefault" : {
+		"message"       : "Не известно",
+		"description"   : ""
+	},
+	"domainsStartPage" : {
+		"message"       : "Старт",
+		"description"   : ""
+	},
+	"domainsSystem" : {
+		"message"       : "Система",
+		"description"   : ""
+	},
+	"domainsExtension" : {
+		"message"       : "Расширения",
+		"description"   : ""
+	}
 }
