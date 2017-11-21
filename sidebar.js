@@ -699,9 +699,8 @@ const initBlock = {
 		};
 
 		const historyTotalWipe = _ => {
-			//
-			for (let hist = document.getElementsByClassName('history'), i = hist.length - 1; i >= 0; i--)
-				hist[i].parentNode.removeChild(hist[i]);
+			for (let i = status.historyId.length - 1; i >= 0; i--)
+				removeById('history', status.historyId[i]);
 		};
 
 		insertFolders(data.historyFolders, 'history');
