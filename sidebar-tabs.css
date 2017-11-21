@@ -13,8 +13,8 @@
 	padding-top: .2rem;
 	padding-bottom: .2rem;
 	background-color: var(--background-color-active);
-	background-size: 1.2rem 1.2rem;
-	background-position-y: .1rem;
+	background-size: 1rem 1rem;
+	background-position-y: .2rem;
 }
 .item.active:hover {
 	background-color: var(--border-color-active);

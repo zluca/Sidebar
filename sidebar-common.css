@@ -291,7 +291,8 @@ ul {
 	margin: .2rem;
 	position: relative;
 	background-repeat: no-repeat;
-	background-size: 1rem 1rem;
+	background-size: .9rem .9rem;
+	background-position-y: .1rem;
 	user-select: none;
 }
 
@@ -317,7 +318,8 @@ ul {
 .folder-name.domain-undefined {
 	background-image: url(icons/default.svg);
 }
-.bookmarks .folder-name.domain-undefined {
+.bookmarks .folder-name.domain-undefined,
+.history .folder-name.domain-undefined {
 	background-image: none;
 	padding-left: 1.4rem;
 }
