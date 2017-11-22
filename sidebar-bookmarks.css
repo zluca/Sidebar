@@ -8,6 +8,10 @@
 }
 .item #bookmarks-delete,
 .item #bookmarks-move,
-.folder-name #bookmarks-deleteFolder {
+.folder-name #bookmarks-deleteFolder,
+#bookmarks-edit {
 	display: inline-block;
+}
+#bookmarks-0>.folder>.folder-name #bookmarks-edit {
+	display: none;
 }

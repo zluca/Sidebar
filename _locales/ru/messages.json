@@ -706,19 +706,27 @@
 		"message"       : "Новая закладка",
 		"description"   : ""
 	},
-	"dialogNewBookmarkDefaultTitle" : {
+	"dialogEditBookmarkHeader" : {
+		"message"       : "Редактировать закладку",
+		"description"   : ""
+	},
+	"dialogEditBookmarkFolderHeader" : {
+		"message"       : "Переименовать папку",
+		"description"   : ""
+	},
+	"dialogBookmarkDefaultTitle" : {
 		"message"       : "Новая закладка",
 		"description"   : ""
 	},
-	"dialogNewBookmarkTitleLabel" : {
-		"message"       : "Название:",
+	"dialogBookmarkTitleLabel" : {
+		"message"       : "Имя:",
 		"description"   : ""
 	},
-	"dialogNewBookmarkUrlLabel" : {
+	"dialogBookmarkUrlLabel" : {
 		"message"       : "Адрес:",
 		"description"   : ""
 	},
-	"dialogNewBookmarkFoldersLabel" : {
+	"dialogBookmarkFoldersLabel" : {
 		"message"       : "Папки:",
 		"description"   : ""
 	},

@@ -113,6 +113,10 @@
 		"message"       : "Bookmark this tab",
 		"description"   : ""
 	},
+	"bkEditBookmark" : {
+		"message"       : "Edit bookmark",
+		"description"   : ""
+	},
 	"bkMoveBookmark" : {
 		"message"       : "Move bookmark",
 		"description"   : ""
@@ -697,6 +701,7 @@
 		"message"       : "Remove file from disc",
 		"description"   : ""
 	},
+
 	"dialogBookmarkRootFolder" : {
 		"message"       : "Bookmarks",
 		"description"   : ""
@@ -705,19 +710,27 @@
 		"message"       : "New bookmark",
 		"description"   : ""
 	},
-	"dialogNewBookmarkDefaultTitle" : {
-		"message"       : "New page",
+	"dialogEditBookmarkHeader" : {
+		"message"       : "Edit bookmark",
 		"description"   : ""
 	},
-	"dialogNewBookmarkTitleLabel" : {
+	"dialogEditBookmarkFolderHeader" : {
+		"message"       : "Rename folder",
+		"description"   : ""
+	},
+	"dialogBookmarkDefaultTitle" : {
+		"message"       : "New bookmark",
+		"description"   : ""
+	},
+	"dialogBookmarkTitleLabel" : {
 		"message"       : "Title:",
 		"description"   : ""
 	},
-	"dialogNewBookmarkUrlLabel" : {
+	"dialogBookmarkUrlLabel" : {
 		"message"       : "Url:",
 		"description"   : ""
 	},
-	"dialogNewBookmarkFoldersLabel" : {
+	"dialogBookmarkFoldersLabel" : {
 		"message"       : "Folders:",
 		"description"   : ""
 	},

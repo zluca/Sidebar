@@ -280,7 +280,6 @@ function makeDialogWindow(data, warnings, colors) {
 					send('background', 'site', 'delete', {'index': data.index});
 			});
 			addButton('cancel', removeDialogWindow);
-
 		},
 
 		siteDelete : _ => {
@@ -297,7 +296,6 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
-
 		},
 
 		closeDomainFolder : _ => {
@@ -314,7 +312,6 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
-
 		},
 
 		bookmarkDelete : _ => {
@@ -331,7 +328,6 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
-
 		},
 
 		bookmarkFolderDelete : _ => {
@@ -346,23 +342,48 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
-
 		},
 
 		newBookmark : _ => {
 
 			header.textContent = getI18n('dialogNewBookmarkHeader');
 
-			const title = addInputRow(getI18n('dialogNewBookmarkTitleLabel'), 'text', data.title || getI18n('dialogNewBookmarkDefaultTitle'));
-			const url = addInputRow(getI18n('dialogNewBookmarkUrlLabel'), 'text', data.url);
-			const folder = addSelectRow(getI18n('dialogNewBookmarkFoldersLabel'), data.folders);
+			const title = addInputRow(getI18n('dialogBookmarkTitleLabel'), 'text', data.title || getI18n('dialogBookmarkDefaultTitle'));
+			const url = addInputRow(getI18n('dialogBookmarkUrlLabel'), 'text', data.url);
+			const folder = addSelectRow(getI18n('dialogBookmarkFoldersLabel'), data.folders);
 
 			addButton('save', _ => {
 				send('background', 'bookmarks', 'newBookmark', {'url': url.value, 'title': title.value, 'parentId': folder.value || "0"});
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
+		},
 
+		editBookmark : _ => {
+
+			header.textContent = getI18n('dialogEditBookmarkHeader');
+
+			const title = addInputRow(getI18n('dialogBookmarkTitleLabel'), 'text', data.title || getI18n('dialogBookmarkDefaultTitle'));
+			const url = addInputRow(getI18n('dialogBookmarkUrlLabel'), 'text', data.url);
+
+			addButton('save', _ => {
+				send('background', 'bookmarks', 'editBookmark', {'id': data.id, 'changes': {'url': url.value, 'title': title.value}});
+				removeDialogWindow();
+			});
+			addButton('cancel', removeDialogWindow);
+		},
+
+		editBookmarkFolder : _ => {
+
+			header.textContent = getI18n('dialogEditBookmarkFolderHeader');
+
+			const title = addInputRow(getI18n('dialogBookmarkTitleLabel'), 'text', data.title || getI18n('dialogBookmarkDefaultTitle'));
+
+			addButton('save', _ => {
+				send('background', 'bookmarks', 'editBookmarkFolder', {'id': data.id, 'changes' : {'title': title.value}});
+				removeDialogWindow();
+			});
+			addButton('cancel', removeDialogWindow);
 		},
 
 		rssAdd : _ => {
@@ -421,7 +442,6 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
-
 		},
 
 		rssDeleteItem : _ => {
@@ -436,7 +456,6 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
-
 		},
 
 		downloadDelete : _ => {
@@ -460,13 +479,10 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
-
 		}
 	};
 
 	fillWindow[type]();
-	// dialog.style.left = `${(doc.offsetWidth - width) >> 1}px`;
-	// dialog.style.top  = `${(doc.offsetHeight - dialog.offsetHeight) >> 1}px`;
 	document.body.style.paddingTop = `calc(50vh - ${dialog.offsetHeight >> 1}px)`;
 	document.body.addEventListener('keydown', keyboardListener);
 

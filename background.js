@@ -690,6 +690,16 @@ const messageHandler = {
 				createDialogWindow(message.action, dataToSend);
 			}
 		},
+		editBookmark : (message, sender, sendResponse) => {
+			const bookmark = getById('bookmarks', message.data.id);
+			if (bookmark)
+				createDialogWindow('editBookmark', {'id': message.data.id, 'url': bookmark.url,'title': bookmark.title});
+		},
+		editBookmarkFolder : (message, sender, sendResponse) => {
+			const folder = getFolderById('bookmarks', message.data.id);
+			if (folder)
+				createDialogWindow('editBookmarkFolder', {'id': message.data.id, 'title': folder.title});
+		},
 		rssAdd : (message, sender, sendResponse) => {
 			const activeTab = getById('tabs', data.activeTabId);
 			if (activeTab)
@@ -1209,6 +1219,14 @@ const init = {
 				newBookmark : (message, sender, sendResponse) => {
 					brauzer.bookmarks.create(message.data);
 				},
+				editBookmark :(message, sender, sendResponse) => {
+					console.log(message.data);
+					brauzer.bookmarks.update(message.data.id, message.data.changes);
+				},
+				editBookmarkFolder :(message, sender, sendResponse) => {
+					console.log(message.data);
+					brauzer.bookmarks.update(message.data.id, message.data.changes);
+				},
 				move : (message, sender, sendResponse) => {
 					brauzer.bookmarks.move(message.data.id, {'parentId': message.data.pid, 'index': message.data.index});
 				},
@@ -1231,6 +1249,7 @@ const init = {
 			i18n.bookmarks = {
 				bookmarkThisText   : getI18n('bkBookmarkThisText'),
 				bookmarkThisTitle  : getI18n('bkBookmarkThisTitle'),
+				edit               : getI18n('bkEditBookmark'),
 				move               : getI18n('bkMoveBookmark'),
 				delete             : getI18n('bkDeleteBookmark'),
 				deleteFolder       : getI18n('bkDeleteBookmarkFolder'),
@@ -1297,12 +1316,14 @@ const init = {
 		const onChanged     = (id, info) => {
 			const bookmark = getById('bookmarks', id);
 			if (bookmark) {
-				if (bookmark.url) {
-					bookmark.url   = info.url;
-					bookmark.title = info.title;
-					send('sidebar', 'bookmarks', 'changedBookmark', {'id': id, 'info': info});
-				} else {
-					bookmark.title = info.title;
+				bookmark.url   = info.url;
+				bookmark.title = info.title;
+				send('sidebar', 'bookmarks', 'changedBookmark', {'id': id, 'info': info});
+			}
+			else {
+				const folder = getFolderById('bookmarks', id);
+				if (folder) {
+					folder.title = info.title;
 					send('sidebar', 'bookmarks', 'changedFolder', {'id': id, 'title': info.title});
 				}
 			}

@@ -448,7 +448,7 @@ const initBlock = {
 				changeBook(data.id, data.info);
 			},
 			changedFolder   : data => {
-				getById('bookmarks', data.id).firstChild.textContent = data.title;
+				getFolderById('bookmarks', data.id).firstChild.textContent = data.title;
 			},
 			createdBookmark : data => {
 				insertBookmarks([data.item]);
@@ -477,6 +477,7 @@ const initBlock = {
 		bookmarksSearchResults.classList.add('search-results');
 		controls.bookmarks.item      = document.createElement('div');
 		controls.bookmarks.item.classList.add('controls');
+		makeButton('edit', 'bookmarks', 'item');
 		makeButton('move', 'bookmarks', 'item');
 		makeButton('delete', 'bookmarks', 'item');
 		makeButton('deleteFolder', 'bookmarks', 'item');
@@ -1469,19 +1470,19 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			if (status.misc.tabsMode !== 'plain')
-				send('background', 'options', 'handler', {'section': 'misc', option: 'tabsMode', value: 'plain'});
+				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'plain'});
 		},
 		domain: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			if (status.misc.tabsMode !== 'domain')
-				send('background', 'options', 'handler', {'section': 'misc', option: 'tabsMode', value: 'domain'});
+				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'domain'});
 		},
 		tree: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			if (status.misc.tabsMode !== 'tree')
-				send('background', 'options', 'handler', {'section': 'misc', option: 'tabsMode', value: 'tree'});
+				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'tree'});
 		}
 	},
 	bookmarks : {
@@ -1569,23 +1570,32 @@ const buttonsEvents = {
 			event.preventDefault();
 			const target = controls.bookmarks.item.parentNode;
 			if (status.warnings.deleteBookmark)
-				send('background', 'dialog', 'bookmarkDelete', {id: target.dataset.id, title: target.textContent});
+				send('background', 'dialog', 'bookmarkDelete', {'id': target.dataset.id, 'title': target.textContent});
 			else
-				send('background', 'bookmarks', 'deleteItem', {id: target.dataset.id});
+				send('background', 'bookmarks', 'deleteItem', {'id': target.dataset.id});
 		},
 		deleteFolder : event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const target = controls.bookmarks.item.parentNode;
 			if (status.warnings.deleteBookmarkFolder)
-				send('background', 'dialog', 'bookmarkFolderDelete', {id: target.dataset.id, title: target.textContent});
+				send('background', 'dialog', 'bookmarkFolderDelete', {'id': target.dataset.id, 'title': target.textContent});
 			else
-				send('background', 'bookmarks', 'deleteFolder', {id: target.dataset.id});
+				send('background', 'bookmarks', 'deleteFolder', {'id': target.dataset.id});
 		},
 		bookmarkThis : event => {
 			event.stopPropagation();
 			event.preventDefault();
 			send('background', 'dialog', 'newBookmark', '');
+		},
+		edit : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = controls.bookmarks.item.parentNode;
+			if (target.nodeName === 'DIV')
+				send('background', 'dialog', 'editBookmarkFolder', {'id': target.dataset.id});
+			else
+				send('background', 'dialog', 'editBookmark', {'id': target.dataset.id});
 		}
 	},
 	history   : {
@@ -1648,7 +1658,7 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			const id = controls.rss.item.parentNode.dataset.id;
-			send('background', 'rss', 'updateFeed', {id: id});
+			send('background', 'rss', 'updateFeed', {'id': id});
 		},
 		reloadAll: event => {
 			event.stopPropagation();
@@ -1660,13 +1670,13 @@ const buttonsEvents = {
 			event.preventDefault();
 			const rss  = controls.rss.item.parentNode;
 			const feed = rss.parentNode.firstChild;
-			send('background', 'rss', 'rssReaded', {id: rss.dataset.id});
+			send('background', 'rss', 'rssReaded', {'id': rss.dataset.id});
 		},
 		markReadAll: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const feed = controls.rss.item.parentNode;
-			send('background', 'rss', 'rssReadedAll', {id: feed.dataset.id});
+			send('background', 'rss', 'rssReadedAll', {'id': feed.dataset.id});
 		},
 		markReadAllFeeds: event => {
 			event.stopPropagation();
@@ -1677,31 +1687,31 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			const feed = controls.rss.item.parentNode;
-			send('background', 'rss', 'rssHideReaded', {id: feed.dataset.id});
+			send('background', 'rss', 'rssHideReaded', {'id': feed.dataset.id});
 		},
 		showReaded: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const feed = controls.rss.item.parentNode;
-			send('background', 'rss', 'rssShowReaded', {id: feed.dataset.id});
+			send('background', 'rss', 'rssShowReaded', {'id': feed.dataset.id});
 		},
 		delete: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const item = controls.rss.item.parentNode;
-			send('background', 'dialog', 'rssDeleteItem', {id: item.dataset.id, title: item.textContent});
+			send('background', 'dialog', 'rssDeleteItem', {'id': item.dataset.id, 'title': item.textContent});
 		},
 		plain: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			if (status.misc.rssMode !== 'plain')
-				send('background', 'options', 'handler', {section: 'misc', option: 'rssMode', value: 'plain'});
+				send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssMode', 'value': 'plain'});
 		},
 		domain: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			if (status.misc.rssMode !== 'domain')
-				send('background', 'options', 'handler', {section: 'misc', option: 'rssMode', value: 'domain'});
+				send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssMode', 'value': 'domain'});
 		}
 	},
 };
