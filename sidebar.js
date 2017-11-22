@@ -982,7 +982,8 @@ const initBlock = {
 `${items[i].title}
 
 ${items[i].description}`;
-				});
+				},
+				{'passive': true, 'once': true});
 				if (items[i].readed)
 					item.classList.add('item', 'rss-item', `domain-${items[i].domain}`);
 				else {
