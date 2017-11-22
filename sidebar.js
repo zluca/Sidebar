@@ -977,10 +977,12 @@ const initBlock = {
 				item.dataset.link  = items[i].link;
 				item.dataset.date  = items[i].date;
 				item.href          = items[i].link;
-				item.title         =
+				item.addEventListener('mouseover', _ => {
+					item.title =
 `${items[i].title}
 
 ${items[i].description}`;
+				});
 				if (items[i].readed)
 					item.classList.add('item', 'rss-item', `domain-${items[i].domain}`);
 				else {
