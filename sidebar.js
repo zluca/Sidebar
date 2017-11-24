@@ -62,6 +62,14 @@ doc.classList.add(status.side);
 
 if (status.method === 'native') {
 	const port = brauzer.runtime.connect({name: 'sidebar-alive'});
+	if (firefox) {
+		doc.addEventListener('mouseleave', event => {
+			send('background', 'sidebar', 'sideDetection', {'sender': 'sidebar', 'action': 'leave', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+		});
+		doc.addEventListener('mouseover', event => {
+			send('background', 'sidebar', 'sideDetection',{'sender': 'sidebar', 'action': 'over', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+		});
+	}
 }
 
 const controls = {
@@ -189,11 +197,12 @@ const messageHandler = {
 		reInit       : data => {
 			fullInit(data);
 		},
-		sidebarDisabled : data => {
-			doc.classList[data]('disabled');
-		},
 		hover       : data => {
 			document.documentElement.classList[data]('hover');
+		},
+		side        : data => {
+			if (status.method === 'native')
+				status.side = data;
 		}
 	},
 	info : {
@@ -1103,6 +1112,7 @@ function enableBlock(mode) {
 
 function fullInit(response) {
 
+	status.side         = response.side;
 	status.misc         = response.misc;
 	status.theme        = response.theme;
 	status.wide         = response.wide;

@@ -143,9 +143,7 @@ const optionsHandler = {
 			iframe   : _ => {
 				send('content', 'iframe', 'remove', {'side': section});
 			},
-			native   : _ => {
-				send(section, 'set', 'sidebarDisabled', 'add');
-			},
+			native   : _ => {},
 			window   : _ => {
 				removeSidebarWindow(section);
 			},
@@ -155,7 +153,7 @@ const optionsHandler = {
 			iframe   : _ => {
 				send('content', 'iframe', 'add', {'side': section, 'width': options[section].width.value});},
 			native   : _ => {
-				send(section, 'set', 'sidebarDisabled', 'remove');
+				send('sidebar', 'set', 'side', section);
 			},
 			window   : _ => {
 				createSidebarWindow(section);
@@ -168,6 +166,7 @@ const optionsHandler = {
 		setIcon();
 	},
 	mode : (section, option, newValue) => {
+		setOption(section, 'mode', newValue);
 		send(section, 'options', 'mode', {value: newValue, data: modeData[newValue]()});
 	},
 	service: (section, option, newValue) => {
@@ -590,19 +589,32 @@ const messageHandler = {
 				sendToTab(sender.tab.id, 'content', 'dialog', 'create', data.dialogType);
 		},
 		mode : (message, sender, sendResponse) => {
-			if (message.data.method === 'window')
-				data[message.data.side].tabId = sender.tab.id;
-			else if (message.data.method === 'native')
-				if (options.leftBar.method.value !== 'native') {
-					if (options.leftBar.method.value === 'window')
-						removeSidebarWindow('leftBar');
-					else if (options.leftBar.method.value === 'iframe')
-						send('content', 'iframe', 'remove', {side : 'leftBar'});
-					setOption('leftBar', 'method', 'native');
-					setIcon();
+			const handler = {
+				window: side => {
+					data[side].tabId = sender.tab.id;
+					sendResponse(sideBarData(side));
+					return true;
+				},
+				native: side => {
+					let trueSide = side;
+					const oppositeSide = {
+						'leftBar'  : 'rightBar',
+						'rightBar' : 'leftBar'
+					};
+					if (firefox) {
+						if (options[side].method.value !== 'native')
+							if (options[oppositeSide[side]].method.value === 'native')
+								trueSide = oppositeSide[side];
+					}
+					sendResponse(sideBarData(trueSide));
+					return true;
+				},
+				iframe: side => {
+					sendResponse(sideBarData(side));
+					return true;
 				}
-			sendResponse(sideBarData(message.data.side));
-			return true;
+			};
+			handler[message.data.method](message.data.side);
 		},
 		startpage : (message, sender, sendResponse) => {
 			sendResponse({
@@ -809,13 +821,8 @@ const gettingStorage = res => {
 
 	if (res.hasOwnProperty('version'))
 		if (res.version === version) {
-			options.leftBar      = res.options.leftBar;
-			options.rightBar     = res.options.rightBar;
-			options.services     = res.options.services;
-			options.misc         = res.options.misc;
-			options.theme        = res.options.theme;
-			options.warnings     = res.options.warnings;
-			options.startpage    = res.options.startpage;
+			for (let section in options)
+				options[section] = res.options[section];
 			return starter();
 		}
 	// set defaults
@@ -851,16 +858,50 @@ if (sidebarAction !== null) {
 	brauzer.runtime.onConnect.addListener(p => {
 		port = p;
 		port.onDisconnect.addListener(_ => {
-			if (options.leftBar.method.value === 'native') {
-				setOption('leftBar', 'method', 'disabled');
-				setIcon();
-			}
-			else if (options.rightBar.method.value === 'native') {
-				setOption('rightBar', 'method', 'disabled');
-				setIcon();
-			}
+			if (options.leftBar.method.value === 'native')
+				optionsHandler.method('leftBar', 'method', 'disabled');
+			else if (options.rightBar.method.value === 'native')
+				optionsHandler.method('rightBar', 'method', 'disabled');
 		});
 	});
+	if (firefox) {
+		data.sideDetection = {};
+		data.sideDetection.sidebar = '';
+		data.sideDetection.content = '';
+		messageHandler.sidebar = {
+			sideDetection: (message, sender, sendResponse) => {
+
+				const setSide = (sender, side) => {
+					data.sideDetection[sender] = side;
+					setTimeout(_ => {data.sideDetection[sender] = '';}, 100);
+				};
+
+				const detectSide = (prevSender, side) => {
+					if (data.sideDetection[prevSender] !== side)
+						return;
+					if (options[side].method.value !== 'native') {
+						const oppositeSide = {
+							leftBar  : 'rightBar',
+							rightBar : 'leftBar'
+						};
+						optionsHandler.method(side, 'method', 'native');
+						optionsHandler.mode(side, 'mode', options[oppositeSide[side]].mode.value);
+						if (options[oppositeSide[side]].method.value === 'native')
+							optionsHandler.method(oppositeSide[side], 'method', 'disabled');
+					}
+				};
+
+				const handler = {
+					sidebarleave : side => setSide('sidebar', side),
+					sidebarover  : side => detectSide('content', side),
+					contentleave : side => setSide('content', side),
+					contentover  : side => detectSide('sidebar', side)
+				};
+
+				handler[`${message.data.sender}${message.data.action}`](message.data.side);
+			}
+		};
+	}
 }
 
 execMethod(brauzer.storage.local.get, gettingStorage, ['options', 'version']);
@@ -896,7 +937,8 @@ const init = {
 	startpage: _ => {
 
 		const gettingStorage = res => {
-			data.speadDial      = res.speadDial;
+			if (Array.isArray(res.speadDial))
+				data.speadDial = res.speadDial;
 			data.init.startpage = true;
 			checkForInit();
 		};
@@ -908,7 +950,7 @@ const init = {
 		if (data.init.favs)
 			return;
 		const gettingStorage = res => {
-			if (res.favs) {
+			if (Array.isArray(res.favs)) {
 				data.favs      = res.favs;
 				data.favsId    = res.favsId;
 			}
@@ -1220,11 +1262,9 @@ const init = {
 					brauzer.bookmarks.create(message.data);
 				},
 				editBookmark :(message, sender, sendResponse) => {
-					console.log(message.data);
 					brauzer.bookmarks.update(message.data.id, message.data.changes);
 				},
 				editBookmarkFolder :(message, sender, sendResponse) => {
-					console.log(message.data);
 					brauzer.bookmarks.update(message.data.id, message.data.changes);
 				},
 				move : (message, sender, sendResponse) => {
@@ -2132,6 +2172,7 @@ const init = {
 function sideBarData(side) {
 
 	return {
+		'side'     : side,
 		'mode'     : options[side].mode.value,
 		'wide'     : options[side].wide.value,
 		'fixed'    : options[side].fixed.value,

@@ -27,9 +27,6 @@ a,
 a:visited {
 	color: unset;
 }
-.disabled>body {
-	display: none!important;
-}
 .leftBar {
 	padding-right: .1rem;
 }
