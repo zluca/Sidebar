@@ -1872,6 +1872,16 @@ const init = {
 			return id;
 		};
 
+		const makeRssDomain = (url, fav) => {
+			const id   = url.replace(/\.|\:|\\|\/|\?|\s|=/g, '');
+			let domain = getById('domains', id);
+			if (!domain) {
+				domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), 'title': ''}, 'last');
+				send('sidebar', 'info', 'newDomain', {'domain': domain});
+			}
+			return domain;
+		};
+
 		const createRssFeed = url => {
 			const rssUrl = urlFromUser(url);
 			for (let i = data.rssFolders.length - 1; i >= 0; i--)
@@ -1889,40 +1899,24 @@ const init = {
 						const head       = xmlDoc.querySelector('channel, feed');
 						let title        = head.querySelector('title');
 						if (title) title = title.textContent.trim();
-						let link         = head.querySelector('link');
-						if (!link)
-							link = domainFromUrl(url);
-						else
-							link = link.getAttribute('href') || link.textContent;
-						if (!link)
-							link = domainFromUrl(url);
-						else if (!link.match(/^https?:\/\//))
-							link = domainFromUrl(url);
 						let desc         = head.querySelector('description, subtitle');
 						if (desc) desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
 						fav              = fav ? fav.textContent.trim() : null;
-						const guid = guidFromUrl(rssUrl);
-						let favUrl;
-						if (fav) {
-							favUrl = fav.match(/^https?:\/\/([\da-z\.-]+)*/i);
-							if (favUrl) favUrl = favUrl[0];
-						}
+						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;
 						feed.pid         = 0;
-						feed.link        = link;
 						feed.title       = title;
 						feed.view        = 'domain';
 						feed.description = desc;
-						feed.domain      = makeDomain(rssUrl, fav, 'rss').id;
+						feed.domain      = makeRssDomain(rssUrl, fav).id;
 						feed.url         = rssUrl;
 						feed.fav         = fav;
 						feed.itemsId     = [];
 						feed.hideReaded  = false;
 						feed.readed      = true;
 						feed.lastUpdate  = Date.now();
-						makeFav(feed.domain, null, fav);
 						if (options.misc.rssMode.value === 'domain')
 							send('sidebar', 'rss', 'createdFeed', {'feed': feed});
 						injectRss(xmlDoc, feed);
@@ -2112,7 +2106,7 @@ const init = {
 						data.rss          = res.rss;
 						data.rssId        = res.rssId;
 						for (let i = data.rssFolders.length - 1; i >= 0; i--) {
-							makeDomain(data.rssFolders[i].link, data.rssFolders[i].fav, 'rss');
+							makeRssDomain(data.rssFolders[i].url, data.rssFolders[i].fav);
 							rssSetUpdate(res.rssFolders[i], options.misc.rssUpdatePeriod.value);
 						}
 						rssSetReaded('count');
@@ -2165,7 +2159,6 @@ const init = {
 			brauzer.alarms.clearAll();
 			data.init.rss       = false;
 		}
-
 	}
 };
 
@@ -2296,10 +2289,10 @@ function makeFav(id, url, favIconUrl, update = false) {
 	return favIcon;
 }
 
-function makeDomain(url, fav, prefix = '') {
+function makeDomain(url, fav) {
 	let id    = '';
 	let title = '';
-	if (!url)
+	if (url === '')
 		id = 'default';
 	else if (url === data.defaultStartPage)
 		id = 'startpage';
@@ -2310,8 +2303,9 @@ function makeDomain(url, fav, prefix = '') {
 	if (id !== '')
 		title = i18n.domains[id];
 	else {
-		id    = prefix + url.split('//', 2).pop().split('/', 2).shift().replace(/\./g, '');
+		// id    = prefix + url.split('//', 2).pop().split('/', 2).shift().replace(/\./g, '');
 		title = domainFromUrl(url, true);
+		id    = title.replace(/\./g, '');
 	}
 	let domain = getById('domains', id);
 	if (!domain) {
