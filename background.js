@@ -605,6 +605,8 @@ const messageHandler = {
 						if (options[side].method.value !== 'native')
 							if (options[oppositeSide[side]].method.value === 'native')
 								trueSide = oppositeSide[side];
+							else
+								optionsHandler.method(side, 'method', 'native');
 					}
 					sendResponse(sideBarData(trueSide));
 					return true;
