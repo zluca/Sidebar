@@ -848,6 +848,7 @@ const gettingStorage = res => {
 		brauzer.storage.local.set({'options': options});
 		brauzer.storage.local.set({'speadDial': data.speadDial});
 		brauzer.storage.local.set({'version': version});
+		brauzer.storage.local.set({'favs': [], 'favsId': []});
 		starter();
 	};
 	execMethod(brauzer.topSites.get, top);
