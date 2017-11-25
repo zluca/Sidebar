@@ -1116,8 +1116,6 @@ function enableBlock(mode) {
 
 function fullInit(response) {
 
-	console.log(response);
-
 	status.side         = response.side;
 	status.misc         = response.misc;
 	status.theme        = response.theme;
