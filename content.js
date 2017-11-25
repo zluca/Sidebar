@@ -6,6 +6,9 @@ const firefox = (typeof InstallTrigger !== 'undefined') ? true : false;
 const brauzer = firefox ? browser : chrome;
 
 const doc     = document.documentElement;
+
+cleanOldStuff();
+
 const mask    = document.createElement('div');
 mask.id       = 'mask';
 const sidebar = {
@@ -188,6 +191,18 @@ function injectIframe(side, width = -1) {
 function deleteIframe(side) {
 	document.body.removeChild(sidebar[side]);
 	setSideBarWidth(side, 0);
+}
+
+function cleanOldStuff() {
+	const oldLeftBar = document.getElementById('sbp-leftBar');
+	if (oldLeftBar)
+		oldLeftBar.parentNode.removeChild(oldLeftBar);
+	const oldRightBar = document.getElementById('sbp-rightBar');
+	if (oldRightBar)
+		oldRightBar.parentNode.removeChild(oldRightBar);
+	const oldMask = document.getElementById('mask');
+	if (oldMask)
+		oldMask.parentNode.removeChild(oldMask);
 }
 
 function injectElements() {

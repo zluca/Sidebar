@@ -224,11 +224,6 @@ a:visited {
 	width: 100%;
 	height: auto;
 	position: relative;
-	color: transparent;
-}
-
-.fixed .block,
-.hover .block {
 	color: var(--font-color);
 }
 
