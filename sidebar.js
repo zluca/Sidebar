@@ -723,13 +723,17 @@ const initBlock = {
 	downloads : data => {
 
 		messageHandler.downloads = {
-			created    : data =>  {
+			created    : data => {
 				insertDownload(data.item);
 			},
-			erased     : data =>  {
+			erased     : data => {
 				block.downloads.removeChild(getById('downloads', data.id));
 			},
-			startPause : data =>  {
+			exists     : data => {
+				const download = getById('downloads', data.id);
+				download.classList[data.method]('deleted');
+			},
+			startPause : data => {
 				const download = getById('downloads', data.id);
 				if (data.paused) {
 					if (data.canResume)
@@ -740,12 +744,12 @@ const initBlock = {
 				else
 					download.classList.remove('paused');
 			},
-			state     : data =>  {
+			state     : data => {
 				const download = getById('downloads', data.id);
 				download.classList.remove('complete', 'interrupted', 'in_progress');
 				download.classList.add(data.state);
 			},
-			progress  : data =>  {
+			progress  : data => {
 				const download = getById('downloads', data.item.id);
 				download.firstChild.nextElementSibling.firstChild.firstChild.style.width = data.item.progressPercent;
 				download.firstChild.nextElementSibling.firstChild.nextElementSibling.textContent = data.item.progressNumbers;

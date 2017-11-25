@@ -1681,24 +1681,30 @@ const init = {
 		};
 
 		const onChanged = delta => {
-			const index = data.downloadsId.indexOf(delta.id);
+			const download = getById('downloads', delta.id);
+			if (download === false)
+				return;
 			if (delta.hasOwnProperty('paused')) {
-				data.downloads[index].paused = delta.paused.current;
+				download.paused = delta.paused.current;
 				if (delta.canResume)
-					data.downloads[index].canResume = delta.canResume.current;
-				send('sidebar', 'downloads', 'startPause', {'id': delta.id, 'paused': delta.paused.current, 'canResume': delta.canResume.current});
+					download.canResume = delta.canResume.current;
+				send('sidebar', 'downloads', 'startPause', {'id': download.id, 'paused': download.paused, 'canResume': download.canResume});
 			}
-			else if (delta.hasOwnProperty('state')) {
+			if (delta.hasOwnProperty('state')) {
 				if (delta.state.current === 'in_progress')
 					setDownloadsCount.add();
 				else
 					setDownloadsCount.delete();
-				data.downloads[index].state = delta.state.current;
-				send('sidebar', 'downloads', 'state', {'id': delta.id, 'state': delta.state.current});
+				download.state = delta.state.current;
+				send('sidebar', 'downloads', 'state', {'id': download.id, 'state': download.state});
 			}
-			else if (delta.hasOwnProperty('filename')) {
-				data.downloads[index].filename = delta.filename.current.split('/').pop();
-				send('sidebar', 'downloads', 'filename', {'id': delta.id, 'filename': data.downloads[index].filename});
+			if (delta.hasOwnProperty('filename')) {
+				download.filename = delta.filename.current.split('/').pop();
+				send('sidebar', 'downloads', 'filename', {'id': download.id, 'filename': download.filename});
+			}
+			if (delta.hasOwnProperty('exists')) {
+				download.exists = delta.exists.current;
+				send('sidebar', 'downloads', 'exists', {'id': download.id, 'method': download.exist ? 'remove' : 'add'});
 			}
 		};
 
