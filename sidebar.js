@@ -1249,7 +1249,7 @@ function insertFolders(items, mode, noTitle = false) {
 			rootFolder.appendChild(status[`${mode}Folders`][folders[i].index]);
 		else {
 			const parentFolder = getFolderById(mode, folders[i].pid);
-			if (parentFolder)
+			if (parentFolder !== false)
 				parentFolder.appendChild(status[`${mode}Folders`][folders[i].index]);
 			else
 				rootFolder.appendChild(status[`${mode}Folders`][folders[i].index]);
@@ -1325,7 +1325,7 @@ function getFolderById(mode, id) {
 	if (index !== -1)
 		return status[`${mode}Folders`][index];
 	else
-		return null;
+		return false;
 }
 
 function removeFolderById(mode, id) {
