@@ -228,16 +228,25 @@ function makeIframe(side) {
 	});
 }
 
+function setHover(side, hover) {
+	send('background', 'set', 'hover', {side: side, hover: hover ? 'add' : 'remove', needResponse: true}, _ => {
+		status[side].hover = hover;
+		setSideBarWidth(side, -1);
+	});
+}
+
 function setSideBarFixed(side, value = -1) {
 
 	const timer = {
 		over  : 0,
-		leave : 0,
-		clean : which => {
-			clearTimeout(timer[which]);
-			timer[which] = 0;
-		}
+		leave : 0
 	};
+
+	const cleanTimer = which => {
+		clearTimeout(timer[which]);
+		timer[which] = 0;
+	};
+
 	const mouseOver = event => {
 		if (event)
 			event.stopPropagation();
@@ -245,18 +254,16 @@ function setSideBarFixed(side, value = -1) {
 			return;
 		status[side].over = true;
 		if (timer.leave)
-			timer.clean('leave');
+			cleanTimer('leave');
 		else
 			timer.over = setTimeout(_ => {
 				if (!status[side].over)
-					return timer.clean('over');
-				send('background', 'set', 'hover', {side: side, hover: 'add', needResponse: true}, _ => {
-					status[side].hover = true;
-					setSideBarWidth(side, -1);
-				});
-				timer.clean('over');
+					return cleanTimer('over');
+				setHover(side, true);
+				cleanTimer('over');
 			}, 100);
 	};
+
 	const mouseLeave = event => {
 		if (event)
 			event.stopPropagation();
@@ -266,26 +273,25 @@ function setSideBarFixed(side, value = -1) {
 		if (status[side].fixed)
 			return;
 		if (timer.over)
-			timer.clean('over');
+			cleanTimer('over');
 		else
 			timer.leave = setTimeout(_ => {
 				if (status[side].over)
-					return timer.clean('leave');
-				send('background', 'set', 'hover', {side: side, hover: 'remove'}, _ => {
-					status[side].hover = false;
-					setSideBarWidth(side, -1);
-				});
-				timer.clean('leave');
+					return cleanTimer('leave');
+				setHover(side, false);
+				cleanTimer('leave');
 			}, 200);
 	};
 
+	if (status[side].fixed === value)
+		return;
 	if (value !== -1)
 		status[side].fixed = value;
 	if (status[side].fixed) {
 		sidebar[side].removeEventListener('mouseover', mouseOver);
 		sidebar[side].removeEventListener('mouseleave', mouseLeave);
-		timer.clean('leave');
-		timer.clean('over');
+		cleanTimer('leave');
+		cleanTimer('over');
 	}
 	else {
 		sidebar[side].addEventListener('mouseover', mouseOver);
@@ -342,62 +348,56 @@ function setSideBarWidth(side, value = -1) {
 function resizeSideBar(side) {
 
 	const isFixed    = status[side].fixed;
-	const abs        = Math.abs;
 	const oldWidth   = status[side].width;
 	const innerWidth = window.innerWidth;
 	const inner100   = innerWidth / 100;
 	let   oldX       = 0;
-	const formula    = {
-		leftBar  : _ => {
-			const w = event.pageX / inner100;
-			if (w < 5) return 5;
-			else if (w > 40) return 40;
-			else return w;
-		},
-		rightBar : _ => {
-			const w = (innerWidth - event.pageX) / inner100;
-			if (w < 5) return 5;
-			else if (w > 40) return 40;
-			else return w;
-		}
+
+	const formula    = (side, pageX) => {
+		const w = side === 'leftBar' ? pageX / inner100 : (innerWidth - pageX) / inner100;
+		return w < 5 ? 5 : w > 40 ? 40 : w;
 	};
 
-	const resize = _ => {
-		if (abs(event.pageX - oldX) > 5) {
+	const resize = event => {
+		if (Math.abs(event.pageX - oldX) > 5) {
 			oldX = event.pageX;
-			setSideBarWidth(side, formula[side]());
+			setSideBarWidth(side, formula(side, event.pageX));
 		}
 	};
 
-	const stopResize = _ => {
+	const finishResize = cancel => {
 		document.removeEventListener('mouseup', stopResize);
 		document.removeEventListener('mousemove', resize);
 		document.removeEventListener('keydown', cancelResize);
 		mask.classList.remove('active');
 		status[side].resize = false;
 		setSideBarFixed(side, isFixed);
-		send('background', 'options', 'handler', {section: side, option: 'width', value: status[side].width});
+		if (!isFixed)
+			setHover(side, false);
+		if (!cancel)
+			send('background', 'options', 'handler', {section: side, option: 'width', value: status[side].width});
+	};
+
+	const stopResize = _ => {
+		finishResize(false);
 	};
 
 	const cancelResize = event => {
-		if (event.key === 'Escape') {
-			document.removeEventListener('mouseup', stopResize);
-			document.removeEventListener('mousemove', resize);
-			document.removeEventListener('keydown', cancelResize);
-			setSideBarWidth(side, oldWidth);
-			mask.classList.remove('active');
-			status[side].resize = false;
-			setSideBarFixed(side, isFixed);
-		}
+		if (event.key === 'Escape')
+			finishResize(true);
 	};
 
+	if (firefox) {
+		sidebar[side].style.display = 'none';
+		setTimeout(_ => {sidebar[side].style.display = 'block';}, 1);
+	}
 	mask.classList.add('active');
 	if (!status[side].fixed)
 		setSideBarFixed(side, true);
 	status[side].resize = true;
 	document.addEventListener('mouseup', stopResize);
-	document.addEventListener('mousemove', resize);
 	document.addEventListener('keydown', cancelResize);
+	document.addEventListener('mousemove', resize);
 }
 
 function send(target, subject, action, data = {}, callback = _ => {}) {

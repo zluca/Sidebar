@@ -28,6 +28,7 @@
 	height: 100%!important;
 	background-color: var(--sbp-border-color)!important;
 	cursor: col-resize!important;
+	z-index: 999;
 }
 .sbp-sidebar>div:hover {
 	contain: strict!important;
