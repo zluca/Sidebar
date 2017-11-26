@@ -124,6 +124,7 @@ const data = {
 	defaultIcon     : 'icons/default.svg',
 	systemIcon      : 'icons/wrench.svg',
 	startpageIcon   : 'icons/startpage.svg',
+	rssIcon         : 'icons/rss.svg',
 	leftBar         : {
 		windowId      : -1,
 		tabId         : -1
@@ -1911,7 +1912,7 @@ const init = {
 						let desc         = head.querySelector('description, subtitle');
 						if (desc) desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
-						fav              = fav ? fav.textContent.trim() : false;
+						fav              = fav ? fav.textContent.trim() : firefox ? data.rssIcon : false;
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;
