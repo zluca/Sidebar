@@ -4,7 +4,7 @@
 		"description"   : "extension name"
 	},
 	"extDescription" : {
-		"message"       : "Боковая панель для браузеров на основе Chromium",
+		"message"       : "Боковая панель для Chromium и Firefox",
 		"description"   : "extension description"
 	},
 	"extTitle" : {
