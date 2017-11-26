@@ -361,14 +361,14 @@ ul {
 .fixed .folder.normal-view>.item {
 	padding-left: 1.6rem;
 	margin-left: .8rem;
-	border-left: .1rem dotted var(--border-color);
+	border-left: .1rem dotted var(--border-color-active);
 	background-position: .4rem 0rem;
 }
 .hover .folder.domain-view .item,
 .fixed .folder.domain-view .item {
 	padding-left: .6rem;
 	margin-left: .8rem;
-	border-left: .1rem dotted var(--border-color);
+	border-left: .1rem dotted var(--border-color-active);
 	background-image: none;
 }
 .hover .tree>#tabs-0>.folder>.item,
@@ -378,7 +378,7 @@ ul {
 .hover .folder>.folder,
 .fixed .folder>.folder {
 	margin-left: .8rem;
-	border-left: .1rem dotted var(--border-color);
+	border-left: .1rem dotted var(--border-color-active);
 }
 .hover .tree>#tabs-0>.folder,
 .fixed .tree>#tabs-0>.folder {
