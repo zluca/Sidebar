@@ -1120,6 +1120,8 @@ function enableBlock(mode) {
 
 function fullInit(response) {
 
+	if (!response) return setTimeout(fullInit, 200);
+
 	status.side         = response.side;
 	status.misc         = response.misc;
 	status.theme        = response.theme;
