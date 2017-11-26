@@ -2277,7 +2277,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		} ,
 		falsefalse : _ => {
 			fav = createById('favs', {id: id, fav: favFromUrl()}, 'last');
-			return fav.fav;
+			return fav;
 		} ,
 	};
 
