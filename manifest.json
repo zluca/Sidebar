@@ -3,12 +3,13 @@
 	"name"               : "__MSG_extName__",
 	"version"            : "0.3.2",
 	"description"        : "__MSG_extDescription__",
-	"developer": {
-		"name": "zluka",
-		"url": "https://github.com/zluca/Sidebar"
+	"author"             : "zluka",
+	"developer"          : {
+		"name"  : "zluka",
+		"url"   : "https://github.com/zluca/Sidebar"
 	},
-	"homepage_url"       : "https://github.com/zluca/",
-	"default_locale"     : "en",
+	"homepage_url"   : "https://github.com/zluca/",
+	"default_locale" : "en",
 	"icons": {
 		"64": "icons/default-64.png"
   	},
