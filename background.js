@@ -1884,7 +1884,7 @@ const init = {
 		const makeRssDomain = (url, fav) => {
 			const id   = url.replace(/\.|\:|\\|\/|\?|\s|=/g, '');
 			let domain = getById('domains', id);
-			if (!domain) {
+			if (domain === false) {
 				domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), 'title': ''}, 'last');
 				send('sidebar', 'info', 'newDomain', {'domain': domain});
 			}
@@ -1911,7 +1911,7 @@ const init = {
 						let desc         = head.querySelector('description, subtitle');
 						if (desc) desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
-						fav              = fav ? fav.textContent.trim() : null;
+						fav              = fav ? fav.textContent.trim() : false;
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;
