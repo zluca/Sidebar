@@ -830,7 +830,10 @@ const initBlock = {
 				insertFolders([data.feed], 'rss');
 			},
 			newItems         : data =>  {
-				insertRss(data.items, 'date');
+				if (status.misc.rssMode === 'plain')
+					insertRss(data.items, 'date');
+				else
+					insertRss(data.items, 'first');
 			},
 			rssReaded        : data =>  {
 				const rssItem = getById('rss', data.id);
@@ -938,53 +941,54 @@ const initBlock = {
 			while (rootFolder.firstChild)
 				rootFolder.removeChild(rootFolder.firstChild);
 			clearStatus('rss');
-			if (status.misc.rssMode === 'domain')
+			if (mode === 'domain')
 				insertFolders(rssFolders, 'rss');
-			insertRss(rss, 'last');
+			insertRss(rss, 'first');
 			setReadedMode(status.misc.rssHideReaded);
 		};
 
 		const insertRss = (items, method) => {
 
 			const insert = {
-				first : (item, data) => {
-					if (status.misc.rssMode === 'domain')
-						folder.insertBefore(item, folder.firstChild.nextElementSibling);
-					else
-						folder.insertBefore(item, folder.firstChild);
+				domainfirst : (item, data) => {
+					pidCheck(data.pid);
+					folder.insertBefore(item, folder.firstChild.nextElementSibling);
 				},
-				last  : (item, data) => {
+				plainfirst  : (item, data) => {
+					folder.insertBefore(item, folder.firstChild);
+				},
+				domainlast  : (item, data) => {
+					pidCheck(data.pid);
 					folder.appendChild(item);
 				},
-				date : (item, data) => {
-					if (status.misc.rssMode === 'domain') {
-						if (folder.children.length < 2)
-							folder.appendChild(item);
-						else
-							folder.insertBefore(item, folder.firstChild.nextElementSibling);
-					}
-					else {
-						if (status.rss.length < 2)
-							folder.appendChild(item);
-						else
-							folder.insertBefore(item, folder.children[data.index]);
-					}
+				plainlast   : (item, data) => {
+					folder.appendChild(item);
+				},
+				domaindate  : (item, data) => {
+					pidCheck(data.pid);
+					if (folder.children.length < 2)
+						folder.appendChild(item);
+					else
+						folder.insertBefore(item, folder.firstChild.nextElementSibling);
+				},
+				plaindate   : (item, data) => {
+					if (status.rss.length < 2)
+						folder.appendChild(item);
+					else
+						folder.insertBefore(item, folder.children[data.index]);
 				}
 			};
-			const pidCheck = {
-				plain  : _ => {},
-				domain : item => {
-					if (pid !== item.pid) {
-						pid    = item.pid;
-						folder = getFolderById('rss', pid);
-					}
+
+			const pidCheck = newPid => {
+				if (pid !== newPid) {
+					pid    = newPid;
+					folder = getFolderById('rss', pid);
 				}
 			};
 
 			let pid = 0;
 			let folder = rootFolder;
-			for (let i = items.length - 1; i >= 0; i--) {
-				pidCheck[status.misc.rssMode](items[i]);
+			for (let i = 0, l = items.length; i < l; i++) {
 				const item         = createById('rss', items[i].id);
 				item.textContent   = items[i].title;
 				item.dataset.link  = items[i].link;
@@ -1003,7 +1007,7 @@ ${items[i].description}`;
 					item.classList.add('item', 'rss-item', `domain-${items[i].domain}`, 'unreaded');
 					folder.classList.add('unreaded');
 				}
-				insert[method](item, items[i]);
+				insert[`${status.misc.rssMode}${method}`](item, items[i]);
 			}
 		};
 
