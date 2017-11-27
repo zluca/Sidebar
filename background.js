@@ -717,9 +717,9 @@ const messageHandler = {
 		rssAdd : (message, sender, sendResponse) => {
 			const activeTab = getById('tabs', data.activeTabId);
 			if (activeTab)
-				send('content', 'dialog', 'checkRss', '');
-			else
-				createDialogWindow(message.action, message.data);
+				if (!tabIsProtected(activeTab))
+					return send('content', 'dialog', 'checkRss', '');
+			createDialogWindow(message.action, message.data);
 		},
 		rssUrlConfirmed : (message, sender, sendResponse) => {
 			createDialogWindow('rssAdd', message.data);
@@ -2344,10 +2344,17 @@ function createDialogWindow(type, dialogData) {
 	data.dialogType = type;
 	const activeTab = getById('tabs', data.activeTabId);
 	if (!activeTab) return;
-	if (/^https?:|^ftp:|^file:|^chrome:\/\/newtab|^chrome:\/\/startpage/.test(activeTab.url) || activeTab.url === data.defaultStartPage)
+	if (!tabIsProtected(activeTab))
 		sendToTab(data.activeTabId, 'content', 'dialog', 'create', type);
 	else
 		brauzer.tabs.create({url: data.defaultStartPage});
+}
+
+function tabIsProtected(tab) {
+	if (!/^https?:|^ftp:|^file:|^chrome:\/\/newtab|^chrome:\/\/startpage/.test(tab.url))
+		if (tab.url !== data.defaultStartPage)
+			return true;
+	return false;
 }
 
 function createSidebarWindow(side) {
