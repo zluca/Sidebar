@@ -34,3 +34,5 @@ no idea
 - Create file "userChrome.css" inside "Chrome" folder
 - Copypaste "#TabsToolbar {visibility: collapse;}" info "userChrome.css"
 - Restart Firefox
+
+more tricks with "userChrome.css" [here](https://github.com/Timvde/UserChrome-Tweaks)
