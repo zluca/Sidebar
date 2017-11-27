@@ -835,8 +835,8 @@ const gettingStorage = res => {
 				brauzer.storage.local.set({'rss': [], 'rssId': [], 'rssFolders': [], 'rssFoldersId': []});
 			if (resetOptions <= oldVersion) {
 				if (res.hasOwnProperty('options'))
-					for (let section in options)
-						for (let option in options[section])
+					for (let section in res.options)
+						for (let option in res.options[section])
 							options[section][option].value = res.options[section][option];
 				return starter();
 			}
