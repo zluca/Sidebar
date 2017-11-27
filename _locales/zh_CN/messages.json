@@ -1,0 +1,754 @@
+{
+	"extName" : {
+		"message"       : "Sidebar+",
+		"description"   : "extension name"
+	},
+	"extDescription" : {
+		"message"       : "侧栏扩展",
+		"description"   : "extension description"
+	},
+	"extTitle" : {
+		"message"       : "Sidebar+",
+		"description"   : ""
+	},
+	"extRightBar" : {
+		"message"       : "右栏模式",
+		"description"   : ""
+	},
+	"extLeftBar" : {
+		"message"       : "左栏模式",
+		"description"   : ""
+	},
+	"extBoth" : {
+		"message"       : "双栏模式",
+		"description"   : ""
+	},
+	"extNone" : {
+		"message"       : "两栏已禁用",
+		"description"   : ""
+	},
+
+	"sbControlsWideTitle" : {
+		"message"       : "折叠侧栏为图标宽度",
+		"description"   : ""
+	},
+	"sbControlsNarrowTitle" : {
+		"message"       : "折叠侧栏为细线",
+		"description"   : ""
+	},
+	"sbControlsFixedTitle" : {
+		"message"       : "固定此视图",
+		"description"   : ""
+	},
+	"sbControlsUnfixedTitle" : {
+		"message"       : "取消固定此视图",
+		"description"   : ""
+	},
+	"sbControlsTabsTitle" : {
+		"message"       : "标签页",
+		"description"   : ""
+	},
+	"sbControlsBookmarksTitle" : {
+		"message"       : "书签",
+		"description"   : ""
+	},
+	"sbControlsHistoryTitle" : {
+		"message"       : "历史记录",
+		"description"   : ""
+	},
+	"sbControlsDownloadsTitle" : {
+		"message"       : "下载",
+		"description"   : ""
+	},
+	"sbControlsRssTitle" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+
+	"tabsNewText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"tabsNewTitle" : {
+		"message"       : "创建新标签页",
+		"description"   : ""
+	},
+	"tabsControlsReload" : {
+		"message"       : "重新载入",
+		"description"   : ""
+	},
+	"tabsControlsPin" : {
+		"message"       : "固定",
+		"description"   : ""
+	},
+	"tabsControlsUnpin" : {
+		"message"       : "取消固定",
+		"description"   : ""
+	},
+	"tabsControlsClose" : {
+		"message"       : "关闭",
+		"description"   : ""
+	},
+	"tabsControlsCloseAll" : {
+		"message"       : "关闭文件夹",
+		"description"   : ""
+	},
+	"tabsPlainModeButton" : {
+		"message"       : "不排序标签页",
+		"description"   : ""
+	},
+	"tabsDomainModeButton" : {
+		"message"       : "按域名分组标签页",
+		"description"   : ""
+	},
+	"tabsTreeModeButton" : {
+		"message"       : "以树视图管理标签页",
+		"description"   : ""
+	},
+	"bkBookmarkThisText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"bkBookmarkThisTitle" : {
+		"message"       : "将此标签页加入书签",
+		"description"   : ""
+	},
+	"bkEditBookmark" : {
+		"message"       : "编辑书签",
+		"description"   : ""
+	},
+	"bkMoveBookmark" : {
+		"message"       : "移动书签",
+		"description"   : ""
+	},
+	"bkDeleteBookmark" : {
+		"message"       : "删除书签",
+		"description"   : ""
+	},
+	"bkDeleteBookmarkFolder" : {
+		"message"       : "删除文件夹",
+		"description"   : ""
+	},
+	"bkSearchPlaceholder" : {
+		"message"       : "搜索",
+		"description"   : ""
+	},
+
+	"hsGetMoreText" : {
+		"message"       : "显示更多",
+		"description"   : "text on 'Get more history' button"
+	},
+	"hsGetMoreTitle" : {
+		"message"       : "显示更多历史记录",
+		"description"   : ""
+	},
+	"hsSearchPlaceholder" : {
+		"message"       : "搜索",
+		"description"   : ""
+	},
+
+	"dlControlsPause" : {
+		"message"       : "暂停",
+		"description"   : ""
+	},
+	"dlControlsResume" : {
+		"message"       : "继续",
+		"description"   : ""
+	},
+	"dlControlsReload" : {
+		"message"       : "重新载入",
+		"description"   : ""
+	},
+	"dlControlsCancel" : {
+		"message"       : "取消",
+		"description"   : ""
+	},
+	"dlControlsDelete" : {
+		"message"       : "删除",
+		"description"   : ""
+	},
+
+
+	"rssNew" : {
+		"message"       : "添加新 RSS 收取点",
+		"description"   : "text that shows when you hold mouse over 'add new RSS' button"
+	},
+	"rssControlsOptions" : {
+		"message"       : "编辑收取点属性",
+		"description"   : ""
+	},
+	"rssControlsMarkRead" : {
+		"message"       : "标为已读",
+		"description"   : ""
+	},
+	"rssControlsMarkReadAll" : {
+		"message"       : "收取点标为已读",
+		"description"   : ""
+	},
+	"rssControlsMarkReadAllFeeds" : {
+		"message"       : "收取点全部标为已读",
+		"description"   : ""
+	},
+	"rssControlsHideReaded" : {
+		"message"       : "隐藏已读项目",
+		"description"   : ""
+	},
+	"rssControlsShowReaded" : {
+		"message"       : "显示已读项目",
+		"description"   : ""
+	},
+	"rssControlsDeleteItem" : {
+		"message"       : "删除",
+		"description"   : ""
+	},
+	"rssControlsReload"          : {
+		"message"       : "更新收取点",
+		"description"   : ""
+	},
+	"rssReloadAll"          : {
+		"message"       : "更新所有收取点",
+		"description"   : ""
+	},
+	"rssPlainModeButton" : {
+		"message"       : "按时间排序 RSS 元素",
+		"description"   : ""
+	},
+	"rssDomainModeButton" : {
+		"message"       : "按收取点分组 RSS 元素",
+		"description"   : ""
+	},
+
+	"optHeaderText" : {
+		"message"       : "Sidebar+ 选项",
+		"description"   : "header of options window"
+	},
+	"optSaveText" : {
+		"message"       : "保存",
+		"description"   : "Save button text"
+	},
+	"optCancelText" : {
+		"message"       : "取消",
+		"description"   : "Cancel button text"
+	},
+
+	"optServicesButton" : {
+		"message"       : "服务",
+		"description"   : "header of Services options"
+	},
+	"optServicesText" : {
+		"message"       : "禁用未使用的服务以取得最佳性能。",
+		"description"   : ""
+	},
+	"optServicesTabsLabel" : {
+		"message"       : "标签页",
+		"description"   : ""
+	},
+	"optServicesDownloadsLabel" : {
+		"message"       : "下载",
+		"description"   : ""
+	},
+	"optServicesBookmarksLabel" : {
+		"message"       : "书签",
+		"description"   : ""
+	},
+	"optServicesHistoryLabel" : {
+		"message"       : "历史记录",
+		"description"   : ""
+	},
+	"optServicesRSSLabel" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+
+	"optThemeButton" : {
+		"message"       : "主题",
+		"description"   : "header of Theme options"
+	},
+	"optThemeText" : {
+		"message"       : "侧栏主题。",
+		"description"   : ""
+	},
+	"optThemeFontSizeLabel" : {
+		"message"       : "侧栏字体大小",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorLabel" : {
+		"message"       : "侧栏背景色",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorActiveLabel" : {
+		"message"       : "侧栏活动元素背景色",
+		"description"   : ""
+	},
+	"optThemeFontColorLabel" : {
+		"message"       : "侧栏字体颜色",
+		"description"   : ""
+	},
+	"optThemeFontColorActiveLabel" : {
+		"message"       : "侧栏活动元素字体颜色",
+		"description"   : ""
+	},
+	"optThemeFontColorInactiveLabel" : {
+		"message"       : "占位符和非活动元素",
+		"description"   : ""
+	},
+	"optThemeBorderColorLabel" : {
+		"message"       : "侧栏边框颜色",
+		"description"   : ""
+	},
+	"optThemeBorderColorActiveLabel" : {
+		"message"       : "侧栏活动元素边框颜色",
+		"description"   : ""
+	},
+	"optThemeSidebarImageLabel" : {
+		"message"       : "侧栏背景图像",
+		"description"   : ""
+	},
+	"optThemeStartpageImageLabel" : {
+		"message"       : "起始页背景图像",
+		"description"   : ""
+	},
+
+	"optMiscButton" : {
+		"message"       : "杂项",
+		"description"   : "header of Misc options"
+	},
+	"optMiscText" : {
+		"message"       : "未归类的选项：",
+		"description"   : ""
+	},
+	"optMiscLimitHistoryLabel" : {
+		"message"       : "一次最多显示历史记录项",
+		"description"   : ""
+	},
+	"optMiscMaxSavedRssPerFeedLabel" : {
+		"message"       : "最多保存 RSS 项",
+		"description"   : ""
+	},
+	"optMiscRssUpdatePeriodLabel" : {
+		"message"       : "RSS 更新周期",
+		"description"   : ""
+	},
+
+	"optWarningsButton" : {
+		"message"       : "警告",
+		"description"   : ""
+	},
+	"optWarningsText" : {
+		"message"       : "执行前询问我：",
+		"description"   : ""
+	},
+	"optWarningsDeleteBookmarkLabel" : {
+		"message"       : "删除书签",
+		"description"   : ""
+	},
+	"optWarningsDeleteBookmarkFolderLabel" : {
+		"message"       : "删除书签文件夹",
+		"description"   : ""
+	},
+	"optWarningsDeleteSiteLabel" : {
+		"message"       : "删除起始页的站点",
+		"description"   : ""
+	},
+	"optWarningsDeleteRssFeedLabel" : {
+		"message"       : "删除 RSS 收取点",
+		"description"   : ""
+	},
+	"optWarningsCloseDomainFolderLabel" : {
+		"message"       : "关闭多个标签页",
+		"description"   : ""
+	},
+
+	"optStartPageButton" : {
+		"message"       : "起始页",
+		"description"   : ""
+	},
+	"optStartPageText" : {
+		"message"       : "起始页设置",
+		"description"   : ""
+	},
+	"optStartPageRowsLabel" : {
+		"message"       : "行",
+		"description"   : ""
+	},
+	"optStartPageColumnsLabel" : {
+		"message"       : "列",
+		"description"   : ""
+	},
+	"optStartPageMarginVLabel" : {
+		"message"       : "垂直间距",
+		"description"   : ""
+	},
+	"optStartPageMarginHLabel" : {
+		"message"       : "水平间距",
+		"description"   : ""
+	},
+	"optStartPagePaddingLabel" : {
+		"message"       : "填充空间",
+		"description"   : ""
+	},
+	"optStartPageSearchEnabledLabel" : {
+		"message"       : "启用搜索",
+		"description"   : ""
+	},
+	"optStartPagewikiSearchLangLabel" : {
+		"message"       : "维基百科搜索语言",
+		"description"   : ""
+	},
+	"optStartPageTranslateFromLabel" : {
+		"message"       : "翻译源语言",
+		"description"   : ""
+	},
+	"optStartPageTranslateToLabel" : {
+		"message"       : "翻译目标语言",
+		"description"   : ""
+	},
+
+
+	"popupFormTextLeftBar" : {
+		"message"       : "左栏:",
+		"description"   : ""
+	},
+	"popupFormTextRightBar" : {
+		"message"       : "右栏:",
+		"description"   : ""
+	},
+	"popupLabelTextIframe" : {
+		"message"       : "框架",
+		"description"   : ""
+	},
+	"popupLabelTextNative" : {
+		"message"       : "原生",
+		"description"   : ""
+	},
+	"popupLabelTextWindow" : {
+		"message"       : "窗口",
+		"description"   : ""
+	},
+	"popupLabelTextDisabled" : {
+		"message"       : "禁用",
+		"description"   : ""
+	},
+	"popupButtonHomeTitle" : {
+		"message"       : "首页",
+		"description"   : ""
+	},
+	"popupButtonOptionsTitle" : {
+		"message"       : "选项",
+		"description"   : ""
+	},
+
+	"notificationRssNewFeedErrorTitle" : {
+		"message"       : "RSS 错误",
+		"description"   : ""
+	},
+	"notificationRssNewFeedErrorText" : {
+		"message"       : "无法找到有效的 RSS 收取点，于 ",
+		"description"   : ""
+	},
+	"notificationRssFeedExistErrorTitle" : {
+		"message"       : "RSS 错误",
+		"description"   : ""
+	},
+	"notificationRssFeedExistErrorText" : {
+		"message"       : "您已订阅，于 ",
+		"description"   : ""
+	},
+
+	"startpagePageTitle" : {
+		"message"       : "起始页",
+		"description"   : ""
+	},
+	"startpageEditButtonTitle" : {
+		"message"       : "编辑站点",
+		"description"   : ""
+	},
+	"startpageAddNewSiteTitle" : {
+		"message"       : "添加新站点",
+		"description"   : ""
+	},
+	"startpageSearchPlaceholder" : {
+		"message"       : "搜索",
+		"description"   : ""
+	},
+	"startpageTranslatePlaceholder" : {
+		"message"       : "翻译",
+		"description"   : ""
+	},
+	"startpageBuyPlaceholder" : {
+		"message"       : "购买",
+		"description"   : ""
+	},
+	"startpageSearchButtonTitle" : {
+		"message"       : "开始",
+		"description"   : ""
+	},
+	"startpageDuckDuckGoLabel" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"startpageGoogleLabel" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"startpageYandexLabel" : {
+		"message"       : "Yandex",
+		"description"   : ""
+	},
+	"startpageBingLabel" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"startpageYahooLabel" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"startpageWikipediaLabel" : {
+		"message"       : "Wikipedia",
+		"description"   : ""
+	},
+	"startpageMdnLabel" : {
+		"message"       : "MDN",
+		"description"   : ""
+	},
+	"startpageStackoverflowLabel" : {
+		"message"       : "stackOverflow",
+		"description"   : ""
+	},
+	"startpageAmazonLabel" : {
+		"message"       : "Amazon",
+		"description"   : ""
+	},
+	"startpageEbayLabel" : {
+		"message"       : "Ebay",
+		"description"   : ""
+	},
+	"startpageAliexpressLabel" : {
+		"message"       : "AliExpress",
+		"description"   : ""
+	},
+	"startpageGoogleTranslateLabel" : {
+		"message"       : "Google 翻译",
+		"description"   : ""
+	},
+	"startpageYandexTranslateLabel" : {
+		"message"       : "Yandex 翻译",
+		"description"   : ""
+	},
+
+
+	"dialogConfirmationTitle" : {
+		"message"       : "需要确认",
+		"description"   : ""
+	},
+	"dialogUserInputTitle" : {
+		"message"       : "需要信息",
+		"description"   : ""
+	},
+
+	"dialogAskAgainWarning" : {
+		"message"       : "总是询问",
+		"description"   : ""
+	},
+	"dialogConfirmButton" : {
+		"message"       : "确认",
+		"description"   : ""
+	},
+	"dialogCancelButton" : {
+		"message"       : "取消",
+		"description"   : ""
+	},
+	"dialogSaveButton" : {
+		"message"       : "保存",
+		"description"   : ""
+	},
+	"dialogDeleteButton" : {
+		"message"       : "删除",
+		"description"   : ""
+	},
+
+	"dialogSiteNewHeader" : {
+		"message"       : "添加新站点",
+		"description"   : ""
+	},
+	"dialogEditSiteHeader" : {
+		"message"       : "编辑站点属性",
+		"description"   : ""
+	},
+	"dialogEditSiteUrlLabel" : {
+		"message"       : "网址:",
+		"description"   : ""
+	},
+	"dialogEditSiteUrlPlaceholder" : {
+		"message"       : "输入站点网址",
+		"description"   : ""
+	},
+	"dialogEditSiteTextLabel" : {
+		"message"       : "文本:",
+		"description"   : ""
+	},
+	"dialogEditSiteColorLabel" : {
+		"message"       : "颜色:",
+		"description"   : ""
+	},
+	"dialogSiteDeleteHeader" : {
+		"message"       : "删除站点",
+		"description"   : ""
+	},
+	"dialogSiteDeleteText" : {
+		"message"       : "删除“$name$”？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogTabsCloseDomainHeader" : {
+		"message"       : "关闭域",
+		"description"   : ""
+	},
+	"dialogTabsCloseDomainAlertText" : {
+		"message"       : "关闭“$name$”域名的所有标签页？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkDeleteHeader" : {
+		"message"       : "删除书签",
+		"description"   : ""
+	},
+	"dialogBookmarkDeleteAlertText" : {
+		"message"       : "确定删除“$name$”？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkFolderDeleteHeader" : {
+		"message"       : "删除文件夹",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderDeleteAlertText" : {
+		"message"       : "确定删除文件夹“$name$”？里面的所有内容都将丢失。",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogRSSNewHeader" : {
+		"message"       : "新 RSS 订阅",
+		"description"   : ""
+	},
+	"dialogRSSNewUrlLabel" : {
+		"message"       : "网址:",
+		"description"   : ""
+	},
+	"dialogRSSNewUrlPlaceholder" : {
+		"message"       : "输入收取点网址",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedHeader" : {
+		"message"       : "编辑 RSS 收取点",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedTitleLabel" : {
+		"message"       : "标题:",
+		"description"   : ""
+	},
+	"dialogRSSEditFeedDescriptionLabel" : {
+		"message"       : "描述:",
+		"description"   : ""
+	},
+	"dialogRSSFeedDeleteHeader" : {
+		"message"       : "删除 RSS 收取点",
+		"description"   : ""
+	},
+	"dialogRSSFeedDeleteAlertText" : {
+		"message"       : "确定删除收取点“$name$”？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDownloadDeleteHeader" : {
+		"message"       : "删除下载历史",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteAlert" : {
+		"message"       : "确定删除“$name$”？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDownloadDeleteFromHistoryLabel" : {
+		"message"       : "删除此下载历史",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteFileLabel" : {
+		"message"       : "删除磁盘上的文件",
+		"description"   : ""
+	},
+
+	"dialogBookmarkRootFolder" : {
+		"message"       : "书签",
+		"description"   : ""
+	},
+	"dialogNewBookmarkHeader" : {
+		"message"       : "新建书签",
+		"description"   : ""
+	},
+	"dialogEditBookmarkHeader" : {
+		"message"       : "编辑书签",
+		"description"   : ""
+	},
+	"dialogEditBookmarkFolderHeader" : {
+		"message"       : "重命名文件夹",
+		"description"   : ""
+	},
+	"dialogBookmarkDefaultTitle" : {
+		"message"       : "新建书签",
+		"description"   : ""
+	},
+	"dialogBookmarkTitleLabel" : {
+		"message"       : "标题:",
+		"description"   : ""
+	},
+	"dialogBookmarkUrlLabel" : {
+		"message"       : "网址:",
+		"description"   : ""
+	},
+	"dialogBookmarkFoldersLabel" : {
+		"message"       : "文件夹:",
+		"description"   : ""
+	},
+
+	"domainsDefault" : {
+		"message"       : "未知",
+		"description"   : ""
+	},
+	"domainsStartPage" : {
+		"message"       : "起始页",
+		"description"   : ""
+	},
+	"domainsSystem" : {
+		"message"       : "系统",
+		"description"   : ""
+	},
+	"domainsExtension" : {
+		"message"       : "扩展",
+		"description"   : ""
+	}
+}
