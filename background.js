@@ -5,7 +5,7 @@
 const firefox     = typeof InstallTrigger !== 'undefined' ? true : false;
 const opera       = window.hasOwnProperty('opr')          ? true : false;
 const brauzer     = firefox ? browser : chrome;
-const version     = brauzer.runtime.getManifest().version;
+const version     = parseInt(brauzer.runtime.getManifest().version.replace(/\./g, ''));
 
 const execMethod  = firefox ?
 (method, callback, options) => {
@@ -192,7 +192,6 @@ const optionsHandler = {
 			init[option](false);
 			send('sidebar', 'options', 'services', {'service': option, 'enabled': false});
 		}
-		brauzer.storage.local.set({'options': options});
 	},
 	sites: (section, option, newValue) => {
 		const oppositeDimension = {
@@ -808,6 +807,10 @@ const fillItem = {
 
 const gettingStorage = res => {
 
+	const resetOptions = 33;
+	const resetFavs    = 0;
+	const resetRss     = 0;
+
 	const starter = _ => {
 		for (let section in options) {
 			optionsShort[section] = {};
@@ -822,12 +825,23 @@ const gettingStorage = res => {
 				data.init[service] = true;
 	};
 
-	if (res.hasOwnProperty('version'))
-		if (res.version === version) {
-			for (let section in options)
-				options[section] = res.options[section];
-			return starter();
+	if (res.hasOwnProperty('version')) {
+		const oldVersion = parseInt(res.version) || 0;
+		if (oldVersion < version) {
+			brauzer.storage.local.set({'version': version});
+			if (resetFavs > oldVersion)
+				brauzer.storage.local.set({'favs': [], 'favsId': []});
+			if (resetRss > oldVersion)
+				brauzer.storage.local.set({'rss': [], 'rssId': [], 'rssFolders': [], 'rssFoldersId': []});
+			if (resetOptions <= oldVersion) {
+				if (res.hasOwnProperty('options'))
+					for (let section in options)
+						for (let option in options[section])
+							options[section][option].value = res.options[section][option];
+				return starter();
+			}
 		}
+	}
 	// set defaults
 	for (let service of ['tabs', 'bookmarks', 'history', 'downloads']) {
 		if (!brauzer.hasOwnProperty(service)) {
@@ -848,10 +862,9 @@ const gettingStorage = res => {
 	const top = topSites => {
 		for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
 			data.speadDial.push(makeSite(i, topSites[i]));
-		brauzer.storage.local.set({'options': options});
-		brauzer.storage.local.set({'speadDial': data.speadDial});
 		brauzer.storage.local.set({'version': version});
-		brauzer.storage.local.set({'favs': [], 'favsId': []});
+		brauzer.storage.local.set({'options': optionsShort});
+		brauzer.storage.local.set({'speadDial': data.speadDial});
 		starter();
 	};
 	execMethod(brauzer.topSites.get, top);
@@ -953,12 +966,12 @@ const init = {
 	favs: _ => {
 		if (data.init.favs)
 			return;
+		data.init.favs = true;
 		const gettingStorage = res => {
 			if (Array.isArray(res.favs)) {
 				data.favs      = res.favs;
 				data.favsId    = res.favsId;
 			}
-			data.init.favs = true;
 			checkForInit();
 		};
 
@@ -2291,11 +2304,12 @@ function makeFav(id, url, favIconUrl, update = false) {
 		favIcon = data.systemIcon;
 	else if (id === 'extension')
 		favIcon = data.defaultIcon;
-	else
+	else {
 		favIcon = updateFav[`${typeof favIconUrl === 'string'}${fav !== false}`]();
+		brauzer.storage.local.set({'favs': data.favs, 'favsId': data.favsId});
+	}
 	if (update)
 		send('sidebar', 'info', 'updateDomain', {'id': id, 'fav': favIcon});
-	brauzer.storage.local.set({'favs': data.favs, 'favsId': data.favsId});
 	return favIcon;
 }
 
@@ -2561,7 +2575,7 @@ function makeSite(index, site) {
 function setOption(section, option, newValue) {
 	options[section][option].value = newValue;
 	optionsShort[section][option]  = newValue;
-	brauzer.storage.local.set({'options': options});
+	brauzer.storage.local.set({'options': optionsShort});
 }
 
 })();
