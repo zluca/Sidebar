@@ -283,7 +283,7 @@ ul {
 	font-family: Arial, Verdana, Helvetica, 'Sans Serif';
 	overflow: hidden;
 	height: auto;
-	padding: .1rem .2rem .1rem 1.4rem;
+	padding: .1rem .2rem .1rem 1.45rem;
 	margin: .2rem;
 	position: relative;
 	background-repeat: no-repeat;
@@ -294,6 +294,9 @@ ul {
 
 .leftBar .item {
 	background-position-x: .2rem;
+}
+.rightBar .item {
+	background-position-x: .1rem;
 }
 .leftBar.fixed .item,
 .leftBar.hover .item {
