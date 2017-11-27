@@ -135,7 +135,10 @@ const data = {
 	},
 	activeWindow    : -1,
 	dialogData      : null,
-	dialogType      : ''
+	dialogType      : '',
+	toSave          : {},
+	saverActive     : false
+
 };
 
 const optionsHandler = {
@@ -656,7 +659,7 @@ const messageHandler = {
 			const folder = getFolderById(message.data.mode, message.data.id);
 			if (folder) {
 				folder.folded = message.data.folded;
-				brauzer.storage.local.set({'data': data});
+				// brauzer.storage.local.set({'data': data});
 				send('sidebar', 'set', 'fold', message.data);
 			}
 		},
@@ -755,24 +758,24 @@ const messageHandler = {
 				site.text  = message.data.text;
 				site.url   = message.data.url;
 				site.color = message.data.color;
-				brauzer.storage.local.set({'speadDial': data.speadDial});
+				saveLater('speadDial');
 				send('startpage', 'site', 'changed', {index: message.data.index, site: site});
 			}
 		},
 		delete : (message, sender, sendResponse) => {
 			makeSite(message.data.index, false);
-			brauzer.storage.local.set({'speadDial': data.speadDial});
+			saveLater('speadDial');
 			send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
 		},
 		create : (message, sender, sendResponse) => {
 			makeSite(message.data.index, message.data);
-			brauzer.storage.local.set({'speadDial': data.speadDial});
+			saveLater('speadDial');
 			send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
 		},
 		move : (message, sender, sendResponse) => {
 			const movedSite = data.speadDial.splice(message.data.from, 1)[0];
 			data.speadDial.splice(message.data.to, 0, movedSite);
-			brauzer.storage.local.set({'speadDial': data.speadDial});
+			saveLater('speadDial');
 			send('startpage', 'site', 'moved', {from: message.data.from, to: message.data.to});
 		}
 	},
@@ -826,13 +829,17 @@ const gettingStorage = res => {
 	};
 
 	if (res.hasOwnProperty('version')) {
+		if (res.hasOwnProperty('data'))
+			brauzer.storage.local.remove('data');
 		const oldVersion = parseInt(res.version) || 0;
-		if (oldVersion < version) {
-			brauzer.storage.local.set({'version': version});
+		if (oldVersion <= version) {
+			saveNow('version');
 			if (resetFavs > oldVersion)
-				brauzer.storage.local.set({'favs': [], 'favsId': []});
-			if (resetRss > oldVersion)
-				brauzer.storage.local.set({'rss': [], 'rssId': [], 'rssFolders': [], 'rssFoldersId': []});
+				saveNow('favs');
+			if (resetRss > oldVersion) {
+				saveNow('rss');
+				saveNow('rssFolders');
+			}
 			if (resetOptions <= oldVersion) {
 				if (res.hasOwnProperty('options'))
 					for (let section in res.options)
@@ -862,9 +869,9 @@ const gettingStorage = res => {
 	const top = topSites => {
 		for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
 			data.speadDial.push(makeSite(i, topSites[i]));
-		brauzer.storage.local.set({'version': version});
-		brauzer.storage.local.set({'options': optionsShort});
-		brauzer.storage.local.set({'speadDial': data.speadDial});
+		saveNow('version');
+		saveNow('options');
+		saveNow('speadDial');
 		starter();
 	};
 	execMethod(brauzer.topSites.get, top);
@@ -1806,14 +1813,14 @@ const init = {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed) {
 						feed.hideReaded = true;
-						brauzer.storage.local.set({'rssFolders': data.rssFolders});
+						saveLater('rssFolders');
 						send('sidebar', 'rss', 'rssHideReaded', {'id': message.data.id});
 					}
 				},
 				rssShowReaded : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
 					feed.hideReaded = false;
-					brauzer.storage.local.set({'rssFolders': data.rssFolders});
+					saveLater('rssFolders');
 					send('sidebar', 'rss', 'rssShowReaded', {'id': message.data.id});
 				},
 				rssNew : (message, sender, sendResponse) => {
@@ -1827,7 +1834,7 @@ const init = {
 					if (feed) {
 						feed.title = message.data.title;
 						feed.description = message.data.description;
-						brauzer.storage.local.set({'rssFolders': data.rssFolders});
+						saveLater('rssFolders');
 						send('sidebar', 'rss', 'rssFeedChanged', {'id': message.data.id, 'title': message.data.title, 'description': message.data.description});
 					}
 				},
@@ -1836,7 +1843,8 @@ const init = {
 					rssSetReaded('feed', feed, 'kill');
 					brauzer.alarms.clear(`rss-update**${message.data.id}`);
 					deleteFolderById('rss', message.data.id);
-					brauzer.storage.local.set({'rss': data.rss, 'rssId': data.rssId, 'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId});
+					saveLater('rss');
+					saveLater('rssFolders');
 					send('sidebar', 'rss', 'rssFeedDeleted', {'id': message.data.id});
 				},
 				readAllFeeds : (message, sender, sendResponse) => {
@@ -1944,7 +1952,7 @@ const init = {
 							send('sidebar', 'rss', 'createdFeed', {'feed': feed});
 						injectRss(xmlDoc, feed);
 						rssSetUpdate(feed, options.misc.rssUpdatePeriod.value);
-						brauzer.storage.local.set({'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId});
+						saveLater('rssFolders');
 					}
 					else
 						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.defaultIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
@@ -1968,7 +1976,7 @@ const init = {
 						feed.lastUpdate = Date.now();
 						injectRss(xmlDoc, feed);
 						rssSetUpdate(feed, options.misc.rssUpdatePeriod.value);
-						brauzer.storage.local.set({'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId});
+						saveLater('rssFolders');
 					}
 					else {
 						feed.lastUpdate = Date.now();
@@ -2046,7 +2054,7 @@ const init = {
 				newItems.sort((a, b) => a.date - b.date);
 				for (let i = 0, l = newItems.length, r = data.rssId.length - 1; i < l; i++)
 					newItems[i].index = r - data.rssId.indexOf(newItems[i].id);
-				brauzer.storage.local.set({'rss': data.rss, 'rssId': data.rssId});
+				saveLater('rss');
 				send('sidebar', 'rss', 'newItems', {'items': newItems});
 				rssSetReaded('info');
 			}
@@ -2069,7 +2077,7 @@ const init = {
 						}
 					}
 					feed.readed = feedReaded;
-					brauzer.storage.local.set({'rss': data.rss});
+					saveLater('rss');
 					send('sidebar', 'rss', 'rssReaded', {'id': target.id, 'feedReaded': feedReaded});
 				},
 				feed    : _ => {
@@ -2093,8 +2101,7 @@ const init = {
 									data.info.rssUnreaded--;
 								}
 							}
-							brauzer.storage.local.set({'rss': data.rss});
-
+							saveLater('rss');
 							send('sidebar', 'rss', 'rssReadedAll', {'id': target.id});
 						}
 					};
@@ -2112,7 +2119,7 @@ const init = {
 					data.info.rssUnreaded = 0;
 					for (let i = data.rss.length - 1; i >= 0; i--)
 						data.rss[i].readed = true;
-					brauzer.storage.local.set({'rss': data.rss});
+					saveLater('rss');
 					send('sidebar', 'rss', 'rssReadedAllFeeds', '');
 				}
 			};
@@ -2136,7 +2143,14 @@ const init = {
 					}
 			initRss();
 			brauzer.alarms.onAlarm.addListener(alarm => {
-				if (/rss-update\*\*/i.test(alarm.name)) {
+				if (alarm.name === 'save-data') {
+					data.saverActive = false;
+					for (let target in data.toSave) {
+						delete data.toSave[target];
+						saveNow(target);
+					}
+				}
+				else if (/rss-update\*\*/i.test(alarm.name)) {
 					const id    = alarm.name.split('**').pop();
 					const feed  = getFolderById('rss', id);
 					if (feed)
@@ -2306,7 +2320,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		favIcon = data.defaultIcon;
 	else {
 		favIcon = updateFav[`${typeof favIconUrl === 'string'}${fav !== false}`]();
-		brauzer.storage.local.set({'favs': data.favs, 'favsId': data.favsId});
+		saveLater('favs');
 	}
 	if (update)
 		send('sidebar', 'info', 'updateDomain', {'id': id, 'fav': favIcon});
@@ -2327,7 +2341,6 @@ function makeDomain(url, fav) {
 	if (id !== '')
 		title = i18n.domains[id];
 	else {
-		// id    = prefix + url.split('//', 2).pop().split('/', 2).shift().replace(/\./g, '');
 		title = domainFromUrl(url, true);
 		id    = title.replace(/\./g, '');
 	}
@@ -2582,7 +2595,29 @@ function makeSite(index, site) {
 function setOption(section, option, newValue) {
 	options[section][option].value = newValue;
 	optionsShort[section][option]  = newValue;
-	brauzer.storage.local.set({'options': optionsShort});
+	saveLater('options');
+}
+
+function saveNow(what) {
+	const dataToSave = {
+		options    : {'options': optionsShort},
+		favs       : {'favs': data.favs, 'favsId': data.favsId},
+		rss        : {'rss': data.rss, 'rssId': data.rssId},
+		rssFolders : {'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId},
+		speadDial  : {'speadDial': data.speadDial},
+		version    : {'version': version}
+	};
+	brauzer.storage.local.set(dataToSave[what]);
+}
+
+function saveLater(what) {
+	if (data.toSave.hasOwnProperty(what))
+		return;
+	data.toSave[what] = true;
+	if (!data.saverActive) {
+		data.saverActive = true;
+		brauzer.alarms.create('save-data', {'delayInMinutes' : 1});
+	}
 }
 
 })();
