@@ -180,7 +180,11 @@ a:visited {
 	padding: 0;
 }
 
-.leftBar #controls .button,
+.leftBar #controls .button {
+	margin-left: .1rem;
+}
+.leftBar.hover #controls .button,
+.leftBar.fixed #controls .button,
 .leftBar .bottom-bar .button {
 	margin-left: .4rem;
 }
@@ -286,6 +290,14 @@ ul {
 	background-size: .9rem .9rem;
 	background-position-y: .1rem;
 	user-select: none;
+}
+
+.leftBar .item {
+	background-position-x: .2rem;
+}
+.leftBar.fixed .item,
+.leftBar.hover .item {
+	background-position-x: 0;
 }
 
 .item:hover,
