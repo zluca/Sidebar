@@ -137,7 +137,8 @@ const data = {
 	dialogData      : null,
 	dialogType      : '',
 	toSave          : {},
-	saverActive     : false
+	saverActive     : false,
+	sendTimer       : {}
 };
 
 const optionsHandler = {
@@ -2241,9 +2242,12 @@ function sideBarData(side) {
 function send(target, subject, action, dataToSend) {
 
 	const sendToSidebar = (target, subject, action, dataToSend) => {
-		if (/tabs|bookmarks|history|downloads|rss/.test(subject))
+		if (/tabs|bookmarks|history|downloads|rss/.test(subject)) {
 			if (subject !== options[target].mode.value)
 				return;
+			if (!data.init[subject])
+				return;
+		}
 
 		const sendByMethod = {
 			native : _ => {
@@ -2251,7 +2255,8 @@ function send(target, subject, action, dataToSend) {
 			},
 			iframe : _ => {
 				if (firefox)
-					sendToTab(data.activeTabId, target, subject, action, dataToSend);
+					if (!tabIsProtected(data.activeTabId))
+						sendToTab(data.activeTabId, target, subject, action, dataToSend);
 				else
 					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
@@ -2281,6 +2286,18 @@ function send(target, subject, action, dataToSend) {
 	};
 
 	sendTo[target]();
+}
+
+function sendLater(what) {
+	const sendData = {
+		favs : _ => {
+			send('sidebar', 'info', 'updateDomain', data.favs);
+			delete data.sendTimer.favs;
+		}
+	};
+
+	if (!data.sendTimer.hasOwnProperty(what))
+		data.sendTimer[what] = setTimeout(sendData.favs, 5000);
 }
 
 function sendToTab(tabId, target, subject, action, dataToSend) {
@@ -2340,7 +2357,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		saveLater('favs');
 	}
 	if (update)
-		send('sidebar', 'info', 'updateDomain', {'id': id, 'fav': favIcon});
+		sendLater('favs');
 	return favIcon;
 }
 

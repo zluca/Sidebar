@@ -213,8 +213,7 @@ const messageHandler = {
 			setDomainStyle.update([data.domain]);
 		},
 		updateDomain   : data => {
-			if (data.hasOwnProperty('fav'))
-				setDomainStyle.update([data]);
+			setDomainStyle.update(data);
 		},
 		downloadStatus : data => {
 			setDownloadStatus[data]();
