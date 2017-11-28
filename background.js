@@ -138,7 +138,6 @@ const data = {
 	dialogType      : '',
 	toSave          : {},
 	saverActive     : false
-
 };
 
 const optionsHandler = {
@@ -828,11 +827,40 @@ const gettingStorage = res => {
 				data.init[service] = true;
 	};
 
+	const setDefaults = _ => {
+		for (let service of ['tabs', 'bookmarks', 'history', 'downloads']) {
+			if (!brauzer.hasOwnProperty(service)) {
+				options.services[service].value  = false;
+				options.services[service].hidden = true;
+			}
+		}
+
+		options.startpage.translateFrom.value  = brauzer.i18n.getUILanguage().split('-')[0];
+		options.startpage.wikiSearchLang.value = brauzer.i18n.getUILanguage().split('-')[0];
+		if (sidebarAction) {
+			options.leftBar.method.values.push('native');
+			if (firefox)
+				options.rightBar.method.values.push('native');
+		}
+		options.startpage.rows.value    = Math.ceil(window.screen.height / 400);
+		options.startpage.columns.value = Math.ceil(window.screen.width  / 400);
+		options.theme.fontSize.value    = Math.ceil(window.screen.height / 60);
+		const top = topSites => {
+			for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
+				data.speadDial.push(makeSite(i, topSites[i]));
+			saveNow('version');
+			saveNow('options');
+			saveNow('speadDial');
+			starter();
+		};
+		execMethod(brauzer.topSites.get, top);
+	};
+
 	if (res.hasOwnProperty('version')) {
 		if (res.hasOwnProperty('data'))
 			brauzer.storage.local.remove('data');
 		const oldVersion = parseInt(res.version) || 0;
-		if (oldVersion <= version) {
+		if (oldVersion < version) {
 			saveNow('version');
 			if (resetFavs > oldVersion)
 				saveNow('favs');
@@ -840,41 +868,18 @@ const gettingStorage = res => {
 				saveNow('rss');
 				saveNow('rssFolders');
 			}
-			if (resetOptions <= oldVersion) {
-				if (res.hasOwnProperty('options'))
-					for (let section in res.options)
-						for (let option in res.options[section])
-							options[section][option].value = res.options[section][option];
-				return starter();
-			}
+			if (resetOptions > oldVersion)
+				return setDefaults();
+		}
+		if (res.hasOwnProperty('options')) {
+			for (let section in res.options)
+				for (let option in res.options[section])
+					options[section][option].value = res.options[section][option];
+			starter();
 		}
 	}
-	// set defaults
-	for (let service of ['tabs', 'bookmarks', 'history', 'downloads']) {
-		if (!brauzer.hasOwnProperty(service)) {
-			options.services[service].value  = false;
-			options.services[service].hidden = true;
-		}
-	}
-
-	options.startpage.translateFrom.value  = brauzer.i18n.getUILanguage().split('-')[0];
-	options.startpage.wikiSearchLang.value = brauzer.i18n.getUILanguage().split('-')[0];
-	if (sidebarAction) {
-		options.leftBar.method.values.push('native');
-		if (firefox)
-			options.rightBar.method.values.push('native');
-	}
-	options.startpage.rows.value    = Math.ceil(window.screen.height / 400);
-	options.startpage.columns.value = Math.ceil(window.screen.width  / 400);
-	const top = topSites => {
-		for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
-			data.speadDial.push(makeSite(i, topSites[i]));
-		saveNow('version');
-		saveNow('options');
-		saveNow('speadDial');
-		starter();
-	};
-	execMethod(brauzer.topSites.get, top);
+	else
+		setDefaults();
 };
 
 if (sidebarAction !== null) {
@@ -2595,7 +2600,7 @@ function makeSite(index, site) {
 function setOption(section, option, newValue) {
 	options[section][option].value = newValue;
 	optionsShort[section][option]  = newValue;
-	saveLater('options');
+	saveNow('options');
 }
 
 function saveNow(what) {
