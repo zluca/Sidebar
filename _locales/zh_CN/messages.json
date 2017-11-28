@@ -367,6 +367,10 @@
 		"message"       : "起始页设置",
 		"description"   : ""
 	},
+	"optStartPageEmptyLabel" : {
+		"message"       : "Empty startpage",
+		"description"   : ""
+	},
 	"optStartPageRowsLabel" : {
 		"message"       : "行",
 		"description"   : ""

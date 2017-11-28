@@ -367,6 +367,10 @@
 		"message"       : "Start Page settings",
 		"description"   : ""
 	},
+	"optStartPageEmptyLabel" : {
+		"message"       : "Empty startpage",
+		"description"   : ""
+	},
 	"optStartPageRowsLabel" : {
 		"message"       : "Rows",
 		"description"   : ""

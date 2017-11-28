@@ -141,7 +141,7 @@ const data = {
 };
 
 const optionsHandler = {
-	method : (section, option, newValue) => {
+	method  : (section, option, newValue) => {
 		const oldValueHandler = {
 			iframe   : _ => {
 				send('content', 'iframe', 'remove', {'side': section});
@@ -168,11 +168,11 @@ const optionsHandler = {
 		setOption(section, 'method', newValue);
 		setIcon();
 	},
-	mode : (section, option, newValue) => {
+	mode    : (section, option, newValue) => {
 		setOption(section, 'mode', newValue);
 		send(section, 'options', 'mode', {value: newValue, data: modeData[newValue]()});
 	},
-	service: (section, option, newValue) => {
+	service : (section, option, newValue) => {
 		if (newValue) {
 			init[option](true);
 			send('sidebar', 'options', 'services', {'service': option, 'enabled': true});
@@ -195,7 +195,7 @@ const optionsHandler = {
 			send('sidebar', 'options', 'services', {'service': option, 'enabled': false});
 		}
 	},
-	sites: (section, option, newValue) => {
+	sites   : (section, option, newValue) => {
 		const oppositeDimension = {
 			rows    : 'columns',
 			columns : 'rows'
@@ -209,12 +209,18 @@ const optionsHandler = {
 		else
 			send('startpage', 'site', 'remove', '');
 	},
-	view: (section, option, newValue) => {
+	view    : (section, option, newValue) => {
 		const mode = option.replace('Mode', '');
 		if (options.leftBar.mode.value === mode)
 			send('leftBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
 		if (options.rightBar.mode.value === mode)
 			send('rightBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
+	},
+	empty   : (section, option, newValue) => {
+		for (let i = data.tabs.length - 1; i >= 0; i--) {
+			if (data.tabs[i].url === data.defaultStartPage)
+				brauzer.tabs.reload(data.tabs[i].id);
+		}
 	}
 };
 
@@ -454,6 +460,12 @@ const options = {
 		}
 	},
 	startpage: {
+		empty          : {
+			value   : false,
+			type    : 'boolean',
+			targets : [],
+			handler : 'empty'
+		},
 		rows           : {
 			value   : 3,
 			type    : 'integer',

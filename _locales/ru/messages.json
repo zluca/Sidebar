@@ -363,6 +363,10 @@
 		"message"       : "Настройки стартовой страницы",
 		"description"   : ""
 	},
+	"optStartPageEmptyLabel" : {
+		"message"       : "Пустая стартовая страница",
+		"description"   : ""
+	},
 	"optStartPageRowsLabel" : {
 		"message"       : "Строки",
 		"description"   : ""

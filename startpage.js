@@ -19,6 +19,8 @@ function init() {
 
 		document.title = response.i18n.pageTitle;
 
+		if (response.startpage.empty) return;
+
 		const status = {
 			theme               : response.theme,
 			options             : response.startpage,
