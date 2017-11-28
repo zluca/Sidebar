@@ -2260,10 +2260,8 @@ function send(target, subject, action, dataToSend) {
 				brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
 			iframe : _ => {
-				if (firefox) {
-					if (!tabIsProtected(data.activeTabId))
-						sendToTab(data.activeTabId, target, subject, action, dataToSend);
-				}
+				if (firefox)
+					sendToTab(data.activeTabId, target, subject, action, dataToSend);
 				else
 					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
@@ -2308,7 +2306,10 @@ function sendLater(what) {
 }
 
 function sendToTab(tabId, target, subject, action, dataToSend) {
-	brauzer.tabs.sendMessage(tabId, {'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
+	const tab = getById('tabs', tabId);
+	if (tab)
+		if (!tabIsProtected(tab))
+			brauzer.tabs.sendMessage(tabId, {'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 }
 
 function getI18n(message) {
@@ -2397,7 +2398,8 @@ function createDialogWindow(type, dialogData) {
 	data.dialogData = dialogData;
 	data.dialogType = type;
 	const activeTab = getById('tabs', data.activeTabId);
-	if (!activeTab) return;
+	if (!activeTab)
+		return;
 	if (!tabIsProtected(activeTab))
 		sendToTab(data.activeTabId, 'content', 'dialog', 'create', type);
 	else
@@ -2405,10 +2407,11 @@ function createDialogWindow(type, dialogData) {
 }
 
 function tabIsProtected(tab) {
-	if (!/^https?:|^ftp:|^file:|^chrome:\/\/newtab|^chrome:\/\/startpage/.test(tab.url))
-		if (tab.url !== data.defaultStartPage)
-			return true;
-	return false;
+	if (/^https?:|^ftp:|^file:|^chrome:\/\/newtab|^chrome:\/\/startpage/.test(tab.url))
+		return false;
+	if (tab.url === data.defaultStartPage)
+		return false;
+	return true;
 }
 
 function createSidebarWindow(side) {
