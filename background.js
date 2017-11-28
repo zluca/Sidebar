@@ -1842,7 +1842,7 @@ const init = {
 					send('sidebar', 'rss', 'rssShowReaded', {'id': message.data.id});
 				},
 				rssNew : (message, sender, sendResponse) => {
-					createRssFeed(message.data.url);
+					createRssFeed(message.data.url, message.data.title);
 				},
 				rssDeleteItem : (message, sender, sendResponse) => {
 					deleteRssItem(message.data.id);
@@ -1931,7 +1931,7 @@ const init = {
 			return domain;
 		};
 
-		const createRssFeed = url => {
+		const createRssFeed = (url, title = '') => {
 			const rssUrl = urlFromUser(url);
 			for (let i = data.rssFolders.length - 1; i >= 0; i--)
 				if (data.rssFolders[i].url === rssUrl)
@@ -1946,8 +1946,13 @@ const init = {
 						const parser     = new DOMParser();
 						const xmlDoc     = parser.parseFromString(xhttp.responseText, 'text/xml');
 						const head       = xmlDoc.querySelector('channel, feed');
-						let title        = head.querySelector('title');
-						if (title) title = title.textContent.trim();
+						let rssTitle     = '';
+						if (title)
+							rssTitle = title;
+						else {
+							rssTitle = head.querySelector('title');
+							rssTitle = rssTitle.textContent.trim();
+						}
 						let desc         = head.querySelector('description, subtitle');
 						if (desc) desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
@@ -1956,7 +1961,7 @@ const init = {
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;
 						feed.pid         = 0;
-						feed.title       = title;
+						feed.title       = rssTitle;
 						feed.view        = 'domain';
 						feed.description = desc;
 						feed.domain      = makeRssDomain(rssUrl, fav).id;
@@ -2242,6 +2247,7 @@ function sideBarData(side) {
 function send(target, subject, action, dataToSend) {
 
 	const sendToSidebar = (target, subject, action, dataToSend) => {
+
 		if (/tabs|bookmarks|history|downloads|rss/.test(subject)) {
 			if (subject !== options[target].mode.value)
 				return;

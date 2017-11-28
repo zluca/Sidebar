@@ -651,6 +651,14 @@
 		"message"       : "新 RSS 订阅",
 		"description"   : ""
 	},
+	"dialogRSSNewTitleLabel" : {
+		"message"       : "Title:",
+		"description"   : ""
+	},
+	"dialogRSSNewTitlePlaceholder" : {
+		"message"       : "Feed title (optional)",
+		"description"   : ""
+	},
 	"dialogRSSNewUrlLabel" : {
 		"message"       : "网址:",
 		"description"   : ""

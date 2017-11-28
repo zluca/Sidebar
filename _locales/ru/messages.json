@@ -647,12 +647,20 @@
 		"message"       : "Новая RSS подписка",
 		"description"   : ""
 	},
+	"dialogRSSNewTitleLabel" : {
+		"message"       : "Имя:",
+		"description"   : ""
+	},
+	"dialogRSSNewTitlePlaceholder" : {
+		"message"       : "Имя фида (не обязательно)",
+		"description"   : ""
+	},
 	"dialogRSSNewUrlLabel" : {
 		"message"       : "Адрес:",
 		"description"   : ""
 	},
 	"dialogRSSNewUrlPlaceholder" : {
-		"message"       : "Введите адрес сюда",
+		"message"       : "Введите адрес",
 		"description"   : ""
 	},
 	"dialogRSSEditFeedHeader" : {

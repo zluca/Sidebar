@@ -390,13 +390,14 @@ function makeDialogWindow(data, warnings, colors) {
 
 			header.textContent = getI18n('dialogRSSNewHeader');
 
-			const inputUrl = addInputRow(getI18n('dialogRSSNewUrlLabel'), 'text', data ? data : '', getI18n('dialogRSSNewUrlPlaceholder'));
+			const inputTitle = addInputRow(getI18n('dialogRSSNewTitleLabel'), 'text', data.title ? data.title : '', getI18n('dialogRSSNewTitlePlaceholder'));
+			const inputUrl = addInputRow(getI18n('dialogRSSNewUrlLabel'), 'text', data.url ? data.url : '', getI18n('dialogRSSNewUrlPlaceholder'));
 
 			addButton('save', _ => {
 				if (optionsChanged || data) {
 					const url = inputUrl.value;
 					if (url)
-						send('background', 'rss', 'rssNew', {'url': url});
+						send('background', 'rss', 'rssNew', {'url': url, 'title': inputTitle.value});
 				}
 				removeDialogWindow();
 			});

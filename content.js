@@ -138,13 +138,16 @@ const messageHandler = {
 			dialog = null;
 		},
 		checkRss    : data => {
-			let rssUrl = '';
+			let rssUrl    = '';
+			let rssTitle  = '';
 			const rssLink = document.querySelector('link[type="application/rss+xml"]');
-			if (rssLink)
-				rssUrl = rssLink.href;
+			if (rssLink) {
+				rssUrl   = rssLink.href;
+				rssTitle = document.title;
+			}
 			else if (/\?xml/.test(doc.outerHTML.substring(0, 1000)))
-				rssUrl = document.location.href;
-			send('background', 'dialog', 'rssUrlConfirmed', rssUrl);
+				rssUrl   = document.location.href;
+			send('background', 'dialog', 'rssUrlConfirmed', {'url': rssUrl, 'title': rssTitle});
 		}
 	}
 };

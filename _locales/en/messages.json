@@ -651,6 +651,14 @@
 		"message"       : "New RSS subscription",
 		"description"   : ""
 	},
+	"dialogRSSNewTitleLabel" : {
+		"message"       : "Title:",
+		"description"   : ""
+	},
+	"dialogRSSNewTitlePlaceholder" : {
+		"message"       : "Feed title (optional)",
+		"description"   : ""
+	},
 	"dialogRSSNewUrlLabel" : {
 		"message"       : "Url:",
 		"description"   : ""
