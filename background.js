@@ -2260,9 +2260,10 @@ function send(target, subject, action, dataToSend) {
 				brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
 			iframe : _ => {
-				if (firefox)
+				if (firefox) {
 					if (!tabIsProtected(data.activeTabId))
 						sendToTab(data.activeTabId, target, subject, action, dataToSend);
+				}
 				else
 					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
