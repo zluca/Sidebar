@@ -63,7 +63,6 @@ function init() {
 
 			const addSearchEngine = engine => {
 				const element       = document.createElement('span');
-				// element.id          = engine.replace(/\s/, '').toLowerCase();
 				element.id          = engine.toLowerCase();
 				element.textContent = response.i18n[`searchEngine${engine}`];
 				element.classList.add('search-engine');
@@ -142,11 +141,21 @@ function init() {
 				event.stopPropagation();
 				const target = event.target;
 				if (searchSelect.classList.contains('show-selection')) {
-					if (target.classList.contains('search-engine'))
-						send('background', 'options', 'handler', {section: 'startpage', option: 'searchEngine', value : target.id});
+					if (target.classList.contains('search-engine')) {
+						send('background', 'options', 'handler', {section: 'startpage', option: 'searchEngine', value: target.id});
+						cancelSelection();
+					}
 				}
 				else {
 					searchSelect.classList.add('show-selection');
+					const bodyHeight   = document.body.getClientRects()[0].height;
+					const searchHeight = searchSelect.getClientRects()[0].height;
+					const searchTop    = searchSelect.getClientRects()[0].top;
+					const maxHeight    = bodyHeight - searchTop - 10;
+					if (maxHeight < searchHeight) {
+						searchSelect.style.setProperty('max-height', `${maxHeight}px`);
+						searchSelect.style.setProperty('overflow-y', 'scroll');
+					}
 					document.body.addEventListener('click', cancelSelection);
 				}
 			});
@@ -220,10 +229,11 @@ function init() {
 			status.initDone = true;
 		};
 
-		const cancelSelection = event => {
-			event.stopPropagation();
+		const cancelSelection = _ => {
 			document.body.removeEventListener('click', cancelSelection);
 			searchSelect.classList.remove('show-selection');
+			searchSelect.style.removeProperty('overflow-y');
+			searchSelect.style.removeProperty('max-height');
 		};
 
 		const insertSite = (index, newSite) => {
