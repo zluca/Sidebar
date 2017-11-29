@@ -99,14 +99,14 @@ const messageHandler = {
 				else
 					deleteIframe(side);
 			if (data.options.fixed !== status[side].fixed)
-				setSideBarFixed(side, data.fixed);
+				setSideBarFixed(side, data.options.fixed);
 			if (data.options.wide !== status[side].wide)
-				setSideBarWideMode(side, data.wide);
+				setSideBarWideMode(side, data.options.wide);
 			if (data.options.width !== status[side].width)
-				setSideBarWidth(side, data.width);
+				setSideBarWidth(side, data.options.width);
 			if (status.fontSize !== data.theme.fontSize) {
 				status.fontSize = data.theme.fontSize;
-				setSideBarWidth(side, data.width);
+				setSideBarWidth(side);
 			}
 			if (status.borderColor !== data.theme.borderColor[0]) {
 				status.borderColor = data.theme.borderColor[0];
