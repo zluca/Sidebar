@@ -95,10 +95,12 @@ input.text {
 	margin: 0;
 	border-color: transparent;
 }
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+input[type="number"] {
+	width: 5rem;
+	height: 1.6rem;
+	padding: 0;
+	margin: 0;
+	border-color: transparent;
 }
 input {
 	justify-self: right;
