@@ -1417,6 +1417,7 @@ const init = {
 				setOption('misc', 'bookmarksMode', 'plain');
 				for (let i = 0, l = bookmarks.length; i < l; i++)
 					createById('bookmarks', bookmarks[i], 'last');
+				return initBookmarks();
 			}
 		};
 
