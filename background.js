@@ -222,6 +222,10 @@ const optionsHandler = {
 			if (data.tabs[i].url === data.defaultStartPage)
 				brauzer.tabs.reload(data.tabs[i].id);
 		}
+	},
+	restartBookmarks : (section, option, newValue) => {
+		init.bookmarks(false);
+		init.bookmarks(true);
 	}
 };
 
@@ -425,6 +429,13 @@ const options = {
 			range   : [10, 999],
 			targets : ['sidebar']
 		},
+		limitBookmarks     : {
+			value   : 999,
+			type    : 'integer',
+			range   : [99, 9999],
+			targets : [],
+			handler : 'restartBookmarks'
+		},
 		maxSavedRssPerFeed : {
 			value   : 99,
 			type    : 'integer',
@@ -457,6 +468,13 @@ const options = {
 			values  : ['plain', 'domain'],
 			targets : [],
 			handler : 'view',
+			hidden  : true
+		},
+		bookmarksMode      : {
+			value   : 'tree',
+			type    : 'select',
+			values  : ['plain', 'tree'],
+			targets : [],
 			hidden  : true
 		}
 	},
@@ -1315,7 +1333,9 @@ const init = {
 				search : (message, sender, sendResponse) => {
 					const onFulfilled = bookmarkItems => {
 						const result = [];
-						for (let i = 0, l = bookmarkItems.length; i < l; i++)
+						const l      = bookmarkItems.length < options.misc.limitBookmarks.value ?
+							bookmarkItems.length : options.misc.limitBookmarks.value;
+						for (let i = 0; i < l; i++)
 							result.push({
 								url      : bookmarkItems[i].url,
 								title    : bookmarkItems[i].title,
@@ -1388,10 +1408,26 @@ const init = {
 					detector(folder.children[i]);
 		};
 
+		const getRecent = (bookmarks) => {
+			if (bookmarks.length < options.misc.limitBookmarks.value) {
+				setOption('misc', 'bookmarksMode', 'tree');
+				execMethod(brauzer.bookmarks.getTree, parseTree);
+			}
+			else {
+				setOption('misc', 'bookmarksMode', 'plain');
+				for (let i = 0, l = bookmarks.length; i < l; i++)
+					createById('bookmarks', bookmarks[i], 'last');
+			}
+		};
+
 		const onCreated     = (id, bookmark) => {
-			if (bookmark.url)
-				send('sidebar', 'bookmarks', 'createdBookmark', {'item': createById('bookmarks', bookmark, 'last')});
-			else
+			if (bookmark.hasOwnProperty('url'))
+				if (firefox) {
+					if (bookmark.url !== undefined)
+						return send('sidebar', 'bookmarks', 'createdBookmark', {'item': createById('bookmarks', bookmark, 'last')});
+				}
+				else
+					return send('sidebar', 'bookmarks', 'createdBookmark', {'item': createById('bookmarks', bookmark, 'last')});
 				send('sidebar', 'bookmarks', 'createdFolder', {'item': makeFolder(bookmark)});
 		};
 
@@ -1443,7 +1479,7 @@ const init = {
 				return newItem;
 			};
 
-			execMethod(brauzer.bookmarks.getTree, parseTree);
+			execMethod(brauzer.bookmarks.getRecent, getRecent, options.misc.limitBookmarks.value);
 		}
 		else {
 			i18n.bookmarks           = {};

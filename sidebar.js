@@ -541,18 +541,26 @@ const initBlock = {
 		});
 
 		const insertBookmarks = (items, method = 'last') => {
-			let parent = rootFolder;
-			let pid = 0;
-			const append = {
+			let parent     = rootFolder;
+			let pid        = 0;
+
+			const checkPid = status.misc.bookmarksMode === 'tree' ?
+				item => {
+					if (item.pid !== pid) {
+						pid = item.pid;
+						parent = getFolderById('bookmarks', pid);
+					}
+				} :
+				item => {};
+
+			const append   = {
 				last   : bookmark => parent.appendChild(bookmark),
 				search : bookmark => bookmarksSearchResults.appendChild(bookmark),
 				index  : bookmark => addBook(bookmark, parent, bookmark.index)
 			};
+
 			for (let i = 0, l = items.length; i < l; i++) {
-				if (items[i].pid !== pid) {
-					pid = items[i].pid;
-					parent = getFolderById('bookmarks', pid);
-				}
+				checkPid(items[i]);
 				const bookmark = createById('bookmarks', items[i].id);
 				bookmark.classList.add('bookmark', 'item', `domain-${items[i].domain}`);
 				bookmark.title = items[i].url;
@@ -587,8 +595,12 @@ const initBlock = {
 			bookmark.textContent = info.title;
 		};
 
-		insertFolders(data.bookmarksFolders, 'bookmarks');
-		insertBookmarks(data.bookmarks, 'index');
+		if (status.misc.bookmarksMode === 'tree') {
+			insertFolders(data.bookmarksFolders, 'bookmarks');
+			insertBookmarks(data.bookmarks, 'index');
+		}
+		else
+			insertBookmarks(data.bookmarks, 'last');
 	},
 
 	history : data => {
