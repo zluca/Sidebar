@@ -50,7 +50,8 @@
 	"browser_action": {
 		"default_icon"  : "icons/default-64.png",
 		"default_title" : "__MSG_extTitle__",
-		"default_popup" : "popup.html"
+		"default_popup" : "popup.html",
+		"browser_style" : true
 	},
 	"options_ui": {
 		"page"          : "options.html#services",
