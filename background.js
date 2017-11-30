@@ -911,7 +911,9 @@ const gettingStorage = res => {
 		if (res.hasOwnProperty('options')) {
 			for (let section in res.options)
 				for (let option in res.options[section])
-					options[section][option].value = res.options[section][option];
+					if (options.hasOwnProperty(section))
+						if (options[section].hasOwnProperty(option))
+							options[section][option].value = res.options[section][option];
 			starter();
 		}
 	}
@@ -983,7 +985,7 @@ function initWindow() {
 function checkForInit() {
 	if (data.initDone) return;
 	for (let serviceInitialized in data.init)
-		if (!serviceInitialized) return;
+		if (!data.init[serviceInitialized]) return;
 	data.initDone = true;
 	brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
 		// console.log(message);
@@ -1273,8 +1275,11 @@ const init = {
 		};
 
 		const getTabs           = tabs => {
-			for (let i = 0, l = tabs.length; i < l; i++)
+			for (let i = 0, l = tabs.length; i < l; i++) {
 				createTab(tabs[i], true);
+				if (tabs[i].active)
+					data.activeTabId = tabs[i].id;
+			}
 			initTabs();
 		};
 
