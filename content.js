@@ -169,7 +169,7 @@ function checkDocument() {
 function setStatus() {
 	send('background', 'request', 'status', {needResponse: true}, response => {
 		if (!response)
-			return setTimeout(setStatus, 200);
+			return setTimeout(setStatus, 400);
 		status.leftBar           = response.leftBar;
 		status.rightBar          = response.rightBar;
 		status.fontSize          = response.fontSize;

@@ -15,7 +15,7 @@ init();
 function init() {
 	send('background', 'request', 'startpage', {needResponse: true}, response => {
 
-		if (!response) return setTimeout(init, 200);
+		if (!response) return setTimeout(init, 400);
 
 		document.title = response.i18n.pageTitle;
 
