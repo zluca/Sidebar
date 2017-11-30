@@ -3,11 +3,15 @@
 'use strict';
 
 const firefox = (typeof InstallTrigger !== 'undefined') ? true : false;
+const opera   = window.hasOwnProperty('opr')            ? true : false;
 const brauzer = firefox ? browser : chrome;
 
 brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: 'popup', data: {needResponse: true}}, response => {
 
-	// console.log(response);
+	const status = {
+		leftBar  : response.leftBar.value,
+		rightBar : response.rightBar.value
+	};
 
 	const getI18n = (message, subs) => {
 		return brauzer.i18n.getMessage(message, subs);
@@ -21,10 +25,19 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 		const label          = document.createElement('label');
 		label.textContent    = getI18n(`popupLabelText${method}`);
 		input.checked        = (response[side].value === method);
-		if (response[side].value === 'native' || method === 'native') {
-			input.disabled   = true;
-			label.classList.add('disabled');
-		}
+		if (response[side].values.indexOf('native') !== -1)
+			if (response[side].value === 'native') {
+				if (opera)
+					if (method !== 'native') {
+						input.disabled = true;
+						label.classList.add('disabled');
+					}
+			}
+			else if (response.status.nativeSbPosition.value !== side)
+				if (method === 'native') {
+					input.disabled = true;
+					label.classList.add('disabled');
+				}
 		form.appendChild(input);
 		form.appendChild(label);
 	};
@@ -58,12 +71,22 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 
 	container.addEventListener('click', event => {
 		event.stopPropagation();
-		if (/label/i.test(event.target.nodeName))
+		if (event.target.nodeName === 'LABEL')
 			event.target.previousElementSibling.click();
 	});
 	container.addEventListener('change', event => {
 		event.stopPropagation();
-		brauzer.runtime.sendMessage({target: 'background', subject: 'options', action: 'handler', data: {section: event.target.name, option: 'method', value: event.target.dataset.method}});
+		const target    = event.target;
+		const section   = target.name;
+		const value     = target.dataset.method;
+		if (firefox) {
+			if (status[section] === 'native' && value !== 'native')
+				brauzer.sidebarAction.close();
+			else if (status[section] !== 'native' && value === 'native')
+				brauzer.sidebarAction.open();
+			status[section] = value;
+		}
+		brauzer.runtime.sendMessage({target: 'background', subject: 'options', action: 'handler', data: {'section': section, 'option': 'method', 'value': value}});
 	});
 	options.addEventListener('click', event => {
 		event.stopPropagation();

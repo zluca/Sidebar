@@ -544,6 +544,12 @@ const options = {
 			type    : 'text',
 			targets : ['startpage']
 		}
+	},
+	status: {
+		hidden : {},
+		nativeSbPosition: {
+			value: 'leftBar'
+		}
 	}
 };
 
@@ -663,7 +669,7 @@ const messageHandler = {
 			sendResponse(options);
 		},
 		popup : (message, sender, sendResponse) => {
-			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method});
+			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method, 'status': options.status});
 		},
 		dialog : (message, sender, sendResponse) => {
 			sendResponse({data: data.dialogData, warnings: optionsShort.warnings, theme: optionsShort.theme});
@@ -845,6 +851,11 @@ const gettingStorage = res => {
 	const resetRss     = 0;
 
 	const starter = _ => {
+		if (sidebarAction !== null) {
+			options.leftBar.method.values.push('native');
+			if (firefox)
+				options.rightBar.method.values.push('native');
+		}
 		for (let section in options) {
 			optionsShort[section] = {};
 			for (let option in options[section])
@@ -868,14 +879,9 @@ const gettingStorage = res => {
 
 		options.startpage.translateFrom.value  = brauzer.i18n.getUILanguage().split('-')[0];
 		options.startpage.wikiSearchLang.value = brauzer.i18n.getUILanguage().split('-')[0];
-		if (sidebarAction) {
-			options.leftBar.method.values.push('native');
-			if (firefox)
-				options.rightBar.method.values.push('native');
-		}
-		options.startpage.rows.value    = Math.ceil(window.screen.height / 400);
-		options.startpage.columns.value = Math.ceil(window.screen.width  / 400);
-		options.theme.fontSize.value    = Math.ceil(window.screen.height / 60);
+		options.startpage.rows.value           = Math.ceil(window.screen.height / 400);
+		options.startpage.columns.value        = Math.ceil(window.screen.width  / 400);
+		options.theme.fontSize.value           = Math.ceil(window.screen.height / 60);
 		const top = topSites => {
 			for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
 				data.speadDial.push(makeSite(i, topSites[i]));
@@ -944,6 +950,7 @@ if (sidebarAction !== null) {
 							leftBar  : 'rightBar',
 							rightBar : 'leftBar'
 						};
+						setOption('status', 'nativeSbPosition', side);
 						optionsHandler.method(side, 'method', 'native');
 						optionsHandler.mode(side, 'mode', options[oppositeSide[side]].mode.value);
 						if (options[oppositeSide[side]].method.value === 'native')
