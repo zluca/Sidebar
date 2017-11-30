@@ -98,16 +98,20 @@ function makeDialogWindow(data, warnings, colors) {
 		return select;
 	};
 
-	const addWarning = (labelText, inputValue) => {
-		const input = document.createElement('input');
-		input.type = 'checkbox';
-		input.checked = inputValue;
+	const addWarning = option => {
+		const input       = document.createElement('input');
+		input.type        = 'checkbox';
+		input.checked     = warnings[option];
+		input.addEventListener('click', event => {
+			event.stopPropagation();
+			send('background', 'options', 'handler', {'section': 'warnings', 'option': option, 'value': input.checked});
+		});
 		warning.appendChild(input);
-		const label = document.createElement('label');
-		label.textContent = labelText;
+		const label       = document.createElement('label');
+		label.textContent = getI18n('dialogAskAgainWarning');
 		label.addEventListener('click', event => {
 			event.stopPropagation();
-			event.target.previousElementSibling.click();
+			label.previousElementSibling.click();
 		});
 		warning.appendChild(label);
 		return input;
@@ -288,7 +292,7 @@ function makeDialogWindow(data, warnings, colors) {
 
 			addAlert(getI18n('dialogSiteDeleteText', data.title));
 
-			const warningCheckbox = addWarning(getI18n('dialogAskAgainWarning'), true);
+			const warningCheckbox = addWarning('deleteSite');
 			addButton('confirm', _ => {
 				send('background', 'site', 'delete', {'index': data.index});
 				if (!warningCheckbox.checked)
@@ -304,7 +308,7 @@ function makeDialogWindow(data, warnings, colors) {
 
 			addAlert(getI18n('dialogTabsCloseDomainAlertText', [data.title]));
 
-			const warningCheckbox = addWarning(getI18n('dialogAskAgainWarning'), true);
+			const warningCheckbox = addWarning('closeDomainFolder');
 			addButton('confirm', _ => {
 				send('background', 'tabs', 'removeByDomain', {'id': data.id});
 				if (!warningCheckbox.checked)
@@ -320,7 +324,7 @@ function makeDialogWindow(data, warnings, colors) {
 
 			addAlert(getI18n('dialogBookmarkDeleteAlertText', [data.title]));
 
-			const warningCheckbox = addWarning(getI18n('dialogAskAgainWarning'), true);
+			const warningCheckbox = addWarning('deleteBookmark');
 			addButton('confirm', _ => {
 				send('background', 'bookmarks', 'deleteItem', {'id': data.id});
 				if (!warningCheckbox.checked)
@@ -336,7 +340,7 @@ function makeDialogWindow(data, warnings, colors) {
 
 			addAlert(getI18n('dialogBookmarkFolderDeleteAlertText', [data.title]));
 
-			const warningCheckbox = addWarning(getI18n('dialogAskAgainWarning'), true);
+			const warningCheckbox = addWarning('deleteBookmarkFolder');
 			addButton('confirm', _ => {
 				send('background', 'bookmarks', 'deleteFolder', {'id': data.id});
 				removeDialogWindow();
@@ -437,23 +441,9 @@ function makeDialogWindow(data, warnings, colors) {
 
 			addAlert(getI18n('dialogRSSFeedDeleteAlertText', [data.title]));
 
-			const warningCheckbox = addWarning(getI18n('dialogAskAgainWarning'), true);
+			const warningCheckbox = addWarning('deleteRssFeed');
 			addButton('confirm', _ => {
 				send('background', 'rss', 'rssDeleteFeed', {'id': data.id});
-				removeDialogWindow();
-			});
-			addButton('cancel', removeDialogWindow);
-		},
-
-		rssDeleteItem : _ => {
-
-			header.textContent = getI18n('dialogRSSItemDeleteHeader');
-
-			addAlert(getI18n('dialogRSSItemDeleteAlertText', [data.title]));
-
-			const warningCheckbox = addWarning(getI18n('dialogAskAgainWarning'), true);
-			addButton('confirm', _ => {
-				send('background', 'rss', 'rssDeleteItem', {'id': data.id});
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
