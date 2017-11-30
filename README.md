@@ -36,3 +36,7 @@ no idea
 - Restart Firefox
 
 more tricks with "userChrome.css" [here](https://github.com/Timvde/UserChrome-Tweaks)
+
+### Start page
+
+The extension has a build-in start page that hardcoded into manifest and cannot be disabled. If you already use extension with startpage reinstall it. But in this case some functionality of Sidebar+ will be inaccessible.
