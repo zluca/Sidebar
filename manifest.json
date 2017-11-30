@@ -53,7 +53,8 @@
 		"default_popup" : "popup.html"
 	},
 	"options_ui": {
-		"page": "options.html#leftBar"
+		"page"          : "options.html#services",
+		"browser_style" : true
 	},
 	"chrome_url_overrides" : {
     	"newtab": "startpage.html"
