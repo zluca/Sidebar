@@ -1043,7 +1043,7 @@ const init = {
 		const initTabs = _ => {
 			messageHandler.tabs = {
 				new : (message, sender, sendResponse) => {
-					const newUrl = message.data.url === '' ? data.defaultStartPage : message.data.url;
+					const newUrl = message.data.url === '' ? data.extensionStartPage : message.data.url;
 					if (message.data.newWindow)
 						brauzer.windows.create({url: newUrl});
 					else
@@ -2481,7 +2481,7 @@ function createDialogWindow(type, dialogData) {
 function tabIsProtected(tab) {
 	if (/^https?:|^ftp:|^file:/.test(tab.url))
 		return false;
-	if (tab.url === data.extensionStartPage)
+	if (tab.pid === 'startpage')
 		return false;
 	return true;
 }
