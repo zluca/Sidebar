@@ -33,7 +33,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 						label.classList.add('disabled');
 					}
 			}
-			else if (response.status.nativeSbPosition.value !== side)
+			else if (response.status.nativeSbPosition.value !== side || opera)
 				if (method === 'native') {
 					input.disabled = true;
 					label.classList.add('disabled');

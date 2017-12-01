@@ -120,7 +120,8 @@ const data = {
 	},
 	initDone        : false,
 	extensionUrl    : brauzer.extension.getURL('/'),
-	defaultStartPage: firefox ? `${brauzer.extension.getURL('/')}startpage.html` : opera ? 'chrome://startpage/' : 'chrome://newtab/',
+	extensionStartPage: `${brauzer.extension.getURL('/')}startpage.html`,
+	defaultStartPage: firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
 	defaultIcon     : 'icons/default.svg',
 	systemIcon      : 'icons/wrench.svg',
 	startpageIcon   : 'icons/startpage.svg',
@@ -222,7 +223,7 @@ const optionsHandler = {
 	},
 	empty   : (section, option, newValue) => {
 		for (let i = data.tabs.length - 1; i >= 0; i--) {
-			if (data.tabs[i].url === data.defaultStartPage)
+			if (data.tabs[i].url === data.defaultStartPage || data.tabs[i].url === data.extensionStartPage)
 				brauzer.tabs.reload(data.tabs[i].id);
 		}
 	},
@@ -928,6 +929,10 @@ const gettingStorage = res => {
 if (sidebarAction !== null) {
 	let port;
 	brauzer.runtime.onConnect.addListener(p => {
+		if (opera) {
+			setOption('leftBar', 'method', 'native');
+			optionsHandler.method('leftBar', 'method', 'native');
+		}
 		port = p;
 		port.onDisconnect.addListener(_ => {
 			if (options.leftBar.method.value === 'native')
@@ -1158,7 +1163,7 @@ const init = {
 				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
 					return false;
 				if (tab.url === data.defaultStartPage)
-					brauzer.tabs.update(tab.id, {url: `${data.extensionUrl}startpage.html`});
+					brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
 				makeFolder(tab);
 				return createById('tabs', tab, 'last');
 			} :
@@ -2441,6 +2446,8 @@ function makeDomain(url, fav) {
 		id = 'default';
 	else if (url === data.defaultStartPage)
 		id = 'startpage';
+	else if (url === data.extensionStartPage)
+		id = 'startpage';
 	else if (/^about:|^chrome:/.test(url))
 		id = 'system';
 	else if (/^chrome-extension:|^moz-extension:/i.test(url))
@@ -2472,9 +2479,9 @@ function createDialogWindow(type, dialogData) {
 }
 
 function tabIsProtected(tab) {
-	if (/^https?:|^ftp:|^file:|^chrome:\/\/newtab|^chrome:\/\/startpage/.test(tab.url))
+	if (/^https?:|^ftp:|^file:/.test(tab.url))
 		return false;
-	if (tab.url === data.defaultStartPage)
+	if (tab.url === data.extensionStartPage)
 		return false;
 	return true;
 }
