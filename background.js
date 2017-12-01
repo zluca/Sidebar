@@ -134,6 +134,7 @@ const data = {
 		tabId         : -1
 	},
 	activeWindow    : -1,
+	nativeActive    : false,
 	dialogData      : null,
 	dialogType      : '',
 	toSave          : {},
@@ -147,7 +148,9 @@ const optionsHandler = {
 			iframe   : _ => {
 				send('content', 'iframe', 'remove', {'side': section});
 			},
-			native   : _ => {},
+			native   : _ => {
+				data.nativeActive = false;
+			},
 			window   : _ => {
 				removeSidebarWindow(section);
 			},
@@ -630,12 +633,12 @@ const messageHandler = {
 		mode : (message, sender, sendResponse) => {
 			const handler = {
 				window: side => {
-					data[side].tabId = sender.tab.id;
+					data[side].tabId  = sender.tab.id;
 					sendResponse(sideBarData(side));
-					return true;
 				},
 				native: side => {
-					let trueSide = side;
+					data.nativeActive  = true;
+					let trueSide       = side;
 					const oppositeSide = {
 						'leftBar'  : 'rightBar',
 						'rightBar' : 'leftBar'
@@ -648,11 +651,12 @@ const messageHandler = {
 								optionsHandler.method(side, 'method', 'native');
 					}
 					sendResponse(sideBarData(trueSide));
-					return true;
 				},
 				iframe: side => {
+					const tab = getById('tabs', sender.tab.id);
+					if (tab !== false)
+						tab.activated = true;
 					sendResponse(sideBarData(side));
-					return true;
 				}
 			};
 			handler[message.data.method](message.data.side);
@@ -988,7 +992,6 @@ function checkForInit() {
 		if (!data.init[serviceInitialized]) return;
 	data.initDone = true;
 	brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
-		// console.log(message);
 		if (message.hasOwnProperty('target'))
 			if (message.target === 'background') {
 				messageHandler[message.subject][message.action](message, sender, sendResponse);
@@ -1048,10 +1051,12 @@ const init = {
 					const tab = getById('tabs', message.data.id);
 					if (tab) {
 						const windowId = tab.windowId;
-						if (data.activeWindow !== windowId)
+						if (data.activeWindow !== windowId) {
+							data.activeWindow = windowId;
 							brauzer.windows.update(windowId, {focused: true}, _ => {
 								brauzer.tabs.update(message.data.id, {active: true});
 							});
+						}
 						else
 							brauzer.tabs.update(message.data.id, {active: true});
 					}
@@ -1298,6 +1303,7 @@ const init = {
 				newItem.title      = item.title;
 				newItem.discarded  = item.discarded;
 				newItem.windowId   = item.windowId;
+				newItem.activated  = false;
 				return newItem;
 			};
 
@@ -2295,32 +2301,37 @@ function sideBarData(side) {
 
 function send(target, subject, action, dataToSend) {
 
-	const sendToSidebar = (target, subject, action, dataToSend) => {
 
-		if (/tabs|bookmarks|history|downloads|rss/.test(subject)) {
-			if (subject !== options[target].mode.value)
-				return;
-			if (!data.init[subject])
-				return;
-		}
+	const sendToSidebar = (target, subject, action, dataToSend) => {
 
 		const sendByMethod = {
 			native : _ => {
-				brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
+				if (data.nativeActive)
+					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
 			iframe : _ => {
+				const tab = getById('tabs', data.activeTabId);
+				if (tab === false)
+					return;
+				if (!tab.activated)
+					return;
 				if (firefox)
 					sendToTab(data.activeTabId, target, subject, action, dataToSend);
 				else
 					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
 			window : _ => {
-				if (data[target].tabId !== -1)
-					sendToTab(data[target].tabId, target, subject, action, dataToSend);
+				sendToWindow(target, subject, action, dataToSend);
 			},
 			disabled : _ => {}
 		};
 
+		if (/tabs|bookmarks|history|downloads|rss/.test(subject)) {
+			if (subject !== options[target].mode.value)
+				return;
+			if (!data.initDone)
+				return;
+		}
 		sendByMethod[options[target].method.value]();
 	};
 
@@ -2354,9 +2365,14 @@ function sendLater(what) {
 		data.sendTimer[what] = setTimeout(sendData.favs, 5000);
 }
 
+function sendToWindow(target, subject, action, dataToSend) {
+	if (data[target].tabId !== -1)
+		brauzer.tabs.sendMessage(data[target].tabId, {'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
+}
+
 function sendToTab(tabId, target, subject, action, dataToSend) {
 	const tab = getById('tabs', tabId);
-	if (tab)
+	if (tab !== false)
 		if (!tabIsProtected(tab))
 			brauzer.tabs.sendMessage(tabId, {'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 }
