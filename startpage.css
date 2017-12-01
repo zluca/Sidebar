@@ -203,7 +203,7 @@ section {
 	display: none;
 	background-repeat: no-repeat;
 	background-size: 1.2rem 1.2rem;
-	background-position: .2rem .05rem;
+	background-position: .15rem .05rem;
 	cursor: pointer;
 	color: transparent;
 	text-indent: 1.8rem;
@@ -214,12 +214,12 @@ section {
 }
 .show-selection .search-engine {
 	background-size: 1.1rem 1.1rem;
-	background-position: .25rem .15rem;
+	background-position: .2rem .15rem;
 }
 .show-selection .search-engine:hover {
 	color: var(--font-color-active);
 	background-size: 1.2rem 1.2rem;
-	background-position: .2rem .05rem;
+	background-position: .15rem .05rem;
 }
 #duckduckgo {
 	background-image: url("icons/duckduckgo.svg");
