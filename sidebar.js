@@ -270,7 +270,7 @@ const initBlock = {
 					},
 					domain : _ => {
 						const folder = tab.parentNode;
-						if (folder.children.length === 1)
+						if (folder.children.length === 2)
 							folder.parentNode.removeChild(folder);
 						removeById('tabs', data.id);
 					},
