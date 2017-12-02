@@ -265,17 +265,18 @@ const initBlock = {
 			},
 			removed      : data => {
 				const removing = {
-					plain  : _ => {
+					plain  : tab => {
 						removeById('tabs', data.id);
 					},
-					domain : _ => {
-						const folder = getFolderById('tabs', tab.parentNode.dataset.id);
+					domain : tab => {
+						const pid    = tab.parentNode.firstChild.dataset.id;
+						const folder = getFolderById('tabs', pid);
 						removeById('tabs', data.id);
 						if (folder !== false)
 							if (folder.children.length === 1)
-								removeFolderById('tabs', tab.pid);
+								removeFolderById('tabs', pid);
 					},
-					tree   : _ => {
+					tree   : tab => {
 						const folder = tab.parentNode;
 						for (let i = 0, l = folder.children.length; i < l; i++)
 							if (folder.children[i].classList.contains('folder'))
@@ -286,7 +287,7 @@ const initBlock = {
 				};
 				const tab = getById('tabs', data.id);
 				if (tab !== false)
-					removing[status.misc.tabsMode]();
+					removing[status.misc.tabsMode](tab);
 			},
 			moved        : data => {
 				moveTab(data);
