@@ -371,6 +371,10 @@
 		"message"       : "起始页设置",
 		"description"   : ""
 	},
+	"optStartPageEnabledLabel" : {
+		"message"       : "Use custom startpage",
+		"description"   : ""
+	},
 	"optStartPageEmptyLabel" : {
 		"message"       : "Empty startpage",
 		"description"   : ""

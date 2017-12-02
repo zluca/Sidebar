@@ -121,7 +121,7 @@ const data = {
 	initDone        : false,
 	extensionUrl    : brauzer.extension.getURL('/'),
 	extensionStartPage: `${brauzer.extension.getURL('/')}startpage.html`,
-	defaultStartPage: firefox ? 'about:blank' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
+	defaultStartPage: firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
 	defaultIcon     : 'icons/default.svg',
 	systemIcon      : 'icons/wrench.svg',
 	startpageIcon   : 'icons/startpage.svg',
@@ -223,8 +223,19 @@ const optionsHandler = {
 	},
 	empty   : (section, option, newValue) => {
 		for (let i = data.tabs.length - 1; i >= 0; i--) {
-			if (data.tabs[i].url === data.defaultStartPage || data.tabs[i].url === data.extensionStartPage)
+			if (data.tabs[i].url === data.extensionStartPage)
 				brauzer.tabs.reload(data.tabs[i].id);
+		}
+	},
+	enabled   : (section, option, newValue) => {
+		for (let i = data.tabs.length - 1; i >= 0; i--) {
+			if (newValue === false) {
+				if (data.tabs[i].url === data.extensionStartPage)
+					if (!firefox)
+						brauzer.tabs.update(data.tabs[i].id, {'url': data.defaultStartPage});
+			}
+			else if (data.tabs[i].url === data.defaultStartPage)
+				brauzer.tabs.update(data.tabs[i].id, {'url': data.extensionStartPage});
 		}
 	},
 	restartBookmarks : (section, option, newValue) => {
@@ -483,6 +494,12 @@ const options = {
 		}
 	},
 	startpage: {
+		enabled        : {
+			value   : true,
+			type    : 'boolean',
+			targets : [],
+			handler : 'enabled'
+		},
 		empty          : {
 			value   : false,
 			type    : 'boolean',
@@ -606,11 +623,7 @@ const modeData = {
 
 const defaultTabsHandler = {
 	new : (message, sender, sendResponse) => {
-		const newUrl = message.data.url === '' ? data.defaultStartPage : message.data.url;
-		if (message.data.newWindow)
-			brauzer.windows.create({url: newUrl});
-		else
-			brauzer.tabs.create({url: newUrl});
+		createNewTab(message.data.url, message.data.newWindow);
 	},
 	update : (message, sender, sendResponse) => {
 		brauzer.tabs.update(data.activeTabId, {'url': message.data.url});
@@ -1043,11 +1056,7 @@ const init = {
 		const initTabs = _ => {
 			messageHandler.tabs = {
 				new : (message, sender, sendResponse) => {
-					const newUrl = message.data.url === '' ? data.extensionStartPage : message.data.url;
-					if (message.data.newWindow)
-						brauzer.windows.create({url: newUrl});
-					else
-						brauzer.tabs.create({url: newUrl});
+					createNewTab(message.data.url, message.data.newWindow);
 				},
 				update : (message, sender, sendResponse) => {
 					brauzer.tabs.update(data.activeTabId, {'url': message.data.url});
@@ -1117,7 +1126,7 @@ const init = {
 		const makeFolder        = tab => {
 			const domain = makeDomain(tab.url, tab.favIconUrl);
 			let folder   = createFolderById('tabs', domain.id, 'last');
-			if (folder) {
+			if (folder !== false) {
 				folder.pid        = 0;
 				folder.title      = domain.title;
 				folder.folded     = false;
@@ -1129,7 +1138,7 @@ const init = {
 			}
 			else {
 				folder = getFolderById('tabs', domain.id);
-				if (folder) {
+				if (folder !== false) {
 					const index = folder.itemsId.indexOf(tab.id);
 					if (index === -1) {
 						folder.itemsId.push(tab.id);
@@ -1158,20 +1167,19 @@ const init = {
 			}
 		};
 
-		const createTab         = opera ?
+		const checkStartPage    = tab => tab.url === data.defaultStartPage ? true : false;
+
+		const createTab         =
 			tab => {
 				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
 					return false;
-				if (tab.url === data.defaultStartPage)
-					brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
+				if (options.startpage.enabled.value)
+					if (checkStartPage(tab))
+						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
 				makeFolder(tab);
-				return createById('tabs', tab, 'last');
-			} :
-			tab => {
-				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
-					return false;
-				makeFolder(tab);
-				return createById('tabs', tab, 'last');
+				const newTab = createById('tabs', tab, 'last');
+				send('sidebar', 'tabs', 'created', {'tab': newTab});
+				return newTab;
 			};
 
 		const onActivated       = tabInfo => {
@@ -1222,6 +1230,9 @@ const init = {
 					send('sidebar', 'tabs', 'unpin', {'id': id});
 			}
 			if (info.hasOwnProperty('url')) {
+				if (options.startpage.enabled.value)
+					if (checkStartPage(tab))
+						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
 				oldTab.url   = info.url;
 				if (pid !== folder.id) {
 					oldTab.pid = folder.id;
@@ -2475,13 +2486,13 @@ function createDialogWindow(type, dialogData) {
 	if (!tabIsProtected(activeTab))
 		sendToTab(data.activeTabId, 'content', 'dialog', 'create', type);
 	else
-		brauzer.tabs.create({url: data.defaultStartPage});
+		brauzer.tabs.create({url: data.extensionStartPage});
 }
 
 function tabIsProtected(tab) {
 	if (/^https?:|^ftp:|^file:/.test(tab.url))
 		return false;
-	if (tab.pid === 'startpage')
+	if (tab.url === data.extensionStartPage)
 		return false;
 	return true;
 }
@@ -2541,6 +2552,21 @@ function setIcon() {
 		},
 	};
 	set[`${options.leftBar.method.value !== 'disabled'}${options.rightBar.method.value !== 'disabled'}`]();
+}
+
+function createNewTab(url = '', newWindow = false) {
+	const newTab =
+	url === '' ?
+		options.startpage.enabled.value ?
+			{'url': data.extensionStartPage} :
+			firefox ?
+				{} :
+				{'url': data.defaultStartPage} :
+		{'url': url};
+	if (newWindow)
+		brauzer.windows.create(newTab);
+	else
+		brauzer.tabs.create(newTab);
 }
 
 function createById(mode, item, position) {
@@ -2640,7 +2666,7 @@ function getFolderById(mode, id) {
 	const index = data[`${mode}FoldersId`].indexOf(id);
 	if (index !== -1)
 		return data[`${mode}Folders`][index];
-	else return null;
+	else return false;
 }
 
 function domainFromUrl(url, noProtocol = false) {

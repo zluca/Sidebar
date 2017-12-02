@@ -367,6 +367,10 @@
 		"message"       : "Настройки стартовой страницы",
 		"description"   : ""
 	},
+	"optStartPageEnabledLabel" : {
+		"message"       : "Включить стартовую страницу",
+		"description"   : ""
+	},
 	"optStartPageEmptyLabel" : {
 		"message"       : "Пустая стартовая страница",
 		"description"   : ""

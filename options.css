@@ -109,6 +109,13 @@ input {
 input[type="file"] {
 	display: none;
 }
+#startpage-section label {
+	color: var(--font-color-inactive);
+}
+#startpage-section label:first-of-type,
+input[data-option="enabled"]:checked+label~label {
+	color: var(--font-color)!important;
+}
 .leftBar #leftBar-section,
 .rightBar #rightBar-section,
 .misc #misc-section,
