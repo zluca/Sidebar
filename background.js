@@ -121,7 +121,7 @@ const data = {
 	initDone        : false,
 	extensionUrl    : brauzer.extension.getURL('/'),
 	extensionStartPage: `${brauzer.extension.getURL('/')}startpage.html`,
-	defaultStartPage: firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
+	defaultStartPage: firefox ? 'about:blank' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
 	defaultIcon     : 'icons/default.svg',
 	systemIcon      : 'icons/wrench.svg',
 	startpageIcon   : 'icons/startpage.svg',
