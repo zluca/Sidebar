@@ -239,6 +239,10 @@
 		"message"       : "禁用未使用的服务以取得最佳性能。",
 		"description"   : ""
 	},
+	"optServicesStartpageLabel" : {
+		"message"       : "Use custom startpage",
+		"description"   : ""
+	},
 	"optServicesTabsLabel" : {
 		"message"       : "标签页",
 		"description"   : ""
@@ -369,10 +373,6 @@
 	},
 	"optStartPageText" : {
 		"message"       : "起始页设置",
-		"description"   : ""
-	},
-	"optStartPageEnabledLabel" : {
-		"message"       : "Use custom startpage",
 		"description"   : ""
 	},
 	"optStartPageEmptyLabel" : {

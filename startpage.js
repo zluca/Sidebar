@@ -411,7 +411,7 @@ function init() {
 					target.style.width  = 'auto';
 					target.style.height = 'auto';
 					if (startPosition !== placeholderPosition)
-						send('background', 'site', 'move', {'from': startPosition, 'to': newPosition});
+						send('background', 'startpage', 'move', {'from': startPosition, 'to': newPosition});
 					else
 						status.dragging = false;
 				};

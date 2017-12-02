@@ -247,7 +247,7 @@ function makeDialogWindow(data, warnings, colors) {
 				if (optionsChanged) {
 					const url   = inputUrl.value;
 					if (url)
-						send('background', 'site', 'create',
+						send('background', 'startpage', 'create',
 							{
 								'url'   : url,
 								'index' : data.index,
@@ -273,7 +273,7 @@ function makeDialogWindow(data, warnings, colors) {
 
 			addButton('save', _ => {
 				if (optionsChanged)
-					send('background', 'site', 'change', {'index': data.index, 'url': inputUrl.value, 'color': inputColor.value, 'text': inputText.value});
+					send('background', 'startpage', 'change', {'index': data.index, 'url': inputUrl.value, 'color': inputColor.value, 'text': inputText.value});
 				removeDialogWindow();
 			});
 			addButton('delete', _ => {
@@ -281,7 +281,7 @@ function makeDialogWindow(data, warnings, colors) {
 				if (warnings.deleteSite)
 					send('background', 'dialog', 'siteDelete', {'index': data.index, 'title': data.url});
 				else
-					send('background', 'site', 'delete', {'index': data.index});
+					send('background', 'startpage', 'delete', {'index': data.index});
 			});
 			addButton('cancel', removeDialogWindow);
 		},
@@ -294,7 +294,7 @@ function makeDialogWindow(data, warnings, colors) {
 
 			const warningCheckbox = addWarning('deleteSite');
 			addButton('confirm', _ => {
-				send('background', 'site', 'delete', {'index': data.index});
+				send('background', 'startpage', 'delete', {'index': data.index});
 				if (!warningCheckbox.checked)
 					send('background', 'options', 'warnings', {'option': 'deleteSite', 'value': false});
 				removeDialogWindow();

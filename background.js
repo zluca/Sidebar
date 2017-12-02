@@ -31,28 +31,7 @@ const i18n = {
 		rssFeedExistErrorTitle     : getI18n('notificationRssFeedExistErrorTitle'),
 		rssFeedExistErrorText      : getI18n('notificationRssFeedExistErrorText')
 	},
-	startpage: {
-		pageTitle                   : getI18n('startpagePageTitle'),
-		addNewSiteTitle             : getI18n('startpageAddNewSiteTitle'),
-		editButtonTitle             : getI18n('startpageEditButtonTitle'),
-		searchPlaceholder           : getI18n('startpageSearchPlaceholder'),
-		translatePlaceholder        : getI18n('startpageTranslatePlaceholder'),
-		buyPlaceholder              : getI18n('startpageBuyPlaceholder'),
-		searchButtonTitle           : getI18n('startpageSearchButtonTitle'),
-		searchEngineDuckDuckGo      : getI18n('startpageDuckDuckGoLabel'),
-		searchEngineGoogle          : getI18n('startpageGoogleLabel'),
-		searchEngineYandex          : getI18n('startpageYandexLabel'),
-		searchEngineBing            : getI18n('startpageBingLabel'),
-		searchEngineYahoo           : getI18n('startpageYahooLabel'),
-		searchEngineWikipedia       : getI18n('startpageWikipediaLabel'),
-		searchEngineMdn             : getI18n('startpageMdnLabel'),
-		searchEngineStackoverflow   : getI18n('startpageStackoverflowLabel'),
-		searchEngineAmazon          : getI18n('startpageAmazonLabel'),
-		searchEngineEbay            : getI18n('startpageEbayLabel'),
-		searchEngineAliexpress      : getI18n('startpageAliexpressLabel'),
-		searchEngineGoogleTranslate : getI18n('startpageGoogleTranslateLabel'),
-		searchEngineYandexTranslate : getI18n('startpageYandexTranslateLabel')
-	},
+	startpage: {},
 	domains: {
 		default   : getI18n('domainsDefault'),
 		startpage : getI18n('domainsStartPage'),
@@ -201,6 +180,9 @@ const optionsHandler = {
 			send('sidebar', 'options', 'services', {'service': option, 'enabled': false});
 		}
 	},
+	startpage : (section, option, newValue) => {
+		init.startpage(newValue);
+	},
 	sites   : (section, option, newValue) => {
 		const oppositeDimension = {
 			rows    : 'columns',
@@ -226,17 +208,6 @@ const optionsHandler = {
 		for (let i = data.tabs.length - 1; i >= 0; i--) {
 			if (data.tabs[i].url === data.extensionStartPage)
 				brauzer.tabs.reload(data.tabs[i].id);
-		}
-	},
-	enabled   : (section, option, newValue) => {
-		for (let i = data.tabs.length - 1; i >= 0; i--) {
-			if (newValue === false) {
-				if (data.tabs[i].url === data.extensionStartPage)
-					if (!firefox)
-						brauzer.tabs.update(data.tabs[i].id, {'url': data.defaultStartPage});
-			}
-			else if (data.tabs[i].url === data.defaultStartPage)
-				brauzer.tabs.update(data.tabs[i].id, {'url': data.extensionStartPage});
 		}
 	},
 	restartBookmarks : (section, option, newValue) => {
@@ -319,7 +290,7 @@ const options = {
 			value   : true,
 			type    : 'boolean',
 			targets : [],
-			hidden  : true
+			handler : 'startpage'
 		},
 		tabs      : {
 			value   : true,
@@ -489,12 +460,6 @@ const options = {
 		}
 	},
 	startpage: {
-		enabled        : {
-			value   : true,
-			type    : 'boolean',
-			targets : [],
-			handler : 'enabled'
-		},
 		empty          : {
 			value   : false,
 			type    : 'boolean',
@@ -804,41 +769,7 @@ const messageHandler = {
 		}
 	},
 
-	startpage : {
-		search : (message, sender, sendResponse) => {
-			setOption('startpage', 'searchEngine', message.data.engine);
-			send('startpage', 'search', 'engine', optionsShort.startpage.searchEngine);
-		}
-	},
-
-	site : {
-		change : (message, sender, sendResponse) => {
-			const site = data.speadDial[message.data.index];
-			if (site) {
-				site.text  = message.data.text;
-				site.url   = message.data.url;
-				site.color = message.data.color;
-				saveLater('speadDial');
-				send('startpage', 'site', 'changed', {index: message.data.index, site: site});
-			}
-		},
-		delete : (message, sender, sendResponse) => {
-			makeSite(message.data.index, false);
-			saveLater('speadDial');
-			send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
-		},
-		create : (message, sender, sendResponse) => {
-			makeSite(message.data.index, message.data);
-			saveLater('speadDial');
-			send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
-		},
-		move : (message, sender, sendResponse) => {
-			const movedSite = data.speadDial.splice(message.data.from, 1)[0];
-			data.speadDial.splice(message.data.to, 0, movedSite);
-			saveLater('speadDial');
-			send('startpage', 'site', 'moved', {from: message.data.from, to: message.data.to});
-		}
-	},
+	startpage : null,
 
 	tabs      : defaultTabsHandler,
 
@@ -1030,18 +961,6 @@ function checkForInit() {
 
 const init = {
 
-	startpage: _ => {
-
-		const gettingStorage = res => {
-			if (Array.isArray(res.speadDial))
-				data.speadDial = res.speadDial;
-			data.init.startpage = true;
-			checkForInit();
-		};
-
-		execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
-	},
-
 	data: _ => {
 		if (data.init.data)
 			return;
@@ -1057,6 +976,90 @@ const init = {
 		};
 
 		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId']);
+	},
+
+	startpage: start => {
+
+		const gettingStorage = res => {
+			if (Array.isArray(res.speadDial))
+				data.speadDial = res.speadDial;
+			data.init.startpage = true;
+			checkForInit();
+		};
+
+		if (start) {
+			messageHandler.startpage = {
+				search : (message, sender, sendResponse) => {
+					setOption('startpage', 'searchEngine', message.data.engine);
+					send('startpage', 'search', 'engine', optionsShort.startpage.searchEngine);
+				},
+				change : (message, sender, sendResponse) => {
+					const site = data.speadDial[message.data.index];
+					if (site) {
+						site.text  = message.data.text;
+						site.url   = message.data.url;
+						site.color = message.data.color;
+						saveLater('speadDial');
+						send('startpage', 'site', 'changed', {index: message.data.index, site: site});
+					}
+				},
+				delete : (message, sender, sendResponse) => {
+					makeSite(message.data.index, false);
+					saveLater('speadDial');
+					send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
+				},
+				create : (message, sender, sendResponse) => {
+					makeSite(message.data.index, message.data);
+					saveLater('speadDial');
+					send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
+				},
+				move : (message, sender, sendResponse) => {
+					const movedSite = data.speadDial.splice(message.data.from, 1)[0];
+					data.speadDial.splice(message.data.to, 0, movedSite);
+					saveLater('speadDial');
+					send('startpage', 'site', 'moved', {from: message.data.from, to: message.data.to});
+				}
+			};
+			i18n.startpage = {
+				pageTitle                   : getI18n('startpagePageTitle'),
+				addNewSiteTitle             : getI18n('startpageAddNewSiteTitle'),
+				editButtonTitle             : getI18n('startpageEditButtonTitle'),
+				searchPlaceholder           : getI18n('startpageSearchPlaceholder'),
+				translatePlaceholder        : getI18n('startpageTranslatePlaceholder'),
+				buyPlaceholder              : getI18n('startpageBuyPlaceholder'),
+				searchButtonTitle           : getI18n('startpageSearchButtonTitle'),
+				searchEngineDuckDuckGo      : getI18n('startpageDuckDuckGoLabel'),
+				searchEngineGoogle          : getI18n('startpageGoogleLabel'),
+				searchEngineYandex          : getI18n('startpageYandexLabel'),
+				searchEngineBing            : getI18n('startpageBingLabel'),
+				searchEngineYahoo           : getI18n('startpageYahooLabel'),
+				searchEngineWikipedia       : getI18n('startpageWikipediaLabel'),
+				searchEngineMdn             : getI18n('startpageMdnLabel'),
+				searchEngineStackoverflow   : getI18n('startpageStackoverflowLabel'),
+				searchEngineAmazon          : getI18n('startpageAmazonLabel'),
+				searchEngineEbay            : getI18n('startpageEbayLabel'),
+				searchEngineAliexpress      : getI18n('startpageAliexpressLabel'),
+				searchEngineGoogleTranslate : getI18n('startpageGoogleTranslateLabel'),
+				searchEngineYandexTranslate : getI18n('startpageYandexTranslateLabel')
+			};
+			execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
+			if (data.init.tabs)
+				for (let i = data.tabs.length - 1; i >= 0; i--)
+					if (data.tabs[i].url === data.defaultStartPage)
+						brauzer.tabs.update(data.tabs[i].id, {'url': data.extensionStartPage});
+		}
+		else {
+			i18n.startpage = {};
+			messageHandler.startpage = {};
+			data.speadDial = [];
+			for (let i = data.tabs.length - 1; i >= 0; i--)
+				if (data.tabs[i].url === data.extensionStartPage) {
+					if (firefox)
+						brauzer.tabs.remove(data.tabs[i].id);
+					else
+						brauzer.tabs.update(data.tabs[i].id, {'url': data.defaultStartPage});
+				}
+		}
 	},
 
 	tabs: start => {
@@ -1181,7 +1184,7 @@ const init = {
 			tab => {
 				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
 					return false;
-				if (options.startpage.enabled.value)
+				if (options.services.startpage.value)
 					if (checkStartPage(tab))
 						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
 				makeFolder(tab);
@@ -1238,7 +1241,7 @@ const init = {
 					send('sidebar', 'tabs', 'unpin', {'id': id});
 			}
 			if (info.hasOwnProperty('url')) {
-				if (options.startpage.enabled.value)
+				if (options.services.startpage.value)
 					if (checkStartPage(tab))
 						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
 				oldTab.url   = info.url;
@@ -2565,7 +2568,7 @@ function setIcon() {
 function createNewTab(url = '', newWindow = false) {
 	const newTab =
 	url === '' ?
-		options.startpage.enabled.value ?
+		options.services.startpage.value ?
 			{'url': data.extensionStartPage} :
 			firefox ?
 				{} :

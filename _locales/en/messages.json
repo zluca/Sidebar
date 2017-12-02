@@ -239,6 +239,10 @@
 		"message"       : "Disable unused services for better performance.",
 		"description"   : ""
 	},
+	"optServicesStartPageLabel" : {
+		"message"       : "Use custom startpage",
+		"description"   : ""
+	},
 	"optServicesTabsLabel" : {
 		"message"       : "Tabs",
 		"description"   : ""
@@ -369,10 +373,6 @@
 	},
 	"optStartPageText" : {
 		"message"       : "Start Page settings",
-		"description"   : ""
-	},
-	"optStartPageEnabledLabel" : {
-		"message"       : "Use custom startpage",
 		"description"   : ""
 	},
 	"optStartPageEmptyLabel" : {

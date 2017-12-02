@@ -235,6 +235,10 @@
 		"message"       : "Отключите неиспользуемые сервисы для лучшего быстродействия.",
 		"description"   : ""
 	},
+	"optServicesStartpageLabel" : {
+		"message"       : "Стартовая страница",
+		"description"   : ""
+	},
 	"optServicesTabsLabel" : {
 		"message"       : "Вкладки",
 		"description"   : ""
@@ -365,10 +369,6 @@
 	},
 	"optStartPageText" : {
 		"message"       : "Настройки стартовой страницы",
-		"description"   : ""
-	},
-	"optStartPageEnabledLabel" : {
-		"message"       : "Включить стартовую страницу",
 		"description"   : ""
 	},
 	"optStartPageEmptyLabel" : {
