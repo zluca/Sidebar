@@ -269,10 +269,11 @@ const initBlock = {
 						removeById('tabs', data.id);
 					},
 					domain : _ => {
-						const folder = tab.parentNode;
-						if (folder.children.length === 2)
-							folder.parentNode.removeChild(folder);
+						const folder = getFolderById('tabs', tab.parentNode.dataset.id);
 						removeById('tabs', data.id);
+						if (folder !== false)
+							if (folder.children.length === 1)
+								removeFolderById('tabs', tab.pid);
 					},
 					tree   : _ => {
 						const folder = tab.parentNode;
@@ -284,7 +285,7 @@ const initBlock = {
 					}
 				};
 				const tab = getById('tabs', data.id);
-				if (tab)
+				if (tab !== false)
 					removing[status.misc.tabsMode]();
 			},
 			moved        : data => {
