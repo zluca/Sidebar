@@ -110,8 +110,8 @@ const data = {
 		downloadsCount : 0
 	},
 	init               : {
+		'data'      : false,
 		'startpage' : false,
-		'favs'      : false,
 		'tabs'      : false,
 		'bookmarks' : false,
 		'history'   : false,
@@ -140,7 +140,8 @@ const data = {
 	dialogType      : '',
 	toSave          : {},
 	saverActive     : false,
-	sendTimer       : {}
+	sendTimer       : {},
+	foldedId        : []
 };
 
 const optionsHandler = {
@@ -315,12 +316,6 @@ const options = {
 	},
 	services: {
 		startpage : {
-			value   : true,
-			type    : 'boolean',
-			targets : [],
-			hidden  : true
-		},
-		favs      : {
 			value   : true,
 			type    : 'boolean',
 			targets : [],
@@ -712,8 +707,19 @@ const messageHandler = {
 		fold : (message, sender, sendResponse) => {
 			const folder = getFolderById(message.data.mode, message.data.id);
 			if (folder) {
+				const fid   = `${message.data.mode}-${message.data.id}`;
+				const index = data.foldedId.indexOf(fid);
+				if (index !== -1) {
+					if (!message.data.folded) {
+						data.foldedId.splice(index, 1);
+						saveNow('foldedId');
+					}
+				}
+				else if (message.data.folded) {
+					data.foldedId.push(fid);
+					saveNow('foldedId');
+				}
 				folder.folded = message.data.folded;
-				// brauzer.storage.local.set({'data': data});
 				send('sidebar', 'set', 'fold', message.data);
 			}
 		},
@@ -879,7 +885,7 @@ const gettingStorage = res => {
 			for (let option in options[section])
 				optionsShort[section][option] = options[section][option].value;
 		}
-		init.favs(true);
+		init.data(true);
 		for (let service in options.services)
 			if (options.services[service])
 				init[service](true);
@@ -1036,19 +1042,21 @@ const init = {
 		execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
 	},
 
-	favs: _ => {
-		if (data.init.favs)
+	data: _ => {
+		if (data.init.data)
 			return;
-		data.init.favs = true;
+		data.init.data = true;
 		const gettingStorage = res => {
 			if (Array.isArray(res.favs)) {
-				data.favs      = res.favs;
-				data.favsId    = res.favsId;
+				data.favs          = res.favs;
+				data.favsId        = res.favsId;
 			}
+			if (Array.isArray(res.foldedId))
+				data.foldedId      = res.foldedId;
 			checkForInit();
 		};
 
-		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId']);
+		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId']);
 	},
 
 	tabs: start => {
@@ -1129,7 +1137,7 @@ const init = {
 			if (folder !== false) {
 				folder.pid        = 0;
 				folder.title      = domain.title;
-				folder.folded     = false;
+				folder.folded     = getFolded(`tabs-${domain.id}`);
 				folder.view       = 'hidden';
 				folder.domain     = domain.id;
 				folder.itemsId    = [tab.id];
@@ -1409,7 +1417,7 @@ const init = {
 				newFolder.title     = folder.title;
 				newFolder.index     = folder.index;
 				newFolder.view      = 'normal';
-				newFolder.folded    = false;
+				newFolder.folded    = getFolded(`bookmarks-${folder.id}`);
 			}
 			return newFolder;
 		};
@@ -1628,7 +1636,7 @@ const init = {
 				folder        = createFolderById('history', id, position);
 				folder.pid    = 0;
 				folder.view   = 'normal';
-				folder.folded = false;
+				folder.folded = getFolded(`history-${id}`);
 				folder.title  = title;
 			}
 			return folder;
@@ -2431,7 +2439,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		} ,
 	};
 
-	let fav = getById('favs', id);
+	let fav     = getById('favs', id);
 	let favIcon = '';
 	if (id === 'default')
 		favIcon = data.defaultIcon;
@@ -2629,7 +2637,6 @@ function moveFromTo(mode, from, to) {
 
 function createFolderById(mode, id, position) {
 
-	let index = data[`${mode}FoldersId`].indexOf(id);
 	const insert = {
 		last  : _ => {
 			data[`${mode}Folders`].push({'id': id});
@@ -2642,6 +2649,7 @@ function createFolderById(mode, id, position) {
 			return data[`${mode}Folders`][0];
 		}
 	};
+	let index = data[`${mode}FoldersId`].indexOf(id);
 
 	if (index !== -1)
 		return false;
@@ -2667,6 +2675,10 @@ function getFolderById(mode, id) {
 	if (index !== -1)
 		return data[`${mode}Folders`][index];
 	else return false;
+}
+
+function getFolded(id) {
+	return data.foldedId.indexOf(id) !== -1 ? true : false;
 }
 
 function domainFromUrl(url, noProtocol = false) {
@@ -2742,12 +2754,13 @@ function setOption(section, option, newValue) {
 
 function saveNow(what) {
 	const dataToSave = {
-		options    : {'options': optionsShort},
-		favs       : {'favs': data.favs, 'favsId': data.favsId},
-		rss        : {'rss': data.rss, 'rssId': data.rssId},
-		rssFolders : {'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId},
-		speadDial  : {'speadDial': data.speadDial},
-		version    : {'version': version}
+		options       : {'options': optionsShort},
+		favs          : {'favs': data.favs, 'favsId': data.favsId},
+		rss           : {'rss': data.rss, 'rssId': data.rssId},
+		rssFolders    : {'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId},
+		speadDial     : {'speadDial': data.speadDial},
+		version       : {'version': version},
+		foldedId      : {'foldedId': data.foldedId}
 	};
 	brauzer.storage.local.set(dataToSave[what]);
 }
