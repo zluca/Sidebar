@@ -11,7 +11,8 @@
 	"homepage_url"   : "https://github.com/zluca/",
 	"default_locale" : "en",
 	"icons": {
-		"64": "icons/default-64.png"
+		"32": "icons/sidebar-icon-32.png",
+		"64": "icons/sidebar-icon-64.png"
   	},
 	"permissions": [
 		"<all_urls>",
@@ -40,7 +41,7 @@
 		"dialog.html"
 	],
 	"sidebar_action": {
-		"default_icon"  : "icons/default-64.png",
+		"default_icon"  : "icons/sidebar-icon-64.png",
 		"default_title" : "Sidebar+",
 		"default_panel" : "sidebar.html#leftBar-native"
 	},
