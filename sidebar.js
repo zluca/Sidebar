@@ -54,7 +54,11 @@ const status           = {
 		rssUnreaded    : 0,
 		downloadStatus : ''
 	},
-	moving              : false
+	moving              : false,
+	lastClicked         : {
+		id   : -1,
+		time : -1
+	}
 };
 
 document.title         = status.method;
@@ -532,7 +536,7 @@ const initBlock = {
 			if (status.moving)
 				return;
 			if (event.target.classList.contains('bookmark'))
-				openLink(event.target.title, event);
+				openLink(event);
 		});
 
 		block.bookmarks.addEventListener('mouseover', event => {
@@ -677,9 +681,8 @@ const initBlock = {
 		block.history.addEventListener('click', event => {
 			event.stopPropagation();
 			event.preventDefault();
-			const target = event.target;
-			if (target.classList.contains('history'))
-				openLink(target.title, event);
+			if (event.target.classList.contains('history'))
+				openLink(event);
 		});
 
 		const insertHistoryes = (items, method) => {
@@ -932,10 +935,9 @@ const initBlock = {
 		block.rss.addEventListener('click', event => {
 			event.preventDefault();
 			event.stopPropagation();
-			const target = event.target;
-			if (target.classList.contains('rss-item')) {
-				openLink(target.dataset.link, event);
-				send('background', 'rss', 'rssReaded', {'id': target.dataset.id});
+			if (event.target.classList.contains('rss-item')) {
+				openLink(event);
+				send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 			}
 		});
 
@@ -1367,13 +1369,20 @@ function send(target, subject, action, data = {}, callback = _ => {}) {
 	brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': data}, callback);
 }
 
-function openLink(href, event) {
+function openLink(event) {
+	if (event.target.id === status.lastClicked.id)
+		if (Date.now() - status.lastClicked.time < 1000)
+			return;
 	if (event.ctrlKey)
-		send('background', 'tabs', 'new', {'url': href});
+		send('background', 'tabs', 'new', {'url': event.target.href});
 	else if (event.shiftKey)
-		send('background', 'tabs', 'new', {'url': href, 'newWindow': true});
+		send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': true});
 	else
-		send('background', 'tabs', 'update', {'url': href});
+		send('background', 'tabs', 'update', {'url': event.target.href});
+	status.lastClicked = {
+		id   : event.target.id,
+		time : Date.now()
+	};
 }
 
 function makeBlock(type) {
