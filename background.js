@@ -113,6 +113,7 @@ const data = {
 		windowId      : -1,
 		tabId         : -1
 	},
+	sidebarWindowCreating: false,
 	activeWindow    : -1,
 	nativeActive    : false,
 	dialogData      : null,
@@ -932,6 +933,10 @@ if (sidebarAction !== null) {
 	}
 }
 
+brauzer.windows.getCurrent({}, win => {
+	data.activeWindow = win.id;
+});
+
 execMethod(brauzer.storage.local.get, gettingStorage, ['options', 'version']);
 
 function initWindow() {
@@ -1182,8 +1187,10 @@ const init = {
 
 		const createTab         =
 			tab => {
-				if (tab.url.match(`${data.extensionUrl}sidebar.html`))
+				if (data.sidebarWindowCreating === true) {
+					data.sidebarWindowCreating = false;
 					return false;
+				}
 				if (options.services.startpage.value)
 					if (checkStartPage(tab))
 						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
@@ -1195,7 +1202,7 @@ const init = {
 
 		const onActivated       = tabInfo => {
 			const tab = getById('tabs', tabInfo.tabId);
-			if (tab) {
+			if (tab !== false) {
 				data.activeTabId = tabInfo.tabId;
 				send('sidebar', 'tabs', 'active', data.activeTabId);
 				if (options.leftBar.method.value === 'iframe') {
@@ -2497,7 +2504,7 @@ function createDialogWindow(type, dialogData) {
 	if (!tabIsProtected(activeTab))
 		sendToTab(data.activeTabId, 'content', 'dialog', 'create', type);
 	else
-		brauzer.tabs.create({url: data.extensionStartPage});
+		brauzer.tabs.create({url: data.extensionStartPage, windowId: data.activeWindow});
 }
 
 function tabIsProtected(tab) {
@@ -2522,6 +2529,7 @@ function createSidebarWindow(side) {
 
 		const onCreate = win => {
 			data[side].windowId = win.id;
+			data[side].tabId    = win.tabs[0].id;
 			brauzer.windows.onRemoved.addListener(id => {
 				if (id === win.id) {
 					data[side].windowId = -1;
@@ -2534,6 +2542,7 @@ function createSidebarWindow(side) {
 			});
 		};
 
+		data.sidebarWindowCreating = true;
 		execMethod(brauzer.windows.create, onCreate, params);
 
 	});
@@ -2566,18 +2575,25 @@ function setIcon() {
 }
 
 function createNewTab(url = '', newWindow = false) {
-	const newTab =
-	url === '' ?
-		options.services.startpage.value ?
-			{'url': data.extensionStartPage} :
-			firefox ?
-				{} :
-				{'url': data.defaultStartPage} :
-		{'url': url};
-	if (newWindow)
-		brauzer.windows.create(newTab);
-	else
-		brauzer.tabs.create(newTab);
+	if (newWindow !== false)
+		brauzer.windows.get(data.activeWindow, win => {
+			const newTab = {
+				truetrue   : {'url': data.extensionStartPage, width: win.width, height: win.height, left: win.left, top: win.top},
+				truefalse  : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top},
+				falsetrue  : {width: win.width, height: win.height, left: win.left, top: win.top},
+				falsefalse : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top}
+			};
+			brauzer.windows.create(newTab[`${options.services.startpage.value === true}${url === ''}`]);
+		});
+	else {
+		const newTab = {
+			truetrue   : {'url': data.extensionStartPage, 'windowId': data.activeWindow},
+			truefalse  : {'url': url, 'windowId': data.activeWindow},
+			falsetrue  : {'windowId': data.activeWindow},
+			falsefalse : {'url': url, 'windowId': data.activeWindow}
+		};
+		brauzer.tabs.create(newTab[`${options.services.startpage.value === true}${url === ''}`]);
+	}
 }
 
 function createById(mode, item, position) {
