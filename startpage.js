@@ -20,6 +20,7 @@ function init() {
 		document.title = response.i18n.pageTitle;
 
 		if (response.startpage.empty) return;
+		if (!response.startpage.enabled) return;
 
 		const status = {
 			theme               : response.theme,
