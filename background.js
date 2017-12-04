@@ -1234,7 +1234,7 @@ const init = {
 				oldTab.pinned = info.pinned;
 				if (info.pinned) {
 					const index  = data.tabsId.indexOf(id);
-					moveFromTo('tabs', id, index, 0);
+					moveFromTo('tabs', index, 0);
 					send('sidebar', 'tabs', 'moved', {'id': id, 'fromIndex': index, 'toIndex': tab.index, 'pinned': info.pinned});
 				}
 				else

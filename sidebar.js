@@ -427,7 +427,7 @@ const initBlock = {
 
 		const moveTab = info => {
 			const tab = getById('tabs', info.id);
-			if (tab) {
+			if (tab !== false) {
 				if (status.misc.tabsMode === 'plain')
 					if (info.toIndex < info.fromIndex)
 						rootFolder.insertBefore(tab, rootFolder.children[info.toIndex]);
