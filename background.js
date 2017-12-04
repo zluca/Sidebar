@@ -2583,7 +2583,7 @@ function createNewTab(url = '', newWindow = false) {
 				falsetrue  : {width: win.width, height: win.height, left: win.left, top: win.top},
 				falsefalse : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top}
 			};
-			brauzer.windows.create(newTab[`${options.services.startpage.value === true}${url === ''}`]);
+			brauzer.windows.create(newTab[`${options.services.startpage.value}${url === ''}`]);
 		});
 	else {
 		const newTab = {
@@ -2592,7 +2592,7 @@ function createNewTab(url = '', newWindow = false) {
 			falsetrue  : {'windowId': data.activeWindow},
 			falsefalse : {'url': url, 'windowId': data.activeWindow}
 		};
-		brauzer.tabs.create(newTab[`${options.services.startpage.value === true}${url === ''}`]);
+		brauzer.tabs.create(newTab[`${options.services.startpage.value}${url === ''}`]);
 	}
 }
 
