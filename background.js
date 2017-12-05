@@ -1326,7 +1326,7 @@ const init = {
 
 		if (start) {
 			fillItem.tabs = (newItem, item) => {
-				const domain = makeDomain(item.url, item.favIconUrl).id;
+				const domain = makeDomain(firefox ? item.url === 'about:blank' ? item.title : item.url : item.url, item.favIconUrl).id;
 				if (item.active)
 					data.activeTabId  = item.id;
 				newItem.pid        = domain;
