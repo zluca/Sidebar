@@ -637,12 +637,14 @@ const messageHandler = {
 			handler[message.data.method](message.data.side);
 		},
 		startpage : (message, sender, sendResponse) => {
-			sendResponse({
-				'sites'     : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
-				'startpage' : optionsShort.startpage,
-				'theme'     : optionsShort.theme,
-				'i18n'      : i18n.startpage,
-			});
+			if (options.services.startpage.value)
+				sendResponse({
+					'sites'     : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
+					'startpage' : optionsShort.startpage,
+					'theme'     : optionsShort.theme,
+					'i18n'      : i18n.startpage,
+				});
+			else sendResponse({'startpage': {'empty': true}});
 		},
 		options : (message, sender, sendResponse) => {
 			sendResponse(options);

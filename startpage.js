@@ -17,10 +17,9 @@ function init() {
 
 		if (!response) return setTimeout(init, 400);
 
-		document.title = response.i18n.pageTitle;
-
 		if (response.startpage.empty) return;
-		if (!response.startpage.enabled) return;
+
+		document.title = response.i18n.pageTitle;
 
 		const status = {
 			theme               : response.theme,
