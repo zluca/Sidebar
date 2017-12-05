@@ -2257,14 +2257,7 @@ const init = {
 					}
 			initRss();
 			brauzer.alarms.onAlarm.addListener(alarm => {
-				if (alarm.name === 'save-data') {
-					data.saverActive = false;
-					for (let target in data.toSave) {
-						delete data.toSave[target];
-						saveNow(target);
-					}
-				}
-				else if (/rss-update\*\*/i.test(alarm.name)) {
+				if (/rss-update\*\*/i.test(alarm.name)) {
 					const id    = alarm.name.split('**').pop();
 					const feed  = getFolderById('rss', id);
 					if (feed)
@@ -2398,7 +2391,7 @@ function sendLater(what) {
 	};
 
 	if (!data.sendTimer.hasOwnProperty(what))
-		data.sendTimer[what] = setTimeout(sendData.favs, 5000);
+		data.sendTimer[what] = setTimeout(sendData[what], 4000);
 }
 
 function sendToWindow(target, subject, action, dataToSend) {
@@ -2442,7 +2435,6 @@ function makeFav(id, url, favIconUrl, update = false) {
 			return favIconUrl;
 		} ,
 		falsetrue  : _ => {
-			fav.fav = favFromUrl();
 			return fav.fav;
 		} ,
 		falsefalse : _ => {
@@ -2462,7 +2454,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 	else if (id === 'extension')
 		favIcon = data.defaultIcon;
 	else {
-		favIcon = updateFav[`${typeof favIconUrl === 'string'}${fav !== false}`]();
+		favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
 		saveLater('favs');
 	}
 	if (update)
@@ -2792,7 +2784,13 @@ function saveLater(what) {
 	data.toSave[what] = true;
 	if (!data.saverActive) {
 		data.saverActive = true;
-		brauzer.alarms.create('save-data', {'delayInMinutes' : 1});
+		setTimeout(_ => {
+			data.saverActive = false;
+			for (let target in data.toSave) {
+				delete data.toSave[target];
+				saveNow(target);
+			}
+		}, 30000);
 	}
 }
 
