@@ -1326,7 +1326,11 @@ const init = {
 
 		if (start) {
 			fillItem.tabs = (newItem, item) => {
-				const domain = makeDomain(firefox ? item.url === 'about:blank' ? item.title : item.url : item.url, item.favIconUrl).id;
+				let url = item.url;
+				if (url === 'about:blank')
+					if (`moz-extension://${item.title}` !== data.extensionStartPage)
+						url = item.title;
+				const domain = makeDomain(url, item.favIconUrl).id;
 				if (item.active)
 					data.activeTabId  = item.id;
 				newItem.pid        = domain;
@@ -2391,7 +2395,7 @@ function sendLater(what) {
 	};
 
 	if (!data.sendTimer.hasOwnProperty(what))
-		data.sendTimer[what] = setTimeout(sendData[what], 4000);
+		data.sendTimer[what] = setTimeout(sendData[what], 1000);
 }
 
 function sendToWindow(target, subject, action, dataToSend) {
