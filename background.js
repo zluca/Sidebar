@@ -2506,9 +2506,21 @@ function createDialogWindow(type, dialogData) {
 }
 
 function tabIsProtected(tab) {
-	if (/^https?:|^ftp:|^file:/.test(tab.url))
+	if (tab.activated === true)
 		return false;
 	if (tab.url === data.extensionStartPage)
+		return false;
+	if (firefox === true) {
+		if (/^https:\/\/addons.mozilla.org/.test(tab.url))
+			return true;
+	}
+	else if (opera === true) {
+		if (/^https:\/\/addons.opera.com/.test(tab.url))
+			return true;
+	}
+	else if (/^https:\/\/chrome.google.com/.test(tab.url))
+		return true;
+	if (/^https?:|^ftp:|^file:/.test(tab.url))
 		return false;
 	return true;
 }
