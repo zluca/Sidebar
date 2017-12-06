@@ -1466,7 +1466,7 @@ const init = {
 					detector(folder.children[i]);
 		};
 
-		const getRecent = (bookmarks) => {
+		const getRecent     = bookmarks => {
 			if (bookmarks.length < options.misc.limitBookmarks.value) {
 				setOption('misc', 'bookmarksMode', 'tree');
 				execMethod(brauzer.bookmarks.getTree, parseTree);
