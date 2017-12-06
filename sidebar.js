@@ -596,9 +596,10 @@ const initBlock = {
 
 		const changeBook = (id, info) => {
 			const bookmark = getById('bookmarks', id);
-			if (info.url)
+			if (info.hasOwnProperty('url'))
 				bookmark.title = info.url;
-			bookmark.textContent = info.title;
+			if (info.hasOwnProperty('title'))
+				bookmark.textContent = info.title;
 		};
 
 		if (status.misc.bookmarksMode === 'tree') {

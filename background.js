@@ -1492,16 +1492,20 @@ const init = {
 
 		const onChanged     = (id, info) => {
 			const bookmark = getById('bookmarks', id);
-			if (bookmark) {
-				bookmark.url   = info.url;
-				bookmark.title = info.title;
+			if (bookmark !== false) {
+				if (info.hasOwnProperty('url'))
+					bookmark.url   = info.url;
+				if (info.hasOwnProperty('title'))
+					bookmark.title = info.title;
 				send('sidebar', 'bookmarks', 'changedBookmark', {'id': id, 'info': info});
 			}
 			else {
 				const folder = getFolderById('bookmarks', id);
-				if (folder) {
-					folder.title = info.title;
-					send('sidebar', 'bookmarks', 'changedFolder', {'id': id, 'title': info.title});
+				if (folder !== false) {
+					if (info.hasOwnProperty('title')) {
+						folder.title = info.title;
+						send('sidebar', 'bookmarks', 'changedFolder', {'id': id, 'title': info.title});
+					}
 				}
 			}
 		};
