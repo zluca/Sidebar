@@ -154,6 +154,7 @@ section {
 #search-field {
 	height: 1.6rem;
 	width: auto;
+	min-width: 0;
 	border: none;
 	font-size: 1.2rem;
 	line-height: 1.5rem;
