@@ -1395,6 +1395,7 @@ const init = {
 							bookmarkItems.length : options.misc.limitBookmarks.value;
 						for (let i = 0; i < l; i++)
 							result.push({
+								id       : bookmarkItems[i].id,
 								url      : bookmarkItems[i].url,
 								title    : bookmarkItems[i].title,
 								domain   : makeDomain(bookmarkItems[i].url).id
@@ -1427,13 +1428,17 @@ const init = {
 
 		const makeFolder    = folder => {
 			let newFolder = getFolderById('bookmarks', folder.id);
-			if (!newFolder) {
+			if (newFolder === false) {
 				newFolder           = createFolderById('bookmarks', folder.id, 'last');
 				newFolder.pid       = folder.parentId;
 				newFolder.title     = folder.title;
 				newFolder.index     = folder.index;
 				newFolder.view      = 'normal';
 				newFolder.folded    = getFolded(`bookmarks-${folder.id}`);
+				newFolder.itemsId   = [];
+				const parent        = getFolderById('bookmarks', folder.parentId);
+				if (parent !== false)
+					parent.itemsId.push(folder.id);
 			}
 			return newFolder;
 		};
@@ -1445,12 +1450,22 @@ const init = {
 					if (child.type === 'folder')
 						parseTree(child);
 					else if (child.type === 'bookmark')
-						if (!/^place:/.test(child.url))
-							createById('bookmarks', child, 'last');
+						if (!/^place:/.test(child.url)) {
+							const parent = getFolderById('bookmarks', child.parentId);
+							if (parent !== false) {
+								parent.itemsId.push(child.id);
+								createById('bookmarks', child, 'last');
+							}
+						}
 				} :
 				child => {
-					if (child.hasOwnProperty('url'))
-						createById('bookmarks', child, 'last');
+					if (child.hasOwnProperty('url')) {
+						const parent = getFolderById('bookmarks', child.parentId);
+						if (parent !== false) {
+							parent.itemsId.push(child.id);
+							createById('bookmarks', child, 'last');
+						}
+					}
 					else parseTree(child);
 				};
 
@@ -1512,20 +1527,53 @@ const init = {
 
 		const onMoved       = (id, info) => {
 			const bookmark = getById('bookmarks', id);
-			bookmark.pid   = info.parentId;
-			bookmark.index = info.index;
-			send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'index': info.index});
+			if (bookmark !== false) {
+				const oldParent = getFolderById('bookmarks', info.oldParentId);
+				if (oldParent !== false) {
+					if (info.parentId === info.oldParentId) {
+						const index = data.bookmarksId.indexOf(id);
+						const shift = index - info.oldIndex;
+						moveFromTo('bookmarks', index, info.index + shift);
+					}
+					else {
+						const newParent = getFolderById('bookmarks', info.parentId);
+						if (newParent !== false) {
+							oldParent.itemsId.splice(info.oldIndex, 1);
+							newParent.itemsId.splice(info.index, 0, id);
+							if (newParent.itemsId.length > 1) {
+								const beaconId    = newParent.itemsId[info.index + 1];
+								const beaconIndex = data.bookmarksId.indexOf(beaconId);
+								const itemIndex   = data.bookmarksId.indexOf(id);
+								const item        = data.bookmarks.splice(itemIndex, 1)[0];
+								data.bookmarksId.splice(itemIndex, 1);
+								data.bookmarks.splice(beaconIndex - 1, 0, item);
+								data.bookmarksId.splice(beaconIndex - 1, 0, item.id);
+							}
+						}
+					}
+				}
+				send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'index': info.index});
+			}
 		};
 
 		const onRemoved     = (id, info) => {
+			const cleaning = id => {
+				const parent = getFolderById('bookmarks', bookmark.pid);
+				if (parent !== false) {
+					const index = parent.itemsId.indexOf(id);
+					parent.itemsId.splice(index, 1);
+				}
+			};
 			let bookmark = getById('bookmarks', id);
-			if (bookmark) {
+			if (bookmark !== false) {
+				cleaning(id);
 				deleteById('bookmarks', id);
 				send('sidebar', 'bookmarks', 'removed', {'id': id});
 			}
 			else {
 				bookmark = getFolderById('bookmarks', id);
-				if (bookmark) {
+				if (bookmark !== false) {
+					cleaning(id);
 					deleteFolderById('bookmarks', id, true);
 					send('sidebar', 'bookmarks', 'folderRemoved', {'id': id});
 				}

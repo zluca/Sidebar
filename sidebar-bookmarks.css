@@ -12,6 +12,8 @@
 #bookmarks-edit {
 	display: inline-block;
 }
-#bookmarks-0>.folder>.folder-name #bookmarks-edit {
+#bookmarks-0>.folder>.folder-name #bookmarks-edit,
+.search-active #bookmarks-move,
+.plain #bookmarks-move {
 	display: none;
 }

@@ -448,7 +448,6 @@ const initBlock = {
 	},
 
 	bookmarks : data => {
-
 		let lastSearch = '';
 
 		messageHandler.bookmarks = {
@@ -477,13 +476,14 @@ const initBlock = {
 					doc.removeEventListener('mouseup', mouseup);
 					setTimeout(_ => {status.moving = false;}, 500);
 				};
-				if (status.moving)
+				if (status.moving === true)
 					doc.addEventListener('mouseup', mouseup);
 				else
-					addBook(getById('bookmarks', data.id) , getFolderById('bookmarks', data.pid), data.index);
+					moveBook(getById('bookmarks', data.id) , getFolderById('bookmarks', data.pid), data.index);
 			}
 		};
 
+		block.bookmarks.classList.add(status.misc.bookmarksMode);
 		rootFolder                   = document.createElement('div');
 		rootFolder.id                = 'bookmarks-0';
 		const bookmarksSearchResults = document.createElement('div');
@@ -550,47 +550,47 @@ const initBlock = {
 			let parent     = rootFolder;
 			let pid        = 0;
 
-			const checkPid = status.misc.bookmarksMode === 'tree' ?
-				item => {
-					if (item.pid !== pid) {
-						pid = item.pid;
-						parent = getFolderById('bookmarks', pid);
-					}
-				} :
-				item => {};
-
-			const append   = {
-				last   : bookmark => parent.appendChild(bookmark),
-				search : bookmark => bookmarksSearchResults.appendChild(bookmark),
-				index  : bookmark => addBook(bookmark, parent, bookmark.index)
-			};
+			const checkPid =
+				method === 'search' ?
+					item => {
+						parent = bookmarksSearchResults;
+					} :
+					status.misc.bookmarksMode === 'tree' ?
+						item => {
+							if (item.pid !== pid) {
+								pid    = item.pid;
+								parent = getFolderById('bookmarks', pid);
+								if (parent === false)
+									parent = rootFolder;
+							}
+						} :
+						item => {};
 
 			for (let i = 0, l = items.length; i < l; i++) {
 				checkPid(items[i]);
-				const bookmark = createById('bookmarks', items[i].id);
+				const bookmark = createById('bookmarks', items[i].id, true);
 				bookmark.classList.add('bookmark', 'item', `domain-${items[i].domain}`);
 				bookmark.title = items[i].url;
 				bookmark.href  = items[i].url;
 				bookmark.textContent = items[i].title;
-				append[method](bookmark);
+				parent.appendChild(bookmark);
 			}
 		};
 
-		const addBook = (item, parent, index) => {
-			const beacon = parent.children[index + 1];
-			if (beacon)
-				parent.insertBefore(item, beacon);
-			else
-				parent.appendChild(item);
-		};
-
 		const moveBook = (item, parent, index) => {
+
+			const injectBook = _ => {
+				const beacon = parent.children[index + 1];
+				if (typeof beacon !== 'undefined')
+					parent.insertBefore(item, beacon);
+				else
+					parent.appendChild(item);
+			};
 			if (parent !== item.parentNode)
-				addBook(item, parent, index);
+				injectBook();
 			else {
-				const temp = document.createElement('div');
-				temp.appendChild(item);
-				addBook(item, parent, index);
+				rootFolder.appendChild(item);
+				injectBook();
 			}
 		};
 
@@ -602,12 +602,9 @@ const initBlock = {
 				bookmark.textContent = info.title;
 		};
 
-		if (status.misc.bookmarksMode === 'tree') {
+		if (status.misc.bookmarksMode === 'tree')
 			insertFolders(data.bookmarksFolders, 'bookmarks');
-			insertBookmarks(data.bookmarks, 'index');
-		}
-		else
-			insertBookmarks(data.bookmarks, 'last');
+		insertBookmarks(data.bookmarks, 'last');
 	},
 
 	history : data => {
@@ -1314,9 +1311,9 @@ const element = {
 	domains:   'style'
 };
 
-function createById(mode, id) {
+function createById(mode, id, search = false) {
 	const item      = document.createElement(element[mode]);
-	item.id         = `${mode}-${id}`;
+	item.id         = search ? `search-${mode}-${id}` : `${mode}-${id}`;
 	item.dataset.id = id;
 	status[mode].push(item);
 	status[`${mode}Id`].push(id);
@@ -1570,7 +1567,7 @@ const buttonsEvents = {
 			const mousedown = event => {
 				event.stopPropagation();
 				event.preventDefault();
-				let newindex = 0;
+				let newindex  = 0;
 				const length  = item.parentNode.children.length;
 				if (length > 2) {
 					for (let i = 1; i < length; i++)
@@ -1578,8 +1575,6 @@ const buttonsEvents = {
 							newindex = i - 1;
 							break;
 						}
-					if (newindex === 0)
-						newindex = length - 1;
 				}
 				finilize();
 				send('background', 'bookmarks', 'move', {'id': id, 'pid': item.parentNode.firstChild.dataset.id, 'index': newindex});
