@@ -97,7 +97,6 @@ const data = {
 		'downloads' : false,
 		'rss'       : false
 	},
-	initDone        : false,
 	extensionUrl    : brauzer.extension.getURL('/'),
 	extensionStartPage: `${brauzer.extension.getURL('/')}startpage.html`,
 	defaultStartPage: firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
@@ -634,17 +633,20 @@ const messageHandler = {
 					sendResponse(sideBarData(side));
 				}
 			};
-			handler[message.data.method](message.data.side);
+			if (data.init[options[message.data.side].mode.value] === true)
+				handler[message.data.method](message.data.side);
 		},
 		startpage : (message, sender, sendResponse) => {
-			if (options.services.startpage.value)
-				sendResponse({
-					'sites'     : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
-					'startpage' : optionsShort.startpage,
-					'theme'     : optionsShort.theme,
-					'i18n'      : i18n.startpage,
-				});
-			else sendResponse({'startpage': {'empty': true}});
+			if (data.init.startpage === true) {
+				if (options.services.startpage.value)
+					sendResponse({
+						'sites'     : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
+						'startpage' : optionsShort.startpage,
+						'theme'     : optionsShort.theme,
+						'i18n'      : i18n.startpage,
+					});
+				else sendResponse({'startpage': {'empty': true}});
+			}
 		},
 		options : (message, sender, sendResponse) => {
 			sendResponse(options);
@@ -820,11 +822,6 @@ const gettingStorage = res => {
 				optionsShort[section][option] = options[section][option].value;
 		}
 		init.data(true);
-		for (let service in options.services)
-			if (options.services[service])
-				init[service](true);
-			else
-				data.init[service] = true;
 	};
 
 	const setDefaults = _ => {
@@ -895,10 +892,10 @@ if (sidebarAction !== null) {
 		});
 	});
 	if (firefox) {
-		data.sideDetection = {};
+		data.sideDetection         = {};
 		data.sideDetection.sidebar = '';
 		data.sideDetection.content = '';
-		messageHandler.sidebar = {
+		messageHandler.sidebar     = {
 			sideDetection: (message, sender, sendResponse) => {
 
 				const setSide = (sender, side) => {
@@ -948,24 +945,6 @@ function initWindow() {
 		createSidebarWindow('rightBar');
 }
 
-function checkForInit() {
-	if (data.initDone) return;
-	for (let serviceInitialized in data.init)
-		if (!data.init[serviceInitialized]) return;
-	data.initDone = true;
-	brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
-		if (message.hasOwnProperty('target'))
-			if (message.target === 'background') {
-				messageHandler[message.subject][message.action](message, sender, sendResponse);
-				if (message.hasOwnProperty('data'))
-					if (message.data.hasOwnProperty('needResponse'))
-						return true;
-			}
-	});
-	initWindow();
-	setIcon();
-}
-
 const init = {
 
 	data: _ => {
@@ -973,13 +952,45 @@ const init = {
 			return;
 		data.init.data = true;
 		const gettingStorage = res => {
+
+			const initLater = [];
+
 			if (Array.isArray(res.favs)) {
 				data.favs          = res.favs;
 				data.favsId        = res.favsId;
 			}
 			if (Array.isArray(res.foldedId))
 				data.foldedId      = res.foldedId;
-			checkForInit();
+
+			if (options.services.startpage.value === true)
+				init.startpage(true);
+			for (let service in options.services)
+				if (options.services[service]) {
+					if (options.leftBar.mode.value === service || options.rightBar.mode.value === service)
+						init[service](true);
+					else
+						initLater.push(service);
+				}
+				else
+					data.init[service] = true;
+			setTimeout(_ => {
+				for (let i = initLater.length - 1; i >= 0; i--)
+					init[initLater[i]](true);
+			}, 2000);
+
+			brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
+				if (message.hasOwnProperty('target'))
+					if (message.target === 'background') {
+						messageHandler[message.subject][message.action](message, sender, sendResponse);
+						if (message.hasOwnProperty('data'))
+							if (message.data.hasOwnProperty('needResponse'))
+								return true;
+					}
+			});
+
+			initWindow();
+			setIcon();
+
 		};
 
 		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId']);
@@ -991,7 +1002,6 @@ const init = {
 			if (Array.isArray(res.speadDial))
 				data.speadDial = res.speadDial;
 			data.init.startpage = true;
-			checkForInit();
 		};
 
 		if (start) {
@@ -1050,7 +1060,7 @@ const init = {
 				searchEngineYandexTranslate : getI18n('startpageYandexTranslateLabel')
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
-			if (data.init.tabs)
+			if (data.init.tabs === true)
 				for (let i = data.tabs.length - 1; i >= 0; i--)
 					if (data.tabs[i].url === data.defaultStartPage)
 						brauzer.tabs.update(data.tabs[i].id, {'url': data.extensionStartPage});
@@ -1138,7 +1148,6 @@ const init = {
 			brauzer.tabs.onMoved.addListener(onMoved);
 
 			data.init.tabs = true;
-			checkForInit();
 		};
 
 		const makeFolder        = tab => {
@@ -1423,7 +1432,6 @@ const init = {
 			brauzer.bookmarks.onRemoved.addListener(onRemoved);
 
 			data.init.bookmarks = true;
-			checkForInit();
 		};
 
 		const makeFolder    = folder => {
@@ -1631,7 +1639,6 @@ const init = {
 			brauzer.history.onVisitRemoved.addListener(onVisitRemoved);
 
 			data.init.history = true;
-			checkForInit();
 		};
 
 		const searchMore = (sendData = false) => {
@@ -1811,7 +1818,6 @@ const init = {
 			brauzer.downloads.onChanged.addListener(onChanged);
 
 			data.init.downloads = true;
-			checkForInit();
 		};
 
 
@@ -2057,7 +2063,6 @@ const init = {
 			};
 
 			data.init.rss = true;
-			checkForInit();
 		};
 
 		const guidFromUrl = url => {
@@ -2386,12 +2391,11 @@ function sideBarData(side) {
 
 function send(target, subject, action, dataToSend) {
 
-
 	const sendToSidebar = (target, subject, action, dataToSend) => {
 
 		const sendByMethod = {
 			native : _ => {
-				if (data.nativeActive)
+				if (data.nativeActive === true)
 					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
 			iframe : _ => {
@@ -2400,7 +2404,7 @@ function send(target, subject, action, dataToSend) {
 					return;
 				if (!tab.activated)
 					return;
-				if (firefox)
+				if (firefox === true)
 					sendToTab(data.activeTabId, target, subject, action, dataToSend);
 				else
 					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
@@ -2414,8 +2418,9 @@ function send(target, subject, action, dataToSend) {
 		if (/tabs|bookmarks|history|downloads|rss/.test(subject)) {
 			if (subject !== options[target].mode.value)
 				return;
-			if (!data.initDone)
-				return;
+			if (data.init.hasOwnProperty(subject))
+				if (data.init[subject] === false)
+					return;
 		}
 		sendByMethod[options[target].method.value]();
 	};

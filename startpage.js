@@ -10,12 +10,16 @@ function send(target, subject, action, data, callback) {
 	brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': data}, callback);
 }
 
+let initTimer = -1;
 init();
 
 function init() {
 	send('background', 'request', 'startpage', {needResponse: true}, response => {
-
-		if (!response) return setTimeout(init, 400);
+		// console.log(response);
+		if (typeof response === 'undefined') {
+			initTimer = setTimeout(init, 200);
+			return;
+		}
 
 		if (response.startpage.empty) return;
 

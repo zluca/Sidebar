@@ -55,7 +55,8 @@ let dialog = null;
 
 makeIframe('leftBar');
 makeIframe('rightBar');
-setStatus();
+let initTimer   = -1;
+init();
 const checkBody = setInterval(
 	_ => {if (document.body) {
 		clearInterval(checkBody);
@@ -166,10 +167,12 @@ function checkDocument() {
 	}
 }
 
-function setStatus() {
+function init() {
 	send('background', 'request', 'status', {needResponse: true}, response => {
-		if (!response)
-			return setTimeout(setStatus, 400);
+		if (typeof response === 'undefined') {
+			initTimer = setTimeout(init, 200);
+			return;
+		}
 		status.leftBar           = response.leftBar;
 		status.rightBar          = response.rightBar;
 		status.fontSize          = response.fontSize;

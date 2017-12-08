@@ -134,7 +134,8 @@ const i18n = {
 	rss         : null
 };
 
-send('background', 'request', 'mode', {'side': status.side, 'method': status.method, needResponse: true}, fullInit);
+let initTimer = -1;
+veryInit();
 
 const messageHandler = {
 	options  : {
@@ -1131,9 +1132,17 @@ function enableBlock(mode) {
 	}
 }
 
-function fullInit(response) {
+function veryInit() {
+	send('background', 'request', 'mode', {'side': status.side, 'method': status.method, needResponse: true}, response => {
+		if (typeof response === 'undefined') {
+			initTimer = setTimeout(veryInit, 200);
+			return;
+		}
+		fullInit(response);
+	});
+}
 
-	if (!response) return setTimeout(fullInit, 200);
+function fullInit(response) {
 
 	status.side         = response.side;
 	status.misc         = response.misc;
