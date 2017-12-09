@@ -101,6 +101,7 @@ const data = {
 	extensionStartPage: `${brauzer.extension.getURL('/')}startpage.html`,
 	defaultStartPage: firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
 	defaultIcon     : 'icons/default.svg',
+	sidebarIcon     : 'icons/sidebar-icon-64.png',
 	systemIcon      : 'icons/wrench.svg',
 	startpageIcon   : 'icons/startpage.svg',
 	rssIcon         : 'icons/rss.svg',
@@ -2087,7 +2088,7 @@ const init = {
 			const rssUrl = urlFromUser(url);
 			for (let i = data.rssFolders.length - 1; i >= 0; i--)
 				if (data.rssFolders[i].url === rssUrl)
-					return brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.defaultIcon, 'title': i18n.notification.rssFeedExistErrorTitle, 'message':  `${i18n.notification.rssFeedExistErrorText}
+					return brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.sidebarIcon, 'title': i18n.notification.rssFeedExistErrorTitle, 'message':  `${i18n.notification.rssFeedExistErrorText}
 							${data.rssFolders[i].title}`});
 			const xhttp  = new XMLHttpRequest();
 			xhttp.open("GET", rssUrl, true);
@@ -2130,7 +2131,7 @@ const init = {
 						saveLater('rssFolders');
 					}
 					else
-						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.defaultIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
+						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.sidebarIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
 							${url}`});
 				}
 
