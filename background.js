@@ -1226,8 +1226,7 @@ const init = {
 				data.activeTabId = tabInfo.tabId;
 				send('sidebar', 'tabs', 'active', data.activeTabId);
 				if (options.leftBar.method.value === 'iframe') {
-					if (firefox)
-						send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
+					send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
 					send('content', 'reInit', 'leftBar', {
 						options: optionsShort.leftBar,
 						theme: {
@@ -1238,8 +1237,7 @@ const init = {
 					});
 				}
 				if (options.rightBar.method.value === 'iframe') {
-					if (firefox)
-						send('rightBar', 'set', 'reInit', sideBarData('rightBar'));
+					send('rightBar', 'set', 'reInit', sideBarData('rightBar'));
 					send('content', 'reInit', 'rightBar', {
 						options: optionsShort.rightBar,
 						theme: {
@@ -2433,12 +2431,9 @@ function send(target, subject, action, dataToSend) {
 				const tab = getById('tabs', data.activeTabId);
 				if (tab === false)
 					return;
-				if (tab.activated)
+				if (tab.activated === false)
 					return;
-				if (firefox === true)
-					sendToTab(data.activeTabId, target, subject, action, dataToSend);
-				else
-					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
+				sendToTab(data.activeTabId, target, subject, action, dataToSend);
 			},
 			window : _ => {
 				sendToWindow(target, subject, action, dataToSend);
