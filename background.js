@@ -169,7 +169,7 @@ const optionsHandler = {
 		else {
 			const firstEnabledService = side => {
 				for (let services = ['tabs', 'bookmarks', 'history', 'downloads', 'rss'], i = services.length - 1; i >= 0; i--) {
-					if (options.services[services[i]].value && services[i] !== option) {
+					if (options.services[services[i]].value === true && services[i] !== option) {
 						setOption(side, 'mode', services[i]);
 						send(side, 'options', 'mode', {value: services[i], data: modeData[services[i]]()});
 						break;
@@ -647,7 +647,7 @@ const messageHandler = {
 		},
 		startpage : (message, sender, sendResponse) => {
 			if (data.init.startpage === true) {
-				if (options.services.startpage.value)
+				if (options.services.startpage.value === true)
 					sendResponse({
 						'sites'     : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
 						'startpage' : optionsShort.startpage,
@@ -758,8 +758,8 @@ const messageHandler = {
 		},
 		rssAdd : (message, sender, sendResponse) => {
 			const activeTab = getById('tabs', data.activeTabId);
-			if (activeTab)
-				if (!tabIsProtected(activeTab))
+			if (activeTab !== false)
+				if (tabIsProtected(activeTab) === false)
 					return send('content', 'dialog', 'checkRss', '');
 			createDialogWindow(message.action, message.data);
 		},
@@ -1211,8 +1211,8 @@ const init = {
 					data.sidebarWindowCreating = false;
 					return false;
 				}
-				if (options.services.startpage.value)
-					if (checkStartPage(tab))
+				if (options.services.startpage.value === true)
+					if (checkStartPage(tab) === true)
 						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
 				makeFolder(tab);
 				const newTab = createById('tabs', tab, 'last');
@@ -1266,7 +1266,7 @@ const init = {
 					send('sidebar', 'tabs', 'unpin', {'id': id});
 			}
 			if (info.hasOwnProperty('url')) {
-				if (options.services.startpage.value)
+				if (options.services.startpage.value === true)
 					if (checkStartPage(tab))
 						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
 				oldTab.url   = info.url;
@@ -1287,7 +1287,7 @@ const init = {
 			if (info.hasOwnProperty('title')) {
 				oldTab.title = info.title;
 				send('sidebar', 'tabs', 'title', {'id': id, 'title': info.title});
-				if (options.services.history) {
+				if (options.services.history.value === true) {
 					const item = getById('tabs', id);
 					for (let i = data.history.length - 1; i >= 0; i--)
 						if (item.url === data.history[i].url) {
@@ -2489,7 +2489,7 @@ function sendToWindow(target, subject, action, dataToSend) {
 function sendToTab(tabId, target, subject, action, dataToSend) {
 	const tab = getById('tabs', tabId);
 	if (tab !== false)
-		if (!tabIsProtected(tab))
+		if (tabIsProtected(tab) === false)
 			brauzer.tabs.sendMessage(tabId, {'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 }
 
@@ -2569,7 +2569,7 @@ function makeDomain(url, fav) {
 		id    = title.replace(/\./g, '');
 	}
 	let domain = getById('domains', id);
-	if (!domain) {
+	if (domain === false) {
 		domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), title: title}, 'last');
 		send('sidebar', 'info', 'newDomain', {'domain': domain});
 	}
@@ -2580,9 +2580,9 @@ function createDialogWindow(type, dialogData) {
 	data.dialogData = dialogData;
 	data.dialogType = type;
 	const activeTab = getById('tabs', data.activeTabId);
-	if (!activeTab)
+	if (activeTab === false)
 		return;
-	if (!tabIsProtected(activeTab))
+	if (tabIsProtected(activeTab) === false)
 		sendToTab(data.activeTabId, 'content', 'dialog', 'create', type);
 	else
 		brauzer.tabs.create({url: data.extensionStartPage, windowId: data.activeWindow});
