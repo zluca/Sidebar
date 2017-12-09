@@ -462,6 +462,18 @@
 		"message"       : "Вы уже подписаны на ",
 		"description"   : ""
 	},
+	"notificationBookmarksTitle" : {
+		"message"       : "Внимание",
+		"description"   : ""
+	},
+	"notificationbkTooManyBookmarksText" : {
+		"message"       : "Слишком много закладок. Переключено в режим просмотра последних закладок. Предел можно поменять в опциях.",
+		"description"   : ""
+	},
+	"notificationbkSwitchToTreeText" : {
+		"message"       : "Закладки переключены в режим дерева.",
+		"description"   : ""
+	},
 
 	"startpagePageTitle" : {
 		"message"       : "Стартовая страница",

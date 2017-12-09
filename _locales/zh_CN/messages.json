@@ -466,6 +466,18 @@
 		"message"       : "您已订阅，于 ",
 		"description"   : ""
 	},
+	"notificationBookmarksTitle" : {
+		"message"       : "Attention",
+		"description"   : ""
+	},
+	"notificationbkTooManyBookmarksText" : {
+		"message"       : "Too many bookmarks. Switched to last bookmarks view. The limit can be changed via Options.",
+		"description"   : ""
+	},
+	"notificationbkSwitchToTreeText" : {
+		"message"       : "Bookmarks switched to tree view.",
+		"description"   : ""
+	},
 
 	"startpagePageTitle" : {
 		"message"       : "起始页",

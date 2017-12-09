@@ -29,7 +29,10 @@ const i18n = {
 		rssNewFeedErrorTitle       : getI18n('notificationRssNewFeedErrorTitle'),
 		rssNewFeedErrorText        : getI18n('notificationRssNewFeedErrorText'),
 		rssFeedExistErrorTitle     : getI18n('notificationRssFeedExistErrorTitle'),
-		rssFeedExistErrorText      : getI18n('notificationRssFeedExistErrorText')
+		rssFeedExistErrorText      : getI18n('notificationRssFeedExistErrorText'),
+		bookmarksTitle             : getI18n('notificationBookmarksTitle'),
+		bkTooManyBookmarksText     : getI18n('notificationbkTooManyBookmarksText'),
+		bkSwitchToTreeText         : getI18n('notificationbkSwitchToTreeText')
 	},
 	startpage: {},
 	domains: {
@@ -212,8 +215,7 @@ const optionsHandler = {
 		}
 	},
 	restartBookmarks : (section, option, newValue) => {
-		init.bookmarks(false);
-		init.bookmarks(true);
+		init.bookmarks('reInit');
 	}
 };
 
@@ -349,6 +351,12 @@ const options = {
 			value   : true,
 			type    : 'boolean',
 			targets : ['sidebar']
+		},
+		tooManyBookmarks     : {
+			value   : true,
+			type    : 'boolean',
+			hidden  : true,
+			targets : []
 		}
 	},
 	theme: {
@@ -1432,6 +1440,13 @@ const init = {
 			brauzer.bookmarks.onMoved.addListener(onMoved);
 			brauzer.bookmarks.onRemoved.addListener(onRemoved);
 
+			if (start === 'reInit') {
+				if (options.leftBar.mode.value === 'bookmarks')
+					send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
+				if (options.rightBar.mode.value === 'bookmarks')
+					send('rightBar', 'set', 'reInit', sideBarData('rightBar'));
+			}
+
 			data.init.bookmarks = true;
 		};
 
@@ -1494,11 +1509,19 @@ const init = {
 			if (bookmarks.length < options.misc.limitBookmarks.value) {
 				setOption('misc', 'bookmarksMode', 'tree');
 				execMethod(brauzer.bookmarks.getTree, parseTree);
+				if (options.warnings.tooManyBookmarks.value === false) {
+					brauzer.notifications.create('switch-to-tree', {'type': 'basic', 'iconUrl': data.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkSwitchToTreeText});
+					setOption('warnings', 'tooManyBookmarks', true);
+				}
 			}
 			else {
 				setOption('misc', 'bookmarksMode', 'plain');
 				for (let i = 0, l = bookmarks.length; i < l; i++)
 					createById('bookmarks', bookmarks[i], 'last');
+				if (options.warnings.tooManyBookmarks.value === true) {
+					brauzer.notifications.create('too-many-bookmarks', {'type': 'basic', 'iconUrl': data.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkTooManyBookmarksText});
+					setOption('warnings', 'tooManyBookmarks', false);
+				}
 				return initBookmarks();
 			}
 		};
@@ -1589,7 +1612,7 @@ const init = {
 			}
 		};
 
-		if (start) {
+		if (start === true) {
 			fillItem.bookmarks = (newItem, item) => {
 				newItem.pid     = item.parentId;
 				newItem.domain  = makeDomain(item.url).id;
@@ -1599,6 +1622,13 @@ const init = {
 				return newItem;
 			};
 
+			execMethod(brauzer.bookmarks.getRecent, getRecent, options.misc.limitBookmarks.value);
+		}
+		else if (start === 'reInit') {
+			data.bookmarks           = [];
+			data.bookmarksId         = [];
+			data.bookmarksFolders    = [];
+			data.bookmarksFoldersId  = [];
 			execMethod(brauzer.bookmarks.getRecent, getRecent, options.misc.limitBookmarks.value);
 		}
 		else {
@@ -2403,7 +2433,7 @@ function send(target, subject, action, dataToSend) {
 				const tab = getById('tabs', data.activeTabId);
 				if (tab === false)
 					return;
-				if (!tab.activated)
+				if (tab.activated)
 					return;
 				if (firefox === true)
 					sendToTab(data.activeTabId, target, subject, action, dataToSend);

@@ -1100,6 +1100,7 @@ function blockInit(newMode, data) {
 		clearStatus(status.mode);
 		block[status.mode].classList.remove('search-active');
 	};
+
 	if (!status.init[newMode]) {
 		i18n[newMode] = data.i18n;
 		const link    = document.createElement('link');
@@ -1143,6 +1144,18 @@ function veryInit() {
 }
 
 function fullInit(response) {
+
+	const onMessage = (message, sender, sendResponse) => {
+		// console.log(message);
+		if (message.hasOwnProperty('target')) {
+			if (message.target === 'sidebar')
+				messageHandler[message.subject][message.action](message.data, sendResponse);
+			else if (message.target === status.side)
+				messageHandler[message.subject][message.action](message.data, sendResponse);
+		}
+	};
+
+	brauzer.runtime.onMessage.removeListener(onMessage);
 
 	status.side         = response.side;
 	status.misc         = response.misc;
@@ -1212,15 +1225,7 @@ function fullInit(response) {
 	setDomainStyle.rewrite(response.domains);
 	blockInit(response.mode, response.data);
 
-	brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
-		// console.log(message);
-		if (message.hasOwnProperty('target')) {
-			if (message.target === 'sidebar')
-				messageHandler[message.subject][message.action](message.data, sendResponse);
-			else if (message.target === status.side)
-				messageHandler[message.subject][message.action](message.data, sendResponse);
-		}
-	});
+	brauzer.runtime.onMessage.addListener(onMessage);
 }
 
 function setRssUnreaded(count) {
