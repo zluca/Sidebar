@@ -1151,7 +1151,7 @@ const init = {
 		};
 
 		const makeFolder        = tab => {
-			const domain = makeDomain(tab.url, tab.favIconUrl);
+			const domain = makeDomain(firefox ? tab.url === 'about:blank' ? tab.title : tab.url: tab.url, tab.favIconUrl);
 			let folder   = createFolderById('tabs', domain.id, 'last');
 			if (folder !== false) {
 				folder.pid        = 0;
