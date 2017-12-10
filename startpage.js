@@ -6,10 +6,6 @@ const firefox = (typeof InstallTrigger !== 'undefined') ? true : false;
 const brauzer = firefox ? browser : chrome;
 const doc     = document.documentElement;
 
-function send(target, subject, action, data, callback) {
-	brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': data}, callback);
-}
-
 let initTimer = -1;
 init();
 
@@ -515,6 +511,10 @@ function init() {
 			send('background', 'dialog', 'siteChange', {index: editButton.parentNode.dataset.index});
 		});
 	});
+}
+
+function send(target, subject, action, data, callback) {
+	brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': data}, callback);
 }
 
 })();

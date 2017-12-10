@@ -476,7 +476,6 @@ function makeDialogWindow(data, warnings, colors) {
 	fillWindow[type]();
 	document.body.style.paddingTop = `calc(50vh - ${dialog.offsetHeight >> 1}px)`;
 	document.body.addEventListener('keydown', keyboardListener);
-
 }
 
 function send(target, subject, action, data = {}, callback = _ => {}) {

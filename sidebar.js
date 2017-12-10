@@ -2,18 +2,22 @@
 
 'use strict';
 
-const firefox          = (typeof InstallTrigger !== 'undefined') ? true : false;
-const brauzer          = firefox ? browser : chrome;
-const doc              = document.documentElement;
-const mask             = window.CSS.supports('mask-image') ? 'mask-image' : '-webkit-mask-image';
+const firefox  = (typeof InstallTrigger !== 'undefined') ? true : false;
+const brauzer  = firefox ? browser : chrome;
+const doc      = document.documentElement;
+const mask     = window.CSS.supports('mask-image') ? 'mask-image' : '-webkit-mask-image';
 
-const status           = {
+const i18n     = {
+	controls    : null,
+	tabs        : null,
+	bookmarks   : null,
+	history     : null,
+	downloads   : null,
+	rss         : null
+};
+
+const status   = {
 	side              : window.location.hash.replace('#', '').split('-')[0],
-	method            : window.location.hash.replace('#', '').split('-')[1],
-	fixed             : false,
-	wide              : false,
-	width             : 0,
-	mode              : '',
 	init: {
 		tabs         : false,
 		bookmarks    : false,
@@ -21,8 +25,6 @@ const status           = {
 		history      : false,
 		rss          : false
 	},
-	misc             : null,
-	warnings         : null,
 	bookmarkFolders  : [],
 	historyInfo       : {
 		lastDate : 0,
@@ -30,6 +32,19 @@ const status           = {
 	},
 	activeTab           : null,
 	activeTabId         : 0,
+	domainsId           : [],
+	info                : {
+		rssUnreaded    : 0,
+		downloadStatus : ''
+	},
+	moving              : false,
+	lastClicked         : {
+		id   : -1,
+		time : -1
+	}
+};
+
+const data     = {
 	tabs                : [],
 	tabsId              : [],
 	tabsFolders         : [],
@@ -48,33 +63,26 @@ const status           = {
 	rssId               : [],
 	rssFolders          : [],
 	rssFoldersId        : [],
-	domains             : [],
-	domainsId           : [],
-	info                : {
-		rssUnreaded    : 0,
-		downloadStatus : ''
-	},
-	moving              : false,
-	lastClicked         : {
-		id   : -1,
-		time : -1
-	}
+	domains             : []
 };
 
-document.title         = status.method;
+const options  = {
+	sidebar          : {
+		method            : window.location.hash.replace('#', '').split('-')[1],
+		fixed             : false,
+		wide              : false,
+		width             : 0,
+		mode              : '',
+	},
+	theme            : null,
+	misc             : null,
+	warnings         : null,
+};
+
+document.title = options.sidebar.method;
 doc.classList.add(status.side);
 
-if (status.method === 'native') {
-	const port = brauzer.runtime.connect({name: 'sidebar-alive'});
-	if (firefox) {
-		doc.addEventListener('mouseleave', event => {
-			send('background', 'sidebar', 'sideDetection', {'sender': 'sidebar', 'action': 'leave', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-		});
-		doc.addEventListener('mouseover', event => {
-			send('background', 'sidebar', 'sideDetection',{'sender': 'sidebar', 'action': 'over', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-		});
-	}
-}
+let rootFolder = null;
 
 const controls = {
 	header: {
@@ -107,7 +115,7 @@ controls.header.sidebar.id = 'controls-block';
 controls.header.main.appendChild(controls.header.sidebar);
 document.body.appendChild(controls.header.main);
 
-const button = {
+const button   = {
 	tabs        : null,
 	bookmarks   : null,
 	history     : null,
@@ -115,9 +123,7 @@ const button = {
 	rss         : null
 };
 
-let rootFolder  = null;
-
-const block = {
+const block    = {
 	tabs        : makeBlock('tabs'),
 	bookmarks   : makeBlock('bookmarks'),
 	history     : makeBlock('history'),
@@ -125,17 +131,9 @@ const block = {
 	rss         : makeBlock('rss')
 };
 
-const i18n = {
-	controls    : null,
-	tabs        : null,
-	bookmarks   : null,
-	history     : null,
-	downloads   : null,
-	rss         : null
-};
 
 let initTimer = -1;
-veryInit();
+tryToInit();
 
 const messageHandler = {
 	options  : {
@@ -146,13 +144,13 @@ const messageHandler = {
 			setFixed(data.value);
 		},
 		width              : data => {
-			status.width = data.value;
+			options.sidebar.width = data.value;
 		},
 		mode               : data => {
 			blockInit(data.value, data.data);
 		},
 		warnings           : data => {
-			status.warnings[data.option] = data.value;
+			options.warnings[data.option] = data.value;
 		},
 		fontSize           : data => {
 			setFontSize(data.value);
@@ -190,23 +188,22 @@ const messageHandler = {
 			else
 				button[data.service].classList.add('hidden');
 		}
-
 	},
 	set : {
 		fold         : data => {
-			if (data.mode !== status.mode) return;
+			if (data.mode !== options.sidebar.mode) return;
 			const folder = getFolderById(data.mode, data.id);
 			if (folder)
 				folder.classList[data.method]('folded');
 		},
 		reInit       : data => {
-			fullInit(data);
+			initSidebar(data);
 		},
 		hover       : data => {
 			document.documentElement.classList[data]('hover');
 		},
 		side        : data => {
-			if (status.method === 'native')
+			if (options.sidebar.method === 'native')
 				status.side = data;
 		}
 	},
@@ -262,7 +259,7 @@ const initBlock = {
 			urlChange   : data => {
 				const tab = getById('tabs', data.tab.id);
 				if (tab) {
-					if (status.misc.tabsMode === 'domain')
+					if (options.misc.tabsMode === 'domain')
 						if (data.hasOwnProperty('folder'))
 							insertFolders([data.folder], 'tabs');
 				}
@@ -292,7 +289,7 @@ const initBlock = {
 				};
 				const tab = getById('tabs', data.id);
 				if (tab !== false)
-					removing[status.misc.tabsMode](tab);
+					removing[options.misc.tabsMode](tab);
 			},
 			moved        : data => {
 				moveTab(data);
@@ -301,7 +298,7 @@ const initBlock = {
 				getById('tabs', data.id).classList.remove('pinned');
 			},
 			newFolder    : data => {
-				if (status.misc.tabsMode === 'domain')
+				if (options.misc.tabsMode === 'domain')
 					insertFolders([data], 'tabs');
 			},
 			domainCount  : data => {
@@ -361,12 +358,12 @@ const initBlock = {
 		});
 
 		const setTabsMode = (mode, tabs, tabsFolders) => {
-			status.misc.tabsMode = mode;
-			block.tabs.classList = `block ${status.misc.tabsMode}`;
+			options.misc.tabsMode = mode;
+			block.tabs.classList = `block ${options.misc.tabsMode}`;
 			while (rootFolder.hasChildNodes())
 				rootFolder.removeChild(rootFolder.firstChild);
 			clearStatus('tabs');
-			if (status.misc.tabsMode === 'domain')
+			if (options.misc.tabsMode === 'domain')
 				insertFolders(tabsFolders, 'tabs');
 			insertTabs(tabs);
 		};
@@ -416,9 +413,9 @@ const initBlock = {
 				classList += tabs[i].pinned    ? ' pinned'    : '';
 				classList += tabs[i].discarded ? ' discarded' : '';
 				tab.classList = classList;
-				postProcess[status.misc.tabsMode](i);
+				postProcess[options.misc.tabsMode](i);
 			}
-			if (status.misc.tabsMode === 'tree') {
+			if (options.misc.tabsMode === 'tree') {
 				insertFolders(treeFolders, 'tabs', true);
 				for (let i = 0, l = tabs.length; i < l; i++) {
 					const folder = getFolderById('tabs', tabs[i].id);
@@ -433,7 +430,7 @@ const initBlock = {
 		const moveTab = info => {
 			const tab = getById('tabs', info.id);
 			if (tab !== false) {
-				if (status.misc.tabsMode === 'plain')
+				if (options.misc.tabsMode === 'plain')
 					if (info.toIndex < info.fromIndex)
 						rootFolder.insertBefore(tab, rootFolder.children[info.toIndex]);
 					else
@@ -445,7 +442,7 @@ const initBlock = {
 			}
 		};
 
-		setTabsMode(status.misc.tabsMode, data.tabs, data.tabsFolders);
+		setTabsMode(options.misc.tabsMode, data.tabs, data.tabsFolders);
 	},
 
 	bookmarks : data => {
@@ -484,7 +481,7 @@ const initBlock = {
 			}
 		};
 
-		block.bookmarks.classList.add(status.misc.bookmarksMode);
+		block.bookmarks.classList.add(options.misc.bookmarksMode);
 		rootFolder                   = document.createElement('div');
 		rootFolder.id                = 'bookmarks-0';
 		const bookmarksSearchResults = document.createElement('div');
@@ -556,7 +553,7 @@ const initBlock = {
 					item => {
 						parent = bookmarksSearchResults;
 					} :
-					status.misc.bookmarksMode === 'tree' ?
+					options.misc.bookmarksMode === 'tree' ?
 						item => {
 							if (item.pid !== pid) {
 								pid    = item.pid;
@@ -603,7 +600,7 @@ const initBlock = {
 				bookmark.textContent = info.title;
 		};
 
-		if (status.misc.bookmarksMode === 'tree')
+		if (options.misc.bookmarksMode === 'tree')
 			insertFolders(data.bookmarksFolders, 'bookmarks');
 		insertBookmarks(data.bookmarks, 'last');
 	},
@@ -845,7 +842,7 @@ const initBlock = {
 				insertFolders([data.feed], 'rss');
 			},
 			newItems         : data =>  {
-				if (status.misc.rssMode === 'plain')
+				if (options.misc.rssMode === 'plain')
 					insertRss(data.items, 'date');
 				else
 					insertRss(data.items, 'first');
@@ -950,7 +947,7 @@ const initBlock = {
 		});
 
 		const setRssMode = (mode, rss, rssFolders) => {
-			status.misc.rssMode = mode;
+			options.misc.rssMode = mode;
 			block.rss.classList = `block ${mode}`;
 			while (rootFolder.firstChild)
 				rootFolder.removeChild(rootFolder.firstChild);
@@ -958,7 +955,7 @@ const initBlock = {
 			if (mode === 'domain')
 				insertFolders(rssFolders, 'rss');
 			insertRss(rss, 'first');
-			setReadedMode(status.misc.rssHideReaded);
+			setReadedMode(options.misc.rssHideReaded);
 		};
 
 		const insertRss = (items, method) => {
@@ -1021,11 +1018,11 @@ ${items[i].description}`;
 					item.classList.add('item', 'rss-item', `domain-${items[i].domain}`, 'unreaded');
 					folder.classList.add('unreaded');
 				}
-				insert[`${status.misc.rssMode}${method}`](item, items[i]);
+				insert[`${options.misc.rssMode}${method}`](item, items[i]);
 			}
 		};
 
-		setRssMode(status.misc.rssMode, data.rss, data.rssFolders);
+		setRssMode(options.misc.rssMode, data.rss, data.rssFolders);
 	}
 };
 
@@ -1034,7 +1031,7 @@ ${items[i].description}`;
 ///------------------------------------------------------------------///
 
 function setWide(mode) {
-	status.wide = mode;
+	options.sidebar.wide = mode;
 	if (mode) {
 		doc.classList.add('wide');
 		doc.classList.remove('narrow');
@@ -1046,7 +1043,7 @@ function setWide(mode) {
 }
 
 function setFixed(mode) {
-	status.fixed = mode;
+	options.sidebar.fixed = mode;
 	if (mode) {
 		doc.classList.remove('unfixed');
 		doc.classList.add('fixed');
@@ -1058,7 +1055,7 @@ function setFixed(mode) {
 }
 
 function setReadedMode(mode) {
-	status.misc.rssHideReaded = mode;
+	options.misc.rssHideReaded = mode;
 	if (mode) {
 		block.rss.classList.add('hide-readed');
 		block.rss.classList.remove('show-readed');
@@ -1071,9 +1068,9 @@ function setReadedMode(mode) {
 
 function setFontSize(fontSize) {
 	if (fontSize)
-		status.theme.fontSize = fontSize;
-	doc.style.fontSize   = `${status.theme.fontSize / window.devicePixelRatio}px`;
-	doc.style.lineHeight = `${status.theme.fontSize / window.devicePixelRatio * 1.2}px`;
+		options.theme.fontSize = fontSize;
+	doc.style.fontSize   = `${options.theme.fontSize / window.devicePixelRatio}px`;
+	doc.style.lineHeight = `${options.theme.fontSize / window.devicePixelRatio * 1.2}px`;
 }
 
 function setColor(colors) {
@@ -1095,10 +1092,10 @@ function setColor(colors) {
 
 function blockInit(newMode, data) {
 	const cleanse = _ => {
-		while (block[status.mode].hasChildNodes())
-			block[status.mode].removeChild(block[status.mode].firstChild);
-		clearStatus(status.mode);
-		block[status.mode].classList.remove('search-active');
+		while (block[options.sidebar.mode].hasChildNodes())
+			block[options.sidebar.mode].removeChild(block[options.sidebar.mode].firstChild);
+		clearStatus(options.sidebar.mode);
+		block[options.sidebar.mode].classList.remove('search-active');
 	};
 
 	if (!status.init[newMode]) {
@@ -1110,9 +1107,9 @@ function blockInit(newMode, data) {
 		document.head.appendChild(link);
 		status.init[newMode] = true;
 	}
-	if (status.mode !== newMode) {
+	if (options.sidebar.mode !== newMode) {
 		initBlock[newMode](data);
-		if (status.mode)
+		if (options.sidebar.mode)
 			cleanse();
 	}
 	else {
@@ -1120,7 +1117,7 @@ function blockInit(newMode, data) {
 		initBlock[newMode](data);
 	}
 	document.body.classList = newMode;
-	status.mode             = newMode;
+	options.sidebar.mode             = newMode;
 	status.activeBlock      = block[newMode];
 }
 
@@ -1133,17 +1130,30 @@ function enableBlock(mode) {
 	}
 }
 
-function veryInit() {
-	send('background', 'request', 'mode', {'side': status.side, 'method': status.method, needResponse: true}, response => {
+function tryToInit() {
+	send('background', 'request', 'mode', {'side': status.side, 'method': options.sidebar.method, needResponse: true}, response => {
 		if (typeof response === 'undefined') {
-			initTimer = setTimeout(veryInit, 200);
+			initTimer = setTimeout(tryToInit, 200);
 			return;
 		}
-		fullInit(response);
+
+		if (options.sidebar.method === 'native') {
+			const port = brauzer.runtime.connect({name: 'sidebar-alive'});
+			if (firefox) {
+				doc.addEventListener('mouseleave', event => {
+					send('background', 'sidebar', 'sideDetection', {'sender': 'sidebar', 'action': 'leave', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+				});
+				doc.addEventListener('mouseover', event => {
+					send('background', 'sidebar', 'sideDetection',{'sender': 'sidebar', 'action': 'over', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+				});
+			}
+		}
+
+		initSidebar(response);
 	});
 }
 
-function fullInit(response) {
+function initSidebar(response) {
 
 	const onMessage = (message, sender, sendResponse) => {
 		// console.log(message);
@@ -1157,19 +1167,18 @@ function fullInit(response) {
 
 	brauzer.runtime.onMessage.removeListener(onMessage);
 
-	status.side         = response.side;
-	status.misc         = response.misc;
-	status.theme        = response.theme;
-	status.wide         = response.wide;
-	status.fixed        = response.fixed;
-	status.width        = response.width;
-	i18n.header         = response.i18n.header;
-	status.warnings     = response.warnings;
+	status.side                  = response.side;
+	options.misc                 = response.options.misc;
+	options.theme                = response.options.theme;
+	options.warnings             = response.options.warnings;
+	options.sidebar              = response.options.sidebar;
+	i18n.header                  = response.i18n.header;
+	status.info                  = response.info;
 
 	setFontSize();
-	setColor(response.theme);
+	setColor(options.theme);
 
-	doc.style.backgroundImage = `url(${status.theme.sidebarImage})`;
+	doc.style.backgroundImage = `url(${options.theme.sidebarImage})`;
 
 	if (button.tabs === null)
 		button.tabs      = makeButton('tabs', 'header', 'sidebar');
@@ -1182,31 +1191,31 @@ function fullInit(response) {
 	if (button.rss === null)
 		button.rss       = makeButton('rss', 'header', 'sidebar');
 
-	if (response.services.tabs)
+	if (response.options.services.tabs)
 		enableBlock('tabs');
 	else
 		button.tabs.classList.add('hidden');
-	if (response.services.bookmarks)
+	if (response.options.services.bookmarks)
 		enableBlock('bookmarks');
 	else
 		button.bookmarks.classList.add('hidden');
-	if (response.services.history)
+	if (response.options.services.history)
 		enableBlock('history');
 	else
 		button.history.classList.add('hidden');
-	if (response.services.downloads)
+	if (response.options.services.downloads)
 		enableBlock('downloads');
 	else
 		button.downloads.classList.add('hidden');
-	if (response.services.rss)
+	if (response.options.services.rss)
 		enableBlock('rss');
 	else
 		button.rss.classList.add('hidden');
 
-	setRssUnreaded(response.info.rssUnreaded);
-	setDownloadStatus[response.info.downloadStatus]();
+	setRssUnreaded(status.info.rssUnreaded);
+	setDownloadStatus[status.info.downloadStatus]();
 
-	if (status.method === 'iframe') {
+	if (options.sidebar.method === 'iframe') {
 		doc.classList.remove('fixed');
 		window.onresize              = _ => {setFontSize();};
 		if (controls.header.iframe === null) {
@@ -1218,12 +1227,12 @@ function fullInit(response) {
 			makeButton('narrow', 'header', 'iframe');
 			controls.header.main.appendChild(controls.header.iframe);
 		}
-		setWide(status.wide);
-		setFixed(status.fixed);
+		setWide(options.sidebar.wide);
+		setFixed(options.sidebar.fixed);
 	}
 
 	setDomainStyle.rewrite(response.domains);
-	blockInit(response.mode, response.data);
+	blockInit(options.sidebar.mode, response.data);
 
 	brauzer.runtime.onMessage.addListener(onMessage);
 }
@@ -1298,10 +1307,10 @@ function setStyle(item) {
 
 const setDomainStyle = {
 	rewrite : items => {
-		for (let i = status.domains.length - 1; i >= 0; i--)
-			document.head.removeChild(status.domains[i]);
-		status.domains   = [];
-		status.domainsId = [];
+		for (let i = data.domains.length - 1; i >= 0; i--)
+			document.head.removeChild(data.domains[i]);
+		data.domains   = [];
+		data.domainsId = [];
 		for (let i = items.length - 1; i >= 0; i--)
 			setStyle(items[i]);
 	},
@@ -1329,7 +1338,7 @@ function createById(mode, id, search = false) {
 	const item      = document.createElement(element[mode]);
 	item.id         = search ? `search-${mode}-${id}` : `${mode}-${id}`;
 	item.dataset.id = id;
-	status[mode].push(item);
+	data[mode].push(item);
 	status[`${mode}Id`].push(id);
 	return item;
 }
@@ -1337,7 +1346,7 @@ function createById(mode, id, search = false) {
 function getById(mode, id) {
 	const index = status[`${mode}Id`].indexOf(id);
 	if (index !== -1)
-		return status[mode][index];
+		return data[mode][index];
 	else
 		return false;
 }
@@ -1345,8 +1354,8 @@ function getById(mode, id) {
 function removeById(mode, id) {
 	const index = status[`${mode}Id`].indexOf(id);
 	if (index !== -1) {
-		status[mode][index].parentNode.removeChild(status[mode][index]);
-		status[mode].splice(index, 1);
+		data[mode][index].parentNode.removeChild(data[mode][index]);
+		data[mode].splice(index, 1);
 		status[`${mode}Id`].splice(index, 1);
 	}
 }
@@ -1371,7 +1380,7 @@ function removeFolderById(mode, id) {
 }
 
 function clearStatus(mode) {
-	status[mode]               = [];
+	data[mode]               = [];
 	status[`${mode}Id`]        = [];
 	status[`${mode}Folders`]   = [];
 	status[`${mode}FoldersId`] = [];
@@ -1441,31 +1450,31 @@ const buttonsEvents = {
 		tabs : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.mode !== 'tabs')
+			if (options.sidebar.mode !== 'tabs')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'tabs'});
 		},
 		bookmarks : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.mode !== 'bookmarks')
+			if (options.sidebar.mode !== 'bookmarks')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'bookmarks'});
 		},
 		history : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.mode !== 'history')
+			if (options.sidebar.mode !== 'history')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'history'});
 		},
 		downloads : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.mode !== 'downloads')
+			if (options.sidebar.mode !== 'downloads')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'downloads'});
 		},
 		rss : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.mode !== 'rss')
+			if (options.sidebar.mode !== 'rss')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'rss'});
 		},
 		pin: event => {
@@ -1513,7 +1522,7 @@ const buttonsEvents = {
 		closeAll: event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.warnings.closeDomainFolder)
+			if (options.warnings.closeDomainFolder)
 				send('background', 'dialog', 'closeDomainFolder', {'id': controls.tabs.item.parentNode.dataset.id});
 			else
 				send('background', 'tabs', 'removeByDomain', {'id': controls.tabs.item.parentNode.dataset.id});
@@ -1526,19 +1535,19 @@ const buttonsEvents = {
 		plain: event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.misc.tabsMode !== 'plain')
+			if (options.misc.tabsMode !== 'plain')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'plain'});
 		},
 		domain: event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.misc.tabsMode !== 'domain')
+			if (options.misc.tabsMode !== 'domain')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'domain'});
 		},
 		tree: event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.misc.tabsMode !== 'tree')
+			if (options.misc.tabsMode !== 'tree')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'tree'});
 		}
 	},
@@ -1624,7 +1633,7 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			const target = controls.bookmarks.item.parentNode;
-			if (status.warnings.deleteBookmark)
+			if (options.warnings.deleteBookmark)
 				send('background', 'dialog', 'bookmarkDelete', {'id': target.dataset.id, 'title': target.textContent});
 			else
 				send('background', 'bookmarks', 'deleteItem', {'id': target.dataset.id});
@@ -1633,7 +1642,7 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			const target = controls.bookmarks.item.parentNode;
-			if (status.warnings.deleteBookmarkFolder)
+			if (options.warnings.deleteBookmarkFolder)
 				send('background', 'dialog', 'bookmarkFolderDelete', {'id': target.dataset.id, 'title': target.textContent});
 			else
 				send('background', 'bookmarks', 'deleteFolder', {'id': target.dataset.id});
@@ -1759,13 +1768,13 @@ const buttonsEvents = {
 		plain: event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.misc.rssMode !== 'plain')
+			if (options.misc.rssMode !== 'plain')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssMode', 'value': 'plain'});
 		},
 		domain: event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.misc.rssMode !== 'domain')
+			if (options.misc.rssMode !== 'domain')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssMode', 'value': 'domain'});
 		}
 	},

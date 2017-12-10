@@ -5,7 +5,7 @@
 const firefox = (typeof InstallTrigger !== 'undefined') ? true : false;
 const brauzer = firefox ? browser : chrome;
 
-let mode = document.location.hash.replace('#', '');
+let mode      = document.location.hash.replace('#', '');
 document.body.classList.add(mode);
 
 brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: 'options', data: {needResponse: true}}, response => {

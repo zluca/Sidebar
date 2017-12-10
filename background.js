@@ -5,24 +5,17 @@
 const firefox     = typeof InstallTrigger !== 'undefined' ? true : false;
 const opera       = window.hasOwnProperty('opr')          ? true : false;
 const brauzer     = firefox ? browser : chrome;
-const version     = parseInt(brauzer.runtime.getManifest().version.replace(/\./g, ''));
 
-const execMethod  = firefox ?
-(method, callback, options) => {
-	return method(options).then(callback);
-} :
-(method, callback, options) => {
-	return options === undefined ? method(callback) : method(options, callback);
+const config = {
+	version            : parseInt(brauzer.runtime.getManifest().version.replace(/\./g, '')),
+	extensionStartPage : `${brauzer.extension.getURL('/')}startpage.html`,
+	defaultStartPage   : firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
+	defaultIcon        : 'icons/default.svg',
+	sidebarIcon        : 'icons/sidebar-icon-64.png',
+	systemIcon         : 'icons/wrench.svg',
+	startpageIcon      : 'icons/startpage.svg',
+	rssIcon            : 'icons/rss.svg',
 };
-
-const sidebarAction =
-	firefox ?
-		browser.hasOwnProperty('sidebarAction') ?
-			browser.sidebarAction : null
-	: opera ?
-		opr.hasOwnProperty('sidebarAction') ?
-			opr.sidebarAction : null
-	: null;
 
 const i18n = {
 	notification: {
@@ -59,33 +52,7 @@ const i18n = {
 	rss         : {}
 };
 
-const data = {
-	tabs               : [],
-	tabsId             : [],
-	tabsFolders        : [],
-	tabsFoldersId      : [],
-	activeTabId        : -1,
-	bookmarks          : [],
-	bookmarksId        : [],
-	bookmarksFolders   : [],
-	bookmarksFoldersId : [],
-	history            : [],
-	historyId          : [],
-	historyFolders     : [],
-	historyFoldersId   : [],
-	historyLastTime    : Date.now(),
-	historyEnd         : false,
-	downloads          : [],
-	downloadsId        : [],
-	rss                : [],
-	rssId              : [],
-	rssFolders         : [],
-	rssFoldersId       : [],
-	domains            : [],
-	domainsId          : [],
-	favs               : [],
-	favsId             : [],
-	speadDial          : [],
+const status = {
 	info               : {
 		rssUnreaded    : 0,
 		downloadStatus : 'idle',
@@ -100,14 +67,6 @@ const data = {
 		'downloads' : false,
 		'rss'       : false
 	},
-	extensionUrl    : brauzer.extension.getURL('/'),
-	extensionStartPage: `${brauzer.extension.getURL('/')}startpage.html`,
-	defaultStartPage: firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
-	defaultIcon     : 'icons/default.svg',
-	sidebarIcon     : 'icons/sidebar-icon-64.png',
-	systemIcon      : 'icons/wrench.svg',
-	startpageIcon   : 'icons/startpage.svg',
-	rssIcon         : 'icons/rss.svg',
 	leftBar         : {
 		windowId      : -1,
 		tabId         : -1
@@ -116,107 +75,44 @@ const data = {
 		windowId      : -1,
 		tabId         : -1
 	},
+	activeTabId          : -1,
+	historyLastTime      : Date.now(),
+	historyEnd           : false,
 	sidebarWindowCreating: false,
-	activeWindow    : -1,
-	nativeActive    : false,
-	dialogData      : null,
-	dialogType      : '',
-	toSave          : {},
-	saverActive     : false,
-	sendTimer       : {},
-	foldedId        : []
+	activeWindow         : -1,
+	nativeActive         : false,
+	dialogData           : null,
+	dialogType           : '',
+	toSave               : {},
+	saverActive          : false,
+	sendTimer            : {}
 };
 
-const optionsHandler = {
-	method  : (section, option, newValue) => {
-		const oldValueHandler = {
-			iframe   : _ => {
-				send('content', 'iframe', 'remove', {'side': section});
-			},
-			native   : _ => {
-				data.nativeActive = false;
-			},
-			window   : _ => {
-				removeSidebarWindow(section);
-			},
-			disabled : _ => {},
-		};
-		const newValueHandler = {
-			iframe   : _ => {
-				send('content', 'iframe', 'add', {'side': section, 'width': options[section].width.value});},
-			native   : _ => {
-				send('sidebar', 'set', 'side', section);
-			},
-			window   : _ => {
-				createSidebarWindow(section);
-			},
-			disabled : _ => {},
-		};
-		oldValueHandler[options[section].method.value]();
-		newValueHandler[newValue]();
-		setOption(section, 'method', newValue);
-		setIcon();
-	},
-	mode    : (section, option, newValue) => {
-		setOption(section, 'mode', newValue);
-		send(section, 'options', 'mode', {value: newValue, data: modeData[newValue]()});
-	},
-	service : (section, option, newValue) => {
-		if (newValue) {
-			init[option](true);
-			send('sidebar', 'options', 'services', {'service': option, 'enabled': true});
-		}
-		else {
-			const firstEnabledService = side => {
-				for (let services = ['tabs', 'bookmarks', 'history', 'downloads', 'rss'], i = services.length - 1; i >= 0; i--) {
-					if (options.services[services[i]].value === true && services[i] !== option) {
-						setOption(side, 'mode', services[i]);
-						send(side, 'options', 'mode', {value: services[i], data: modeData[services[i]]()});
-						break;
-					}
-				}
-			};
-			if (options.leftBar.mode.value === option)
-				firstEnabledService('leftBar');
-			if (options.rightBar.mode.value === option)
-				firstEnabledService('rightBar');
-			init[option](false);
-			send('sidebar', 'options', 'services', {'service': option, 'enabled': false});
-		}
-	},
-	startpage : (section, option, newValue) => {
-		init.startpage(newValue);
-	},
-	sites   : (section, option, newValue) => {
-		const oppositeDimension = {
-			rows    : 'columns',
-			columns : 'rows'
-		};
-		const change = options.startpage[option].value - newValue;
-		if (change < 0) {
-			const oldLength = options.startpage[option].value * options.startpage[oppositeDimension[option]].value;
-			const newLength = newValue * options.startpage[oppositeDimension[option]].value;
-			send('startpage', 'site', 'addSites', {'sites': data.speadDial.slice(oldLength, newLength)});
-		}
-		else
-			send('startpage', 'site', 'remove', '');
-	},
-	view    : (section, option, newValue) => {
-		const mode = option.replace('Mode', '');
-		if (options.leftBar.mode.value === mode)
-			send('leftBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
-		if (options.rightBar.mode.value === mode)
-			send('rightBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
-	},
-	empty   : (section, option, newValue) => {
-		for (let i = data.tabs.length - 1; i >= 0; i--) {
-			if (data.tabs[i].url === data.extensionStartPage)
-				brauzer.tabs.reload(data.tabs[i].id);
-		}
-	},
-	restartBookmarks : (section, option, newValue) => {
-		init.bookmarks('reInit');
-	}
+const data = {
+	tabs               : [],
+	tabsId             : [],
+	tabsFolders        : [],
+	tabsFoldersId      : [],
+	bookmarks          : [],
+	bookmarksId        : [],
+	bookmarksFolders   : [],
+	bookmarksFoldersId : [],
+	history            : [],
+	historyId          : [],
+	historyFolders     : [],
+	historyFoldersId   : [],
+	downloads          : [],
+	downloadsId        : [],
+	rss                : [],
+	rssId              : [],
+	rssFolders         : [],
+	rssFoldersId       : [],
+	domains            : [],
+	domainsId          : [],
+	favs               : [],
+	favsId             : [],
+	speadDial          : [],
+	foldedId           : []
 };
 
 const options = {
@@ -545,6 +441,15 @@ const options = {
 
 const optionsShort = {};
 
+const sidebarAction =
+	firefox ?
+		browser.hasOwnProperty('sidebarAction') ?
+			browser.sidebarAction : null
+	: opera ?
+		opr.hasOwnProperty('sidebarAction') ?
+			opr.sidebarAction : null
+	: null;
+
 const modeData = {
 	tabs       : _ => {
 		return {
@@ -552,7 +457,7 @@ const modeData = {
 			i18n           : i18n.tabs,
 			tabs           : data.tabs,
 			tabsFolders    : data.tabsFolders,
-			activeTabId    : data.activeTabId
+			activeTabId    : status.activeTabId
 		};
 	},
 	bookmarks  : _ => {
@@ -561,7 +466,7 @@ const modeData = {
 			i18n             : i18n.bookmarks,
 			bookmarks        : data.bookmarks,
 			bookmarksFolders : data.bookmarksFolders,
-			activeTabId      : data.activeTabId
+			activeTabId      : status.activeTabId
 		};
 	},
 	history    : _ => {
@@ -569,7 +474,7 @@ const modeData = {
 			mode             : 'history',
 			i18n             : i18n.history,
 			history          : data.history,
-			historyEnd       : data.historyEnd,
+			historyEnd       : status.historyEnd,
 			historyFolders   : data.historyFolders
 		};
 	},
@@ -590,12 +495,95 @@ const modeData = {
 	}
 };
 
-const defaultTabsHandler = {
-	new : (message, sender, sendResponse) => {
-		createNewTab(message.data.url, message.data.newWindow);
+const optionsHandler = {
+	method  : (section, option, newValue) => {
+		const oldValueHandler = {
+			iframe   : _ => {
+				send('content', 'iframe', 'remove', {'side': section});
+			},
+			native   : _ => {
+				status.nativeActive = false;
+			},
+			window   : _ => {
+				removeSidebarWindow(section);
+			},
+			disabled : _ => {},
+		};
+		const newValueHandler = {
+			iframe   : _ => {
+				send('content', 'iframe', 'add', {'side': section, 'width': options[section].width.value});},
+			native   : _ => {
+				send('sidebar', 'set', 'side', section);
+			},
+			window   : _ => {
+				createSidebarWindow(section);
+			},
+			disabled : _ => {},
+		};
+		oldValueHandler[options[section].method.value]();
+		newValueHandler[newValue]();
+		setOption(section, 'method', newValue);
+		setIcon();
 	},
-	update : (message, sender, sendResponse) => {
-		brauzer.tabs.update(data.activeTabId, {'url': message.data.url});
+	mode    : (section, option, newValue) => {
+		setOption(section, 'mode', newValue);
+		send(section, 'options', 'mode', {value: newValue, data: modeData[newValue]()});
+	},
+	service : (section, option, newValue) => {
+		if (newValue) {
+			initService[option](true);
+			send('sidebar', 'options', 'services', {'service': option, 'enabled': true});
+		}
+		else {
+			const firstEnabledService = side => {
+				for (let services = ['tabs', 'bookmarks', 'history', 'downloads', 'rss'], i = services.length - 1; i >= 0; i--) {
+					if (options.services[services[i]].value === true && services[i] !== option) {
+						setOption(side, 'mode', services[i]);
+						send(side, 'options', 'mode', {value: services[i], data: modeData[services[i]]()});
+						break;
+					}
+				}
+			};
+			if (options.leftBar.mode.value === option)
+				firstEnabledService('leftBar');
+			if (options.rightBar.mode.value === option)
+				firstEnabledService('rightBar');
+			initService[option](false);
+			send('sidebar', 'options', 'services', {'service': option, 'enabled': false});
+		}
+	},
+	startpage : (section, option, newValue) => {
+		initService.startpage(newValue);
+	},
+	sites   : (section, option, newValue) => {
+		const oppositeDimension = {
+			rows    : 'columns',
+			columns : 'rows'
+		};
+		const change = options.startpage[option].value - newValue;
+		if (change < 0) {
+			const oldLength = options.startpage[option].value * options.startpage[oppositeDimension[option]].value;
+			const newLength = newValue * options.startpage[oppositeDimension[option]].value;
+			send('startpage', 'site', 'addSites', {'sites': data.speadDial.slice(oldLength, newLength)});
+		}
+		else
+			send('startpage', 'site', 'remove', '');
+	},
+	view    : (section, option, newValue) => {
+		const mode = option.replace('Mode', '');
+		if (options.leftBar.mode.value === mode)
+			send('leftBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
+		if (options.rightBar.mode.value === mode)
+			send('rightBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
+	},
+	empty   : (section, option, newValue) => {
+		for (let i = data.tabs.length - 1; i >= 0; i--) {
+			if (data.tabs[i].url === config.extensionStartPage)
+				brauzer.tabs.reload(data.tabs[i].id);
+		}
+	},
+	restartBookmarks : (section, option, newValue) => {
+		initService.bookmarks('reInit');
 	}
 };
 
@@ -610,17 +598,17 @@ const messageHandler = {
 				'borderColor'       : optionsShort.theme.borderColor,
 				'borderColorActive' : optionsShort.theme.borderColorActive
 			});
-			if (data.dialogData)
-				sendToTab(sender.tab.id, 'content', 'dialog', 'create', data.dialogType);
+			if (status.dialogData)
+				sendToTab(sender.tab.id, 'content', 'dialog', 'create', status.dialogType);
 		},
 		mode : (message, sender, sendResponse) => {
 			const handler = {
 				window: side => {
-					data[side].tabId  = sender.tab.id;
+					status[side].tabId  = sender.tab.id;
 					sendResponse(sideBarData(side));
 				},
 				native: side => {
-					data.nativeActive  = true;
+					status.nativeActive  = true;
 					let trueSide       = side;
 					const oppositeSide = {
 						'leftBar'  : 'rightBar',
@@ -642,11 +630,11 @@ const messageHandler = {
 					sendResponse(sideBarData(side));
 				}
 			};
-			if (data.init[options[message.data.side].mode.value] === true)
+			if (status.init[options[message.data.side].mode.value] === true)
 				handler[message.data.method](message.data.side);
 		},
 		startpage : (message, sender, sendResponse) => {
-			if (data.init.startpage === true) {
+			if (status.init.startpage === true) {
 				if (options.services.startpage.value === true)
 					sendResponse({
 						'sites'     : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
@@ -664,8 +652,8 @@ const messageHandler = {
 			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method, 'status': options.status});
 		},
 		dialog : (message, sender, sendResponse) => {
-			sendResponse({data: data.dialogData, warnings: optionsShort.warnings, theme: optionsShort.theme});
-			data.dialogData = null;
+			sendResponse({data: status.dialogData, warnings: optionsShort.warnings, theme: optionsShort.theme});
+			status.dialogData = null;
 		}
 	},
 
@@ -735,10 +723,10 @@ const messageHandler = {
 			createDialogWindow(message.action, message.data);
 		},
 		newBookmark : (message, sender, sendResponse) => {
-			const activeTab = getById('tabs', data.activeTabId);
+			const activeTab = getById('tabs', status.activeTabId);
 			if (activeTab) {
 				const dataToSend = {
-					'id'      : data.activeTabId,
+					'id'      : status.activeTabId,
 					'url'     : activeTab.url,
 					'title'   : activeTab.title,
 					'folders' : data.bookmarksFolders
@@ -757,7 +745,7 @@ const messageHandler = {
 				createDialogWindow('editBookmarkFolder', {'id': message.data.id, 'title': folder.title});
 		},
 		rssAdd : (message, sender, sendResponse) => {
-			const activeTab = getById('tabs', data.activeTabId);
+			const activeTab = getById('tabs', status.activeTabId);
 			if (activeTab !== false)
 				if (tabIsProtected(activeTab) === false)
 					return send('content', 'dialog', 'checkRss', '');
@@ -785,7 +773,16 @@ const messageHandler = {
 
 	startpage : null,
 
-	tabs      : defaultTabsHandler,
+	defaultTabsHandler : {
+		new : (message, sender, sendResponse) => {
+			createNewTab(message.data.url, message.data.newWindow);
+		},
+		update : (message, sender, sendResponse) => {
+			brauzer.tabs.update(status.activeTabId, {'url': message.data.url});
+		}
+	},
+
+	tabs      : null,
 
 	bookmarks : null,
 
@@ -796,24 +793,15 @@ const messageHandler = {
 	rss       : null
 };
 
-const fillItem = {
-	tabs       : null,
-	bookmarks  : null,
-	history    : null,
-	downloads  : null,
-	rss        : null,
-	domains    : (newItem, item) => {
-		newItem.fav   = item.fav;
-		newItem.title = item.title;
-		return newItem;
-	},
-	favs      : (newItem, item) => {
-		newItem.fav = item.fav;
-		return newItem.fav;
-	}
+const execMethod  = firefox ?
+(method, callback, options) => {
+	return method(options).then(callback);
+} :
+(method, callback, options) => {
+	return options === undefined ? method(callback) : method(options, callback);
 };
 
-const gettingStorage = res => {
+const initExtension = res => {
 
 	const resetOptions = 33;
 	const resetFavs    = 0;
@@ -830,7 +818,7 @@ const gettingStorage = res => {
 			for (let option in options[section])
 				optionsShort[section][option] = options[section][option].value;
 		}
-		init.data(true);
+		initService.data(true);
 	};
 
 	const setDefaults = _ => {
@@ -861,7 +849,7 @@ const gettingStorage = res => {
 		if (res.hasOwnProperty('data'))
 			brauzer.storage.local.remove('data');
 		const oldVersion = parseInt(res.version) || 0;
-		if (oldVersion < version) {
+		if (oldVersion < config.version) {
 			saveNow('version');
 			if (resetFavs > oldVersion)
 				saveNow('favs');
@@ -885,81 +873,29 @@ const gettingStorage = res => {
 		setDefaults();
 };
 
-if (sidebarAction !== null) {
-	let port;
-	brauzer.runtime.onConnect.addListener(p => {
-		if (opera) {
-			setOption('leftBar', 'method', 'native');
-			optionsHandler.method('leftBar', 'method', 'native');
-		}
-		port = p;
-		port.onDisconnect.addListener(_ => {
-			if (options.leftBar.method.value === 'native')
-				optionsHandler.method('leftBar', 'method', 'disabled');
-			else if (options.rightBar.method.value === 'native')
-				optionsHandler.method('rightBar', 'method', 'disabled');
-		});
-	});
-	if (firefox) {
-		data.sideDetection         = {};
-		data.sideDetection.sidebar = '';
-		data.sideDetection.content = '';
-		messageHandler.sidebar     = {
-			sideDetection: (message, sender, sendResponse) => {
+execMethod(brauzer.storage.local.get, initExtension, ['options', 'version']);
 
-				const setSide = (sender, side) => {
-					data.sideDetection[sender] = side;
-					setTimeout(_ => {data.sideDetection[sender] = '';}, 100);
-				};
-
-				const detectSide = (prevSender, side) => {
-					if (data.sideDetection[prevSender] !== side)
-						return;
-					if (options[side].method.value !== 'native') {
-						const oppositeSide = {
-							leftBar  : 'rightBar',
-							rightBar : 'leftBar'
-						};
-						setOption('status', 'nativeSbPosition', side);
-						optionsHandler.method(side, 'method', 'native');
-						optionsHandler.mode(side, 'mode', options[oppositeSide[side]].mode.value);
-						if (options[oppositeSide[side]].method.value === 'native')
-							optionsHandler.method(oppositeSide[side], 'method', 'disabled');
-					}
-				};
-
-				const handler = {
-					sidebarleave : side => setSide('sidebar', side),
-					sidebarover  : side => detectSide('content', side),
-					contentleave : side => setSide('content', side),
-					contentover  : side => detectSide('sidebar', side)
-				};
-
-				handler[`${message.data.sender}${message.data.action}`](message.data.side);
-			}
-		};
+const fillItem = {
+	tabs       : null,
+	bookmarks  : null,
+	history    : null,
+	downloads  : null,
+	rss        : null,
+	domains    : (newItem, item) => {
+		newItem.fav   = item.fav;
+		newItem.title = item.title;
+		return newItem;
+	},
+	favs      : (newItem, item) => {
+		newItem.fav = item.fav;
+		return newItem.fav;
 	}
-}
+};
 
-brauzer.windows.getCurrent({}, win => {
-	data.activeWindow = win.id;
-});
-
-execMethod(brauzer.storage.local.get, gettingStorage, ['options', 'version']);
-
-function initWindow() {
-	if (options.leftBar.method.value === 'window')
-		createSidebarWindow('leftBar');
-	if (options.rightBar.method.value === 'window')
-		createSidebarWindow('rightBar');
-}
-
-const init = {
+const initService = {
 
 	data: _ => {
-		if (data.init.data)
-			return;
-		data.init.data = true;
+
 		const gettingStorage = res => {
 
 			const initLater = [];
@@ -972,20 +908,79 @@ const init = {
 				data.foldedId      = res.foldedId;
 
 			if (options.services.startpage.value === true)
-				init.startpage(true);
+				initService.startpage(true);
+			if (options.services.tabs.value === false)
+				messageHandler.tabs = messageHandler.defaultTabsHandler;
+
 			for (let service in options.services)
 				if (options.services[service]) {
 					if (options.leftBar.mode.value === service || options.rightBar.mode.value === service)
-						init[service](true);
+						initService[service](true);
 					else
 						initLater.push(service);
 				}
 				else
-					data.init[service] = true;
+					status.init[service] = true;
 			setTimeout(_ => {
 				for (let i = initLater.length - 1; i >= 0; i--)
-					init[initLater[i]](true);
+					initService[initLater[i]](true);
 			}, 2000);
+
+			if (sidebarAction !== null) {
+				let port;
+				brauzer.runtime.onConnect.addListener(p => {
+					if (opera === true) {
+						setOption('leftBar', 'method', 'native');
+						optionsHandler.method('leftBar', 'method', 'native');
+					}
+					port = p;
+					port.onDisconnect.addListener(_ => {
+						if (options.leftBar.method.value === 'native')
+							optionsHandler.method('leftBar', 'method', 'disabled');
+						else if (options.rightBar.method.value === 'native')
+							optionsHandler.method('rightBar', 'method', 'disabled');
+					});
+				});
+				if (firefox === true) {
+					data.sideDetection         = {};
+					data.sideDetection.sidebar = '';
+					data.sideDetection.content = '';
+					messageHandler.sidebar     = {
+						sideDetection: (message, sender, sendResponse) => {
+
+							const setSide = (sender, side) => {
+								data.sideDetection[sender] = side;
+								setTimeout(_ => {data.sideDetection[sender] = '';}, 100);
+							};
+
+							const detectSide = (prevSender, side) => {
+								if (data.sideDetection[prevSender] !== side)
+									return;
+								if (options[side].method.value !== 'native') {
+									const oppositeSide = {
+										leftBar  : 'rightBar',
+										rightBar : 'leftBar'
+									};
+									setOption('status', 'nativeSbPosition', side);
+									optionsHandler.method(side, 'method', 'native');
+									optionsHandler.mode(side, 'mode', options[oppositeSide[side]].mode.value);
+									if (options[oppositeSide[side]].method.value === 'native')
+										optionsHandler.method(oppositeSide[side], 'method', 'disabled');
+								}
+							};
+
+							const handler = {
+								sidebarleave : side => setSide('sidebar', side),
+								sidebarover  : side => detectSide('content', side),
+								contentleave : side => setSide('content', side),
+								contentover  : side => detectSide('sidebar', side)
+							};
+
+							handler[`${message.data.sender}${message.data.action}`](message.data.side);
+						}
+					};
+				}
+			}
 
 			brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
 				if (message.hasOwnProperty('target'))
@@ -999,8 +994,15 @@ const init = {
 
 			initWindow();
 			setIcon();
-
 		};
+
+		if (status.init.data)
+			return;
+		status.init.data = true;
+
+		brauzer.windows.getCurrent({}, win => {
+			status.activeWindow = win.id;
+		});
 
 		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId']);
 	},
@@ -1010,7 +1012,7 @@ const init = {
 		const gettingStorage = res => {
 			if (Array.isArray(res.speadDial))
 				data.speadDial = res.speadDial;
-			data.init.startpage = true;
+			status.init.startpage = true;
 		};
 
 		if (start) {
@@ -1069,21 +1071,21 @@ const init = {
 				searchEngineYandexTranslate : getI18n('startpageYandexTranslateLabel')
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
-			if (data.init.tabs === true)
+			if (status.init.tabs === true)
 				for (let i = data.tabs.length - 1; i >= 0; i--)
-					if (data.tabs[i].url === data.defaultStartPage)
-						brauzer.tabs.update(data.tabs[i].id, {'url': data.extensionStartPage});
+					if (data.tabs[i].url === config.defaultStartPage)
+						brauzer.tabs.update(data.tabs[i].id, {'url': config.extensionStartPage});
 		}
 		else {
 			i18n.startpage = {};
 			messageHandler.startpage = {};
 			data.speadDial = [];
 			for (let i = data.tabs.length - 1; i >= 0; i--)
-				if (data.tabs[i].url === data.extensionStartPage) {
+				if (data.tabs[i].url === config.extensionStartPage) {
 					if (firefox)
 						brauzer.tabs.remove(data.tabs[i].id);
 					else
-						brauzer.tabs.update(data.tabs[i].id, {'url': data.defaultStartPage});
+						brauzer.tabs.update(data.tabs[i].id, {'url': config.defaultStartPage});
 				}
 		}
 	},
@@ -1096,14 +1098,14 @@ const init = {
 					createNewTab(message.data.url, message.data.newWindow);
 				},
 				update : (message, sender, sendResponse) => {
-					brauzer.tabs.update(data.activeTabId, {'url': message.data.url});
+					brauzer.tabs.update(status.activeTabId, {'url': message.data.url});
 				},
 				setActive : (message, sender, sendResponse) => {
 					const tab = getById('tabs', message.data.id);
 					if (tab) {
 						const windowId = tab.windowId;
-						if (data.activeWindow !== windowId) {
-							data.activeWindow = windowId;
+						if (status.activeWindow !== windowId) {
+							status.activeWindow = windowId;
 							brauzer.windows.update(windowId, {focused: true}, _ => {
 								brauzer.tabs.update(message.data.id, {active: true});
 							});
@@ -1156,7 +1158,7 @@ const init = {
 			brauzer.tabs.onRemoved.addListener(onRemoved);
 			brauzer.tabs.onMoved.addListener(onMoved);
 
-			data.init.tabs = true;
+			status.init.tabs = true;
 		};
 
 		const makeFolder        = tab => {
@@ -1203,16 +1205,16 @@ const init = {
 			}
 		};
 
-		const checkStartPage    = tab => tab.url === data.defaultStartPage ? true : false;
+		const checkStartPage    = tab => tab.url === config.defaultStartPage ? true : false;
 
 		const createTab         = tab => {
-				if (data.sidebarWindowCreating === true) {
-					data.sidebarWindowCreating = false;
+				if (status.sidebarWindowCreating === true) {
+					status.sidebarWindowCreating = false;
 					return false;
 				}
 				if (options.services.startpage.value === true)
 					if (checkStartPage(tab) === true)
-						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
+						brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
 				makeFolder(tab);
 				const newTab = createById('tabs', tab, 'last');
 				send('sidebar', 'tabs', 'created', {'tab': newTab});
@@ -1222,8 +1224,8 @@ const init = {
 		const onActivated       = tabInfo => {
 			const tab = getById('tabs', tabInfo.tabId);
 			if (tab !== false) {
-				data.activeTabId = tabInfo.tabId;
-				send('sidebar', 'tabs', 'active', data.activeTabId);
+				status.activeTabId = tabInfo.tabId;
+				send('sidebar', 'tabs', 'active', status.activeTabId);
 				if (options.leftBar.method.value === 'iframe') {
 					send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
 					send('content', 'reInit', 'leftBar', {
@@ -1267,7 +1269,7 @@ const init = {
 			if (info.hasOwnProperty('url')) {
 				if (options.services.startpage.value === true)
 					if (checkStartPage(tab))
-						brauzer.tabs.update(tab.id, {url: data.extensionStartPage});
+						brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
 				oldTab.url   = info.url;
 				if (pid !== folder.id) {
 					oldTab.pid = folder.id;
@@ -1334,7 +1336,7 @@ const init = {
 			for (let i = 0, l = tabs.length; i < l; i++) {
 				createTab(tabs[i], true);
 				if (tabs[i].active)
-					data.activeTabId = tabs[i].id;
+					status.activeTabId = tabs[i].id;
 			}
 			initTabs();
 		};
@@ -1343,7 +1345,7 @@ const init = {
 			fillItem.tabs = (newItem, item) => {
 				const domain = makeDomain(item.url, item.favIconUrl, item.title).id;
 				if (item.active === true)
-					data.activeTabId  = item.id;
+					status.activeTabId  = item.id;
 				newItem.pid        = domain;
 				newItem.domain     = domain;
 				newItem.pinned     = item.pinned;
@@ -1373,7 +1375,7 @@ const init = {
 			brauzer.tabs.onUpdated.removeListener(onUpdated);
 			brauzer.tabs.onRemoved.removeListener(onRemoved);
 			brauzer.tabs.onMoved.removeListener(onMoved);
-			data.init.tabs      = false;
+			status.init.tabs      = false;
 		}
 	},
 
@@ -1440,7 +1442,7 @@ const init = {
 					send('rightBar', 'set', 'reInit', sideBarData('rightBar'));
 			}
 
-			data.init.bookmarks = true;
+			status.init.bookmarks = true;
 		};
 
 		const makeFolder    = folder => {
@@ -1503,7 +1505,7 @@ const init = {
 				setOption('misc', 'bookmarksMode', 'tree');
 				execMethod(brauzer.bookmarks.getTree, parseTree);
 				if (options.warnings.tooManyBookmarks.value === false) {
-					brauzer.notifications.create('switch-to-tree', {'type': 'basic', 'iconUrl': data.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkSwitchToTreeText});
+					brauzer.notifications.create('switch-to-tree', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkSwitchToTreeText});
 					setOption('warnings', 'tooManyBookmarks', true);
 				}
 			}
@@ -1512,7 +1514,7 @@ const init = {
 				for (let i = 0, l = bookmarks.length; i < l; i++)
 					createById('bookmarks', bookmarks[i], 'last');
 				if (options.warnings.tooManyBookmarks.value === true) {
-					brauzer.notifications.create('too-many-bookmarks', {'type': 'basic', 'iconUrl': data.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkTooManyBookmarksText});
+					brauzer.notifications.create('too-many-bookmarks', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkTooManyBookmarksText});
 					setOption('warnings', 'tooManyBookmarks', false);
 				}
 				return initBookmarks();
@@ -1636,7 +1638,7 @@ const init = {
 			brauzer.bookmarks.onChanged.removeListener(onChanged);
 			brauzer.bookmarks.onMoved.removeListener(onMoved);
 			brauzer.bookmarks.onRemoved.removeListener(onRemoved);
-			data.init.bookmarks      = false;
+			status.init.bookmarks      = false;
 		}
 	},
 
@@ -1662,7 +1664,7 @@ const init = {
 			brauzer.history.onVisited.addListener(onVisited);
 			brauzer.history.onVisitRemoved.addListener(onVisitRemoved);
 
-			data.init.history = true;
+			status.init.history = true;
 		};
 
 		const searchMore = (sendData = false) => {
@@ -1675,7 +1677,7 @@ const init = {
 
 			const searchHandler = history => {
 				const l = history.length;
-				if (l < options.misc.limitHistory.value) data.historyEnd = true;
+				if (l < options.misc.limitHistory.value) status.historyEnd = true;
 				let foldersId = [];
 				for (let i = 0; i < l; i++) {
 					const item   = createById('history', history[i], 'last');
@@ -1688,16 +1690,16 @@ const init = {
 						dataToSend.history.push(item);
 					}
 				}
-				data.historyLastTime = l > 0 ? history[l - 1].lastVisitTime : 0;
+				status.historyLastTime = l > 0 ? history[l - 1].lastVisitTime : 0;
 				if (sendData) {
-					dataToSend.historyEnd = data.historyEnd;
+					dataToSend.historyEnd = status.historyEnd;
 					send('sidebar', 'history', 'gotMore', dataToSend);
 				}
 				else
 					initHistory();
 			};
 
-			const searchObject = {text: '', maxResults: options.misc.limitHistory.value, startTime: 0, endTime: data.historyLastTime};
+			const searchObject = {text: '', maxResults: options.misc.limitHistory.value, startTime: 0, endTime: status.historyLastTime};
 
 			execMethod(brauzer.history.search, searchHandler, searchObject);
 		};
@@ -1797,7 +1799,7 @@ const init = {
 			data.historyFoldersId  = [];
 			brauzer.history.onVisited.removeListener(onVisited);
 			brauzer.history.onVisitRemoved.removeListener(onVisitRemoved);
-			data.init.history      = false;
+			status.init.history      = false;
 		}
 	},
 
@@ -1841,7 +1843,7 @@ const init = {
 			brauzer.downloads.onErased.addListener(onErased);
 			brauzer.downloads.onChanged.addListener(onChanged);
 
-			data.init.downloads = true;
+			status.init.downloads = true;
 		};
 
 
@@ -1858,18 +1860,18 @@ const init = {
 
 		const setDownloadsCount = {
 			add    : _ => {
-				data.info.downloadsCount++;
-				if (data.info.downloadStatus === 'idle') {
-					data.info.downloadStatus = 'progress';
+				status.info.downloadsCount++;
+				if (status.info.downloadStatus === 'idle') {
+					status.info.downloadStatus = 'progress';
 					send('sidebar', 'info', 'downloadStatus', 'progress');
 				}
 			},
 			delete : _ => {
-				data.info.downloadsCount--;
-				if (data.info.downloadsCount < 0)
-					data.info.downloadsCount = 0;
-				if (data.info.downloadsCount === 0) {
-					data.info.downloadStatus = 'idle';
+				status.info.downloadsCount--;
+				if (status.info.downloadsCount < 0)
+					status.info.downloadsCount = 0;
+				if (status.info.downloadsCount === 0) {
+					status.info.downloadStatus = 'idle';
 					send('sidebar', 'info', 'downloadStatus', 'idle');
 				}
 			},
@@ -1878,12 +1880,12 @@ const init = {
 				for (let i = data.downloads.length - 1; i >= 0; i--)
 					if (data.downloads[i].state === 'in_progress')
 						count++;
-				data.info.downloadsCount = count;
+				status.info.downloadsCount = count;
 				if (count > 0)
-					data.info.downloadStatus = 'progress';
+					status.info.downloadStatus = 'progress';
 				else
-					data.info.downloadStatus = 'idle';
-				send('sidebar', 'info', 'downloadStatus', data.info.downloadStatus);
+					status.info.downloadStatus = 'idle';
+				send('sidebar', 'info', 'downloadStatus', status.info.downloadStatus);
 			}
 		};
 
@@ -1987,7 +1989,7 @@ const init = {
 			brauzer.downloads.onCreated.removeListener(onCreated);
 			brauzer.downloads.onErased.removeListener(onErased);
 			brauzer.downloads.onChanged.removeListener(onChanged);
-			data.init.downloads      = false;
+			status.init.downloads      = false;
 		}
 	},
 
@@ -2086,7 +2088,7 @@ const init = {
 				domain           : getI18n('rssDomainModeButton')
 			};
 
-			data.init.rss = true;
+			status.init.rss = true;
 		};
 
 		const guidFromUrl = url => {
@@ -2111,7 +2113,7 @@ const init = {
 			const rssUrl = urlFromUser(url);
 			for (let i = data.rssFolders.length - 1; i >= 0; i--)
 				if (data.rssFolders[i].url === rssUrl)
-					return brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.sidebarIcon, 'title': i18n.notification.rssFeedExistErrorTitle, 'message':  `${i18n.notification.rssFeedExistErrorText}
+					return brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssFeedExistErrorTitle, 'message':  `${i18n.notification.rssFeedExistErrorText}
 							${data.rssFolders[i].title}`});
 			const xhttp  = new XMLHttpRequest();
 			xhttp.open("GET", rssUrl, true);
@@ -2132,7 +2134,7 @@ const init = {
 						let desc         = head.querySelector('description, subtitle');
 						if (desc) desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
-						fav              = fav ? fav.textContent.trim() : firefox ? data.rssIcon : false;
+						fav              = fav ? fav.textContent.trim() : firefox ? config.rssIcon : false;
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;
@@ -2154,7 +2156,7 @@ const init = {
 						saveLater('rssFolders');
 					}
 					else
-						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': data.sidebarIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
+						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
 							${url}`});
 				}
 
@@ -2265,7 +2267,7 @@ const init = {
 				rssItem : _ => {
 					if (target.readed) return;
 					target.readed = true;
-					data.info.rssUnreaded--;
+					status.info.rssUnreaded--;
 					const feed = getFolderById('rss', target.pid);
 					let feedReaded = true;
 					for (let itemsId = feed.itemsId, i = itemsId.length - 1; i >= 0; i--) {
@@ -2286,7 +2288,7 @@ const init = {
 								const index = data.rssId.indexOf(itemsId[i]);
 								if (index !== -1) {
 									if (!data.rss[index].readed)
-										data.info.rssUnreaded--;
+										status.info.rssUnreaded--;
 									data.rss.splice(index, 1);
 									data.rssId.splice(index, 1);
 								}
@@ -2297,7 +2299,7 @@ const init = {
 								const rssItem = getById('rss', itemsId[i]);
 								if (!rssItem.readed) {
 									rssItem.readed = true;
-									data.info.rssUnreaded--;
+									status.info.rssUnreaded--;
 								}
 							}
 							saveLater('rss');
@@ -2309,13 +2311,13 @@ const init = {
 				},
 				info   : _ => {},
 				count  : _ => {
-					data.info.rssUnreaded = 0;
+					status.info.rssUnreaded = 0;
 					for (let i = data.rss.length - 1; i >= 0; i--)
 						if (!data.rss[i].readed)
-							data.info.rssUnreaded++;
+							status.info.rssUnreaded++;
 				},
 				all    : _ => {
-					data.info.rssUnreaded = 0;
+					status.info.rssUnreaded = 0;
 					for (let i = data.rss.length - 1; i >= 0; i--)
 						data.rss[i].readed = true;
 					saveLater('rss');
@@ -2323,7 +2325,7 @@ const init = {
 				}
 			};
 			setReaded[method]();
-			send('sidebar', 'info', 'rssUnreaded', {'unreaded': data.info.rssUnreaded});
+			send('sidebar', 'info', 'rssUnreaded', {'unreaded': status.info.rssUnreaded});
 		};
 
 		const getRss = res => {
@@ -2360,7 +2362,7 @@ const init = {
 				newItem.pid         = item.pid;
 				newItem.domain      = item.domain;
 				newItem.date        = item.date;
-				data.info.rssUnreaded++;
+				status.info.rssUnreaded++;
 				const feed  = getFolderById('rss', item.pid);
 				feed.readed = false;
 				let success = false;
@@ -2386,30 +2388,36 @@ const init = {
 			data.rssFolders     = [];
 			data.rssFoldersId   = [];
 			brauzer.alarms.clearAll();
-			data.init.rss       = false;
+			status.init.rss     = false;
 		}
 	}
 };
+
+function initWindow() {
+	if (options.leftBar.method.value === 'window')
+		createSidebarWindow('leftBar');
+	if (options.rightBar.method.value === 'window')
+		createSidebarWindow('rightBar');
+}
 
 function sideBarData(side) {
 
 	return {
 		'side'     : side,
-		'mode'     : options[side].mode.value,
-		'wide'     : options[side].wide.value,
-		'fixed'    : options[side].fixed.value,
-		'width'    : options[side].width.value,
+		'options'  : {
+			'sidebar' : optionsShort[side],
+			'warnings' : optionsShort.warnings,
+			'theme'    : optionsShort.theme,
+			'misc'     : optionsShort.misc,
+			'services' : optionsShort.services
+		},
 		'data'     : modeData[options[side].mode.value](),
-		'info'     : data.info,
+		'info'     : status.info,
 		'domains'  : data.domains,
 		'i18n'     : {
 						'header' : i18n.header,
 						'mode'   : i18n[options[side].mode.value]
 					 },
-		'services' : optionsShort.services,
-		'warnings' : optionsShort.warnings,
-		'misc'     : optionsShort.misc,
-		'theme'    : optionsShort.theme
 	};
 }
 
@@ -2419,16 +2427,16 @@ function send(target, subject, action, dataToSend) {
 
 		const sendByMethod = {
 			native : _ => {
-				if (data.nativeActive === true)
+				if (status.nativeActive === true)
 					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
 			iframe : _ => {
-				const tab = getById('tabs', data.activeTabId);
+				const tab = getById('tabs', status.activeTabId);
 				if (tab === false)
 					return;
 				if (tab.activated === false)
 					return;
-				sendToTab(data.activeTabId, target, subject, action, dataToSend);
+				sendToTab(status.activeTabId, target, subject, action, dataToSend);
 			},
 			window : _ => {
 				sendToWindow(target, subject, action, dataToSend);
@@ -2439,8 +2447,8 @@ function send(target, subject, action, dataToSend) {
 		if (/tabs|bookmarks|history|downloads|rss/.test(subject)) {
 			if (subject !== options[target].mode.value)
 				return;
-			if (data.init.hasOwnProperty(subject))
-				if (data.init[subject] === false)
+			if (status.init.hasOwnProperty(subject))
+				if (status.init[subject] === false)
 					return;
 		}
 		sendByMethod[options[target].method.value]();
@@ -2457,7 +2465,7 @@ function send(target, subject, action, dataToSend) {
 			brauzer.runtime.sendMessage({'target': 'startpage', 'subject': subject, 'action': action, 'data': dataToSend});
 		},
 		content  : _ => {
-			sendToTab(data.activeTabId, 'content', subject, action, dataToSend);
+			sendToTab(status.activeTabId, 'content', subject, action, dataToSend);
 		}
 	};
 
@@ -2468,17 +2476,17 @@ function sendLater(what) {
 	const sendData = {
 		favs : _ => {
 			send('sidebar', 'info', 'updateDomain', data.favs);
-			delete data.sendTimer.favs;
+			delete status.sendTimer.favs;
 		}
 	};
 
-	if (!data.sendTimer.hasOwnProperty(what))
-		data.sendTimer[what] = setTimeout(sendData[what], 1000);
+	if (!status.sendTimer.hasOwnProperty(what))
+		status.sendTimer[what] = setTimeout(sendData[what], 1000);
 }
 
 function sendToWindow(target, subject, action, dataToSend) {
-	if (data[target].tabId !== -1)
-		brauzer.tabs.sendMessage(data[target].tabId, {'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
+	if (status[target].tabId !== -1)
+		brauzer.tabs.sendMessage(status[target].tabId, {'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 }
 
 function sendToTab(tabId, target, subject, action, dataToSend) {
@@ -2528,13 +2536,13 @@ function makeFav(id, url, favIconUrl, update = false) {
 	let fav     = getById('favs', id);
 	let favIcon = '';
 	if (id === 'default')
-		favIcon = data.defaultIcon;
+		favIcon = config.defaultIcon;
 	else if (id === 'startpage')
-		favIcon = data.startpageIcon;
+		favIcon = config.startpageIcon;
 	else if (id === 'system')
-		favIcon = data.systemIcon;
+		favIcon = config.systemIcon;
 	else if (id === 'extension')
-		favIcon = data.defaultIcon;
+		favIcon = config.defaultIcon;
 	else {
 		favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
 		saveLater('favs');
@@ -2550,9 +2558,9 @@ function makeDomain(url, fav, title) {
 	let newTitle = '';
 	if (url === '')
 		id = 'default';
-	else if (url === data.defaultStartPage)
+	else if (url === config.defaultStartPage)
 		id = 'startpage';
-	else if (url === data.extensionStartPage)
+	else if (url === config.extensionStartPage)
 		id = 'startpage';
 	else if (url === 'about:blank') {
 		if (typeof title !== 'undefined')
@@ -2577,21 +2585,21 @@ function makeDomain(url, fav, title) {
 }
 
 function createDialogWindow(type, dialogData) {
-	data.dialogData = dialogData;
-	data.dialogType = type;
-	const activeTab = getById('tabs', data.activeTabId);
+	status.dialogData = dialogData;
+	status.dialogType = type;
+	const activeTab = getById('tabs', status.activeTabId);
 	if (activeTab === false)
 		return;
 	if (tabIsProtected(activeTab) === false)
-		sendToTab(data.activeTabId, 'content', 'dialog', 'create', type);
+		sendToTab(status.activeTabId, 'content', 'dialog', 'create', type);
 	else
-		brauzer.tabs.create({url: data.extensionStartPage, windowId: data.activeWindow});
+		brauzer.tabs.create({url: config.extensionStartPage, windowId: status.activeWindow});
 }
 
 function tabIsProtected(tab) {
 	if (tab.activated === true)
 		return false;
-	if (tab.url === data.extensionStartPage)
+	if (tab.url === config.extensionStartPage)
 		return false;
 	if (firefox === true) {
 		if (/^https:\/\/addons.mozilla.org/.test(tab.url))
@@ -2621,12 +2629,12 @@ function createSidebarWindow(side) {
 		};
 
 		const onCreate = win => {
-			data[side].windowId = win.id;
-			data[side].tabId    = win.tabs[0].id;
+			status[side].windowId = win.id;
+			status[side].tabId    = win.tabs[0].id;
 			brauzer.windows.onRemoved.addListener(id => {
 				if (id === win.id) {
-					data[side].windowId = -1;
-					data[side].tabId = -1;
+					status[side].windowId = -1;
+					status[side].tabId = -1;
 					if (options[side].method.value === 'window') {
 						setOption(side, 'method', 'disabled');
 						setIcon();
@@ -2635,14 +2643,14 @@ function createSidebarWindow(side) {
 			});
 		};
 
-		data.sidebarWindowCreating = true;
+		status.sidebarWindowCreating = true;
 		execMethod(brauzer.windows.create, onCreate, params);
 
 	});
 }
 
 function removeSidebarWindow(side) {
-	brauzer.windows.remove(data[side].windowId);
+	brauzer.windows.remove(status[side].windowId);
 }
 
 function setIcon() {
@@ -2669,9 +2677,9 @@ function setIcon() {
 
 function createNewTab(url = '', newWindow = false) {
 	if (newWindow !== false)
-		brauzer.windows.get(data.activeWindow, win => {
+		brauzer.windows.get(status.activeWindow, win => {
 			const newTab = {
-				truetrue   : {'url': data.extensionStartPage, width: win.width, height: win.height, left: win.left, top: win.top},
+				truetrue   : {'url': config.extensionStartPage, width: win.width, height: win.height, left: win.left, top: win.top},
 				truefalse  : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top},
 				falsetrue  : {width: win.width, height: win.height, left: win.left, top: win.top},
 				falsefalse : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top}
@@ -2680,10 +2688,10 @@ function createNewTab(url = '', newWindow = false) {
 		});
 	else {
 		const newTab = {
-			truetrue   : {'url': data.extensionStartPage, 'windowId': data.activeWindow},
-			truefalse  : {'url': url, 'windowId': data.activeWindow},
-			falsetrue  : {'windowId': data.activeWindow},
-			falsefalse : {'url': url, 'windowId': data.activeWindow}
+			truetrue   : {'url': config.extensionStartPage, 'windowId': status.activeWindow},
+			truefalse  : {'url': url, 'windowId': status.activeWindow},
+			falsetrue  : {'windowId': status.activeWindow},
+			falsefalse : {'url': url, 'windowId': status.activeWindow}
 		};
 		brauzer.tabs.create(newTab[`${options.services.startpage.value}${url === ''}`]);
 	}
@@ -2871,22 +2879,22 @@ function saveNow(what) {
 		rss           : {'rss': data.rss, 'rssId': data.rssId},
 		rssFolders    : {'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId},
 		speadDial     : {'speadDial': data.speadDial},
-		version       : {'version': version},
+		version       : {'version': config.version},
 		foldedId      : {'foldedId': data.foldedId}
 	};
 	brauzer.storage.local.set(dataToSave[what]);
 }
 
 function saveLater(what) {
-	if (data.toSave.hasOwnProperty(what))
+	if (status.toSave.hasOwnProperty(what))
 		return;
-	data.toSave[what] = true;
-	if (!data.saverActive) {
-		data.saverActive = true;
+	status.toSave[what] = true;
+	if (!status.saverActive) {
+		status.saverActive = true;
 		setTimeout(_ => {
-			data.saverActive = false;
-			for (let target in data.toSave) {
-				delete data.toSave[target];
+			status.saverActive = false;
+			for (let target in status.toSave) {
+				delete status.toSave[target];
 				saveNow(target);
 			}
 		}, 30000);

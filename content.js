@@ -7,24 +7,6 @@ const brauzer = firefox ? browser : chrome;
 
 const doc     = document.documentElement;
 
-cleanOldStuff();
-
-const mask    = document.createElement('div');
-mask.id       = 'mask';
-const sidebar = {
-	leftBar   : null,
-	rightBar  : null
-};
-
-if (firefox) {
-	doc.addEventListener('mouseleave', event => {
-		send('background', 'sidebar', 'sideDetection', {'sender': 'content', 'action': 'leave', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-	});
-	doc.addEventListener('mouseover', event => {
-		send('background', 'sidebar', 'sideDetection',{'sender': 'content', 'action': 'over', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-	});
-}
-
 const status = {
 	leftBar: {
 		width    : 0,
@@ -51,12 +33,22 @@ const status = {
 	borderColorActive : '#000'
 };
 
-let dialog = null;
+cleanOldStuff();
+
+const mask    = document.createElement('div');
+mask.id       = 'mask';
+const sidebar = {
+	leftBar   : null,
+	rightBar  : null
+};
+let dialog    = null;
 
 makeIframe('leftBar');
 makeIframe('rightBar');
-let initTimer   = -1;
+
+let initTimer = -1;
 init();
+
 const checkBody = setInterval(
 	_ => {if (document.body) {
 		clearInterval(checkBody);
@@ -153,13 +145,6 @@ const messageHandler = {
 	}
 };
 
-brauzer.runtime.onMessage.addListener(message => {
-	// console.log(message);
-	if (message.hasOwnProperty('target'))
-		if (message.target === 'content')
-			messageHandler[message.subject][message.action](message.data);
-});
-
 function checkDocument() {
 	if (document.body) {
 		status.docReady = true;
@@ -173,6 +158,23 @@ function init() {
 			initTimer = setTimeout(init, 200);
 			return;
 		}
+
+		brauzer.runtime.onMessage.addListener(message => {
+			// console.log(message);
+			if (message.hasOwnProperty('target'))
+				if (message.target === 'content')
+					messageHandler[message.subject][message.action](message.data);
+		});
+
+		if (firefox) {
+			doc.addEventListener('mouseleave', event => {
+				send('background', 'sidebar', 'sideDetection', {'sender': 'content', 'action': 'leave', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+			});
+			doc.addEventListener('mouseover', event => {
+				send('background', 'sidebar', 'sideDetection',{'sender': 'content', 'action': 'over', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+			});
+		}
+
 		status.leftBar           = response.leftBar;
 		status.rightBar          = response.rightBar;
 		status.fontSize          = response.fontSize;
