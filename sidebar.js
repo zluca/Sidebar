@@ -271,7 +271,7 @@ const initBlock = {
 				if (tab !== false) {
 					if (options.misc.tabsMode === 'domain')
 						if (data.hasOwnProperty('folder'))
-							insertFolders([data.folder], 'tabs');
+							insertFolders('tabs', [data.folder]);
 				}
 				insertTabs([data.tab]);
 			},
@@ -309,7 +309,7 @@ const initBlock = {
 			},
 			newFolder    : data => {
 				if (options.misc.tabsMode === 'domain')
-					insertFolders([data], 'tabs');
+					insertFolders('tabs', [data]);
 			},
 			domainCount  : data => {
 				const folder = getFolderById('tabs', data.id);
@@ -374,7 +374,7 @@ const initBlock = {
 				rootFolder.removeChild(rootFolder.firstChild);
 			clearData('tabs');
 			if (options.misc.tabsMode === 'domain')
-				insertFolders(tabsFolders, 'tabs');
+				insertFolders('tabs', tabsFolders);
 			insertTabs(tabs);
 		};
 
@@ -426,7 +426,7 @@ const initBlock = {
 				postProcess[options.misc.tabsMode](i);
 			}
 			if (options.misc.tabsMode === 'tree') {
-				insertFolders(treeFolders, 'tabs', true);
+				insertFolders('tabs', treeFolders, true);
 				for (let i = 0, l = tabs.length; i < l; i++) {
 					const folder = getFolderById('tabs', tabs[i].id);
 					if (folder)
@@ -475,7 +475,7 @@ const initBlock = {
 				insertBookmarks([data.item]);
 			},
 			createdFolder   : data => {
-				insertFolders([data.item], 'bookmarks');
+				insertFolders('bookmarks', [data.item]);
 			},
 			moved           : data => {
 				const mouseup = event => {
@@ -611,7 +611,7 @@ const initBlock = {
 		};
 
 		if (options.misc.bookmarksMode === 'tree')
-			insertFolders(data.bookmarksFolders, 'bookmarks');
+			insertFolders('bookmarks', data.bookmarksFolders);
 		insertBookmarks(data.bookmarks, 'last');
 	},
 
@@ -619,7 +619,7 @@ const initBlock = {
 
 		messageHandler.history = {
 			new     : data =>  {
-				insertFolders([data.folder], 'history');
+				insertFolders('history', [data.folder]);
 				insertHistoryes([data.item], 'first');
 				if (data.historyEnd)
 					getMoreButton.classList.add('hidden');
@@ -631,7 +631,7 @@ const initBlock = {
 				historyTotalWipe();
 			},
 			gotMore : data =>  {
-				insertFolders(data.historyFolders, 'history');
+				insertFolders('history', data.historyFolders);
 				insertHistoryes(data.history, 'last');
 			},
 			title   : data =>  {
@@ -735,7 +735,7 @@ const initBlock = {
 				removeById('history', data.historyId[i]);
 		};
 
-		insertFolders(data.historyFolders, 'history');
+		insertFolders('history', data.historyFolders);
 		insertHistoryes(data.history, 'last');
 		if (data.historyEnd)
 			getMoreButton.classList.add('hidden');
@@ -849,7 +849,7 @@ const initBlock = {
 
 		messageHandler.rss = {
 			createdFeed      : data =>  {
-				insertFolders([data.feed], 'rss');
+				insertFolders('rss', [data.feed]);
 			},
 			newItems         : data =>  {
 				if (options.misc.rssMode === 'plain')
@@ -963,7 +963,7 @@ const initBlock = {
 				rootFolder.removeChild(rootFolder.firstChild);
 			clearData('rss');
 			if (mode === 'domain')
-				insertFolders(rssFolders, 'rss');
+				insertFolders('rss', rssFolders);
 			insertRss(rss, 'first');
 			setReadedMode(options.misc.rssHideReaded);
 		};
@@ -1039,11 +1039,16 @@ ${items[i].description}`;
 
 		console.log(data);
 
+		messageHandler.pocket = {
+			newItems         : data =>  {
+				injectPockets(data);
+			},
+		};
+
 		rootFolder              = document.createElement('div');
 		rootFolder.id           = 'pocket-0';
 
 		const loginContainer    = document.createElement('div');
-		// loginContainer.id       = 'pocket-login';
 		const login             = makeItemButton('login', 'pocket');
 		login.id                = 'login';
 		login.textContent       = 'Log in to Pocket';
@@ -1056,11 +1061,30 @@ ${items[i].description}`;
 		block.pocket.appendChild(loginContainer);
 		block.pocket.appendChild(rootFolder);
 
-		if (data.auth === true) {
-			console.log('ture');
+		if (data.auth === true)
 			block.pocket.classList.add('auth');
-		}
 
+		const injectPockets = items => {
+			let pid    = 0;
+			let parent = rootFolder;
+			for (let i = 0, l = items.length; i < l; i++) {
+				const pocket       = createById('pocket', items[i].id);
+				let classList      = `pocket item ${items[i].favourite === true ? 'favourite ' : ''}`;
+				pocket.href        = items[i].url;
+				pocket.dataset.url = items[i].url;
+				pocket.textContent = items[i].title;
+				pocket.classList   = classList;
+				pocket.title       = items[i].description !== '' ? items[i].description : items[i].url;
+				if (items[i].pid !== pid) {
+					pid    = items[i].pid;
+					parent = getFolderById('pocket', pid);
+				}
+				parent.appendChild(pocket);
+			}
+		};
+
+		insertFolders('pocket', data.pocketFolders);
+		injectPockets(data.pocket);
 	}
 };
 
@@ -1272,7 +1296,7 @@ const setDownloadStatus = {
 	}
 };
 
-function insertFolders(items, mode, noTitle = false) {
+function insertFolders(mode, items, noTitle = false) {
 	let folders = [];
 	for (let i = 0, l = items.length; i < l; i++) {
 		if (getFolderById(mode, items[i].id))
@@ -1284,7 +1308,7 @@ function insertFolders(items, mode, noTitle = false) {
 		classList += ` ${items[i].view}-view`;
 		classList += items[i].folded ? ' folded' : '';
 		data[`${mode}Folders`][index].classList = classList;
-		data[`${mode}Folders`][index].id = `${mode}-folder-${items[i].id}`;
+		data[`${mode}Folders`][index].id        = `${mode}-folder-${items[i].id}`;
 		if (!noTitle) {
 			const title       = document.createElement('div');
 			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
@@ -1341,12 +1365,13 @@ const setDomainStyle = {
 };
 
 const element = {
-	tabs:      'a',
-	bookmarks: 'a',
-	history:   'a',
-	downloads: 'li',
-	rss:       'a',
-	domains:   'style'
+	tabs      : 'a',
+	bookmarks : 'a',
+	history   : 'a',
+	downloads : 'li',
+	rss       : 'a',
+	pocket    : 'a',
+	domains   : 'style'
 };
 
 function createById(mode, id, search = false) {

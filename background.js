@@ -466,6 +466,11 @@ const options = {
 			value   : false,
 			type    : 'boolean',
 			targets : []
+		},
+		lastUpdate : {
+			value   : 0,
+			type    : 'integer',
+			targets : []
 		}
 	}
 };
@@ -533,6 +538,7 @@ const modeData = {
 			auth             : optionsShort.pocket.auth,
 			i18n             : i18n.pocket,
 			pocket           : data.pocket,
+			pocketFolders    : data.pocketFolders,
 		};
 	}
 };
@@ -2442,7 +2448,129 @@ const initService = {
 	},
 
 	pocket: start => {
+
+		const updatePocket = _ => {
+			if (options.pocket.auth.value === false)
+				return;
+			if (options.pocket.accessToken.value === '') {
+				setOption('pocket', 'auth', false);
+				return;
+			}
+
+			const xhttp  = new XMLHttpRequest();
+			xhttp.open('POST', 'https://getpocket.com/v3/get', true);
+			xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+			xhttp.setRequestHeader('X-Accept', 'application/json');
+			xhttp.send(JSON.stringify(
+				{
+					'consumer_key' : '72831-08ba83947577ffe5e7738034',
+					'access_token' : options.pocket.accessToken.value,
+					'detailType'   : 'complete',
+					'since'        : options.pocket.lastUpdate.value
+				})
+			);
+
+			xhttp.onreadystatechange = _ => {
+				if (xhttp.readyState === 4)
+					if (xhttp.status === 200) {
+						// setOption('pocket', 'lastUpdate', Date.now());
+						const response = JSON.parse(xhttp.responseText);
+						console.log(response);
+						const toSend = [];
+						for (let list in response.list)
+							toSend.push(createPocket(response.list[list]));
+						console.log(toSend);
+						if (toSend.length > 0)
+							send('sidebar', 'pocket', 'newItems', toSend);
+					}
+			};
+		};
+
+		const createPocket = item => {
+			let newItem = getById('pocket', item.item_id);
+			if (newItem === false)
+				newItem = createById('pocket', item, 'last');
+			return newItem;
+		};
+
+		const getPocket = res => {
+			if (res.hasOwnProperty('pocket')) {
+				data.pocket          = res.pocket;
+				data.pocketId        = res.pocketId;
+				data.pocketFolders   = res.pocketFolders;
+				data.pocketFoldersId = res.pocketFoldersId;
+			}
+			else {
+				data.pocketFolders   = [
+					{
+						id      : 'articles',
+						pid     : 0,
+						title   : 'Articles',
+						domain  : 'articles',
+						view    : 'domain',
+						folded  : false,
+						itemsId : []
+					},
+					{
+						id      : 'videos',
+						pid     : 0,
+						title   : 'Videos',
+						domain  : 'videos',
+						view    : 'domain',
+						folded  : false,
+						itemsId : []
+					},
+					{
+						id      : 'pictures',
+						pid     : 0,
+						title   : 'Pictures',
+						domain  : 'pictures',
+						view    : 'domain',
+						folded  : false,
+						itemsId : []
+					},
+					{
+						id      : 'other',
+						pid     : 0,
+						title   : 'Other',
+						domain  : 'other',
+						view    : 'domain',
+						folded  : false,
+						itemsId : []
+					},
+				];
+				data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other'];
+				saveNow('pocket');
+				saveNow('pocketFolders');
+			}
+
+			status.init.pocket = true;
+			updatePocket();
+		};
+
 		if (start === true) {
+
+			fillItem.pocket = (newItem, item) => {
+				let pid = '';
+				if (item.is_article === '1')
+					pid = 'articles';
+				else if (item.has_image === '2')
+					pid = 'images';
+				else if (item.has_video === '2')
+					pid = 'videos';
+				else
+					pid = 'other';
+				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
+				newItem.title       = item.given_title;
+				newItem.url         = item.given_url;
+				newItem.status      = item.status;
+				newItem.domain      = makeDomain(item.given_url).id;
+				newItem.favourite   = item.favourite === '0' ? false : true;
+				newItem.pid         = pid;
+				newItem.hasImage    = parseInt(item.has_image) > 0 ? true : false;
+				newItem.hasVideo    = parseInt(item.has_video) > 0 ? true : false;
+				return newItem;
+			};
 
 			messageHandler.pocket = {
 				login: (message, sender, sendResponse) => {
@@ -2501,7 +2629,10 @@ const initService = {
 				}
 			};
 
-			status.init.pocket = true;
+			if (options.pocket.auth.value === true) {
+				// updatePocket();
+				execMethod(brauzer.storage.local.get, getPocket, ['pocket', 'pocketId', 'pocketFolders', 'pocketFoldersId']);
+			}
 		}
 		else {
 			i18n.pocket           = {};
@@ -2509,7 +2640,8 @@ const initService = {
 			messageHandler.pocket = null;
 			data.pocket           = [];
 			data.pocketId         = [];
-
+			data.pocketFolders    = [];
+			data.pocketFoldersId  = [];
 			status.init.pocket    = false;
 		}
 	}
@@ -3008,6 +3140,8 @@ function saveNow(what) {
 		favs          : {'favs': data.favs, 'favsId': data.favsId},
 		rss           : {'rss': data.rss, 'rssId': data.rssId},
 		rssFolders    : {'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId},
+		pocket        : {'pocket': data.pocket, 'pocketId': data.pocketId},
+		pocketFolders : {'pocketFolders': data.pocketFolders, 'pocketFoldersId': data.pocketFoldersId},
 		speadDial     : {'speadDial': data.speadDial},
 		version       : {'version': config.version},
 		foldedId      : {'foldedId': data.foldedId}
