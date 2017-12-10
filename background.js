@@ -1160,7 +1160,7 @@ const init = {
 		};
 
 		const makeFolder        = tab => {
-			const domain = makeDomain(firefox ? tab.url === 'about:blank' ? tab.title : tab.url: tab.url, tab.favIconUrl);
+			const domain = makeDomain(tab.url, tab.favIconUrl, tab.title);
 			let folder   = createFolderById('tabs', domain.id, 'last');
 			if (folder !== false) {
 				folder.pid        = 0;
@@ -1205,8 +1205,7 @@ const init = {
 
 		const checkStartPage    = tab => tab.url === data.defaultStartPage ? true : false;
 
-		const createTab         =
-			tab => {
+		const createTab         = tab => {
 				if (data.sidebarWindowCreating === true) {
 					data.sidebarWindowCreating = false;
 					return false;
@@ -1342,12 +1341,8 @@ const init = {
 
 		if (start) {
 			fillItem.tabs = (newItem, item) => {
-				let url = item.url;
-				if (url === 'about:blank')
-					if (`moz-extension://${item.title}` !== data.extensionStartPage)
-						url = item.title;
-				const domain = makeDomain(url, item.favIconUrl).id;
-				if (item.active)
+				const domain = makeDomain(item.url, item.favIconUrl, item.title).id;
+				if (item.active === true)
 					data.activeTabId  = item.id;
 				newItem.pid        = domain;
 				newItem.domain     = domain;
@@ -2549,28 +2544,33 @@ function makeFav(id, url, favIconUrl, update = false) {
 	return favIcon;
 }
 
-function makeDomain(url, fav) {
-	let id    = '';
-	let title = '';
+function makeDomain(url, fav, title) {
+	let id       = '';
+	let newUrl   = url;
+	let newTitle = '';
 	if (url === '')
 		id = 'default';
 	else if (url === data.defaultStartPage)
 		id = 'startpage';
 	else if (url === data.extensionStartPage)
 		id = 'startpage';
-	else if (/^about:|^chrome:/.test(url))
+	else if (url === 'about:blank') {
+		if (typeof title !== 'undefined')
+			newUrl = title;
+	}
+	else if (/^about:|^chrome:/.test(newUrl))
 		id = 'system';
-	else if (/^chrome-extension:|^moz-extension:/i.test(url))
+	else if (/^chrome-extension:|^moz-extension:/i.test(newUrl))
 		id = 'extension';
 	if (id !== '')
-		title = i18n.domains[id];
+		newTitle = i18n.domains[id];
 	else {
-		title = domainFromUrl(url, true);
-		id    = title.replace(/\./g, '');
+		newTitle = domainFromUrl(newUrl, true);
+		id       = newTitle.replace(/\./g, '');
 	}
 	let domain = getById('domains', id);
 	if (domain === false) {
-		domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), title: title}, 'last');
+		domain = createById('domains', {'id': id, 'fav': makeFav(id, newUrl, fav), title: newTitle}, 'last');
 		send('sidebar', 'info', 'newDomain', {'domain': domain});
 	}
 	return domain;
