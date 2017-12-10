@@ -70,7 +70,7 @@ function makeDialogWindow(data, warnings, colors) {
 		if (inputType === 'text') input.placeholder = inputPlaceholder;
 		if (inputType === 'checkbox') input.checked = inputValue;
 		else input.value = inputValue;
-		if (reverse) {
+		if (reverse !== false) {
 			label.classList.add('reverse');
 			label.addEventListener('click', event => {
 				event.stopPropagation();
@@ -158,7 +158,7 @@ function makeDialogWindow(data, warnings, colors) {
 	};
 
 	const showCompleter = response => {
-		if (!response.length)
+		if (response.length === 0)
 			return hideCompleter();
 		cleanCompleter();
 		const inputs    = dialog.querySelectorAll('input');
@@ -211,7 +211,7 @@ function makeDialogWindow(data, warnings, colors) {
 			cancelButton.click();
 		else if (event.key === 'Enter') {
 			const focused = document.querySelector(':focus');
-			if (focused)
+			if (focused !== undefined)
 				focused.blur();
 			okButton.click();
 		}
@@ -244,9 +244,9 @@ function makeDialogWindow(data, warnings, colors) {
 			});
 
 			addButton('save', _ => {
-				if (optionsChanged) {
+				if (optionsChanged === true) {
 					const url   = inputUrl.value;
-					if (url)
+					if (url !== '')
 						send('background', 'startpage', 'create',
 							{
 								'url'   : url,
@@ -272,13 +272,13 @@ function makeDialogWindow(data, warnings, colors) {
 			const inputColor = addInputRow(getI18n('dialogEditSiteColorLabel'), 'color', data.color);
 
 			addButton('save', _ => {
-				if (optionsChanged)
+				if (optionsChanged === true)
 					send('background', 'startpage', 'change', {'index': data.index, 'url': inputUrl.value, 'color': inputColor.value, 'text': inputText.value});
 				removeDialogWindow();
 			});
 			addButton('delete', _ => {
 				removeDialogWindow();
-				if (warnings.deleteSite)
+				if (warnings.deleteSite === true)
 					send('background', 'dialog', 'siteDelete', {'index': data.index, 'title': data.url});
 				else
 					send('background', 'startpage', 'delete', {'index': data.index});
@@ -295,7 +295,7 @@ function makeDialogWindow(data, warnings, colors) {
 			const warningCheckbox = addWarning('deleteSite');
 			addButton('confirm', _ => {
 				send('background', 'startpage', 'delete', {'index': data.index});
-				if (!warningCheckbox.checked)
+				if (warningCheckbox.checked === false)
 					send('background', 'options', 'warnings', {'option': 'deleteSite', 'value': false});
 				removeDialogWindow();
 			});
@@ -311,7 +311,7 @@ function makeDialogWindow(data, warnings, colors) {
 			const warningCheckbox = addWarning('closeDomainFolder');
 			addButton('confirm', _ => {
 				send('background', 'tabs', 'removeByDomain', {'id': data.id});
-				if (!warningCheckbox.checked)
+				if (warningCheckbox.checked === false)
 					send('background', 'options', 'warnings', {'option': 'closeDomainFolder', 'value': false});
 				removeDialogWindow();
 			});
@@ -327,7 +327,7 @@ function makeDialogWindow(data, warnings, colors) {
 			const warningCheckbox = addWarning('deleteBookmark');
 			addButton('confirm', _ => {
 				send('background', 'bookmarks', 'deleteItem', {'id': data.id});
-				if (!warningCheckbox.checked)
+				if (warningCheckbox.checked === false)
 					send('background', 'options', 'warnings', {'option': 'deleteBookmark', 'value': false});
 				removeDialogWindow();
 			});
@@ -394,13 +394,13 @@ function makeDialogWindow(data, warnings, colors) {
 
 			header.textContent = getI18n('dialogRSSNewHeader');
 
-			const inputTitle = addInputRow(getI18n('dialogRSSNewTitleLabel'), 'text', data.title ? data.title : '', getI18n('dialogRSSNewTitlePlaceholder'));
-			const inputUrl = addInputRow(getI18n('dialogRSSNewUrlLabel'), 'text', data.url ? data.url : '', getI18n('dialogRSSNewUrlPlaceholder'));
+			const inputTitle = addInputRow(getI18n('dialogRSSNewTitleLabel'), 'text', data.hasOwnProperty('title') ? data.title : '', getI18n('dialogRSSNewTitlePlaceholder'));
+			const inputUrl = addInputRow(getI18n('dialogRSSNewUrlLabel'), 'text', data.hasOwnProperty('url') ? data.url : '', getI18n('dialogRSSNewUrlPlaceholder'));
 
 			addButton('save', _ => {
-				if (optionsChanged || data) {
+				if (optionsChanged === true || data.hasOwnProperty('url')) {
 					const url = inputUrl.value;
-					if (url)
+					if (url !== '')
 						send('background', 'rss', 'rssNew', {'url': url, 'title': inputTitle.value});
 				}
 				removeDialogWindow();
@@ -418,13 +418,13 @@ function makeDialogWindow(data, warnings, colors) {
 			const inputDesc  = addInputRow(getI18n('dialogRSSEditFeedDescriptionLabel'), 'text', data.description, '');
 
 			addButton('save', _ => {
-				if (optionsChanged) {
+				if (optionsChanged === true) {
 					send('background', 'rss', 'rssEditFeed', {'id': data.id, 'title': inputTitle.value, 'description': inputDesc.value});
 				removeDialogWindow();
 				}
 			});
 			addButton('delete', _ => {
-				if (warnings.deleteRssFeed)
+				if (warnings.deleteRssFeed === true)
 					send('background', 'dialog', 'rssDeleteFeed', {'id': data.id, 'title': data.title});
 				else
 					send('background', 'rss', 'rssDeleteFeed', {'id': data.id});
@@ -455,7 +455,8 @@ function makeDialogWindow(data, warnings, colors) {
 
 			const alert = document.createElement('p');
 			let title = data.title;
-			if (title.length > 30) title = title.substring(0, 28) + '...';
+			if (title.length > 30)
+				title = title.substring(0, 28) + '...';
 			alert.textContent = getI18n('dialogDownloadDeleteAlert', [title]);
 			main.appendChild(alert);
 
@@ -463,7 +464,7 @@ function makeDialogWindow(data, warnings, colors) {
 			const deleteFile = addInputRow(getI18n('dialogDownloadDeleteFileLabel'), 'checkbox', false, '', true);
 
 			addButton('confirm', _ => {
-				if (deleteFile.checked)
+				if (deleteFile.checked === true)
 					send('background', 'downloads', 'removeFile', {'id': data.id});
 				if (deleteFromHistory.checked)
 					send('background', 'downloads', 'erase', {'id': data.id});

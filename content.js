@@ -50,7 +50,7 @@ let initTimer = -1;
 init();
 
 const checkBody = setInterval(
-	_ => {if (document.body) {
+	_ => {if (document.body !== null) {
 		clearInterval(checkBody);
 		status.docReady = true;
 		injectElements();
@@ -134,7 +134,7 @@ const messageHandler = {
 			let rssUrl    = '';
 			let rssTitle  = '';
 			const rssLink = document.querySelector('link[type="application/rss+xml"]');
-			if (rssLink) {
+			if (rssLink !== undefined) {
 				rssUrl   = rssLink.href;
 				rssTitle = document.title;
 			}
@@ -144,13 +144,6 @@ const messageHandler = {
 		}
 	}
 };
-
-function checkDocument() {
-	if (document.body) {
-		status.docReady = true;
-		injectElements();
-	}
-}
 
 function init() {
 	send('background', 'request', 'status', {needResponse: true}, response => {
@@ -180,7 +173,8 @@ function init() {
 		status.fontSize          = response.fontSize;
 		status.borderColor       = response.borderColor;
 		status.borderColorActive = response.borderColorActive;
-		if (status.docReady) injectElements();
+		if (status.docReady === true)
+			injectElements();
 		window.onresize = _ => {
 			if (status.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
 			if (status.rightBar.method === 'iframe') setSideBarWidth('rightBar');
@@ -188,7 +182,7 @@ function init() {
 	});
 }
 
-function injectIframe(side, width = -1) {
+function injectIframe(side, width) {
 	setSideBarWideMode(side);
 	setSideBarFixed(side);
 	setSideBarWidth(side, width);
@@ -203,13 +197,13 @@ function deleteIframe(side) {
 
 function cleanOldStuff() {
 	const oldLeftBar = document.getElementById('sbp-leftBar');
-	if (oldLeftBar)
+	if (oldLeftBar !== null)
 		oldLeftBar.parentNode.removeChild(oldLeftBar);
 	const oldRightBar = document.getElementById('sbp-rightBar');
-	if (oldRightBar)
+	if (oldRightBar !== null)
 		oldRightBar.parentNode.removeChild(oldRightBar);
 	const oldMask = document.getElementById('mask');
-	if (oldMask)
+	if (oldMask !== null)
 		oldMask.parentNode.removeChild(oldMask);
 }
 
@@ -239,11 +233,11 @@ function makeIframe(side) {
 function setHover(side, hover) {
 	send('background', 'set', 'hover', {side: side, hover: hover ? 'add' : 'remove', needResponse: true}, _ => {
 		status[side].hover = hover;
-		setSideBarWidth(side, -1);
+		setSideBarWidth(side);
 	});
 }
 
-function setSideBarFixed(side, value = -1) {
+function setSideBarFixed(side, value) {
 
 	const timer = {
 		over  : 0,
@@ -256,12 +250,12 @@ function setSideBarFixed(side, value = -1) {
 	};
 
 	const mouseOver = event => {
-		if (event)
+		if (event !== undefined)
 			event.stopPropagation();
-		if (status[side].over)
+		if (status[side].over === true)
 			return;
 		status[side].over = true;
-		if (timer.leave)
+		if (timer.leave !== 0)
 			cleanTimer('leave');
 		else
 			timer.over = setTimeout(_ => {
@@ -273,18 +267,18 @@ function setSideBarFixed(side, value = -1) {
 	};
 
 	const mouseLeave = event => {
-		if (event)
+		if (event !== undefined)
 			event.stopPropagation();
-		if (!status[side].over || status[side].resize)
+		if (status[side].over === false || status[side].resize === true)
 			return;
 		status[side].over = false;
-		if (status[side].fixed)
+		if (status[side].fixed === true)
 			return;
-		if (timer.over)
+		if (timer.over !== 0)
 			cleanTimer('over');
 		else
 			timer.leave = setTimeout(_ => {
-				if (status[side].over)
+				if (status[side].over === true)
 					return cleanTimer('leave');
 				setHover(side, false);
 				cleanTimer('leave');
@@ -293,9 +287,9 @@ function setSideBarFixed(side, value = -1) {
 
 	if (status[side].fixed === value)
 		return;
-	if (value !== -1)
+	if (value !== undefined)
 		status[side].fixed = value;
-	if (status[side].fixed) {
+	if (status[side].fixed === true) {
 		sidebar[side].removeEventListener('mouseover', mouseOver);
 		sidebar[side].removeEventListener('mouseleave', mouseLeave);
 		cleanTimer('leave');
@@ -305,17 +299,17 @@ function setSideBarFixed(side, value = -1) {
 		sidebar[side].addEventListener('mouseover', mouseOver);
 		sidebar[side].addEventListener('mouseleave', mouseLeave);
 	}
-	if (status[side].over)
+	if (status[side].over === true)
 		mouseOver();
 	else
 		mouseLeave();
 	setSideBarWidth(side);
 }
 
-function setSideBarWideMode(side, value = -1) {
-	if (value !== -1)
+function setSideBarWideMode(side, value) {
+	if (value !== undefined)
 		status[side].wide = value;
-	if (status[side].wide)
+	if (status[side].wide === true)
 		sidebar[side].classList.add('wide');
 	else
 		sidebar[side].classList.remove('wide');
@@ -327,22 +321,22 @@ function setColor() {
 	doc.style.setProperty('--sbp-border-color-active', status.borderColorActive, 'important');
 }
 
-function setSideBarWidth(side, value = -1) {
+function setSideBarWidth(side, value) {
 	const borderWidth = status.fontSize / 8 / window.devicePixelRatio;
 	const iconWidth   = status.fontSize * 1.7 / window.devicePixelRatio;
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
 	sidebar[side].lastChild.style.setProperty(`margin-${side === 'leftBar' ? 'right' : 'left'}`, `${borderWidth}px`, 'important');
 	const trueSide = side.replace('Bar', '');
-	if (value !== -1)
+	if (value !== undefined)
 		status[side].width = value;
-	if (status[side].fixed) {
+	if (status[side].fixed === true) {
 		doc.style.setProperty(`margin-${trueSide}`, `${status[side].width}%`, 'important');
 		sidebar[side].style.setProperty('width', `${status[side].width}%`, 'important');
 	}
 	else {
-		if (status[side].hover)
+		if (status[side].hover === true)
 			sidebar[side].style.setProperty('width', `${status[side].width}%`, 'important');
-		else if (status[side].wide) {
+		else if (status[side].wide === true) {
 			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
 		}
@@ -380,9 +374,9 @@ function resizeSideBar(side) {
 		mask.classList.remove('active');
 		status[side].resize = false;
 		setSideBarFixed(side, isFixed);
-		if (!isFixed)
+		if (isFixed === false)
 			setHover(side, false);
-		if (!cancel)
+		if (cancel === false)
 			send('background', 'options', 'handler', {section: side, option: 'width', value: status[side].width});
 	};
 
@@ -400,7 +394,7 @@ function resizeSideBar(side) {
 		setTimeout(_ => {sidebar[side].style.display = 'block';}, 1);
 	}
 	mask.classList.add('active');
-	if (!status[side].fixed)
+	if (status[side].fixed === false)
 		setSideBarFixed(side, true);
 	status[side].resize = true;
 	document.addEventListener('mouseup', stopResize);

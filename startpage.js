@@ -12,12 +12,12 @@ init();
 function init() {
 	send('background', 'request', 'startpage', {needResponse: true}, response => {
 		// console.log(response);
-		if (typeof response === 'undefined') {
+		if (response === undefined) {
 			initTimer = setTimeout(init, 200);
 			return;
 		}
 
-		if (response.startpage.empty) return;
+		if (response.startpage.empty === true) return;
 
 		document.title = response.i18n.pageTitle;
 
@@ -55,7 +55,7 @@ function init() {
 
 		const setSearch = _ => {
 
-			if (!status.options.searchEnabled) {
+			if (status.options.searchEnabled === false) {
 				if (search !== null) {
 					document.body.removeChild(search);
 					search = null;
@@ -129,7 +129,7 @@ function init() {
 					googletranslate : `https://translate.google.com/#${status.options.translateFrom}/${status.options.translateTo}/`,
 					yandextranslate : `https://translate.yandex.com/?lang=${status.options.translateFrom}-${status.options.translateTo}&text=`
 				};
-				if (subject)
+				if (subject !== '')
 					document.location.href = searchPath[status.options.searchEngine] + subject.replace(' ', '+');
 			});
 
@@ -162,7 +162,7 @@ function init() {
 				}
 			});
 
-			if (document.body.firstChild)
+			if (document.body.firstChild !== undefined)
 				document.body.insertBefore(search, document.body.firstChild);
 			else
 				document.body.appendChild(search);
@@ -258,7 +258,7 @@ function init() {
 		setColor(response.theme);
 		window.addEventListener('resize', setStyle);
 
-		if (status.options.searchEnabled)
+		if (status.options.searchEnabled === true)
 			setSearch();
 
 		initSites(response.sites);
@@ -340,7 +340,7 @@ function init() {
 					setSiteProperties(sites[data.index], data.site);
 				},
 				moved         : data => {
-					if (status.dragging)
+					if (status.dragging === true)
 						status.dragging = false;
 					else {
 						let beacon;
@@ -485,7 +485,7 @@ function init() {
 
 		document.body.addEventListener('mouseover', event => {
 			const target = event.target;
-			if (status.dragging) return;
+			if (status.dragging === true) return;
 			if (target.classList.contains('site'))
 				target.appendChild(editButton);
 		});
@@ -496,9 +496,9 @@ function init() {
 			if (target.classList.contains('add-new'))
 				send('background', 'dialog', 'siteCreate', {'index': target.dataset.index});
 			else if (target.classList.contains('site')) {
-				if (event.ctrlKey)
+				if (event.ctrlKey === true)
 					send('background', 'tabs', 'new', {'url': event.target.title});
-				else if (event.shiftKey)
+				else if (event.shiftKey === true)
 					send('background', 'tabs', 'new', {'url': event.target.title, 'newWindow': true});
 				else
 					document.location = event.target.title;

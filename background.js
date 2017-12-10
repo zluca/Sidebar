@@ -444,11 +444,13 @@ const optionsShort = {};
 const sidebarAction =
 	firefox ?
 		browser.hasOwnProperty('sidebarAction') ?
-			browser.sidebarAction : null
-	: opera ?
-		opr.hasOwnProperty('sidebarAction') ?
-			opr.sidebarAction : null
-	: null;
+			browser.sidebarAction :
+			null :
+		opera ?
+			opr.hasOwnProperty('sidebarAction') ?
+				opr.sidebarAction :
+				null :
+			null;
 
 const modeData = {
 	tabs       : _ => {
@@ -598,7 +600,7 @@ const messageHandler = {
 				'borderColor'       : optionsShort.theme.borderColor,
 				'borderColorActive' : optionsShort.theme.borderColorActive
 			});
-			if (status.dialogData)
+			if (status.dialogData !== null)
 				sendToTab(sender.tab.id, 'content', 'dialog', 'create', status.dialogType);
 		},
 		mode : (message, sender, sendResponse) => {
@@ -608,9 +610,9 @@ const messageHandler = {
 					sendResponse(sideBarData(side));
 				},
 				native: side => {
-					status.nativeActive  = true;
-					let trueSide       = side;
-					const oppositeSide = {
+					status.nativeActive = true;
+					let trueSide        = side;
+					const oppositeSide  = {
 						'leftBar'  : 'rightBar',
 						'rightBar' : 'leftBar'
 					};
@@ -673,16 +675,16 @@ const messageHandler = {
 	set : {
 		fold : (message, sender, sendResponse) => {
 			const folder = getFolderById(message.data.mode, message.data.id);
-			if (folder) {
+			if (folder !== false) {
 				const fid   = `${message.data.mode}-${message.data.id}`;
 				const index = data.foldedId.indexOf(fid);
 				if (index !== -1) {
-					if (!message.data.folded) {
+					if (message.data.folded === false) {
 						data.foldedId.splice(index, 1);
 						saveNow('foldedId');
 					}
 				}
-				else if (message.data.folded) {
+				else if (message.data.folded === true) {
 					data.foldedId.push(fid);
 					saveNow('foldedId');
 				}
@@ -724,7 +726,7 @@ const messageHandler = {
 		},
 		newBookmark : (message, sender, sendResponse) => {
 			const activeTab = getById('tabs', status.activeTabId);
-			if (activeTab) {
+			if (activeTab !== false) {
 				const dataToSend = {
 					'id'      : status.activeTabId,
 					'url'     : activeTab.url,
@@ -736,12 +738,12 @@ const messageHandler = {
 		},
 		editBookmark : (message, sender, sendResponse) => {
 			const bookmark = getById('bookmarks', message.data.id);
-			if (bookmark)
+			if (bookmark !== false)
 				createDialogWindow('editBookmark', {'id': message.data.id, 'url': bookmark.url,'title': bookmark.title});
 		},
 		editBookmarkFolder : (message, sender, sendResponse) => {
 			const folder = getFolderById('bookmarks', message.data.id);
-			if (folder)
+			if (folder !== false)
 				createDialogWindow('editBookmarkFolder', {'id': message.data.id, 'title': folder.title});
 		},
 		rssAdd : (message, sender, sendResponse) => {
@@ -929,7 +931,7 @@ const initService = {
 			if (sidebarAction !== null) {
 				let port;
 				brauzer.runtime.onConnect.addListener(p => {
-					if (opera === true) {
+					if (opera) {
 						setOption('leftBar', 'method', 'native');
 						optionsHandler.method('leftBar', 'method', 'native');
 					}
@@ -941,7 +943,7 @@ const initService = {
 							optionsHandler.method('rightBar', 'method', 'disabled');
 					});
 				});
-				if (firefox === true) {
+				if (firefox) {
 					data.sideDetection         = {};
 					data.sideDetection.sidebar = '';
 					data.sideDetection.content = '';
@@ -1015,7 +1017,7 @@ const initService = {
 			status.init.startpage = true;
 		};
 
-		if (start) {
+		if (start === true) {
 			messageHandler.startpage = {
 				search : (message, sender, sendResponse) => {
 					setOption('startpage', 'searchEngine', message.data.engine);
@@ -1023,7 +1025,7 @@ const initService = {
 				},
 				change : (message, sender, sendResponse) => {
 					const site = data.speadDial[message.data.index];
-					if (site) {
+					if (site !== undefined) {
 						site.text  = message.data.text;
 						site.url   = message.data.url;
 						site.color = message.data.color;
@@ -1102,7 +1104,7 @@ const initService = {
 				},
 				setActive : (message, sender, sendResponse) => {
 					const tab = getById('tabs', message.data.id);
-					if (tab) {
+					if (tab !== false) {
 						const windowId = tab.windowId;
 						if (status.activeWindow !== windowId) {
 							status.activeWindow = windowId;
@@ -1121,11 +1123,13 @@ const initService = {
 					brauzer.tabs.remove(message.data.idList);
 				},
 				removeByDomain: (message, sender, sendResponse) => {
-					let toClose = [];
 					const folder = getFolderById('tabs', message.data.id);
-					for (let i = folder.itemsId.length - 1; i >= 0; i--)
-						toClose.push(folder.itemsId[i]);
-					brauzer.tabs.remove(toClose);
+					if (folder !== false) {
+						let toClose = [];
+						for (let i = folder.itemsId.length - 1; i >= 0; i--)
+							toClose.push(folder.itemsId[i]);
+						brauzer.tabs.remove(toClose);
+					}
 				},
 				move : (message, sender, sendResponse) => {
 					brauzer.tabs.move(message.data.id, {index: message.data.to});
@@ -1253,12 +1257,13 @@ const initService = {
 
 		const onUpdated         = (id, info, tab) => {
 			const oldTab = getById('tabs', id);
-			if (!oldTab) return;
+			if (oldTab === false)
+				return;
 			const pid    = oldTab.pid;
 			const folder = makeFolder(tab);
 			if (info.hasOwnProperty('pinned')) {
 				oldTab.pinned = info.pinned;
-				if (info.pinned) {
+				if (info.pinned === true) {
 					const index  = data.tabsId.indexOf(id);
 					moveFromTo('tabs', index, 0);
 					send('sidebar', 'tabs', 'moved', {'id': id, 'fromIndex': index, 'toIndex': tab.index, 'pinned': info.pinned});
@@ -1270,11 +1275,11 @@ const initService = {
 				if (options.services.startpage.value === true)
 					if (checkStartPage(tab))
 						brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
-				oldTab.url   = info.url;
+				oldTab.url = info.url;
 				if (pid !== folder.id) {
 					oldTab.pid = folder.id;
 					const oldFolder = getFolderById('tabs', pid);
-					if (oldFolder) {
+					if (oldFolder !== false) {
 						const index = oldFolder.itemsId.indexOf(id);
 						oldFolder.itemsId.splice(index, 1);
 						checkCount(oldFolder);
@@ -1290,12 +1295,13 @@ const initService = {
 				send('sidebar', 'tabs', 'title', {'id': id, 'title': info.title});
 				if (options.services.history.value === true) {
 					const item = getById('tabs', id);
-					for (let i = data.history.length - 1; i >= 0; i--)
-						if (item.url === data.history[i].url) {
-							data.history[i].title = info.title;
-							send('sidebar', 'history', 'title', {'id': data.history[i].id, 'title': info.title});
-							break;
-						}
+					if (item !== false)
+						for (let i = data.history.length - 1; i >= 0; i--)
+							if (item.url === data.history[i].url) {
+								data.history[i].title = info.title;
+								send('sidebar', 'history', 'title', {'id': data.history[i].id, 'title': info.title});
+								break;
+							}
 				}
 			}
 			if (info.hasOwnProperty('status')) {
@@ -1304,18 +1310,18 @@ const initService = {
 			}
 			if (info.hasOwnProperty('favIconUrl')) {
 				const domain = getById('domains', pid);
-				if (domain)
+				if (domain !== false)
 					domain.fav = makeFav(domain.id, null, info.favIconUrl, true);
 			}
 		};
 
 		const onRemoved         = id => {
 			const tab = getById('tabs', id);
-			if (tab) {
+			if (tab !== false) {
 				const folder      = getFolderById('tabs', tab.pid);
 				const newOpenerId = tab.openerId;
 				deleteById('tabs', id);
-				if (folder) {
+				if (folder !== false) {
 					const index = folder.itemsId.indexOf(id);
 					folder.itemsId.splice(index, 1);
 					checkCount(folder);
@@ -1335,13 +1341,13 @@ const initService = {
 		const getTabs           = tabs => {
 			for (let i = 0, l = tabs.length; i < l; i++) {
 				createTab(tabs[i], true);
-				if (tabs[i].active)
+				if (tabs[i].active === true)
 					status.activeTabId = tabs[i].id;
 			}
 			initTabs();
 		};
 
-		if (start) {
+		if (start === true) {
 			fillItem.tabs = (newItem, item) => {
 				const domain = makeDomain(item.url, item.favIconUrl, item.title).id;
 				if (item.active === true)
@@ -1495,7 +1501,7 @@ const initService = {
 			if (folder.hasOwnProperty('parentId'))
 				if (folder.parentId !== undefined)
 					makeFolder(folder);
-			if (folder.children)
+			if (folder.hasOwnProperty('children'))
 				for (let i = 0, l = folder.children.length; i < l; i++)
 					detector(folder.children[i]);
 		};
@@ -1682,7 +1688,7 @@ const initService = {
 				for (let i = 0; i < l; i++) {
 					const item   = createById('history', history[i], 'last');
 					const folder = makeHistoryFolder(history[i], 'last');
-					if (sendData) {
+					if (sendData !== false) {
 						if (foldersId.indexOf(folder.id) === -1) {
 							foldersId.push(folder.id);
 							dataToSend.historyFolders.push(folder);
@@ -1691,7 +1697,7 @@ const initService = {
 					}
 				}
 				status.historyLastTime = l > 0 ? history[l - 1].lastVisitTime : 0;
-				if (sendData) {
+				if (sendData !== false) {
 					dataToSend.historyEnd = status.historyEnd;
 					send('sidebar', 'history', 'gotMore', dataToSend);
 				}
@@ -1733,7 +1739,7 @@ const initService = {
 			title       = title.toLocaleDateString();
 			const id    = title.replace(/\./g, '');
 			let folder  = getFolderById('history', id);
-			if (!folder) {
+			if (folder === false) {
 				folder        = createFolderById('history', id, position);
 				folder.pid    = 0;
 				folder.view   = 'normal';
@@ -1745,14 +1751,14 @@ const initService = {
 
 		const onVisited = item => {
 			const hs = getById('history', item.id);
-			if (hs)
+			if (hs !== false)
 				deleteById('history', item.id);
 			send('sidebar', 'history', 'new', {'item': createById('history', item, 'first'), 'folder': makeHistoryFolder(item, 'first')});
 		};
 
 		const onVisitRemoved = info => {
 			const urls = info.urls;
-			if (info.allHistory) {
+			if (info.allHistory === true) {
 				data.historyId = [];
 				data.history   = [];
 				send('sidebar', 'history', 'wiped', '');
@@ -1775,7 +1781,7 @@ const initService = {
 		};
 
 
-		if (start) {
+		if (start === true) {
 			fillItem.history = (newItem, item) => {
 				let title      = new Date(item.lastVisitTime);
 				title          = title.toLocaleDateString();
@@ -1818,7 +1824,7 @@ const initService = {
 				},
 				reload : (message, sender, sendResponse) => {
 					const index = data.downloadsId.indexOf(message.data.id);
-					if (data.downloads[index].exists)
+					if (data.downloads[index].exists === true)
 						brauzer.downloads.removeFile(message.data.id);
 					brauzer.downloads.erase({'id': message.data.id});
 					brauzer.downloads.download({'url': data.downloads[index].url, 'conflictAction': 'uniquify'});
@@ -1904,7 +1910,7 @@ const initService = {
 				return;
 			if (delta.hasOwnProperty('paused')) {
 				download.paused = delta.paused.current;
-				if (delta.canResume)
+				if (delta.hasOwnProperty('canResume'))
 					download.canResume = delta.canResume.current;
 				send('sidebar', 'downloads', 'startPause', {'id': download.id, 'paused': download.paused, 'canResume': download.canResume});
 			}
@@ -1922,7 +1928,7 @@ const initService = {
 			}
 			if (delta.hasOwnProperty('exists')) {
 				download.exists = delta.exists.current;
-				send('sidebar', 'downloads', 'exists', {'id': download.id, 'method': download.exist ? 'remove' : 'add'});
+				send('sidebar', 'downloads', 'exists', {'id': download.id, 'method': (download.exist === true) ? 'remove' : 'add'});
 			}
 		};
 
@@ -1932,7 +1938,7 @@ const initService = {
 			initDownloads();
 		};
 
-		if (start) {
+		if (start === true) {
 			fillItem.downloads       = (newItem, item) => {
 
 				const checkDownloadState = id => {
@@ -1955,11 +1961,12 @@ const initService = {
 				};
 
 				let filename = item.filename.split('/').pop();
-				if (!filename)
+				if (filename !== false)
 					filename = item.url.split('/').pop();
-				let url = item.finalUrl;
-				if (!url)
-					url = item.url;
+				let url = item.url;
+				if (item.hasOwnProperty('finalUrl'))
+					if (item.finalUrl !== '')
+						url = item.finalUrl;
 				if (item.state === 'in_progress') {
 					setDownloadsCount.add();
 					checkDownloadState(item.id);
@@ -1989,7 +1996,7 @@ const initService = {
 			brauzer.downloads.onCreated.removeListener(onCreated);
 			brauzer.downloads.onErased.removeListener(onErased);
 			brauzer.downloads.onChanged.removeListener(onChanged);
-			status.init.downloads      = false;
+			status.init.downloads    = false;
 		}
 	},
 
@@ -2008,7 +2015,7 @@ const initService = {
 				},
 				rssHideReaded : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
-					if (feed) {
+					if (feed !== false) {
 						feed.hideReaded = true;
 						saveLater('rssFolders');
 						send('sidebar', 'rss', 'rssHideReaded', {'id': message.data.id});
@@ -2028,7 +2035,7 @@ const initService = {
 				},
 				rssEditFeed : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
-					if (feed) {
+					if (feed !== false) {
 						feed.title = message.data.title;
 						feed.description = message.data.description;
 						saveLater('rssFolders');
@@ -2037,19 +2044,21 @@ const initService = {
 				},
 				rssDeleteFeed : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
-					rssSetReaded('feed', feed, 'kill');
-					brauzer.alarms.clear(`rss-update**${message.data.id}`);
-					deleteFolderById('rss', message.data.id);
-					saveLater('rss');
-					saveLater('rssFolders');
-					send('sidebar', 'rss', 'rssFeedDeleted', {'id': message.data.id});
+					if (feed !== false) {
+						rssSetReaded('feed', feed, 'kill');
+						brauzer.alarms.clear(`rss-update**${message.data.id}`);
+						deleteFolderById('rss', message.data.id);
+						saveLater('rss');
+						saveLater('rssFolders');
+						send('sidebar', 'rss', 'rssFeedDeleted', {'id': message.data.id});
+					}
 				},
 				readAllFeeds : (message, sender, sendResponse) => {
 					rssSetReaded('all');
 				},
 				updateFeed   : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
-					if (feed) {
+					if (feed !== false) {
 						send('sidebar', 'rss', 'update', {id: feed.id, method: 'add'});
 						brauzer.alarms.clear(`rss-update**${feed.id}`);
 						updateRssFeed(message.data.id);
@@ -2109,7 +2118,7 @@ const initService = {
 			return domain;
 		};
 
-		const createRssFeed = (url, title = '') => {
+		const createRssFeed = (url, title) => {
 			const rssUrl = urlFromUser(url);
 			for (let i = data.rssFolders.length - 1; i >= 0; i--)
 				if (data.rssFolders[i].url === rssUrl)
@@ -2125,16 +2134,17 @@ const initService = {
 						const xmlDoc     = parser.parseFromString(xhttp.responseText, 'text/xml');
 						const head       = xmlDoc.querySelector('channel, feed');
 						let rssTitle     = '';
-						if (title)
+						if (title !== undefined)
 							rssTitle = title;
 						else {
 							rssTitle = head.querySelector('title');
 							rssTitle = rssTitle.textContent.trim();
 						}
 						let desc         = head.querySelector('description, subtitle');
-						if (desc) desc   = desc.textContent.trim();
+						if (desc !== undefined)
+							desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
-						fav              = fav ? fav.textContent.trim() : firefox ? config.rssIcon : false;
+						fav              = (fav !== undefined) ? fav.textContent.trim() : firefox ? config.rssIcon : false;
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;
@@ -2191,7 +2201,7 @@ const initService = {
 
 		const rssSetUpdate = (feed, timeout) => {
 			brauzer.alarms.clearAll();
-			if (feed.lastUpdate < Date.now() - (timeout * 60000))
+			if (feed.lastUpdate < (Date.now() - (timeout * 60000)))
 				updateRssFeed(feed.id);
 			else
 				brauzer.alarms.create(`rss-update**${feed.id}`,
@@ -2230,7 +2240,7 @@ const initService = {
 						item.title = ch[j].textContent;
 					else if (nodeName === 'link') {
 						const link = ch[j].textContent || ch[j].getAttribute('href');
-						if (link.match(/^https?:\/\//))
+						if (/^https?:\/\//i.test(link))
 							item.link = link;
 						else
 							item.link = `${feed.link}${link}`;
@@ -2265,7 +2275,7 @@ const initService = {
 
 			const setReaded = {
 				rssItem : _ => {
-					if (target.readed) return;
+					if (target.readed === true) return;
 					target.readed = true;
 					status.info.rssUnreaded--;
 					const feed = getFolderById('rss', target.pid);
@@ -2287,7 +2297,7 @@ const initService = {
 							for (let itemsId = target.itemsId, i = itemsId.length - 1; i >= 0; i--) {
 								const index = data.rssId.indexOf(itemsId[i]);
 								if (index !== -1) {
-									if (!data.rss[index].readed)
+									if (data.rss[index].readed === false)
 										status.info.rssUnreaded--;
 									data.rss.splice(index, 1);
 									data.rssId.splice(index, 1);
@@ -2297,7 +2307,7 @@ const initService = {
 						save : _ => {
 							for (let itemsId = target.itemsId, i = itemsId.length - 1; i >= 0; i--) {
 								const rssItem = getById('rss', itemsId[i]);
-								if (!rssItem.readed) {
+								if (rssItem.readed === false) {
 									rssItem.readed = true;
 									status.info.rssUnreaded--;
 								}
@@ -2313,7 +2323,7 @@ const initService = {
 				count  : _ => {
 					status.info.rssUnreaded = 0;
 					for (let i = data.rss.length - 1; i >= 0; i--)
-						if (!data.rss[i].readed)
+						if (data.rss[i].readed === false)
 							status.info.rssUnreaded++;
 				},
 				all    : _ => {
@@ -2330,30 +2340,29 @@ const initService = {
 
 		const getRss = res => {
 			if (res.hasOwnProperty('rssFolders'))
-				if (res.hasOwnProperty('rssFoldersId'))
-					if (res.hasOwnProperty('rss')) {
-						data.rssFolders   = res.rssFolders;
-						data.rssFoldersId = res.rssFoldersId;
-						data.rss          = res.rss;
-						data.rssId        = res.rssId;
-						for (let i = data.rssFolders.length - 1; i >= 0; i--) {
-							makeRssDomain(data.rssFolders[i].url, data.rssFolders[i].fav);
-							rssSetUpdate(res.rssFolders[i], options.misc.rssUpdatePeriod.value);
-						}
-						rssSetReaded('count');
+				if (res.hasOwnProperty('rss')) {
+					data.rssFolders   = res.rssFolders;
+					data.rssFoldersId = res.rssFoldersId;
+					data.rss          = res.rss;
+					data.rssId        = res.rssId;
+					for (let i = data.rssFolders.length - 1; i >= 0; i--) {
+						makeRssDomain(data.rssFolders[i].url, data.rssFolders[i].fav);
+						rssSetUpdate(res.rssFolders[i], options.misc.rssUpdatePeriod.value);
 					}
+					rssSetReaded('count');
+				}
 			initRss();
 			brauzer.alarms.onAlarm.addListener(alarm => {
 				if (/rss-update\*\*/i.test(alarm.name)) {
 					const id    = alarm.name.split('**').pop();
 					const feed  = getFolderById('rss', id);
-					if (feed)
+					if (feed !== false)
 						updateRssFeed(id);
 				}
 			});
 		};
 
-		if (start) {
+		if (start === true) {
 			fillItem.rss = (newItem, item) => {
 				newItem.readed      = item.readed;
 				newItem.title       = item.title;
@@ -2372,7 +2381,7 @@ const initService = {
 						success = true;
 						break;
 					}
-				if (!success)
+				if (success === false)
 					feed.itemsId.push(item.id);
 				return newItem;
 			};
@@ -2547,7 +2556,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
 		saveLater('favs');
 	}
-	if (update)
+	if (update !== false)
 		sendLater('favs');
 	return favIcon;
 }
@@ -2563,7 +2572,7 @@ function makeDomain(url, fav, title) {
 	else if (url === config.extensionStartPage)
 		id = 'startpage';
 	else if (url === 'about:blank') {
-		if (typeof title !== 'undefined')
+		if (title !== undefined)
 			newUrl = title;
 	}
 	else if (/^about:|^chrome:/.test(newUrl))
@@ -2601,11 +2610,11 @@ function tabIsProtected(tab) {
 		return false;
 	if (tab.url === config.extensionStartPage)
 		return false;
-	if (firefox === true) {
+	if (firefox) {
 		if (/^https:\/\/addons.mozilla.org/.test(tab.url))
 			return true;
 	}
-	else if (opera === true) {
+	else if (opera) {
 		if (/^https:\/\/addons.opera.com/.test(tab.url))
 			return true;
 	}
@@ -2780,7 +2789,7 @@ function createFolderById(mode, id, position) {
 function deleteFolderById(mode, id, killChildrens = false) {
 	const index = data[`${mode}FoldersId`].indexOf(id);
 	if (index !== -1) {
-		if (killChildrens) {
+		if (killChildrens === true) {
 			for (let maybeChildren = data[mode], i = maybeChildren.length - 1; i >= 0; i--)
 				if (maybeChildren.pid === id)
 					deleteById(mode, children[i]);
@@ -2802,22 +2811,23 @@ function getFolded(id) {
 }
 
 function domainFromUrl(url, noProtocol = false) {
-	if (!url)
+	if (url === undefined || url === '')
 		return 'default';
-	else if (!noProtocol) {
+	else if (noProtocol === false) {
 		const domain = url.match(/^(.*:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
-		if (domain)
+		if (domain !== false)
 			return domain[0];
 	}
 	else {
 		const domain = url.match(/([\da-z\.-]+)\.([a-z\.]{2,6})/i);
-		if (domain)
+		if (domain !== false)
 			return domain[0];
 	}
 	return 'default';
 }
 
 function colorFromUrl(url) {
+	//optimize
 	const t = url.replace(/www|https?:\/\//i, '').replace(/\n/g, '').replace(/\.|\//, '').substring(0, 6)
 		.replace(/g|w/ig, '0').replace(/h|x|\s/ig, '1').replace(/i|y/ig, '2')
 		.replace(/j|z/ig, '3').replace(/k|\./ig, '4').replace(/l|-/ig, '5')
@@ -2840,7 +2850,7 @@ function colorFromUrl(url) {
 
 function makeSite(index, site) {
 
-	if (site) {
+	if (site !== undefined) {
 		const url  = urlFromUser(site.url);
 		let domen  = domainFromUrl(site.url, true).replace('/', '');
 		domen      = domen.split('.', 6);
@@ -2851,7 +2861,7 @@ function makeSite(index, site) {
 		if (l < 3)
 			text += '\n';
 		data.speadDial[index] = {
-			color : site.color ? site.color : colorFromUrl(site.url),
+			color : site.hasOwnProperty('color') ? site.color : colorFromUrl(site.url),
 			url   : url,
 			text  : text,
 			class : 'site'
@@ -2889,7 +2899,7 @@ function saveLater(what) {
 	if (status.toSave.hasOwnProperty(what))
 		return;
 	status.toSave[what] = true;
-	if (!status.saverActive) {
+	if (status.saverActive === false) {
 		status.saverActive = true;
 		setTimeout(_ => {
 			status.saverActive = false;

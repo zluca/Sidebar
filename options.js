@@ -186,7 +186,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 			select   : target => target.dataset.value,
 			color    : target => target.value,
 			text     : target => target.value,
-			image    : target => target.checked ? true : '',
+			image    : target => target.checked === true ? true : '',
 			file     : target => {
 			    const reader     = new FileReader();
 			    reader.onloadend = _ => {
@@ -201,15 +201,15 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 		const option   = event.target.dataset.option;
 		const type     = event.target.dataset.type;
 		if (type === 'image') {
-			if (getValue.image(event.target))
+			if (getValue.image(event.target) === true)
 				return event.target.nextElementSibling.click();
 		}
-		if (!changes[section])
+		if (!changes.hasOwnProperty(section))
 			changes[section] = {};
 		changes[section][option] = getValue[type](event.target);
 		if (changes[section][option] === response[section][option]) {
 			delete changes[section][option];
-			if (!Object.keys(changes[section]).length)
+			if (Object.keys(changes[section]).length < 1)
 				delete changes[section];
 		}
 	});

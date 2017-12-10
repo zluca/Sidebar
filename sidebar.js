@@ -30,7 +30,7 @@ const status   = {
 		lastDate : 0,
 		lastNum  : 0
 	},
-	activeTab           : null,
+	activeTab           : false,
 	activeTabId         : 0,
 	domainsId           : [],
 	info                : {
@@ -183,7 +183,7 @@ const messageHandler = {
 			setReadedMode(data.value);
 		},
 		services           : data => {
-			if (data.enabled)
+			if (data.enabled === true)
 				enableBlock(data.service);
 			else
 				button[data.service].classList.add('hidden');
@@ -193,7 +193,7 @@ const messageHandler = {
 		fold         : data => {
 			if (data.mode !== options.sidebar.mode) return;
 			const folder = getFolderById(data.mode, data.id);
-			if (folder)
+			if (folder !== false)
 				folder.classList[data.method]('folded');
 		},
 		reInit       : data => {
@@ -240,25 +240,25 @@ const initBlock = {
 			},
 			active     : data => {
 				status.activeTabId = data;
-				if (status.activeTab)
+				if (status.activeTab !== false)
 					status.activeTab.classList.remove('active');
 				status.activeTab = getById('tabs', data);
-				if (status.activeTab)
+				if (status.activeTab !== false)
 					status.activeTab.classList.add('active');
 			},
 			title      : data => {
 				const tab = getById('tabs', data.id);
-				if (tab)
+				if (tab !== false)
 					tab.textContent = data.title;
 			},
 			status     : data => {
 				const tab = getById('tabs', data.id);
-				if (tab)
+				if (tab !== false)
 					tab.classList[data.loading]('loading');
 			},
 			urlChange   : data => {
 				const tab = getById('tabs', data.tab.id);
-				if (tab) {
+				if (tab !== false) {
 					if (options.misc.tabsMode === 'domain')
 						if (data.hasOwnProperty('folder'))
 							insertFolders([data.folder], 'tabs');
@@ -383,7 +383,7 @@ const initBlock = {
 						pid    = tabs[i].pid;
 						folder = getFolderById('tabs', pid);
 					}
-					if (folder)
+					if (folder !== false)
 						folder.appendChild(tab);
 				},
 				tree  : i => {
@@ -579,7 +579,7 @@ const initBlock = {
 
 			const injectBook = _ => {
 				const beacon = parent.children[index + 1];
-				if (typeof beacon !== 'undefined')
+				if (beacon !== undefined)
 					parent.insertBefore(item, beacon);
 				else
 					parent.appendChild(item);
@@ -1132,7 +1132,7 @@ function enableBlock(mode) {
 
 function tryToInit() {
 	send('background', 'request', 'mode', {'side': status.side, 'method': options.sidebar.method, needResponse: true}, response => {
-		if (typeof response === 'undefined') {
+		if (response === undefined) {
 			initTimer = setTimeout(tryToInit, 200);
 			return;
 		}
