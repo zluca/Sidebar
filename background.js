@@ -1963,14 +1963,14 @@ const init = {
 					checkDownloadState(item.id);
 				}
 				newItem.paused          = item.paused;
-				newItem.filename        = decodeURIComponent(filename);
+				newItem.filename        = filename;
 				newItem.totalBytes      = item.totalBytes;
 				newItem.bytesReceived   = item.bytesReceived;
 				newItem.progressPercent = `${(100 * item.bytesReceived / item.totalBytes).toFixed(2)}%`;
 				newItem.progressNumbers = `${beautySize(item.bytesReceived)} / ${beautySize(item.totalBytes)}`;
 				newItem.fileSize        = beautySize(item.fileSize);
 				newItem.canResume       = item.canResume;
-				newItem.url             = decodeURIComponent(url);
+				newItem.url             = url;
 				newItem.state           = item.state;
 				newItem.exists          = item.exists;
 				return newItem;
