@@ -1,0 +1,7 @@
+#username,
+.auth #login {
+	display: none;
+}
+.auth #username {
+	display: block;
+}

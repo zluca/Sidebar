@@ -23,7 +23,8 @@ const status   = {
 		bookmarks    : false,
 		downloads    : false,
 		history      : false,
-		rss          : false
+		rss          : false,
+		pocket       : false
 	},
 	bookmarkFolders  : [],
 	historyInfo       : {
@@ -63,6 +64,10 @@ const data     = {
 	rssId               : [],
 	rssFolders          : [],
 	rssFoldersId        : [],
+	pocket              : [],
+	pocketId            : [],
+	pocketFolders       : [],
+	pocketFoldersId     : [],
 	domains             : []
 };
 
@@ -78,6 +83,9 @@ const options  = {
 	misc             : null,
 	warnings         : null,
 };
+
+let initTimer = -1;
+tryToInit();
 
 document.title = options.sidebar.method;
 doc.classList.add(status.side);
@@ -107,6 +115,10 @@ const controls = {
 	rss       : {
 		item     : null,
 		bottom   : null
+	},
+	pocket    : {
+		item     : null,
+		bottom   : null
 	}
 };
 
@@ -120,7 +132,8 @@ const button   = {
 	bookmarks   : null,
 	history     : null,
 	downloads   : null,
-	rss         : null
+	rss         : null,
+	pocket      : null
 };
 
 const block    = {
@@ -128,12 +141,9 @@ const block    = {
 	bookmarks   : makeBlock('bookmarks'),
 	history     : makeBlock('history'),
 	downloads   : makeBlock('downloads'),
-	rss         : makeBlock('rss')
+	rss         : makeBlock('rss'),
+	pocket      : makeBlock('pocket')
 };
-
-
-let initTimer = -1;
-tryToInit();
 
 const messageHandler = {
 	options  : {
@@ -362,7 +372,7 @@ const initBlock = {
 			block.tabs.classList = `block ${options.misc.tabsMode}`;
 			while (rootFolder.hasChildNodes())
 				rootFolder.removeChild(rootFolder.firstChild);
-			clearStatus('tabs');
+			clearData('tabs');
 			if (options.misc.tabsMode === 'domain')
 				insertFolders(tabsFolders, 'tabs');
 			insertTabs(tabs);
@@ -721,8 +731,8 @@ const initBlock = {
 		};
 
 		const historyTotalWipe = _ => {
-			for (let i = status.historyId.length - 1; i >= 0; i--)
-				removeById('history', status.historyId[i]);
+			for (let i = data.historyId.length - 1; i >= 0; i--)
+				removeById('history', data.historyId[i]);
 		};
 
 		insertFolders(data.historyFolders, 'history');
@@ -865,9 +875,9 @@ const initBlock = {
 			},
 			rssReadedAllFeeds : data => {
 				for (let i = status.rss.length - 1; i >= 0; i--)
-					status.rss[i].classList.remove('unreaded');
-				for (let i = status.rssFolders.length - 1; i >= 0; i--)
-					status.rssFolders[i].classList.remove('unreaded');
+					data.rss[i].classList.remove('unreaded');
+				for (let i = data.rssFolders.length - 1; i >= 0; i--)
+					data.rssFolders[i].classList.remove('unreaded');
 			},
 			view             : data =>  {
 				setRssMode(data.view, data.items, data.folders);
@@ -951,7 +961,7 @@ const initBlock = {
 			block.rss.classList = `block ${mode}`;
 			while (rootFolder.firstChild)
 				rootFolder.removeChild(rootFolder.firstChild);
-			clearStatus('rss');
+			clearData('rss');
 			if (mode === 'domain')
 				insertFolders(rssFolders, 'rss');
 			insertRss(rss, 'first');
@@ -1023,6 +1033,34 @@ ${items[i].description}`;
 		};
 
 		setRssMode(options.misc.rssMode, data.rss, data.rssFolders);
+	},
+
+	pocket : data => {
+
+		console.log(data);
+
+		rootFolder              = document.createElement('div');
+		rootFolder.id           = 'pocket-0';
+
+		const loginContainer    = document.createElement('div');
+		// loginContainer.id       = 'pocket-login';
+		const login             = makeItemButton('login', 'pocket');
+		login.id                = 'login';
+		login.textContent       = 'Log in to Pocket';
+		const username          = document.createElement('div');
+		username.id             = 'username';
+		username.textContent    = data.username;
+		loginContainer.appendChild(login);
+		loginContainer.appendChild(username);
+
+		block.pocket.appendChild(loginContainer);
+		block.pocket.appendChild(rootFolder);
+
+		if (data.auth === true) {
+			console.log('ture');
+			block.pocket.classList.add('auth');
+		}
+
 	}
 };
 
@@ -1094,7 +1132,7 @@ function blockInit(newMode, data) {
 	const cleanse = _ => {
 		while (block[options.sidebar.mode].hasChildNodes())
 			block[options.sidebar.mode].removeChild(block[options.sidebar.mode].firstChild);
-		clearStatus(options.sidebar.mode);
+		clearData(options.sidebar.mode);
 		block[options.sidebar.mode].classList.remove('search-active');
 	};
 
@@ -1180,37 +1218,14 @@ function initSidebar(response) {
 
 	doc.style.backgroundImage = `url(${options.theme.sidebarImage})`;
 
-	if (button.tabs === null)
-		button.tabs      = makeButton('tabs', 'header', 'sidebar');
-	if (button.bookmarks === null)
-		button.bookmarks = makeButton('bookmarks', 'header', 'sidebar');
-	if (button.history === null)
-		button.history   = makeButton('history', 'header', 'sidebar');
-	if (button.downloads === null)
-		button.downloads = makeButton('downloads', 'header', 'sidebar');
-	if (button.rss === null)
-		button.rss       = makeButton('rss', 'header', 'sidebar');
-
-	if (response.options.services.tabs)
-		enableBlock('tabs');
-	else
-		button.tabs.classList.add('hidden');
-	if (response.options.services.bookmarks)
-		enableBlock('bookmarks');
-	else
-		button.bookmarks.classList.add('hidden');
-	if (response.options.services.history)
-		enableBlock('history');
-	else
-		button.history.classList.add('hidden');
-	if (response.options.services.downloads)
-		enableBlock('downloads');
-	else
-		button.downloads.classList.add('hidden');
-	if (response.options.services.rss)
-		enableBlock('rss');
-	else
-		button.rss.classList.add('hidden');
+	for (let service in response.options.services) {
+		if (button[service] === null)
+			button[service] = makeButton(service, 'header', 'sidebar');
+		if (response.options.services[service] === true)
+			enableBlock(service);
+		else
+			button[service].classList.add('hidden');
+	}
 
 	setRssUnreaded(status.info.rssUnreaded);
 	setDownloadStatus[status.info.downloadStatus]();
@@ -1262,14 +1277,14 @@ function insertFolders(items, mode, noTitle = false) {
 	for (let i = 0, l = items.length; i < l; i++) {
 		if (getFolderById(mode, items[i].id))
 			continue;
-		const index = status[`${mode}Folders`].push(document.createElement('ul')) - 1;
-		status[`${mode}FoldersId`].push(items[i].id);
+		const index = data[`${mode}Folders`].push(document.createElement('ul')) - 1;
+		data[`${mode}FoldersId`].push(items[i].id);
 		folders.push({'index': index, 'pid': items[i].pid});
 		let classList = 'folder';
 		classList += ` ${items[i].view}-view`;
 		classList += items[i].folded ? ' folded' : '';
-		status[`${mode}Folders`][index].classList = classList;
-		status[`${mode}Folders`][index].id = `${mode}-folder-${items[i].id}`;
+		data[`${mode}Folders`][index].classList = classList;
+		data[`${mode}Folders`][index].id = `${mode}-folder-${items[i].id}`;
 		if (!noTitle) {
 			const title       = document.createElement('div');
 			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
@@ -1277,7 +1292,7 @@ function insertFolders(items, mode, noTitle = false) {
 			title.dataset.id  = items[i].id;
 			title.classList.add('folder-name', `domain-${items[i].domain}`);
 			title.appendChild(text);
-			status[`${mode}Folders`][index].appendChild(title);
+			data[`${mode}Folders`][index].appendChild(title);
 			title.addEventListener('click', event => {
 				event.preventDefault();
 				event.stopPropagation();
@@ -1288,13 +1303,13 @@ function insertFolders(items, mode, noTitle = false) {
 	}
 	for (let i = 0, l = folders.length; i < l; i++) {
 		if (folders[i].pid === 0)
-			rootFolder.appendChild(status[`${mode}Folders`][folders[i].index]);
+			rootFolder.appendChild(data[`${mode}Folders`][folders[i].index]);
 		else {
 			const parentFolder = getFolderById(mode, folders[i].pid);
 			if (parentFolder !== false)
-				parentFolder.appendChild(status[`${mode}Folders`][folders[i].index]);
+				parentFolder.appendChild(data[`${mode}Folders`][folders[i].index]);
 			else
-				rootFolder.appendChild(status[`${mode}Folders`][folders[i].index]);
+				rootFolder.appendChild(data[`${mode}Folders`][folders[i].index]);
 		}
 	}
 }
@@ -1336,15 +1351,15 @@ const element = {
 
 function createById(mode, id, search = false) {
 	const item      = document.createElement(element[mode]);
-	item.id         = search ? `search-${mode}-${id}` : `${mode}-${id}`;
+	item.id         = (search === true) ? `search-${mode}-${id}` : `${mode}-${id}`;
 	item.dataset.id = id;
 	data[mode].push(item);
-	status[`${mode}Id`].push(id);
+	data[`${mode}Id`].push(id);
 	return item;
 }
 
 function getById(mode, id) {
-	const index = status[`${mode}Id`].indexOf(id);
+	const index = data[`${mode}Id`].indexOf(id);
 	if (index !== -1)
 		return data[mode][index];
 	else
@@ -1352,38 +1367,38 @@ function getById(mode, id) {
 }
 
 function removeById(mode, id) {
-	const index = status[`${mode}Id`].indexOf(id);
+	const index = data[`${mode}Id`].indexOf(id);
 	if (index !== -1) {
 		data[mode][index].parentNode.removeChild(data[mode][index]);
 		data[mode].splice(index, 1);
-		status[`${mode}Id`].splice(index, 1);
+		data[`${mode}Id`].splice(index, 1);
 	}
 }
 
 function getFolderById(mode, id) {
 	if (id === 0)
 		return rootFolder;
-	const index = status[`${mode}FoldersId`].indexOf(id);
+	const index = data[`${mode}FoldersId`].indexOf(id);
 	if (index !== -1)
-		return status[`${mode}Folders`][index];
+		return data[`${mode}Folders`][index];
 	else
 		return false;
 }
 
 function removeFolderById(mode, id) {
-	const index = status[`${mode}FoldersId`].indexOf(id);
+	const index = data[`${mode}FoldersId`].indexOf(id);
 	if (index !== -1) {
-		status[`${mode}Folders`][index].parentNode.removeChild(status[`${mode}Folders`][index]);
-		status[`${mode}Folders`].splice(index, 1);
-		status[`${mode}FoldersId`].splice(index, 1);
+		data[`${mode}Folders`][index].parentNode.removeChild(data[`${mode}Folders`][index]);
+		data[`${mode}Folders`].splice(index, 1);
+		data[`${mode}FoldersId`].splice(index, 1);
 	}
 }
 
-function clearStatus(mode) {
+function clearData(mode) {
 	data[mode]               = [];
-	status[`${mode}Id`]        = [];
-	status[`${mode}Folders`]   = [];
-	status[`${mode}FoldersId`] = [];
+	data[`${mode}Id`]        = [];
+	data[`${mode}Folders`]   = [];
+	data[`${mode}FoldersId`] = [];
 }
 
 function send(target, subject, action, data = {}, callback = _ => {}) {
@@ -1476,6 +1491,12 @@ const buttonsEvents = {
 			event.preventDefault();
 			if (options.sidebar.mode !== 'rss')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'rss'});
+		},
+		pocket : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			if (options.sidebar.mode !== 'pocket')
+				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'pocket'});
 		},
 		pin: event => {
 			event.stopPropagation();
@@ -1778,6 +1799,14 @@ const buttonsEvents = {
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssMode', 'value': 'domain'});
 		}
 	},
+	pocket    : {
+		login : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = event.target;
+			send('background', 'pocket', 'login', '');
+		}
+	}
 };
 
 })();

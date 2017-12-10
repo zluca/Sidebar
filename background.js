@@ -10,6 +10,7 @@ const config = {
 	version            : parseInt(brauzer.runtime.getManifest().version.replace(/\./g, '')),
 	extensionStartPage : `${brauzer.extension.getURL('/')}startpage.html`,
 	defaultStartPage   : firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
+	pocketRedirectPage : 'https://getpocket.com/a/read/1973998361',
 	defaultIcon        : 'icons/default.svg',
 	sidebarIcon        : 'icons/sidebar-icon-64.png',
 	systemIcon         : 'icons/wrench.svg',
@@ -27,7 +28,6 @@ const i18n = {
 		bkTooManyBookmarksText     : getI18n('notificationbkTooManyBookmarksText'),
 		bkSwitchToTreeText         : getI18n('notificationbkSwitchToTreeText')
 	},
-	startpage: {},
 	domains: {
 		default   : getI18n('domainsDefault'),
 		startpage : getI18n('domainsStartPage'),
@@ -45,11 +45,13 @@ const i18n = {
 		downloads : getI18n('sbControlsDownloadsTitle'),
 		rss       : getI18n('sbControlsRssTitle')
 	},
+	startpage   : {},
 	tabs        : {},
 	bookmarks   : {},
 	history     : {},
 	downloads   : {},
-	rss         : {}
+	rss         : {},
+	pocket      : {}
 };
 
 const status = {
@@ -65,7 +67,8 @@ const status = {
 		'bookmarks' : false,
 		'history'   : false,
 		'downloads' : false,
-		'rss'       : false
+		'rss'       : false,
+		'pocket'    : false
 	},
 	leftBar         : {
 		windowId      : -1,
@@ -107,6 +110,10 @@ const data = {
 	rssId              : [],
 	rssFolders         : [],
 	rssFoldersId       : [],
+	pocket             : [],
+	pocketId           : [],
+	pocketFolders      : [],
+	pocketFoldersId    : [],
 	domains            : [],
 	domainsId          : [],
 	favs               : [],
@@ -216,6 +223,12 @@ const options = {
 			handler : 'service'
 		},
 		rss       : {
+			value   : true,
+			type    : 'boolean',
+			targets : [],
+			handler : 'service'
+		},
+		pocket    : {
 			value   : true,
 			type    : 'boolean',
 			targets : [],
@@ -436,6 +449,24 @@ const options = {
 		nativeSbPosition: {
 			value: 'leftBar'
 		}
+	},
+	pocket: {
+		hidden : {},
+		accessToken : {
+			value   : '',
+			type    : 'text',
+			targets : []
+		},
+		username    : {
+			value   : '',
+			type    : 'text',
+			targets : []
+		},
+		auth        : {
+			value   : false,
+			type    : 'boolean',
+			targets : []
+		}
 	}
 };
 
@@ -493,6 +524,15 @@ const modeData = {
 			i18n             : i18n.rss,
 			rss              : data.rss,
 			rssFolders       : data.rssFolders
+		};
+	},
+	pocket    : _ => {
+		return {
+			mode             : 'pocket',
+			username         : optionsShort.pocket.username,
+			auth             : optionsShort.pocket.auth,
+			i18n             : i18n.pocket,
+			pocket           : data.pocket,
 		};
 	}
 };
@@ -2399,6 +2439,79 @@ const initService = {
 			brauzer.alarms.clearAll();
 			status.init.rss     = false;
 		}
+	},
+
+	pocket: start => {
+		if (start === true) {
+
+			messageHandler.pocket = {
+				login: (message, sender, sendResponse) => {
+
+					let code = '';
+
+					const redirectFromPocket = (id, info, tab) => {
+						if (tab.url === config.pocketRedirectPage) {
+							brauzer.tabs.onUpdated.removeListener(redirectFromPocket);
+							const xhttp  = new XMLHttpRequest();
+							xhttp.open('POST', 'https://getpocket.com/v3/oauth/authorize', true);
+							xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+							xhttp.setRequestHeader('X-Accept', 'application/json');
+							xhttp.send(JSON.stringify(
+								{
+									'consumer_key' : '72831-08ba83947577ffe5e7738034',
+									'code'         : code
+								})
+							);
+							xhttp.onreadystatechange = _ => {
+								if (xhttp.readyState === 4)
+									if (xhttp.status === 200) {
+										const response = JSON.parse(xhttp.responseText);
+										if (response.hasOwnProperty('access_token')) {
+											setOption('pocket', 'accessToken', response.access_token);
+											if (response.hasOwnProperty('username'))
+												setOption('pocket', 'username', response.username);
+											setOption('pocket', 'auth', true);
+										}
+									}
+								console.log(xhttp);
+							};
+						}
+					};
+
+					const xhttp  = new XMLHttpRequest();
+					xhttp.open('POST', 'https://getpocket.com/v3/oauth/request', true);
+					xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+					xhttp.setRequestHeader('X-Accept', 'application/json');
+					xhttp.send(JSON.stringify(
+						{
+							'consumer_key' : '72831-08ba83947577ffe5e7738034',
+							'redirect_uri' : config.pocketRedirectPage
+						})
+					);
+					xhttp.onreadystatechange = _ => {
+						if (xhttp.readyState === 4)
+							if (xhttp.status === 200) {
+								const response = JSON.parse(xhttp.responseText);
+								code           = response.code;
+								brauzer.tabs.onUpdated.addListener(redirectFromPocket);
+								createNewTab(`https://getpocket.com/auth/authorize?request_token=${code}&redirect_uri=${config.pocketRedirectPage}`);
+							}
+						console.log(xhttp);
+					};
+				}
+			};
+
+			status.init.pocket = true;
+		}
+		else {
+			i18n.pocket           = {};
+			fillItem.pocket       = null;
+			messageHandler.pocket = null;
+			data.pocket           = [];
+			data.pocketId         = [];
+
+			status.init.pocket    = false;
+		}
 	}
 };
 
@@ -2414,11 +2527,18 @@ function sideBarData(side) {
 	return {
 		'side'     : side,
 		'options'  : {
-			'sidebar' : optionsShort[side],
+			'sidebar'  : optionsShort[side],
 			'warnings' : optionsShort.warnings,
 			'theme'    : optionsShort.theme,
 			'misc'     : optionsShort.misc,
-			'services' : optionsShort.services
+			'services' : {
+				'tabs'      : optionsShort.services.tabs,
+				'bookmarks' : optionsShort.services.bookmarks,
+				'history'   : optionsShort.services.history,
+				'downloads' : optionsShort.services.downloads,
+				'rss'       : optionsShort.services.rss,
+				'pocket'    : optionsShort.services.pocket
+			}
 		},
 		'data'     : modeData[options[side].mode.value](),
 		'info'     : status.info,
@@ -2815,12 +2935,12 @@ function domainFromUrl(url, noProtocol = false) {
 		return 'default';
 	else if (noProtocol === false) {
 		const domain = url.match(/^(.*:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
-		if (domain !== false)
+		if (domain !== null)
 			return domain[0];
 	}
 	else {
 		const domain = url.match(/([\da-z\.-]+)\.([a-z\.]{2,6})/i);
-		if (domain !== false)
+		if (domain !== null)
 			return domain[0];
 	}
 	return 'default';

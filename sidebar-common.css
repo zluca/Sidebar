@@ -205,6 +205,7 @@ a:visited {
 .history #header-history::before,
 .downloads #header-downloads::before,
 .rss #header-rss::before,
+.pocket #header-pocket::before,
 .plain #tabs-plain::before,
 .domain #tabs-domain::before,
 .tree #tabs-tree::before,
@@ -235,7 +236,8 @@ a:visited {
 .bookmarks #bookmarks,
 .history #history,
 .downloads #downloads,
-.rss #rss {
+.rss #rss,
+.pocket #pocket {
 	display: block;
 }
 
