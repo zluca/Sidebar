@@ -200,6 +200,21 @@ a:visited {
 	display: inline-block;
 }
 
+.unfixed #controls-block .button {
+	display: none;
+}
+.hover #controls-block .button {
+	display: inline-block;
+}
+.unfixed .tabs #header-tabs,
+.unfixed .bookmarks #header-bookmarks,
+.unfixed .history #header-history,
+.unfixed .downloads #header-downloads,
+.unfixed .rss #header-rss,
+.unfixed .pocket #header-pocket {
+	display: inline-block;
+}
+
 .tabs #header-tabs::before,
 .bookmarks #header-bookmarks::before,
 .history #header-history::before,
