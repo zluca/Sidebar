@@ -18,6 +18,7 @@ rm -rf ./temp
 
 mkdir ./temp
 mkdir ./temp/icons
+mkdir ./builds
 cp -r ./_locales ./temp/
 cp *.html ./temp/
 cp *.json ./temp/
@@ -58,5 +59,5 @@ done
 
 cd ../temp
 web-ext build
-cp ./web-ext-artifacts/*.zip ../
+cp ./web-ext-artifacts/*.zip ../builds
 rm -rf ../temp
