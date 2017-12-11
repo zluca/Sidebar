@@ -1042,9 +1042,13 @@ ${items[i].description}`;
 
 		messageHandler.pocket = {
 			newItems         : data =>  {
-				console.log(data);
 				injectPockets(data);
 			},
+			update           : data => {
+				const pocket = getById('pocket', data.id);
+				if (pocket !== false)
+					updatePocket(pocket, data);
+			}
 		};
 
 		rootFolder              = dce('div');
@@ -1076,17 +1080,21 @@ ${items[i].description}`;
 		if (data.auth === true)
 			block.pocket.classList.add('auth');
 
+		const updatePocket  = (pocket, info) => {
+			let classList      = `pocket item ${info.favourite === true ? 'favourite ' : ''}`;
+			pocket.href        = info.url;
+			pocket.dataset.url = info.url;
+			pocket.textContent = info.title;
+			pocket.classList   = classList;
+			pocket.title       = info.description !== '' ? info.description : info.url;
+		};
+
 		const injectPockets = items => {
 			let pid    = 0;
 			let parent = rootFolder;
 			for (let i = 0, l = items.length; i < l; i++) {
 				const pocket       = createById('pocket', items[i].id);
-				let classList      = `pocket item ${items[i].favourite === true ? 'favourite ' : ''}`;
-				pocket.href        = items[i].url;
-				pocket.dataset.url = items[i].url;
-				pocket.textContent = items[i].title;
-				pocket.classList   = classList;
-				pocket.title       = items[i].description !== '' ? items[i].description : items[i].url;
+				updatePocket(pocket, items[i]);
 				if (items[i].pid !== pid) {
 					pid    = items[i].pid;
 					parent = getFolderById('pocket', pid);
@@ -1172,7 +1180,7 @@ function blockInit(newMode, data) {
 		block[options.sidebar.mode].classList.remove('search-active');
 	};
 
-	if (!status.init[newMode]) {
+	if (status.init[newMode] === false) {
 		i18n[newMode] = data.i18n;
 		const link    = dce('link');
 		link.type     = 'text/css';
@@ -1191,7 +1199,7 @@ function blockInit(newMode, data) {
 		initBlock[newMode](data);
 	}
 	document.body.classList = newMode;
-	options.sidebar.mode             = newMode;
+	options.sidebar.mode    = newMode;
 	status.activeBlock      = block[newMode];
 }
 

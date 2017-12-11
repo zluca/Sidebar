@@ -2464,6 +2464,7 @@ const initService = {
 			const links  = {
 				add     : 'https://getpocket.com/v3/add',
 				get     : 'https://getpocket.com/v3/get',
+				check   : 'https://getpocket.com/v3/get',
 				modify  : 'https://getpocket.com/v3/send',
 				auth    : 'https://getpocket.com/v3/oauth/authorize',
 				request : 'https://getpocket.com/v3/oauth/request'
@@ -2481,6 +2482,12 @@ const initService = {
 					'access_token' : options.pocket.accessToken.value,
 					'detailType'   : 'complete',
 					'since'        : options.pocket.lastUpdate.value
+				},
+				check    : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'sort'         : 'newest',
+					'count'        : '1'
 				},
 				modify   : {
 					'consumer_key' : config.pocketConsumerKey,
@@ -2500,9 +2507,19 @@ const initService = {
 			const onReady = {
 				add     : response => {
 					parsePockets(response);
+					if (response.hasOwnProperty('item'))
+						pocketRequest('check', response.item.item_id);
 				},
 				get     : response => {
 					parsePockets(response);
+				},
+				check  : response => {
+					// console.log(response);
+					if (response.hasOwnProperty('list')) {
+						const item = getById('pocket', info);
+						if (item !== false)
+							send('sidebar', 'pocket', 'update', fillItem.pocket(item, response.list[info]));
+					}
 				},
 				send    : response => {
 					console.log(response);
@@ -2645,7 +2662,7 @@ const initService = {
 				else
 					pid = 'other';
 				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
-				newItem.title       = item.given_title || item.resolved_title;
+				newItem.title       = item.given_title || item.resolved_title || item.given_url || item.resolved_url;
 				newItem.url         = item.given_url || item.resolved_url;
 				newItem.status      = item.status;
 				newItem.domain      = makeDomain(item.given_url || item.resolved_url).id;
