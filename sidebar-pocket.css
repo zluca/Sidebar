@@ -3,5 +3,38 @@
 	display: none;
 }
 .auth #username {
-	display: block;
+	display: flex;
+}
+#username {
+	align-items: center;
+	cursor: default;
+	font-size: 1.2rem;
+	padding-left: 1.5rem;
+	position: relative;
+	margin-bottom: .8rem;
+	user-select: none;
+	moz-user-select: none;
+}
+#username::before {
+	content: '';
+	display: inline-block;
+	position: absolute;
+	top: .2rem;
+	left: .2rem;
+	mask-image: url(/icons/user.svg);
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-size: 100% 100%;
+	-webkit-mask-position: center;
+	-webkit-mask-mode: alpha;
+	mask-repeat: no-repeat;
+	mask-size: 100% 100%;
+	mask-position: center;
+	mask-mode: alpha;
+	background-color: var(--font-color);
+	width: 1rem;
+	height: 1rem;
+}
+.auth #pocket-logout {
+	display: inline-block;
+	margin-left: .4rem;
 }

@@ -2572,6 +2572,15 @@ const initService = {
 				return newItem;
 			};
 
+			i18n.pocket = {
+				logout    : 'logout',
+				new       : 'add',
+				plain     : 'plain mode',
+				type      : 'type mode',
+				domain    : 'domain mode',
+				reload    : 'Sync pocket account'
+			};
+
 			messageHandler.pocket = {
 				login: (message, sender, sendResponse) => {
 
@@ -2626,7 +2635,8 @@ const initService = {
 							}
 						console.log(xhttp);
 					};
-				}
+				},
+				logout : (message, sender, sendResponse) => {}
 			};
 
 			if (options.pocket.auth.value === true) {

@@ -94,8 +94,8 @@ let rootFolder = null;
 
 const controls = {
 	header: {
-		main      : document.createElement('nav'),
-		sidebar   : document.createElement('div'),
+		main      : dce('nav'),
+		sidebar   : dce('div'),
 		iframe    : null
 	},
 	tabs      : {
@@ -118,7 +118,8 @@ const controls = {
 	},
 	pocket    : {
 		item     : null,
-		bottom   : null
+		bottom   : null,
+		user     : null
 	}
 };
 
@@ -327,16 +328,16 @@ const initBlock = {
 			}
 		};
 
-		rootFolder                = document.createElement('div');
+		rootFolder                = dce('div');
 		rootFolder.id             = 'tabs-0';
-		controls.tabs.item        = document.createElement('div');
+		controls.tabs.item        = dce('div');
 		controls.tabs.item.classList.add('controls');
 		makeButton('reload', 'tabs', 'item');
 		makeButton('pin', 'tabs', 'item');
 		makeButton('unpin', 'tabs', 'item');
 		makeButton('close', 'tabs', 'item');
 		makeButton('closeAll', 'tabs', 'item');
-		controls.tabs.bottom      = document.createElement('div');
+		controls.tabs.bottom      = dce('div');
 		controls.tabs.bottom.classList.add('bottom-bar');
 		makeButton('new', 'tabs', 'bottom');
 		makeButton('plain', 'tabs', 'bottom');
@@ -492,26 +493,26 @@ const initBlock = {
 		};
 
 		block.bookmarks.classList.add(options.misc.bookmarksMode);
-		rootFolder                   = document.createElement('div');
+		rootFolder                   = dce('div');
 		rootFolder.id                = 'bookmarks-0';
-		const bookmarksSearchResults = document.createElement('div');
+		const bookmarksSearchResults = dce('div');
 		bookmarksSearchResults.id    = 'bookmarks-search-results';
 		bookmarksSearchResults.classList.add('search-results');
-		controls.bookmarks.item      = document.createElement('div');
+		controls.bookmarks.item      = dce('div');
 		controls.bookmarks.item.classList.add('controls');
 		makeButton('edit', 'bookmarks', 'item');
 		makeButton('move', 'bookmarks', 'item');
 		makeButton('delete', 'bookmarks', 'item');
 		makeButton('deleteFolder', 'bookmarks', 'item');
-		controls.bookmarks.bottom    = document.createElement('div');
+		controls.bookmarks.bottom    = dce('div');
 		controls.bookmarks.bottom.classList.add('bottom-bar');
-		const bookmarksSearch        = document.createElement('input');
+		const bookmarksSearch        = dce('input');
 		bookmarksSearch.id           = 'bookmarks-search';
 		bookmarksSearch.classList.add('search');
 		bookmarksSearch.type         = 'text';
 		bookmarksSearch.placeholder  = i18n.bookmarks.searchPlaceholder;
 		controls.bookmarks.bottom.appendChild(bookmarksSearch);
-		const searchIcon             = document.createElement('span');
+		const searchIcon             = dce('span');
 		searchIcon.classList.add('search-icon');
 		controls.bookmarks.bottom.appendChild(searchIcon);
 		block.bookmarks.appendChild(rootFolder);
@@ -643,15 +644,15 @@ const initBlock = {
 		const now = new Date();
 		status.historyInfo.lastDate = now.toLocaleDateString();
 
-		rootFolder                 = document.createElement('div');
+		rootFolder                 = dce('div');
 		rootFolder.id              = 'history-0';
-		const historySearchResults = document.createElement('div');
+		const historySearchResults = dce('div');
 		historySearchResults.id    = 'history-search-results';
 		historySearchResults.classList.add('search-results');
-		controls.history.bottom    = document.createElement('div');
+		controls.history.bottom    = dce('div');
 		controls.history.bottom.classList.add('bottom-bar');
-		const searchIcon           = document.createElement('span');
-		const historySearch        = document.createElement('input');
+		const searchIcon           = dce('span');
+		const historySearch        = dce('input');
 		historySearch.id           = 'historySearch';
 		historySearch.classList.add('search');
 		historySearch.type         = 'text';
@@ -783,7 +784,7 @@ const initBlock = {
 			}
 		};
 
-		controls.downloads.item = document.createElement('div');
+		controls.downloads.item = dce('div');
 		controls.downloads.item.classList.add('controls');
 		makeButton('pause', 'downloads', 'item');
 		makeButton('resume', 'downloads', 'item');
@@ -820,18 +821,18 @@ const initBlock = {
 			if (item.paused)
 				classList += item.canResume ? ' paused' : ' canceled';
 			down.classList       = classList;
-			const status         = document.createElement('div');
+			const status         = dce('div');
 			status.classList.add('status');
 			status.title         = '';
-			const progress       = document.createElement('div');
+			const progress       = dce('div');
 			progress.classList.add('progress-bar');
-			const bar            = document.createElement('span');
+			const bar            = dce('span');
 			progress.appendChild(bar);
 			bar.style.width      = item.progressPercent;
-			const recived        = document.createElement('div');
+			const recived        = dce('div');
 			recived.classList.add('recived');
 			recived.textContent  = item.progressNumbers;
-			const fileSize       = document.createElement('div');
+			const fileSize       = dce('div');
 			fileSize.classList.add('file-size');
 			fileSize.textContent = item.fileSize;
 			status.appendChild(progress);
@@ -912,10 +913,10 @@ const initBlock = {
 			}
 		};
 
-		rootFolder              = document.createElement('div');
+		rootFolder              = dce('div');
 		rootFolder.id           = 'rss-0';
 
-		controls.rss.item       = document.createElement('div');
+		controls.rss.item       = dce('div');
 		controls.rss.item.classList.add('controls');
 		makeButton('reload', 'rss', 'item');
 		makeButton('markRead', 'rss', 'item');
@@ -924,7 +925,7 @@ const initBlock = {
 		makeButton('showReaded', 'rss', 'item');
 		makeButton('options', 'rss', 'item');
 
-		controls.rss.bottom     = document.createElement('div');
+		controls.rss.bottom     = dce('div');
 		controls.rss.bottom.classList.add('bottom-bar');
 		makeButton('new', 'rss', 'bottom');
 		makeButton('hideReadedAll', 'rss', 'bottom');
@@ -1045,21 +1046,31 @@ ${items[i].description}`;
 			},
 		};
 
-		rootFolder              = document.createElement('div');
+		rootFolder              = dce('div');
 		rootFolder.id           = 'pocket-0';
 
-		const loginContainer    = document.createElement('div');
+		const loginContainer    = dce('div');
 		const login             = makeItemButton('login', 'pocket');
 		login.id                = 'login';
 		login.textContent       = 'Log in to Pocket';
-		const username          = document.createElement('div');
-		username.id             = 'username';
-		username.textContent    = data.username;
+		controls.pocket.user    = dce('div');
+		controls.pocket.user.id = 'username';
+		controls.pocket.user.classList.add('controls');
+		controls.pocket.user.textContent = data.username;
+		makeButton('logout', 'pocket', 'user');
 		loginContainer.appendChild(login);
-		loginContainer.appendChild(username);
+		loginContainer.appendChild(controls.pocket.user);
+		controls.pocket.bottom  = dce('div');
+		controls.pocket.bottom.classList.add('bottom-bar');
+		makeButton('new', 'pocket', 'bottom');
+		makeButton('plain', 'pocket', 'bottom');
+		makeButton('type', 'pocket', 'bottom');
+		makeButton('domain', 'pocket', 'bottom');
+		makeButton('reload', 'pocket', 'bottom');
 
 		block.pocket.appendChild(loginContainer);
 		block.pocket.appendChild(rootFolder);
+		block.pocket.appendChild(controls.pocket.bottom);
 
 		if (data.auth === true)
 			block.pocket.classList.add('auth');
@@ -1162,7 +1173,7 @@ function blockInit(newMode, data) {
 
 	if (!status.init[newMode]) {
 		i18n[newMode] = data.i18n;
-		const link    = document.createElement('link');
+		const link    = dce('link');
 		link.type     = 'text/css';
 		link.rel      = 'stylesheet';
 		link.href     = `sidebar-${newMode}.css`;
@@ -1186,7 +1197,7 @@ function blockInit(newMode, data) {
 function enableBlock(mode) {
 	button[mode].classList.remove('hidden');
 	if (mode === 'rss') {
-		const unreaded  = document.createElement('div');
+		const unreaded  = dce('div');
 		unreaded.id     = 'rss-unreaded';
 		button.rss.appendChild(unreaded);
 	}
@@ -1258,7 +1269,7 @@ function initSidebar(response) {
 		doc.classList.remove('fixed');
 		window.onresize              = _ => {setFontSize();};
 		if (controls.header.iframe === null) {
-			controls.header.iframe       = document.createElement('div');
+			controls.header.iframe       = dce('div');
 			controls.header.iframe.id    = 'controls-sidebar';
 			makeButton('pin', 'header', 'iframe');
 			makeButton('unpin', 'header', 'iframe');
@@ -1301,7 +1312,7 @@ function insertFolders(mode, items, noTitle = false) {
 	for (let i = 0, l = items.length; i < l; i++) {
 		if (getFolderById(mode, items[i].id))
 			continue;
-		const index = data[`${mode}Folders`].push(document.createElement('ul')) - 1;
+		const index = data[`${mode}Folders`].push(dce('ul')) - 1;
 		data[`${mode}FoldersId`].push(items[i].id);
 		folders.push({'index': index, 'pid': items[i].pid});
 		let classList = 'folder';
@@ -1310,7 +1321,7 @@ function insertFolders(mode, items, noTitle = false) {
 		data[`${mode}Folders`][index].classList = classList;
 		data[`${mode}Folders`][index].id        = `${mode}-folder-${items[i].id}`;
 		if (!noTitle) {
-			const title       = document.createElement('div');
+			const title       = dce('div');
 			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
 			title.title       = items[i].description || items[i].title;
 			title.dataset.id  = items[i].id;
@@ -1375,7 +1386,7 @@ const element = {
 };
 
 function createById(mode, id, search = false) {
-	const item      = document.createElement(element[mode]);
+	const item      = dce(element[mode]);
 	item.id         = (search === true) ? `search-${mode}-${id}` : `${mode}-${id}`;
 	item.dataset.id = id;
 	data[mode].push(item);
@@ -1447,7 +1458,7 @@ function openLink(event) {
 }
 
 function makeBlock(type) {
-	const block = document.createElement('div');
+	const block = dce('div');
 	block.id    = type;
 	block.classList.add('block');
 	document.body.appendChild(block);
@@ -1455,11 +1466,11 @@ function makeBlock(type) {
 }
 
 function makeButton(type, block, sub) {
-	const button     = document.createElement('span');
+	const button     = dce('span');
 	button.id        = `${block}-${type}`;
 	button.classList = 'button';
 	button.title     = i18n[block][type];
-	const icon       = document.createElement('span');
+	const icon       = dce('span');
 	icon.style.setProperty(mask, `url('icons/${type}.svg')`);
 	button.appendChild(icon);
 	controls[block][sub].appendChild(button);
@@ -1468,7 +1479,7 @@ function makeButton(type, block, sub) {
 }
 
 function makeItemButton(type, block) {
-	const item       = document.createElement('span');
+	const item       = dce('span');
 	item.title       = i18n[block][`${type}Title`];
 	item.id          = `${block}-${type}`;
 	item.classList.add('item-button');
@@ -1476,10 +1487,10 @@ function makeItemButton(type, block) {
 	if (i18n[block][`${type}Text`] !== '')
 		item.textContent = i18n[block][`${type}Text`];
 	else {
-		const button     = document.createElement('span');
+		const button     = dce('span');
 		button.classList.add('button');
 		item.appendChild(button);
-		const icon       = document.createElement('span');
+		const icon       = dce('span');
 		button.appendChild(icon);
 	}
 	return item;
@@ -1828,10 +1839,43 @@ const buttonsEvents = {
 		login : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			const target = event.target;
 			send('background', 'pocket', 'login', '');
+		},
+		logout : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'pocket', 'logout', '');
+		},
+		new : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'pocket', 'new', '');
+		},
+		plain : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'options', 'handler', {});
+		},
+		type : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'options', 'handler', {});
+		},
+		domain : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'options', 'handler', {});
+		},
+		reload : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'pocket', 'reloadAll', '');
 		}
 	}
 };
+
+function dce(element) {
+	return document.createElement(element);
+}
 
 })();
