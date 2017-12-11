@@ -16,6 +16,7 @@ const config = {
 	systemIcon         : 'icons/wrench.svg',
 	startpageIcon      : 'icons/startpage.svg',
 	rssIcon            : 'icons/rss.svg',
+	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034'
 };
 
 const i18n = {
@@ -88,7 +89,8 @@ const status = {
 	dialogType           : '',
 	toSave               : {},
 	saverActive          : false,
-	sendTimer            : {}
+	sendTimer            : {},
+	pocketCode           : ''
 };
 
 const data = {
@@ -816,6 +818,14 @@ const messageHandler = {
 		},
 		remove : (message, sender, sendResponse) => {
 			sendToTab(sender.tab.id, 'content', 'dialog', 'remove');
+		},
+		pocketAdd : (message, sender, sendResponse) => {
+			const activeTab = getById('tabs', status.activeTabId);
+			if (activeTab !== false);
+				createDialogWindow(message.action, {
+					'url'   : activeTab.url,
+					'title' : activeTab.title
+				});
 		}
 	},
 
@@ -2449,6 +2459,92 @@ const initService = {
 
 	pocket: start => {
 
+		const pocketRequest = (type, info = {}) => {
+
+			const links  = {
+				add     : 'https://getpocket.com/v3/add',
+				get     : 'https://getpocket.com/v3/get',
+				modify  : 'https://getpocket.com/v3/send',
+				auth    : 'https://getpocket.com/v3/oauth/authorize',
+				request : 'https://getpocket.com/v3/oauth/request'
+			};
+
+			const toSend = {
+				add      : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'url'          : info.url,
+					'title'        : info.title,
+				},
+				get      : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'detailType'   : 'complete',
+					'since'        : options.pocket.lastUpdate.value
+				},
+				modify   : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'actions'      : info
+				},
+				auth     : {
+					'consumer_key' : config.pocketConsumerKey,
+					'code'         : status.pocketCode
+				},
+				request  : {
+					'consumer_key' : config.pocketConsumerKey,
+					'redirect_uri' : config.pocketRedirectPage
+				}
+			};
+
+			const onReady = {
+				add     : response => {
+					parsePockets(response);
+				},
+				get     : response => {
+					parsePockets(response);
+				},
+				send    : response => {
+					console.log(response);
+				},
+				auth    : response => {
+					if (response.hasOwnProperty('access_token')) {
+						setOption('pocket', 'accessToken', response.access_token);
+						if (response.hasOwnProperty('username'))
+							setOption('pocket', 'username', response.username);
+						setOption('pocket', 'auth', true);
+					}
+				},
+				request : response => {
+					status.pocketCode = response.code;
+					brauzer.tabs.onUpdated.addListener(redirectFromPocket);
+					createNewTab(`https://getpocket.com/auth/authorize?request_token=${status.pocketCode}&redirect_uri=${config.pocketRedirectPage}`);
+				},
+			};
+
+			const xhttp  = new XMLHttpRequest();
+			xhttp.open('POST', links[type], true);
+			xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+			xhttp.setRequestHeader('X-Accept', 'application/json');
+			xhttp.send(JSON.stringify(toSend[type]));
+			xhttp.onreadystatechange = _ => {
+			if (xhttp.readyState === 4)
+				if (xhttp.status === 200) {
+					const response = JSON.parse(xhttp.responseText);
+					if (response.hasOwnProperty('status'))
+						if (parseInt(response.status) === 1)
+							onReady[type](response);
+				}
+			};
+		};
+
+		const redirectFromPocket = (id, info, tab) => {
+			if (tab.url === config.pocketRedirectPage) {
+				brauzer.tabs.onUpdated.removeListener(redirectFromPocket);
+				pocketRequest('auth');
+			}
+		};
+
 		const updatePocket = _ => {
 			if (options.pocket.auth.value === false)
 				return;
@@ -2456,40 +2552,28 @@ const initService = {
 				setOption('pocket', 'auth', false);
 				return;
 			}
+			pocketRequest('get');
+		};
 
-			const xhttp  = new XMLHttpRequest();
-			xhttp.open('POST', 'https://getpocket.com/v3/get', true);
-			xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-			xhttp.setRequestHeader('X-Accept', 'application/json');
-			xhttp.send(JSON.stringify(
-				{
-					'consumer_key' : '72831-08ba83947577ffe5e7738034',
-					'access_token' : options.pocket.accessToken.value,
-					'detailType'   : 'complete',
-					'since'        : options.pocket.lastUpdate.value
-				})
-			);
-
-			xhttp.onreadystatechange = _ => {
-				if (xhttp.readyState === 4)
-					if (xhttp.status === 200) {
-						// setOption('pocket', 'lastUpdate', Date.now());
-						const response = JSON.parse(xhttp.responseText);
-						console.log(response);
-						const toSend = [];
-						for (let list in response.list)
-							toSend.push(createPocket(response.list[list]));
-						console.log(toSend);
-						if (toSend.length > 0)
-							send('sidebar', 'pocket', 'newItems', toSend);
-					}
-			};
+		const parsePockets = response => {
+			const toSend = [];
+			if (response.hasOwnProperty('list'))
+				for (let list in response.list)
+					toSend.push(createPocket(response.list[list]));
+			else if (response.hasOwnProperty('item'))
+				toSend.push(createPocket(response.item));
+			if (toSend.length > 0)
+				send('sidebar', 'pocket', 'newItems', toSend);
 		};
 
 		const createPocket = item => {
 			let newItem = getById('pocket', item.item_id);
-			if (newItem === false)
+			if (newItem === false) {
+				item.id = item.item_id;
 				newItem = createById('pocket', item, 'last');
+			}
+			else
+				fillItem.pocket(newItem, item);
 			return newItem;
 		};
 
@@ -2552,20 +2636,20 @@ const initService = {
 
 			fillItem.pocket = (newItem, item) => {
 				let pid = '';
-				if (item.is_article === '1')
+				if (parseInt(item.is_article) === 1)
 					pid = 'articles';
-				else if (item.has_image === '2')
+				else if (parseInt(item.has_image) === 2)
 					pid = 'images';
-				else if (item.has_video === '2')
+				else if (parseInt(item.has_video) === 2)
 					pid = 'videos';
 				else
 					pid = 'other';
 				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
-				newItem.title       = item.given_title;
-				newItem.url         = item.given_url;
+				newItem.title       = item.given_title || item.resolved_title;
+				newItem.url         = item.given_url || item.resolved_url;
 				newItem.status      = item.status;
-				newItem.domain      = makeDomain(item.given_url).id;
-				newItem.favourite   = item.favourite === '0' ? false : true;
+				newItem.domain      = makeDomain(item.given_url || item.resolved_url).id;
+				newItem.favourite   = parseInt(item.favourite) === 0 ? false : true;
 				newItem.pid         = pid;
 				newItem.hasImage    = parseInt(item.has_image) > 0 ? true : false;
 				newItem.hasVideo    = parseInt(item.has_video) > 0 ? true : false;
@@ -2582,65 +2666,16 @@ const initService = {
 			};
 
 			messageHandler.pocket = {
-				login: (message, sender, sendResponse) => {
-
-					let code = '';
-
-					const redirectFromPocket = (id, info, tab) => {
-						if (tab.url === config.pocketRedirectPage) {
-							brauzer.tabs.onUpdated.removeListener(redirectFromPocket);
-							const xhttp  = new XMLHttpRequest();
-							xhttp.open('POST', 'https://getpocket.com/v3/oauth/authorize', true);
-							xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-							xhttp.setRequestHeader('X-Accept', 'application/json');
-							xhttp.send(JSON.stringify(
-								{
-									'consumer_key' : '72831-08ba83947577ffe5e7738034',
-									'code'         : code
-								})
-							);
-							xhttp.onreadystatechange = _ => {
-								if (xhttp.readyState === 4)
-									if (xhttp.status === 200) {
-										const response = JSON.parse(xhttp.responseText);
-										if (response.hasOwnProperty('access_token')) {
-											setOption('pocket', 'accessToken', response.access_token);
-											if (response.hasOwnProperty('username'))
-												setOption('pocket', 'username', response.username);
-											setOption('pocket', 'auth', true);
-										}
-									}
-								console.log(xhttp);
-							};
-						}
-					};
-
-					const xhttp  = new XMLHttpRequest();
-					xhttp.open('POST', 'https://getpocket.com/v3/oauth/request', true);
-					xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-					xhttp.setRequestHeader('X-Accept', 'application/json');
-					xhttp.send(JSON.stringify(
-						{
-							'consumer_key' : '72831-08ba83947577ffe5e7738034',
-							'redirect_uri' : config.pocketRedirectPage
-						})
-					);
-					xhttp.onreadystatechange = _ => {
-						if (xhttp.readyState === 4)
-							if (xhttp.status === 200) {
-								const response = JSON.parse(xhttp.responseText);
-								code           = response.code;
-								brauzer.tabs.onUpdated.addListener(redirectFromPocket);
-								createNewTab(`https://getpocket.com/auth/authorize?request_token=${code}&redirect_uri=${config.pocketRedirectPage}`);
-							}
-						console.log(xhttp);
-					};
+				login  : (message, sender, sendResponse) => {
+					pocketRequest('request');
 				},
-				logout : (message, sender, sendResponse) => {}
+				logout : (message, sender, sendResponse) => {},
+				add    : (message, sender, sendResponse) => {
+					pocketRequest('add', message.data);
+				},
 			};
 
 			if (options.pocket.auth.value === true) {
-				// updatePocket();
 				execMethod(brauzer.storage.local.get, getPocket, ['pocket', 'pocketId', 'pocketFolders', 'pocketFoldersId']);
 			}
 		}
@@ -2970,8 +3005,6 @@ function createNewTab(url = '', newWindow = false) {
 
 function createById(mode, item, position) {
 
-	let index = data[`${mode}Id`].indexOf(item.id);
-
 	const insert = {
 		last  : _ => {
 			data[mode].push({'id': item.id});
@@ -2997,6 +3030,9 @@ function createById(mode, item, position) {
 			return data[mode][index];
 		}
 	};
+
+	let index = data[`${mode}Id`].indexOf(item.id);
+
 
 	if (index !== -1)
 		return data[mode][index];

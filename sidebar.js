@@ -1042,6 +1042,7 @@ ${items[i].description}`;
 
 		messageHandler.pocket = {
 			newItems         : data =>  {
+				console.log(data);
 				injectPockets(data);
 			},
 		};
@@ -1849,7 +1850,7 @@ const buttonsEvents = {
 		new : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'pocket', 'new', '');
+			send('background', 'dialog', 'pocketAdd', {});
 		},
 		plain : event => {
 			event.stopPropagation();

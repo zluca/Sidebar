@@ -471,6 +471,24 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
+		},
+
+		pocketAdd : _ => {
+			header.textContent = getI18n('dialogPocketAddHeader');
+
+			const inputTitle   = addInputRow(getI18n('dialogPocketAddTitleLabel'), 'text', data.hasOwnProperty('title') ? data.title : '', getI18n('dialogPocketAddTitlePlaceholder'));
+			const inputUrl     = addInputRow(getI18n('dialogPocketAddUrlLabel'), 'text', data.hasOwnProperty('url') ? data.url : '', getI18n('dialogPocketAddUrlPlaceholder'));
+
+			addButton('save', _ => {
+				if (optionsChanged === true || data.hasOwnProperty('url')) {
+					const url = inputUrl.value;
+					console.log(url);
+					if (url !== '')
+						send('background', 'pocket', 'add', {'url': url, 'title': inputTitle.value});
+				}
+				removeDialogWindow();
+			});
+			addButton('cancel', removeDialogWindow);
 		}
 	};
 
