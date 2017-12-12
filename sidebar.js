@@ -711,7 +711,7 @@ const initBlock = {
 			};
 			for (let i = 0, l = items.length; i < l; i++) {
 				let hist = getById('history', items[i].id);
-				if (!hist)
+				if (hist === false)
 					hist = createById('history', items[i].id);
 				if (items[i].pid !== pid) {
 					pid = items[i].pid;
@@ -957,18 +957,6 @@ const initBlock = {
 				target.appendChild(controls.rss.item);
 		});
 
-		// const setRssMode = (mode, rss, rssFolders) => {
-		// 	options.misc.rssMode = mode;
-		// 	block.rss.classList = `block ${mode}`;
-		// 	while (rootFolder.firstChild)
-		// 		rootFolder.removeChild(rootFolder.firstChild);
-		// 	clearData('rss');
-		// 	if (mode === 'domain')
-		// 		insertFolders('rss', rssFolders);
-		// 	insertRss(rss, 'first');
-		// 	setReadedMode(options.misc.rssHideReaded);
-		// };
-
 		insertItems.rss = (items, method) => {
 			const insert = {
 				domainfirst : (item, data) => {
@@ -1042,12 +1030,12 @@ ${items[i].description}`;
 
 		messageHandler.pocket = {
 			newItems     : data =>  {
-				injectPockets(data);
+				insertItems.pocket(data, 'first');
 			},
 			updated      : data => {
 				const pocket = getById('pocket', data.id);
 				if (pocket !== false)
-					updatePocket(pocket, data);
+					updateItem.pocket(pocket, data);
 			},
 			deleted      : data => {
 				const pocket = getById('pocket', data);
@@ -1055,10 +1043,10 @@ ${items[i].description}`;
 					removeById('pocket', data);
 			},
 			view         : data => {
-				setPocketMode(data.view, data.items, data.folders);
+				setView('pocket', data.view, data.items, data.folders);
 			},
 			logout       : data => {
-				block.pocket.classList.remove('auth');
+				block.pocket.classList.add('logout');
 			}
 		};
 
@@ -1100,10 +1088,10 @@ ${items[i].description}`;
 				target.appendChild(controls.pocket.item);
 		});
 
-		if (data.auth === true)
-			block.pocket.classList.add('auth');
+		if (data.auth === false)
+			block.pocket.classList.add('logout');
 
-		const updatePocket  = (pocket, info) => {
+		updateItem.pocket  = (pocket, info) => {
 			let classList      = `pocket item ${info.favourite === true ? 'favourite ' : ''} domain-${info.domain}`;
 			pocket.href        = info.url;
 			pocket.dataset.url = info.url;
@@ -1112,23 +1100,42 @@ ${items[i].description}`;
 			pocket.title       = info.description !== '' ? info.description : info.url;
 		};
 
-		const injectPockets = items => {
+		insertItems.pocket = (items, position = 'last') => {
 			let pid    = 0;
 			let parent = rootFolder;
-			for (let i = 0, l = items.length; i < l; i++) {
-				const pocket       = createById('pocket', items[i].id);
-				updatePocket(pocket, items[i]);
-				if (options.pocketMode !== 'plain')
-					if (items[i].pid !== pid) {
-						pid    = items[i].pid;
-						parent = getFolderById('pocket', pid);
+			const insert = {
+				last  : pocket => {
+					parent.appendChild(pocket);
+				},
+				first : pocket => {
+					if (options.pocketMode === 'plain') {
+						if (parent.children.length > 0)
+							parent.insertBefore(pocket, parent.firstChild);
+						else
+							parent.appendChild(pocket);
 					}
-				parent.appendChild(pocket);
+					else {
+						if (parent.children.length > 1)
+							parent.insertBefore(pocket, parent.firstChild.nextElementSibling);
+						else
+							parent.appendChild(pocket);
+					}
+				}
+			};
+			for (let i = 0, l = items.length; i < l; i++) {
+				const pocket = createById('pocket', items[i].id);
+				updateItem.pocket(pocket, items[i]);
+				if (options.misc.pocketMode !== 'plain') {
+					if (items[i][options.misc.pocketMode] !== pid) {
+						pid    = items[i][options.misc.pocketMode];
+						parent = getFolderById('pocket', items[i][options.misc.pocketMode]);
+					}
+				}
+				insert[position](pocket);
 			}
 		};
 
-		insertFolders('pocket', data.pocketFolders);
-		injectPockets(data.pocket);
+		setView('pocket', options.misc.pocketMode, data.pocket, data.pocketFolders);
 	}
 };
 
@@ -1407,12 +1414,9 @@ const setDomainStyle = {
 	}
 };
 
-const insertItems = {
-	tabs      : items => {},
-	bookmarks : items => {},
-	rss       : (items, method) => {},
-	pocket    : items => {},
-};
+const insertItems = {};
+
+const updateItem = {};
 
 function setView(mode, view, items, folders) {
 	options.misc[`${mode}Mode`] = view;

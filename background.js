@@ -2611,11 +2611,32 @@ const initService = {
 			}
 		};
 
+		const makeFolder = pocket => {
+			const domain = makeDomain(pocket.url);
+			let folder = getFolderById('pocket', domain.id);
+			if (folder === false) {
+				folder         = createFolderById('pocket', domain.id, 'last');
+				folder.folded  = false;
+				folder.title   = domain.title;
+				folder.itemsId = [pocket.id];
+				folder.view    = 'domain';
+				folder.domain  = domain.id;
+			}
+			else {
+				const index = folder.itemsId.indexOf(pocket.id);
+				if (index === -1)
+					folder.itemsId.push(pocket.id);
+			}
+			return folder;
+		};
+
 		const createPocket = item => {
 			let newItem = getById('pocket', item.item_id);
 			if (newItem === false) {
-				item.id = item.item_id;
-				newItem = createById('pocket', item, 'last');
+				item.id   = item.item_id;
+				item.date = item.time_added;
+				newItem   = createById('pocket', item, 'date');
+				makeFolder(newItem);
 			}
 			else
 				updateItem.pocket(newItem, item);
@@ -2686,22 +2707,22 @@ const initService = {
 		if (start === true) {
 
 			updateItem.pocket = (newItem, item) => {
-				let pid = '';
+				let type = '';
 				if (parseInt(item.is_article) === 1)
-					pid = 'articles';
+					type = 'articles';
 				else if (parseInt(item.has_image) === 2)
-					pid = 'images';
+					type = 'images';
 				else if (parseInt(item.has_video) === 2)
-					pid = 'videos';
+					type = 'videos';
 				else
-					pid = 'other';
+					type = 'other';
 				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
 				newItem.title       = item.given_title || item.resolved_title || item.given_url || item.resolved_url;
 				newItem.url         = item.given_url || item.resolved_url;
 				newItem.status      = item.status;
 				newItem.domain      = makeDomain(item.given_url || item.resolved_url).id;
 				newItem.favourite   = parseInt(item.favourite) === 0 ? false : true;
-				newItem.pid         = pid;
+				newItem.type        = type;
 				newItem.hasImage    = parseInt(item.has_image) > 0 ? true : false;
 				newItem.hasVideo    = parseInt(item.has_video) > 0 ? true : false;
 				return newItem;

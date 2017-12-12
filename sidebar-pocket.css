@@ -1,13 +1,14 @@
-#pocket-0,
-#username,
-.auth #login {
+.logout #pocket-0,
+.logout #username,
+#login,
+.type .domain-view,
+.domain .type-view {
 	display: none;
 }
-.auth #username {
+#username {
 	display: flex;
 }
-.auth #pocket-0,
-.auth #pocket .bottom-bar {
+.logout #login {
 	display: block;
 }
 #username {
@@ -39,7 +40,7 @@
 	width: 1rem;
 	height: 1rem;
 }
-.auth #pocket-logout {
+#pocket-logout {
 	display: inline-block;
 	margin-left: .4rem;
 }
@@ -47,4 +48,16 @@
 #pocket-edit,
 #pocket-delete {
 	display: inline-block;
+}
+.domain-articles {
+	background-image: url(icons/article.svg);
+}
+.domain-pictures {
+	background-image: url(icons/picture.svg);
+}
+.domain-videos {
+	background-image: url(icons/video.svg);
+}
+.domain-other {
+	background-image: url(icons/default.svg);
 }
