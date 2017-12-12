@@ -6,6 +6,15 @@ const firefox  = (typeof InstallTrigger !== 'undefined') ? true : false;
 const brauzer  = firefox ? browser : chrome;
 const doc      = document.documentElement;
 const mask     = window.CSS.supports('mask-image') ? 'mask-image' : '-webkit-mask-image';
+const element  = {
+	tabs      : 'a',
+	bookmarks : 'a',
+	history   : 'a',
+	downloads : 'li',
+	rss       : 'a',
+	pocket    : 'a',
+	domains   : 'style'
+};
 
 const i18n     = {
 	controls    : null,
@@ -211,7 +220,7 @@ const messageHandler = {
 			initSidebar(data);
 		},
 		hover       : data => {
-			document.documentElement.classList[data]('hover');
+			doc.classList[data]('hover');
 		},
 		side        : data => {
 			if (options.sidebar.method === 'native')
@@ -247,7 +256,7 @@ const initBlock = {
 
 		messageHandler.tabs = {
 			created    : data => {
-				insertTabs([data.tab]);
+				insertItems.tabs([data.tab]);
 			},
 			active     : data => {
 				status.activeTabId = data;
@@ -274,7 +283,7 @@ const initBlock = {
 						if (data.hasOwnProperty('folder'))
 							insertFolders('tabs', [data.folder]);
 				}
-				insertTabs([data.tab]);
+				insertItems.tabs([data.tab]);
 			},
 			removed      : data => {
 				const removing = {
@@ -324,7 +333,7 @@ const initBlock = {
 				}
 			},
 			view         : data => {
-				setTabsMode(data.view, data.items, data.folders);
+				setView('tabs', data.view, data.items, data.folders);
 			}
 		};
 
@@ -368,18 +377,7 @@ const initBlock = {
 				target.appendChild(controls.tabs.item);
 		});
 
-		const setTabsMode = (mode, tabs, tabsFolders) => {
-			options.misc.tabsMode = mode;
-			block.tabs.classList = `block ${options.misc.tabsMode}`;
-			while (rootFolder.hasChildNodes())
-				rootFolder.removeChild(rootFolder.firstChild);
-			clearData('tabs');
-			if (options.misc.tabsMode === 'domain')
-				insertFolders('tabs', tabsFolders);
-			insertTabs(tabs);
-		};
-
-		const insertTabs = tabs => {
+		insertItems.tabs = tabs => {
 			let pid         = 0;
 			let tab         = null;
 			let folder      = rootFolder;
@@ -411,7 +409,7 @@ const initBlock = {
 
 			for (let i = 0, l = tabs.length; i < l; i++) {
 				tab = getById('tabs', tabs[i].id);
-				if (!tab)
+				if (tab === false)
 					tab = createById('tabs', tabs[i].id);
 				tab.textContent = tabs[i].title;
 				tab.title       = tabs[i].url;
@@ -430,7 +428,7 @@ const initBlock = {
 				insertFolders('tabs', treeFolders, true);
 				for (let i = 0, l = tabs.length; i < l; i++) {
 					const folder = getFolderById('tabs', tabs[i].id);
-					if (folder)
+					if (folder !== false)
 						folder.insertBefore(getById('tabs', tabs[i].id), folder.firstChild);
 					else
 						rootFolder.appendChild(getById('tabs', tabs[i].id));
@@ -453,7 +451,8 @@ const initBlock = {
 			}
 		};
 
-		setTabsMode(options.misc.tabsMode, data.tabs, data.tabsFolders);
+		setView('tabs', options.misc.tabsMode, data.tabs, data.tabsFolders);
+		setReadedMode();
 	},
 
 	bookmarks : data => {
@@ -854,9 +853,9 @@ const initBlock = {
 			},
 			newItems         : data =>  {
 				if (options.misc.rssMode === 'plain')
-					insertRss(data.items, 'date');
+					insertItems.rss(data.items, 'date');
 				else
-					insertRss(data.items, 'first');
+					insertItems.rss(data.items, 'first');
 			},
 			rssReaded        : data =>  {
 				const rssItem = getById('rss', data.id);
@@ -881,21 +880,22 @@ const initBlock = {
 					data.rssFolders[i].classList.remove('unreaded');
 			},
 			view             : data =>  {
-				setRssMode(data.view, data.items, data.folders);
+				setView('rss', data.view, data.items, data.folders);
+				setReadedMode(options.misc.rssHideReaded);
 			},
 			rssHideReaded    : data =>  {
 				const feed = getFolderById('rss', data.id);
-				if (feed)
+				if (feed !== false)
 					feed.classList.add('hide-readed');
 			},
 			rssShowReaded    : data =>  {
 				const feed = getFolderById('rss', data.id);
-				if (feed)
+				if (feed !== false)
 					feed.classList.remove('hide-readed');
 			},
 			rssFeedChanged   : data =>  {
 				const feed = getFolderById('rss', data.id);
-				if (feed) {
+				if (feed !== false) {
 					feed.firstChild.firstChild.textContent = data.title;
 					feed.firstChild.title                  = data.description;
 				}
@@ -908,7 +908,7 @@ const initBlock = {
 			},
 			update           : data => {
 				const feed = getFolderById('rss', data.id);
-				if (feed)
+				if (feed !== false)
 					feed.firstChild.classList[data.method]('loading');
 			}
 		};
@@ -957,20 +957,19 @@ const initBlock = {
 				target.appendChild(controls.rss.item);
 		});
 
-		const setRssMode = (mode, rss, rssFolders) => {
-			options.misc.rssMode = mode;
-			block.rss.classList = `block ${mode}`;
-			while (rootFolder.firstChild)
-				rootFolder.removeChild(rootFolder.firstChild);
-			clearData('rss');
-			if (mode === 'domain')
-				insertFolders('rss', rssFolders);
-			insertRss(rss, 'first');
-			setReadedMode(options.misc.rssHideReaded);
-		};
+		// const setRssMode = (mode, rss, rssFolders) => {
+		// 	options.misc.rssMode = mode;
+		// 	block.rss.classList = `block ${mode}`;
+		// 	while (rootFolder.firstChild)
+		// 		rootFolder.removeChild(rootFolder.firstChild);
+		// 	clearData('rss');
+		// 	if (mode === 'domain')
+		// 		insertFolders('rss', rssFolders);
+		// 	insertRss(rss, 'first');
+		// 	setReadedMode(options.misc.rssHideReaded);
+		// };
 
-		const insertRss = (items, method) => {
-
+		insertItems.rss = (items, method) => {
 			const insert = {
 				domainfirst : (item, data) => {
 					pidCheck(data.pid);
@@ -1033,26 +1032,33 @@ ${items[i].description}`;
 			}
 		};
 
-		setRssMode(options.misc.rssMode, data.rss, data.rssFolders);
+		setView('rss', options.misc.rssMode, data.rss, data.rssFolders);
+		setReadedMode(options.misc.rssHideReaded);
 	},
 
 	pocket : data => {
 
-		// console.log(data);
+		console.log(data);
 
 		messageHandler.pocket = {
-			newItems         : data =>  {
+			newItems     : data =>  {
 				injectPockets(data);
 			},
-			update           : data => {
+			updated      : data => {
 				const pocket = getById('pocket', data.id);
 				if (pocket !== false)
 					updatePocket(pocket, data);
 			},
-			deleted          : data => {
+			deleted      : data => {
 				const pocket = getById('pocket', data);
 				if (pocket !== false)
 					removeById('pocket', data);
+			},
+			view         : data => {
+				setPocketMode(data.view, data.items, data.folders);
+			},
+			logout       : data => {
+				block.pocket.classList.remove('auth');
 			}
 		};
 
@@ -1098,7 +1104,7 @@ ${items[i].description}`;
 			block.pocket.classList.add('auth');
 
 		const updatePocket  = (pocket, info) => {
-			let classList      = `pocket item ${info.favourite === true ? 'favourite ' : ''}`;
+			let classList      = `pocket item ${info.favourite === true ? 'favourite ' : ''} domain-${info.domain}`;
 			pocket.href        = info.url;
 			pocket.dataset.url = info.url;
 			pocket.textContent = info.title;
@@ -1112,10 +1118,11 @@ ${items[i].description}`;
 			for (let i = 0, l = items.length; i < l; i++) {
 				const pocket       = createById('pocket', items[i].id);
 				updatePocket(pocket, items[i]);
-				if (items[i].pid !== pid) {
-					pid    = items[i].pid;
-					parent = getFolderById('pocket', pid);
-				}
+				if (options.pocketMode !== 'plain')
+					if (items[i].pid !== pid) {
+						pid    = items[i].pid;
+						parent = getFolderById('pocket', pid);
+					}
 				parent.appendChild(pocket);
 			}
 		};
@@ -1253,7 +1260,6 @@ function tryToInit() {
 }
 
 function initSidebar(response) {
-
 	const onMessage = (message, sender, sendResponse) => {
 		// console.log(message);
 		if (message.hasOwnProperty('target')) {
@@ -1401,15 +1407,23 @@ const setDomainStyle = {
 	}
 };
 
-const element = {
-	tabs      : 'a',
-	bookmarks : 'a',
-	history   : 'a',
-	downloads : 'li',
-	rss       : 'a',
-	pocket    : 'a',
-	domains   : 'style'
+const insertItems = {
+	tabs      : items => {},
+	bookmarks : items => {},
+	rss       : (items, method) => {},
+	pocket    : items => {},
 };
+
+function setView(mode, view, items, folders) {
+	options.misc[`${mode}Mode`] = view;
+	block[mode].classList       = `block ${view}`;
+	while (rootFolder.firstChild)
+		rootFolder.removeChild(rootFolder.firstChild);
+	clearData(mode);
+	if (view !== 'plain')
+		insertFolders(mode, folders, view === 'tree' ? true : false);
+	insertItems[mode](items, 'first');
+}
 
 function createById(mode, id, search = false) {
 	const item      = dce(element[mode]);
@@ -1865,37 +1879,37 @@ const buttonsEvents = {
 		login : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'pocket', 'login', '');
+			send('background', 'pocket', 'login');
 		},
 		logout : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'pocket', 'logout', '');
+			send('background', 'pocket', 'logout');
 		},
 		new : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'dialog', 'pocketAdd', {});
+			send('background', 'dialog', 'pocketAdd');
 		},
 		plain : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'options', 'handler', {});
+			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'plain'});
 		},
 		type : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'options', 'handler', {});
+			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'type'});
 		},
 		domain : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'options', 'handler', {});
+			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'domain'});
 		},
 		reload : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'pocket', 'reloadAll', '');
+			send('background', 'pocket', 'reloadAll');
 		},
 		edit   : event => {
 			event.stopPropagation();

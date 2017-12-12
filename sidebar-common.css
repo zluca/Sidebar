@@ -384,13 +384,16 @@ ul {
 	margin-left: 0;
 }
 .domain-view .folder-name,
+.type-view .folder-name,
 #bookmarks .folder-name,
 #history .folder-name,
 #rss .folder-name {
 	display: block;
 }
 .hover .folder.normal-view>.item,
-.fixed .folder.normal-view>.item {
+.fixed .folder.normal-view>.item,
+.hover .folder.type-view>.item,
+.fixed .folder.type-view>.item {
 	padding-left: 1.6rem;
 	margin-left: .8rem;
 	border-left: .1rem dotted var(--border-color-active);

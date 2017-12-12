@@ -1,9 +1,14 @@
+#pocket-0,
 #username,
 .auth #login {
 	display: none;
 }
 .auth #username {
 	display: flex;
+}
+.auth #pocket-0,
+.auth #pocket .bottom-bar {
+	display: block;
 }
 #username {
 	align-items: center;

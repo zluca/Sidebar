@@ -382,6 +382,14 @@ const options = {
 			values  : ['plain', 'tree'],
 			targets : [],
 			hidden  : true
+		},
+		pocketMode      : {
+			value   : 'type',
+			type    : 'select',
+			values  : ['plain', 'domain', 'type'],
+			targets : [],
+			handler : 'view',
+			hidden  : true
 		}
 	},
 	startpage: {
@@ -687,6 +695,7 @@ const messageHandler = {
 			};
 			if (status.init[options[message.data.side].mode.value] === true)
 				handler[message.data.method](message.data.side);
+			else sendResponse(undefined);
 		},
 		startpage : (message, sender, sendResponse) => {
 			if (status.init.startpage === true) {
@@ -943,7 +952,7 @@ const initExtension = res => {
 
 execMethod(brauzer.storage.local.get, initExtension, ['options', 'version']);
 
-const fillItem = {
+const updateItem = {
 	tabs       : null,
 	bookmarks  : null,
 	history    : null,
@@ -1051,6 +1060,7 @@ const initService = {
 			}
 
 			brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
+				// console.log(message);
 				if (message.hasOwnProperty('target'))
 					if (message.target === 'background') {
 						messageHandler[message.subject][message.action](message, sender, sendResponse);
@@ -1064,7 +1074,7 @@ const initService = {
 			setIcon();
 		};
 
-		if (status.init.data)
+		if (status.init.data === true)
 			return;
 		status.init.data = true;
 
@@ -1414,7 +1424,7 @@ const initService = {
 		};
 
 		if (start === true) {
-			fillItem.tabs = (newItem, item) => {
+			updateItem.tabs = (newItem, item) => {
 				const domain = makeDomain(item.url, item.favIconUrl, item.title).id;
 				if (item.active === true)
 					status.activeTabId  = item.id;
@@ -1436,7 +1446,7 @@ const initService = {
 		}
 		else {
 			i18n.tabs           = {};
-			fillItem.tabs       = null;
+			updateItem.tabs       = null;
 			messageHandler.tabs = defaultTabsHandler;
 			data.tabs           = [];
 			data.tabsId         = [];
@@ -1680,7 +1690,7 @@ const initService = {
 		};
 
 		if (start === true) {
-			fillItem.bookmarks = (newItem, item) => {
+			updateItem.bookmarks = (newItem, item) => {
 				newItem.pid     = item.parentId;
 				newItem.domain  = makeDomain(item.url).id;
 				newItem.title   = item.title;
@@ -1700,7 +1710,7 @@ const initService = {
 		}
 		else {
 			i18n.bookmarks           = {};
-			fillItem.bookmarks       = null;
+			updateItem.bookmarks       = null;
 			messageHandler.bookmarks = null;
 			data.bookmarks           = [];
 			data.bookmarksId         = [];
@@ -1848,7 +1858,7 @@ const initService = {
 
 
 		if (start === true) {
-			fillItem.history = (newItem, item) => {
+			updateItem.history = (newItem, item) => {
 				let title      = new Date(item.lastVisitTime);
 				title          = title.toLocaleDateString();
 				const pid      = title.replace(/\./g, '');
@@ -1863,7 +1873,7 @@ const initService = {
 		}
 		else {
 			i18n.history           = {};
-			fillItem.history       = null;
+			updateItem.history       = null;
 			messageHandler.history = null;
 			data.history           = [];
 			data.historyId         = [];
@@ -2005,7 +2015,7 @@ const initService = {
 		};
 
 		if (start === true) {
-			fillItem.downloads       = (newItem, item) => {
+			updateItem.downloads       = (newItem, item) => {
 
 				const checkDownloadState = id => {
 					setTimeout(_ => {
@@ -2055,7 +2065,7 @@ const initService = {
 		}
 		else {
 			i18n.downloads           = null;
-			fillItem.downloads       = null;
+			updateItem.downloads       = null;
 			messageHandler.downloads = null;
 			data.downloads           = [];
 			data.downloadsId         = [];
@@ -2429,7 +2439,7 @@ const initService = {
 		};
 
 		if (start === true) {
-			fillItem.rss = (newItem, item) => {
+			updateItem.rss = (newItem, item) => {
 				newItem.readed      = item.readed;
 				newItem.title       = item.title;
 				newItem.link        = item.link;
@@ -2457,7 +2467,7 @@ const initService = {
 		else {
 			i18n.rss            = null;
 			messageHandler.rss  = null;
-			fillItem.rss        = null;
+			updateItem.rss        = null;
 			data.rss            = [];
 			data.rssId          = [];
 			data.rssFolders     = [];
@@ -2522,17 +2532,16 @@ const initService = {
 				},
 				get    : response => {
 					parsePockets(response);
+					setOption('pocket', 'lastUpdate', Date.now());
 				},
 				check  : response => {
-					// console.log(response);
 					if (response.hasOwnProperty('list')) {
 						const item = getById('pocket', info);
 						if (item !== false)
-							send('sidebar', 'pocket', 'update', fillItem.pocket(item, response.list[info]));
+							send('sidebar', 'pocket', 'updated', updateItem.pocket(item, response.list[info]));
 					}
 				},
 				delete  : response => {
-					console.log(response);
 					deleteById('pocket', info);
 					send('sidebar', 'pocket', 'deleted', info);
 				},
@@ -2542,6 +2551,7 @@ const initService = {
 						if (response.hasOwnProperty('username'))
 							setOption('pocket', 'username', response.username);
 						setOption('pocket', 'auth', true);
+						pocketRequest('get');
 					}
 				},
 				request : response => {
@@ -2551,10 +2561,6 @@ const initService = {
 				},
 			};
 
-
-			console.log('request');
-			console.log(type);
-			console.log(info);
 			const xhttp  = new XMLHttpRequest();
 			xhttp.open('POST', links[type], true);
 			xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -2564,9 +2570,12 @@ const initService = {
 			if (xhttp.readyState === 4)
 				if (xhttp.status === 200) {
 					const response = JSON.parse(xhttp.responseText);
-					if (response.hasOwnProperty('status'))
+					if (response.hasOwnProperty('status')) {
 						if (parseInt(response.status) === 1)
 							onReady[type](response);
+					}
+					else if (type === 'auth' || type === 'request')
+						onReady[type](response);
 				}
 			};
 		};
@@ -2595,8 +2604,11 @@ const initService = {
 					toSend.push(createPocket(response.list[list]));
 			else if (response.hasOwnProperty('item'))
 				toSend.push(createPocket(response.item));
-			if (toSend.length > 0)
+			if (toSend.length > 0) {
+				saveNow('pocket');
+				saveNow('pocketFolders');
 				send('sidebar', 'pocket', 'newItems', toSend);
+			}
 		};
 
 		const createPocket = item => {
@@ -2606,7 +2618,7 @@ const initService = {
 				newItem = createById('pocket', item, 'last');
 			}
 			else
-				fillItem.pocket(newItem, item);
+				updateItem.pocket(newItem, item);
 			return newItem;
 		};
 
@@ -2616,58 +2628,64 @@ const initService = {
 				data.pocketId        = res.pocketId;
 				data.pocketFolders   = res.pocketFolders;
 				data.pocketFoldersId = res.pocketFoldersId;
+				updatePocket();
 			}
-			else {
-				data.pocketFolders   = [
-					{
-						id      : 'articles',
-						pid     : 0,
-						title   : 'Articles',
-						domain  : 'articles',
-						view    : 'domain',
-						folded  : false,
-						itemsId : []
-					},
-					{
-						id      : 'videos',
-						pid     : 0,
-						title   : 'Videos',
-						domain  : 'videos',
-						view    : 'domain',
-						folded  : false,
-						itemsId : []
-					},
-					{
-						id      : 'pictures',
-						pid     : 0,
-						title   : 'Pictures',
-						domain  : 'pictures',
-						view    : 'domain',
-						folded  : false,
-						itemsId : []
-					},
-					{
-						id      : 'other',
-						pid     : 0,
-						title   : 'Other',
-						domain  : 'other',
-						view    : 'domain',
-						folded  : false,
-						itemsId : []
-					},
-				];
-				data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other'];
-				saveNow('pocket');
-				saveNow('pocketFolders');
-			}
+			status.init.pocket     = true;
+		};
 
-			status.init.pocket = true;
-			updatePocket();
+		const resetPocket = update => {
+			data.pocketFolders   = [
+				{
+					id      : 'articles',
+					pid     : 0,
+					title   : 'Articles',
+					domain  : 'articles',
+					view    : 'type',
+					folded  : false,
+					itemsId : []
+				},
+				{
+					id      : 'videos',
+					pid     : 0,
+					title   : 'Videos',
+					domain  : 'videos',
+					view    : 'type',
+					folded  : false,
+					itemsId : []
+				},
+				{
+					id      : 'pictures',
+					pid     : 0,
+					title   : 'Pictures',
+					domain  : 'pictures',
+					view    : 'type',
+					folded  : false,
+					itemsId : []
+				},
+				{
+					id      : 'other',
+					pid     : 0,
+					title   : 'Other',
+					domain  : 'other',
+					view    : 'type',
+					folded  : false,
+					itemsId : []
+				},
+			];
+			data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other'];
+			saveNow('pocket');
+			saveNow('pocketFolders');
+			setOption('pocket', 'lastUpdate', 0);
+			setOption('pocket', 'auth', false);
+			setOption('pocket', 'username', '');
+			status.init.pocket   = true;
+			if (update === true)
+				send('sidebar', 'pocket', 'logout');
 		};
 
 		if (start === true) {
 
-			fillItem.pocket = (newItem, item) => {
+			updateItem.pocket = (newItem, item) => {
 				let pid = '';
 				if (parseInt(item.is_article) === 1)
 					pid = 'articles';
@@ -2704,7 +2722,9 @@ const initService = {
 				login  : (message, sender, sendResponse) => {
 					pocketRequest('request');
 				},
-				logout : (message, sender, sendResponse) => {},
+				logout : (message, sender, sendResponse) => {
+					resetPocket(true);
+				},
 				add    : (message, sender, sendResponse) => {
 					pocketRequest('add', message.data);
 				},
@@ -2713,13 +2733,14 @@ const initService = {
 				}
 			};
 
-			if (options.pocket.auth.value === true) {
+			if (options.pocket.auth.value === true)
 				execMethod(brauzer.storage.local.get, getPocket, ['pocket', 'pocketId', 'pocketFolders', 'pocketFoldersId']);
-			}
+			else
+				resetPocket(false);
 		}
 		else {
 			i18n.pocket           = {};
-			fillItem.pocket       = null;
+			updateItem.pocket     = null;
 			messageHandler.pocket = null;
 			data.pocket           = [];
 			data.pocketId         = [];
@@ -3075,7 +3096,7 @@ function createById(mode, item, position) {
 	if (index !== -1)
 		return data[mode][index];
 	else
-		return fillItem[mode](insert[position](), item);
+		return updateItem[mode](insert[position](), item);
 }
 
 function deleteById(mode, id) {
