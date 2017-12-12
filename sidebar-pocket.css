@@ -38,3 +38,8 @@
 	display: inline-block;
 	margin-left: .4rem;
 }
+
+#pocket-edit,
+#pocket-delete {
+	display: inline-block;
+}

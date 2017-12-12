@@ -263,6 +263,11 @@ const options = {
 			type    : 'boolean',
 			targets : ['sidebar']
 		},
+		deletePocket         : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
 		tooManyBookmarks     : {
 			value   : true,
 			type    : 'boolean',
@@ -826,6 +831,11 @@ const messageHandler = {
 					'url'   : activeTab.url,
 					'title' : activeTab.title
 				});
+		},
+		pocketDelete: (message, sender, sendResponse) => {
+			const pocket = getById('pocket', message.data);
+			if (pocket !== false)
+				createDialogWindow(message.action, {'id': pocket.id, 'title': pocket.title});
 		}
 	},
 
@@ -2465,7 +2475,7 @@ const initService = {
 				add     : 'https://getpocket.com/v3/add',
 				get     : 'https://getpocket.com/v3/get',
 				check   : 'https://getpocket.com/v3/get',
-				modify  : 'https://getpocket.com/v3/send',
+				delete  : 'https://getpocket.com/v3/send',
 				auth    : 'https://getpocket.com/v3/oauth/authorize',
 				request : 'https://getpocket.com/v3/oauth/request'
 			};
@@ -2489,10 +2499,10 @@ const initService = {
 					'sort'         : 'newest',
 					'count'        : '1'
 				},
-				modify   : {
+				delete   : {
 					'consumer_key' : config.pocketConsumerKey,
 					'access_token' : options.pocket.accessToken.value,
-					'actions'      : info
+					'actions'      : [{'item_id': info, 'action': 'delete', 'time': Date.now()}]
 				},
 				auth     : {
 					'consumer_key' : config.pocketConsumerKey,
@@ -2505,12 +2515,12 @@ const initService = {
 			};
 
 			const onReady = {
-				add     : response => {
+				add    : response => {
 					parsePockets(response);
 					if (response.hasOwnProperty('item'))
 						pocketRequest('check', response.item.item_id);
 				},
-				get     : response => {
+				get    : response => {
 					parsePockets(response);
 				},
 				check  : response => {
@@ -2521,8 +2531,10 @@ const initService = {
 							send('sidebar', 'pocket', 'update', fillItem.pocket(item, response.list[info]));
 					}
 				},
-				send    : response => {
+				delete  : response => {
 					console.log(response);
+					deleteById('pocket', info);
+					send('sidebar', 'pocket', 'deleted', info);
 				},
 				auth    : response => {
 					if (response.hasOwnProperty('access_token')) {
@@ -2539,6 +2551,10 @@ const initService = {
 				},
 			};
 
+
+			console.log('request');
+			console.log(type);
+			console.log(info);
 			const xhttp  = new XMLHttpRequest();
 			xhttp.open('POST', links[type], true);
 			xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -2679,7 +2695,9 @@ const initService = {
 				plain     : 'plain mode',
 				type      : 'type mode',
 				domain    : 'domain mode',
-				reload    : 'Sync pocket account'
+				reload    : 'Sync pocket account',
+				edit      : 'edit',
+				delete    : 'delete'
 			};
 
 			messageHandler.pocket = {
@@ -2690,6 +2708,9 @@ const initService = {
 				add    : (message, sender, sendResponse) => {
 					pocketRequest('add', message.data);
 				},
+				delete : (message, sender, sendResponse) => {
+					pocketRequest('delete', message.data);
+				}
 			};
 
 			if (options.pocket.auth.value === true) {

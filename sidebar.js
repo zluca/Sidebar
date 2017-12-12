@@ -1038,7 +1038,7 @@ ${items[i].description}`;
 
 	pocket : data => {
 
-		console.log(data);
+		// console.log(data);
 
 		messageHandler.pocket = {
 			newItems         : data =>  {
@@ -1048,6 +1048,11 @@ ${items[i].description}`;
 				const pocket = getById('pocket', data.id);
 				if (pocket !== false)
 					updatePocket(pocket, data);
+			},
+			deleted          : data => {
+				const pocket = getById('pocket', data);
+				if (pocket !== false)
+					removeById('pocket', data);
 			}
 		};
 
@@ -1065,6 +1070,10 @@ ${items[i].description}`;
 		makeButton('logout', 'pocket', 'user');
 		loginContainer.appendChild(login);
 		loginContainer.appendChild(controls.pocket.user);
+		controls.pocket.item    = dce('div');
+		controls.pocket.item.classList.add('controls');
+		makeButton('edit', 'pocket', 'item');
+		makeButton('delete', 'pocket', 'item');
 		controls.pocket.bottom  = dce('div');
 		controls.pocket.bottom.classList.add('bottom-bar');
 		makeButton('new', 'pocket', 'bottom');
@@ -1076,6 +1085,14 @@ ${items[i].description}`;
 		block.pocket.appendChild(loginContainer);
 		block.pocket.appendChild(rootFolder);
 		block.pocket.appendChild(controls.pocket.bottom);
+		block.pocket.appendChild(controls.pocket.item);
+
+		block.pocket.addEventListener('mouseover', event => {
+			event.stopPropagation();
+			const target = event.target;
+			if (target.classList.contains('pocket'))
+				target.appendChild(controls.pocket.item);
+		});
 
 		if (data.auth === true)
 			block.pocket.classList.add('auth');
@@ -1879,6 +1896,21 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			send('background', 'pocket', 'reloadAll', '');
+		},
+		edit   : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = event.target.parentNode.parentNode;
+			send('background', 'pocket', 'edit', target.dataset.id);
+		},
+		delete : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = event.target.parentNode.parentNode.parentNode;
+			if (options.warnings.deletePocket === true)
+				send('background', 'dialog', 'pocketDelete', target.dataset.id);
+			else
+				send('background', 'pocket', 'delete', target.dataset.id);
 		}
 	}
 };

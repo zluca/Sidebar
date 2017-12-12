@@ -489,7 +489,25 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel', removeDialogWindow);
-		}
+		},
+
+		pocketDelete : _ => {
+
+			header.textContent = getI18n('dialogPocketDeleteHeader');
+
+			const alert = document.createElement('p');
+			let title = data.title;
+			if (title.length > 30)
+				title = title.substring(0, 28) + '...';
+			alert.textContent = getI18n('dialogPocketDeleteAlert', [title]);
+			main.appendChild(alert);
+
+			addButton('confirm', _ => {
+				send('background', 'pocket', 'delete', data.id);
+				removeDialogWindow();
+			});
+			addButton('cancel', removeDialogWindow);
+		},
 	};
 
 	fillWindow[type]();
