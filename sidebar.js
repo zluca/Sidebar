@@ -1076,7 +1076,6 @@ ${items[i].description}`;
 		loginContainer.appendChild(controls.pocket.user);
 		controls.pocket.item    = dce('div');
 		controls.pocket.item.classList.add('controls');
-		makeButton('edit', 'pocket', 'item');
 		makeButton('delete', 'pocket', 'item');
 		controls.pocket.bottom  = dce('div');
 		controls.pocket.bottom.classList.add('bottom-bar');
@@ -1919,12 +1918,6 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			send('background', 'pocket', 'reloadAll');
-		},
-		edit   : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const target = event.target.parentNode.parentNode;
-			send('background', 'pocket', 'edit', target.dataset.id);
 		},
 		delete : event => {
 			event.stopPropagation();
