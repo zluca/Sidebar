@@ -415,9 +415,9 @@ ul {
 .fixed .tree>#tabs-0>.folder {
 	border-left: none;
 }
-.folder.folded>.folder,
-.folder.folded>.item,
-.folder.folded>.item-button {
+.folder.folded>.folder-content>.folder,
+.folder.folded>.folder-content>.item,
+.folder.folded>.folder-content>.item-button {
 	display: none;
 }
 .folder-name {
