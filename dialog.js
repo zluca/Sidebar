@@ -324,7 +324,7 @@ function makeDialogWindow(data, warnings, colors) {
 			addAlert();
 			addWarning();
 			addButton('confirm', _ => {
-				send('background', 'tabs', 'removeByDomain', {'id': data.id});
+				send('background', 'tabs', 'domainFolderClose', {'id': data.id});
 				removeDialogWindow();
 			});
 			addButton('cancel');
@@ -336,7 +336,7 @@ function makeDialogWindow(data, warnings, colors) {
 			addAlert();
 			addWarning();
 			addButton('confirm', _ => {
-				send('background', 'bookmarks', 'deleteItem', {'id': data.id});
+				send('background', 'bookmarks', 'bookmarkDelete', {'id': data.id});
 				removeDialogWindow();
 			});
 			addButton('cancel');
@@ -361,7 +361,7 @@ function makeDialogWindow(data, warnings, colors) {
 			const inputTitle  = addInputRow.text('title');
 			const folder      = addSelectRow(getI18n('dialogBookmarkFoldersLabel'), data.folders);
 			addButton('save', _ => {
-				send('background', 'bookmarks', 'newBookmark', {'url': inputUrl.value, 'title': inputTitle.value, 'parentId': folder.value || "0"});
+				send('background', 'bookmarks', 'bookmarkNew', {'url': inputUrl.value, 'title': inputTitle.value, 'parentId': folder.value || "0"});
 				removeDialogWindow();
 			});
 			addButton('cancel');
@@ -414,15 +414,15 @@ function makeDialogWindow(data, warnings, colors) {
 			const inputDesc  = addInputRow.text('description');
 			addButton('save', _ => {
 				if (optionsChanged === true) {
-					send('background', 'rss', 'rssEditFeed', {'id': data.id, 'title': inputTitle.value, 'description': inputDesc.value});
+					send('background', 'rss', 'rssFeedEdit', {'id': data.id, 'title': inputTitle.value, 'description': inputDesc.value});
 				removeDialogWindow();
 				}
 			});
 			addButton('delete', _ => {
 				if (warnings.deleteRssFeed === true)
-					send('background', 'dialog', 'rssDeleteFeed', {'id': data.id, 'title': data.title});
+					send('background', 'dialog', 'rssFeedDelete', {'id': data.id, 'title': data.title});
 				else
-					send('background', 'rss', 'rssDeleteFeed', {'id': data.id});
+					send('background', 'rss', 'rssFeedDelete', {'id': data.id});
 
 			});
 			addButton('cancel');

@@ -1198,7 +1198,7 @@ const initService = {
 				removeById : (message, sender, sendResponse) => {
 					brauzer.tabs.remove(message.data.idList);
 				},
-				removeByDomain: (message, sender, sendResponse) => {
+				domainFolderClose: (message, sender, sendResponse) => {
 					const folder = getFolderById('tabs', message.data.id);
 					if (folder !== false) {
 						let toClose = [];
@@ -1465,19 +1465,19 @@ const initService = {
 
 		const initBookmarks = _ => {
 			messageHandler.bookmarks = {
-				deleteItem : (message, sender, sendResponse) => {
+				bookmarkDelete : (message, sender, sendResponse) => {
 					brauzer.bookmarks.remove(message.data.id);
 				},
-				deleteFolder : (message, sender, sendResponse) => {
+				bookmarkFolderDelete : (message, sender, sendResponse) => {
 					brauzer.bookmarks.removeTree(message.data.id);
 				},
-				newBookmark : (message, sender, sendResponse) => {
+				bookmarkNew : (message, sender, sendResponse) => {
 					brauzer.bookmarks.create(message.data);
 				},
-				editBookmark :(message, sender, sendResponse) => {
+				bookmarkEdit :(message, sender, sendResponse) => {
 					brauzer.bookmarks.update(message.data.id, message.data.changes);
 				},
-				editBookmarkFolder :(message, sender, sendResponse) => {
+				bookmarkFolderEdit :(message, sender, sendResponse) => {
 					brauzer.bookmarks.update(message.data.id, message.data.changes);
 				},
 				move : (message, sender, sendResponse) => {
@@ -2106,10 +2106,10 @@ const initService = {
 				rssNew : (message, sender, sendResponse) => {
 					createRssFeed(message.data.url, message.data.title);
 				},
-				rssDeleteItem : (message, sender, sendResponse) => {
+				rssItemDelete : (message, sender, sendResponse) => {
 					deleteRssItem(message.data.id);
 				},
-				rssEditFeed : (message, sender, sendResponse) => {
+				rssFeedEdit : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed !== false) {
 						feed.title = message.data.title;
@@ -2118,7 +2118,7 @@ const initService = {
 						send('sidebar', 'rss', 'rssFeedChanged', {'id': message.data.id, 'title': message.data.title, 'description': message.data.description});
 					}
 				},
-				rssDeleteFeed : (message, sender, sendResponse) => {
+				rssFeedDelete : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed !== false) {
 						rssSetReaded('feed', feed, 'kill');
