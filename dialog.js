@@ -59,34 +59,6 @@ function makeDialogWindow(data, warnings, colors) {
 		header.textContent = getI18n(`dialog${type}Header`);
 	};
 
-	// const addInputRow = (labelText, inputType, inputValue, inputPlaceholder = '', reverse = false) => {
-	// 	const label = document.createElement('label');
-	// 	label.textContent = labelText;
-	// 	main.appendChild(label);
-	// 	if (inputType === 'textarea') {
-	// 		const input = document.createElement('textarea');
-	// 		input.value = inputValue;
-	// 		main.appendChild(input);
-	// 		return input;
-	// 	}
-	// 	const input = document.createElement('input');
-	// 	input.type = inputType;
-	// 	if (inputType === 'text') input.placeholder = inputPlaceholder;
-	// 	if (inputType === 'checkbox') input.checked = inputValue;
-	// 	else input.value = inputValue;
-	// 	if (reverse !== false) {
-	// 		label.classList.add('reverse');
-	// 		label.addEventListener('click', event => {
-	// 			event.stopPropagation();
-	// 			label.previousElementSibling.click();
-	// 		});
-	// 		main.insertBefore(input, label);
-	// 	}
-	// 	else
-	// 		main.appendChild(input);
-	// 	return input;
-	// };
-
 	const addInputRow =  {
 		text : inputType => {
 			const label       = document.createElement('label');
