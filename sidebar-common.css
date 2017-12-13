@@ -342,8 +342,7 @@ ul {
 .folder-name.domain-undefined {
 	background-image: url(icons/default.svg);
 }
-.bookmarks .folder-name.domain-undefined,
-.history .folder-name.domain-undefined {
+.normal-view .folder-name{
 	background-image: none;
 	padding-left: 1.4rem;
 }
@@ -410,8 +409,8 @@ ul {
 .fixed .tree>#tabs-0>.folder>.item {
 	border-left: none;
 }
-.hover .folder>.folder,
-.fixed .folder>.folder {
+.hover .folder-content>.folder,
+.fixed .folder-content>.folder {
 	margin-left: .8rem;
 	border-left: .1rem dotted var(--border-color-active);
 }

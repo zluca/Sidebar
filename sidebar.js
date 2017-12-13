@@ -295,7 +295,7 @@ const initBlock = {
 						const folder = getFolderById('tabs', pid);
 						removeById('tabs', data.id);
 						if (folder !== false)
-							if (folder.children.length === 1)
+							if (!folder.lastChild.hasChildNodes())
 								removeFolderById('tabs', pid);
 					},
 					tree   : tab => {
@@ -339,6 +339,8 @@ const initBlock = {
 
 		rootFolder                = dce('div');
 		rootFolder.id             = 'tabs-0';
+		const rootContent         = dce('div');
+		rootFolder.appendChild(rootContent);
 		controls.tabs.item        = dce('div');
 		controls.tabs.item.classList.add('controls');
 		makeButton('reload', 'tabs', 'item');
@@ -385,7 +387,7 @@ const initBlock = {
 
 			const postProcess = {
 				plain : _ => {
-					folder.appendChild(tab);
+					folder.lastChild.appendChild(tab);
 				},
 				domain : i => {
 					if (pid !== tabs[i].pid) {
@@ -393,7 +395,7 @@ const initBlock = {
 						folder = getFolderById('tabs', pid);
 					}
 					if (folder !== false)
-						folder.appendChild(tab);
+						folder.lastChild.appendChild(tab);
 				},
 				tree  : i => {
 					treeFolders[i] = {
@@ -431,7 +433,7 @@ const initBlock = {
 					if (folder !== false)
 						folder.insertBefore(getById('tabs', tabs[i].id), folder.firstChild);
 					else
-						rootFolder.appendChild(getById('tabs', tabs[i].id));
+						rootFolder.lastChild.appendChild(getById('tabs', tabs[i].id));
 				}
 			}
 		};
@@ -441,9 +443,9 @@ const initBlock = {
 			if (tab !== false) {
 				if (options.misc.tabsMode === 'plain')
 					if (info.toIndex < info.fromIndex)
-						rootFolder.insertBefore(tab, rootFolder.children[info.toIndex]);
+						rootFolder.lastChild.insertBefore(tab, rootFolder.children[info.toIndex]);
 					else
-						rootFolder.insertBefore(tab, rootFolder.children[info.toIndex + 1]);
+						rootFolder.lastChild.insertBefore(tab, rootFolder.children[info.toIndex + 1]);
 				if (info.hasOwnProperty('pinned'))
 					tab.classList.add('pinned');
 				else
@@ -494,6 +496,8 @@ const initBlock = {
 		block.bookmarks.classList.add(options.misc.bookmarksMode);
 		rootFolder                   = dce('div');
 		rootFolder.id                = 'bookmarks-0';
+		const rootContent            = dce('div');
+		rootFolder.appendChild(rootContent);
 		const bookmarksSearchResults = dce('div');
 		bookmarksSearchResults.id    = 'bookmarks-search-results';
 		bookmarksSearchResults.classList.add('search-results');
@@ -597,7 +601,7 @@ const initBlock = {
 			if (parent !== item.parentNode)
 				injectBook();
 			else {
-				rootFolder.appendChild(item);
+				rootFolder.lastChild.appendChild(item);
 				injectBook();
 			}
 		};
@@ -645,6 +649,8 @@ const initBlock = {
 
 		rootFolder                 = dce('div');
 		rootFolder.id              = 'history-0';
+		const rootContent          = dce('div');
+		rootFolder.appendChild(rootContent);
 		const historySearchResults = dce('div');
 		historySearchResults.id    = 'history-search-results';
 		historySearchResults.classList.add('search-results');
@@ -696,17 +702,17 @@ const initBlock = {
 			let folder = null;
 			const insert = {
 				first : item => {
-					if (folder.children[1])
-						folder.insertBefore(item, folder.children[1]);
+					if (folder.lastChild.hasChildNodes())
+						folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 					else
-						folder.appendChild(item);
+						folder.lastChild.appendChild(item);
 				},
 				search : item => {
 					historySearchResults.appendChild(item);
 				},
 				last : item => {
 					status.historyInfo.lastNum++;
-					folder.appendChild(item);
+					folder.lastChild.appendChild(item);
 				}
 			};
 			for (let i = 0, l = items.length; i < l; i++) {
@@ -915,6 +921,8 @@ const initBlock = {
 
 		rootFolder              = dce('div');
 		rootFolder.id           = 'rss-0';
+		const rootContent       = dce('div');
+		rootFolder.appendChild(rootContent);
 
 		controls.rss.item       = dce('div');
 		controls.rss.item.classList.add('controls');
@@ -961,30 +969,30 @@ const initBlock = {
 			const insert = {
 				domainfirst : (item, data) => {
 					pidCheck(data.pid);
-					folder.insertBefore(item, folder.firstChild.nextElementSibling);
+					folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 				},
 				plainfirst  : (item, data) => {
-					folder.insertBefore(item, folder.firstChild);
+					folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 				},
 				domainlast  : (item, data) => {
 					pidCheck(data.pid);
-					folder.appendChild(item);
+					folder.lastChild.appendChild(item);
 				},
 				plainlast   : (item, data) => {
-					folder.appendChild(item);
+					folder.lastChild.appendChild(item);
 				},
 				domaindate  : (item, data) => {
 					pidCheck(data.pid);
-					if (folder.children.length < 2)
-						folder.appendChild(item);
+					if (folder.lastChild.hasChildNodes())
+						folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 					else
-						folder.insertBefore(item, folder.firstChild.nextElementSibling);
+						folder.lastChild.appendChild(item);
 				},
 				plaindate   : (item, data) => {
 					if (status.rss.length < 2)
-						folder.appendChild(item);
+						folder.lastChild.appendChild(item);
 					else
-						folder.insertBefore(item, folder.children[data.index]);
+						folder.lastChild.insertBefore(item, folder.lastChild.children[data.index]);
 				}
 			};
 
@@ -1052,6 +1060,8 @@ ${items[i].description}`;
 
 		rootFolder              = dce('div');
 		rootFolder.id           = 'pocket-0';
+		const rootContent       = dce('div');
+		rootFolder.appendChild(rootContent);
 
 		const loginContainer    = dce('div');
 		const login             = makeItemButton('login', 'pocket');
@@ -1102,24 +1112,16 @@ ${items[i].description}`;
 
 		insertItems.pocket = (items, position = 'last') => {
 			let pid    = 0;
-			let parent = rootFolder;
+			let folder = rootFolder;
 			const insert = {
 				last  : pocket => {
-					parent.appendChild(pocket);
+					folder.lastChild.appendChild(pocket);
 				},
 				first : pocket => {
-					if (options.pocketMode === 'plain') {
-						if (parent.children.length > 0)
-							parent.insertBefore(pocket, parent.firstChild);
-						else
-							parent.appendChild(pocket);
-					}
-					else {
-						if (parent.children.length > 1)
-							parent.insertBefore(pocket, parent.firstChild.nextElementSibling);
-						else
-							parent.appendChild(pocket);
-					}
+					if (folder.lastChild.hasChildNodes())
+						folder.lastChild.insertBefore(pocket, folder.lastChild.firstChild);
+					else
+						folder.lastChild.appendChild(pocket);
 				}
 			};
 			for (let i = 0, l = items.length; i < l; i++) {
@@ -1128,7 +1130,7 @@ ${items[i].description}`;
 				if (options.misc.pocketMode !== 'plain') {
 					if (items[i][options.misc.pocketMode] !== pid) {
 						pid    = items[i][options.misc.pocketMode];
-						parent = getFolderById('pocket', items[i][options.misc.pocketMode]);
+						folder = getFolderById('pocket', items[i][options.misc.pocketMode]);
 					}
 				}
 				insert[position](pocket);
@@ -1346,20 +1348,20 @@ const setDownloadStatus = {
 	}
 };
 
-function insertFolders(mode, items, noTitle = false) {
+function insertFolders(mode, items, fake = false) {
 	let folders = [];
 	for (let i = 0, l = items.length; i < l; i++) {
-		if (getFolderById(mode, items[i].id))
+		if (getFolderById(mode, items[i].id) !== false)
 			continue;
 		const index = data[`${mode}Folders`].push(dce('ul')) - 1;
 		data[`${mode}FoldersId`].push(items[i].id);
 		folders.push({'index': index, 'pid': items[i].pid});
 		let classList = 'folder';
 		classList += ` ${items[i].view}-view`;
-		classList += items[i].folded ? ' folded' : '';
+		classList += items[i].folded === true ? ' folded' : '';
 		data[`${mode}Folders`][index].classList = classList;
 		data[`${mode}Folders`][index].id        = `${mode}-folder-${items[i].id}`;
-		if (!noTitle) {
+		if (fake === false) {
 			const title       = dce('div');
 			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
 			title.title       = items[i].description || items[i].title;
@@ -1374,16 +1376,19 @@ function insertFolders(mode, items, noTitle = false) {
 				send('background', 'set', 'fold', {'mode': mode, 'id': items[i].id, 'folded': folded, 'method': folded ? 'add' : 'remove'});
 			});
 		}
+		const content = dce('div');
+		content.classList.add('folder-content');
+		data[`${mode}Folders`][index].appendChild(content);
 	}
 	for (let i = 0, l = folders.length; i < l; i++) {
 		if (folders[i].pid === 0)
-			rootFolder.appendChild(data[`${mode}Folders`][folders[i].index]);
+			rootFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
 		else {
 			const parentFolder = getFolderById(mode, folders[i].pid);
 			if (parentFolder !== false)
-				parentFolder.appendChild(data[`${mode}Folders`][folders[i].index]);
+				parentFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
 			else
-				rootFolder.appendChild(data[`${mode}Folders`][folders[i].index]);
+				rootFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
 		}
 	}
 }
@@ -1421,8 +1426,8 @@ const updateItem = {};
 function setView(mode, view, items, folders) {
 	options.misc[`${mode}Mode`] = view;
 	block[mode].classList       = `block ${view}`;
-	while (rootFolder.firstChild)
-		rootFolder.removeChild(rootFolder.firstChild);
+	while (rootFolder.lastChild.firstChild)
+		rootFolder.lastChild.removeChild(rootFolder.lastChild.firstChild);
 	clearData(mode);
 	if (view !== 'plain')
 		insertFolders(mode, folders, view === 'tree' ? true : false);
@@ -1672,18 +1677,18 @@ const buttonsEvents = {
 					finilize();
 					status.moving = false;
 					if (folder !== item.parentNode)
-						folder.insertBefore(item, folder.children[index]);
+						folder.lastChild.insertBefore(item, folder.children[index]);
 					else if (index >= folder.children.length - 1)
-						folder.appendChild(item);
+						folder.lastChild.appendChild(item);
 					else {
 						let newindex  = -1;
-						for (let i = 0, l = folder.children.length; i < l; i++)
-							if (folder.children[i] === item) {
+						for (let i = 0, l = folder.lastChild.children.length; i < l; i++)
+							if (folder.lastChild.children[i] === item) {
 								newindex = i;
 								break;
 							}
 						const k = newindex < index ? 1 : 0;
-						folder.insertBefore(item, folder.children[index + k]);
+						folder.lastChild.insertBefore(item, folder.lastChild.children[index + k]);
 					}
 				}
 			};
@@ -1717,8 +1722,8 @@ const buttonsEvents = {
 			const folder  = item.parentNode;
 			const id      = item.dataset.id;
 			let   index   = -1;
-			for (let i = 0, l = folder.children.length; i < l; i++)
-				if (folder.children[i] === item) {
+			for (let i = 0, l = folder.lastChild.children.length; i < l; i++)
+				if (folder.lastChild.children[i] === item) {
 					index = i;
 					break;
 				}
