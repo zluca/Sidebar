@@ -55,32 +55,90 @@ function makeDialogWindow(data, warnings, colors) {
 	});
 	dialog.classList.add(type);
 
-	const addInputRow = (labelText, inputType, inputValue, inputPlaceholder = '', reverse = false) => {
-		const label = document.createElement('label');
-		label.textContent = labelText;
-		main.appendChild(label);
-		if (inputType === 'textarea') {
-			const input = document.createElement('textarea');
-			input.value = inputValue;
+	const setHeader = _ => {
+		header.textContent = getI18n(`dialog${type}Header`);
+	};
+
+	// const addInputRow = (labelText, inputType, inputValue, inputPlaceholder = '', reverse = false) => {
+	// 	const label = document.createElement('label');
+	// 	label.textContent = labelText;
+	// 	main.appendChild(label);
+	// 	if (inputType === 'textarea') {
+	// 		const input = document.createElement('textarea');
+	// 		input.value = inputValue;
+	// 		main.appendChild(input);
+	// 		return input;
+	// 	}
+	// 	const input = document.createElement('input');
+	// 	input.type = inputType;
+	// 	if (inputType === 'text') input.placeholder = inputPlaceholder;
+	// 	if (inputType === 'checkbox') input.checked = inputValue;
+	// 	else input.value = inputValue;
+	// 	if (reverse !== false) {
+	// 		label.classList.add('reverse');
+	// 		label.addEventListener('click', event => {
+	// 			event.stopPropagation();
+	// 			label.previousElementSibling.click();
+	// 		});
+	// 		main.insertBefore(input, label);
+	// 	}
+	// 	else
+	// 		main.appendChild(input);
+	// 	return input;
+	// };
+
+	const addInputRow =  {
+		text : inputType => {
+			const label       = document.createElement('label');
+			label.textContent = getI18n(`dialog${inputType}Label`);
+			const input       = document.createElement('input');
+			input.type        = 'text';
+			input.placeholder = getI18n(`dialog${type}${inputType}Placeholder`);
+			input.value       = data.hasOwnProperty(inputType) ? data[inputType] : '';
+			main.appendChild(label);
 			main.appendChild(input);
 			return input;
-		}
-		const input = document.createElement('input');
-		input.type = inputType;
-		if (inputType === 'text') input.placeholder = inputPlaceholder;
-		if (inputType === 'checkbox') input.checked = inputValue;
-		else input.value = inputValue;
-		if (reverse !== false) {
-			label.classList.add('reverse');
-			label.addEventListener('click', event => {
-				event.stopPropagation();
-				label.previousElementSibling.click();
-			});
-			main.insertBefore(input, label);
-		}
-		else
+		},
+		textarea : inputType => {
+			const label       = document.createElement('label');
+			label.textContent = getI18n(`dialog${inputType}Label`);
+			const input       = document.createElement('textarea');
+			input.value       = data.hasOwnProperty(inputType) ? data[inputType] : '';
+			main.appendChild(label);
 			main.appendChild(input);
-		return input;
+			return input;
+		},
+		color : _ => {
+			const label       = document.createElement('label');
+			label.textContent = getI18n(`dialogColorLabel`);
+			const input       = document.createElement('input');
+			input.type        = 'color';
+			input.value       = data.hasOwnProperty('color') ? data.color : '#006688';
+			main.appendChild(label);
+			main.appendChild(input);
+			return input;
+		},
+		checkbox : (inputType, reverse = false) => {
+			const label       = document.createElement('label');
+			label.textContent = getI18n(`dialog${inputType}Label`);
+			const input       = document.createElement('input');
+			input.type        = 'checkbox';
+			input.checked     = data[inputType];
+			if (reverse === false) {
+				main.appendChild(label);
+				main.appendChild(input);
+			}
+			else {
+				label.classList.add('reverse');
+				label.addEventListener('click', event => {
+					event.stopPropagation();
+					label.previousElementSibling.click();
+				});
+				main.appendChild(input);
+				main.appendChild(label);
+			}
+			return input;
+		},
 	};
 
 	const addSelectRow = (labelText, options) => {
@@ -98,13 +156,13 @@ function makeDialogWindow(data, warnings, colors) {
 		return select;
 	};
 
-	const addWarning = option => {
+	const addWarning = _ => {
 		const input       = document.createElement('input');
 		input.type        = 'checkbox';
-		input.checked     = warnings[option];
+		input.checked     = warnings[type];
 		input.addEventListener('click', event => {
 			event.stopPropagation();
-			send('background', 'options', 'handler', {'section': 'warnings', 'option': option, 'value': input.checked});
+			send('background', 'options', 'handler', {'section': 'warnings', 'option': type, 'value': input.checked});
 		});
 		warning.appendChild(input);
 		const label       = document.createElement('label');
@@ -151,9 +209,9 @@ function makeDialogWindow(data, warnings, colors) {
 		return completer;
 	};
 
-	const addAlert = text => {
-		const p = document.createElement('p');
-		p.textContent = text;
+	const addAlert = _ => {
+		const p       = document.createElement('p');
+		p.textContent = getI18n(`dialog${type}Alert`, [data.title]);
 		main.appendChild(p);
 	};
 
@@ -211,7 +269,7 @@ function makeDialogWindow(data, warnings, colors) {
 			cancelButton.click();
 		else if (event.key === 'Enter') {
 			const focused = document.querySelector(':focus');
-			if (focused !== undefined)
+			if (focused !== null)
 				focused.blur();
 			okButton.click();
 		}
@@ -223,26 +281,20 @@ function makeDialogWindow(data, warnings, colors) {
 
 			let completerTimer;
 			let lastValue;
-			let inputText;
-
-			header.textContent = getI18n('dialogSiteNewHeader');
-
-			const inputUrl     = addInputRow(
-				getI18n('dialogEditSiteUrlLabel'), 'text', '', getI18n('dialogEditSiteUrlPlaceholder'));
+			setHeader();
+			const inputUrl   = addInputRow.text('url');
 			addAutoCompleter();
-			const inputColor   = addInputRow(getI18n('dialogEditSiteColorLabel'), 'color', '#006688');
-
+			const inputColor = addInputRow.color();
 			inputUrl.addEventListener('keyup', function() {
-					if (inputUrl.value.length > 2) {
-						if (lastValue !== inputUrl.value) {
-							lastValue = inputUrl.value;
-							send('background', 'history', 'search', {request: inputUrl.value, maxResults: 10, needResponse: true}, response => showCompleter(response));
-						}
+				if (inputUrl.value.length > 2) {
+					if (lastValue !== inputUrl.value) {
+						lastValue = inputUrl.value;
+						send('background', 'history', 'search', {request: inputUrl.value, maxResults: 10, needResponse: true}, response => showCompleter(response));
 					}
-					else
-						hideCompleter();
+				}
+				else
+					hideCompleter();
 			});
-
 			addButton('save', _ => {
 				if (optionsChanged === true) {
 					const url   = inputUrl.value;
@@ -258,19 +310,15 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('cancel');
-
 			inputUrl.focus();
 		},
 
 		siteChange : _ => {
 
-			header.textContent = getI18n('dialogEditSiteHeader');
-
-			const inputUrl     = addInputRow(
-				getI18n('dialogEditSiteUrlLabel'), 'text', data.url, getI18n('dialogEditSiteUrlPlaceholder'));
-			const inputText  = addInputRow(getI18n('dialogEditSiteTextLabel'), 'textarea', data.text, '');
-			const inputColor = addInputRow(getI18n('dialogEditSiteColorLabel'), 'color', data.color);
-
+			setHeader();
+			const inputUrl   = addInputRow.text('url');
+			const inputText  = addInputRow.textarea('text');
+			const inputColor = addInputRow.color();
 			addButton('save', _ => {
 				if (optionsChanged === true)
 					send('background', 'startpage', 'change', {'index': data.index, 'url': inputUrl.value, 'color': inputColor.value, 'text': inputText.value});
@@ -283,120 +331,98 @@ function makeDialogWindow(data, warnings, colors) {
 				else
 					send('background', 'startpage', 'delete', {'index': data.index});
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
 		siteDelete : _ => {
 
-			header.textContent = getI18n('dialogSiteDeleteHeader');
-
-			addAlert(getI18n('dialogSiteDeleteText', data.title));
-
-			const warningCheckbox = addWarning('deleteSite');
+			setHeader();
+			addAlert();
+			addWarning();
 			addButton('confirm', _ => {
 				send('background', 'startpage', 'delete', {'index': data.index});
-				if (warningCheckbox.checked === false)
-					send('background', 'options', 'warnings', {'option': 'deleteSite', 'value': false});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
-		closeDomainFolder : _ => {
+		domainFolderClose : _ => {
 
-			header.textContent = getI18n('dialogTabsCloseDomainHeader');
-
-			addAlert(getI18n('dialogTabsCloseDomainAlertText', [data.title]));
-
-			const warningCheckbox = addWarning('closeDomainFolder');
+			setHeader();
+			addAlert();
+			addWarning();
 			addButton('confirm', _ => {
 				send('background', 'tabs', 'removeByDomain', {'id': data.id});
-				if (warningCheckbox.checked === false)
-					send('background', 'options', 'warnings', {'option': 'closeDomainFolder', 'value': false});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
 		bookmarkDelete : _ => {
 
-			header.textContent = getI18n('dialogBookmarkDeleteHeader');
-
-			addAlert(getI18n('dialogBookmarkDeleteAlertText', [data.title]));
-
-			const warningCheckbox = addWarning('deleteBookmark');
+			setHeader();
+			addAlert();
+			addWarning();
 			addButton('confirm', _ => {
 				send('background', 'bookmarks', 'deleteItem', {'id': data.id});
-				if (warningCheckbox.checked === false)
-					send('background', 'options', 'warnings', {'option': 'deleteBookmark', 'value': false});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
 		bookmarkFolderDelete : _ => {
 
-			header.textContent = getI18n('dialogBookmarkFolderDeleteHeader');
-
-			addAlert(getI18n('dialogBookmarkFolderDeleteAlertText', [data.title]));
-
-			const warningCheckbox = addWarning('deleteBookmarkFolder');
+			setHeader();
+			addAlert();
+			addWarning();
 			addButton('confirm', _ => {
-				send('background', 'bookmarks', 'deleteFolder', {'id': data.id});
+				send('background', 'bookmarks', 'bookmarksFolderDelete', {'id': data.id});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
-		newBookmark : _ => {
+		bookmarkNew : _ => {
 
-			header.textContent = getI18n('dialogNewBookmarkHeader');
-
-			const title = addInputRow(getI18n('dialogBookmarkTitleLabel'), 'text', data.title || getI18n('dialogBookmarkDefaultTitle'));
-			const url = addInputRow(getI18n('dialogBookmarkUrlLabel'), 'text', data.url);
-			const folder = addSelectRow(getI18n('dialogBookmarkFoldersLabel'), data.folders);
-
+			setHeader();
+			const inputUrl    = addInputRow.text('url');
+			const inputTitle  = addInputRow.text('title');
+			const folder      = addSelectRow(getI18n('dialogBookmarkFoldersLabel'), data.folders);
 			addButton('save', _ => {
-				send('background', 'bookmarks', 'newBookmark', {'url': url.value, 'title': title.value, 'parentId': folder.value || "0"});
+				send('background', 'bookmarks', 'newBookmark', {'url': inputUrl.value, 'title': inputTitle.value, 'parentId': folder.value || "0"});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
-		editBookmark : _ => {
+		bookmarkEdit : _ => {
 
-			header.textContent = getI18n('dialogEditBookmarkHeader');
-
-			const title = addInputRow(getI18n('dialogBookmarkTitleLabel'), 'text', data.title || getI18n('dialogBookmarkDefaultTitle'));
-			const url = addInputRow(getI18n('dialogBookmarkUrlLabel'), 'text', data.url);
-
+			setHeader();
+			const inputTitle  = addInputRow.text('title');
+			const inputUrl    = addInputRow.text('url');
 			addButton('save', _ => {
-				send('background', 'bookmarks', 'editBookmark', {'id': data.id, 'changes': {'url': url.value, 'title': title.value}});
+				send('background', 'bookmarks', 'bookmarkEdit', {'id': data.id, 'changes': {'url': inputUrl.value, 'title': inputTitle.value}});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
-		editBookmarkFolder : _ => {
+		bookmarkFolderEdit : _ => {
 
-			header.textContent = getI18n('dialogEditBookmarkFolderHeader');
-
-			const title = addInputRow(getI18n('dialogBookmarkTitleLabel'), 'text', data.title || getI18n('dialogBookmarkDefaultTitle'));
-
+			setHeader();
+			const inputTitle  = addInputRow.text('title');
 			addButton('save', _ => {
-				send('background', 'bookmarks', 'editBookmarkFolder', {'id': data.id, 'changes' : {'title': title.value}});
+				send('background', 'bookmarks', 'bookmarkFolderEdit', {'id': data.id, 'changes' : {'title': inputTitle.value}});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
-		rssAdd : _ => {
+		rssNew : _ => {
 
-			header.textContent = getI18n('dialogRSSNewHeader');
-
-			const inputTitle = addInputRow(getI18n('dialogRSSNewTitleLabel'), 'text', data.hasOwnProperty('title') ? data.title : '', getI18n('dialogRSSNewTitlePlaceholder'));
-			const inputUrl = addInputRow(getI18n('dialogRSSNewUrlLabel'), 'text', data.hasOwnProperty('url') ? data.url : '', getI18n('dialogRSSNewUrlPlaceholder'));
-
+			setHeader();
+			const inputTitle  = addInputRow.text('title');
+			const inputUrl    = addInputRow.text('url');
 			addButton('save', _ => {
 				if (optionsChanged === true || data.hasOwnProperty('url')) {
 					const url = inputUrl.value;
@@ -405,18 +431,15 @@ function makeDialogWindow(data, warnings, colors) {
 				}
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
-
+			addButton('cancel');
 			inputUrl.focus();
 		},
 
-		rssEditFeed : _ => {
+		rssFeedEdit : _ => {
 
-			header.textContent = getI18n('dialogRSSEditFeedHeader');
-
-			const inputTitle = addInputRow(getI18n('dialogRSSEditFeedTitleLabel'), 'text', data.title, '');
-			const inputDesc  = addInputRow(getI18n('dialogRSSEditFeedDescriptionLabel'), 'text', data.description, '');
-
+			setHeader();
+			const inputTitle = addInputRow.text('title');
+			const inputDesc  = addInputRow.text('description');
 			addButton('save', _ => {
 				if (optionsChanged === true) {
 					send('background', 'rss', 'rssEditFeed', {'id': data.id, 'title': inputTitle.value, 'description': inputDesc.value});
@@ -430,70 +453,62 @@ function makeDialogWindow(data, warnings, colors) {
 					send('background', 'rss', 'rssDeleteFeed', {'id': data.id});
 
 			});
-			addButton('cancel', removeDialogWindow);
-
+			addButton('cancel');
 			inputTitle.focus();
 		},
 
-		rssDeleteFeed : _ => {
+		rssFeedDelete : _ => {
 
-			header.textContent = getI18n('dialogRSSFeedDeleteHeader');
-
-			addAlert(getI18n('dialogRSSFeedDeleteAlertText', [data.title]));
-
-			const warningCheckbox = addWarning('deleteRssFeed');
+			setHeader();
+			addAlert();
+			addWarning();
 			addButton('confirm', _ => {
-				send('background', 'rss', 'rssDeleteFeed', {'id': data.id});
+				send('background', 'rss', 'rssFeedDelete', {'id': data.id});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
 		downloadDelete : _ => {
 
-			header.textContent = getI18n('dialogDownloadDeleteHeader');
-
+			setHeader();
 			const alert = document.createElement('p');
 			let title = data.title;
 			if (title.length > 30)
 				title = title.substring(0, 28) + '...';
 			alert.textContent = getI18n('dialogDownloadDeleteAlert', [title]);
 			main.appendChild(alert);
-
-			const deleteFromHistory = addInputRow(getI18n('dialogDownloadDeleteFromHistoryLabel'), 'checkbox', true, '', true);
-			const deleteFile = addInputRow(getI18n('dialogDownloadDeleteFileLabel'), 'checkbox', false, '', true);
-
+			const deleteFromHistory = addInputRow.checkbox(true, true);
+			const deleteFile        = addInputRow.checkbox(false, true);
 			addButton('confirm', _ => {
 				if (deleteFile.checked === true)
 					send('background', 'downloads', 'removeFile', {'id': data.id});
-				if (deleteFromHistory.checked)
+				if (deleteFromHistory.checked === true)
 					send('background', 'downloads', 'erase', {'id': data.id});
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
-		pocketAdd : _ => {
-			header.textContent = getI18n('dialogPocketAddHeader');
+		pocketNew : _ => {
 
-			const inputTitle   = addInputRow(getI18n('dialogPocketAddTitleLabel'), 'text', data.hasOwnProperty('title') ? data.title : '', getI18n('dialogPocketAddTitlePlaceholder'));
-			const inputUrl     = addInputRow(getI18n('dialogPocketAddUrlLabel'), 'text', data.hasOwnProperty('url') ? data.url : '', getI18n('dialogPocketAddUrlPlaceholder'));
-
+			setHeader();
+			const inputUrl   = addInputRow.text('url');
+			const inputTitle = addInputRow.text('title');
 			addButton('save', _ => {
 				if (optionsChanged === true || data.hasOwnProperty('url')) {
 					const url = inputUrl.value;
-					console.log(url);
 					if (url !== '')
 						send('background', 'pocket', 'add', {'url': url, 'title': inputTitle.value});
 				}
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 
 		pocketDelete : _ => {
 
-			header.textContent = getI18n('dialogPocketDeleteHeader');
+			setHeader();
 
 			const alert = document.createElement('p');
 			let title = data.title;
@@ -506,7 +521,7 @@ function makeDialogWindow(data, warnings, colors) {
 				send('background', 'pocket', 'delete', data.id);
 				removeDialogWindow();
 			});
-			addButton('cancel', removeDialogWindow);
+			addButton('cancel');
 		},
 	};
 

@@ -1628,8 +1628,8 @@ const buttonsEvents = {
 		closeAll: event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (options.warnings.closeDomainFolder)
-				send('background', 'dialog', 'closeDomainFolder', {'id': controls.tabs.item.parentNode.dataset.id});
+			if (options.warnings.domainFolderClose === true)
+				send('background', 'dialog', 'domainFolderClose', {'id': controls.tabs.item.parentNode.dataset.id});
 			else
 				send('background', 'tabs', 'removeByDomain', {'id': controls.tabs.item.parentNode.dataset.id});
 		},
@@ -1756,16 +1756,16 @@ const buttonsEvents = {
 		bookmarkThis : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'dialog', 'newBookmark', '');
+			send('background', 'dialog', 'bookmarkNew', '');
 		},
 		edit : event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const target = controls.bookmarks.item.parentNode;
 			if (target.nodeName === 'DIV')
-				send('background', 'dialog', 'editBookmarkFolder', {'id': target.dataset.id});
+				send('background', 'dialog', 'bookmarkFolderEdit', {'id': target.dataset.id});
 			else
-				send('background', 'dialog', 'editBookmark', {'id': target.dataset.id});
+				send('background', 'dialog', 'bookmarkEdit', {'id': target.dataset.id});
 		}
 	},
 	history   : {
@@ -1806,7 +1806,7 @@ const buttonsEvents = {
 		new : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'dialog', 'rssAdd', {});
+			send('background', 'dialog', 'rssNew', {});
 		},
 		hideReadedAll: event => {
 			event.stopPropagation();
@@ -1822,7 +1822,7 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			const folderTitle = controls.rss.item.parentNode;
-			send('background', 'dialog', 'rssEditFeed', {'id': folderTitle.dataset.id, 'title': folderTitle.textContent.trim(), 'description': folderTitle.title});
+			send('background', 'dialog', 'rssFeedEdit', {'id': folderTitle.dataset.id, 'title': folderTitle.textContent.trim(), 'description': folderTitle.title});
 		},
 		reload: event => {
 			event.stopPropagation();
@@ -1869,7 +1869,7 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			const item = controls.rss.item.parentNode;
-			send('background', 'dialog', 'rssDeleteItem', {'id': item.dataset.id, 'title': item.textContent});
+			send('background', 'dialog', 'rssItemDelete', {'id': item.dataset.id, 'title': item.textContent});
 		},
 		plain: event => {
 			event.stopPropagation();
@@ -1898,7 +1898,7 @@ const buttonsEvents = {
 		new : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'dialog', 'pocketAdd');
+			send('background', 'dialog', 'pocketNew');
 		},
 		plain : event => {
 			event.stopPropagation();

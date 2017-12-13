@@ -134,7 +134,7 @@ const messageHandler = {
 			let rssUrl    = '';
 			let rssTitle  = '';
 			const rssLink = document.querySelector('link[type="application/rss+xml"]');
-			if (rssLink !== undefined) {
+			if (rssLink !== null) {
 				rssUrl   = rssLink.href;
 				rssTitle = document.title;
 			}

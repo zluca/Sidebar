@@ -342,23 +342,23 @@
 		"message"       : "Предпреждать меня перед...",
 		"description"   : ""
 	},
-	"optWarningsDeleteBookmarkLabel" : {
+	"optWarningsBookmarkDeleteLabel" : {
 		"message"       : "Удалением закладки",
 		"description"   : ""
 	},
-	"optWarningsDeleteBookmarkFolderLabel" : {
+	"optWarningsBookmarkFolderDeleteLabel" : {
 		"message"       : "Удалением папки закладок",
 		"description"   : ""
 	},
-	"optWarningsDeleteSiteLabel" : {
+	"optWarningsSiteDeleteLabel" : {
 		"message"       : "Удалением сайта с начальной страницы",
 		"description"   : ""
 	},
-	"optWarningsDeleteRssFeedLabel" : {
+	"optWarningsRssFeedDeleteLabel" : {
 		"message"       : "Удалением RSS канала",
 		"description"   : ""
 	},
-	"optWarningsCloseDomainFolderLabel" : {
+	"optWarningsDomainFolderCloseLabel" : {
 		"message"       : "Закрытием множества вкладок",
 		"description"   : ""
 	},
@@ -587,35 +587,44 @@
 		"description"   : ""
 	},
 
-	"dialogSiteNewHeader" : {
-		"message"       : "Добавить сайт",
-		"description"   : ""
-	},
-	"dialogEditSiteHeader" : {
-		"message"       : "Изменить настройки сайта",
-		"description"   : ""
-	},
-	"dialogEditSiteUrlLabel" : {
+	"dialogUrlLabel"    : {
 		"message"       : "Адрес:",
 		"description"   : ""
 	},
-	"dialogEditSiteUrlPlaceholder" : {
-		"message"       : "Введите адрес сайта",
+	"dialogTitleLabel"    : {
+		"message"       : "Имя:",
 		"description"   : ""
 	},
-	"dialogEditSiteTextLabel" : {
+	"dialogTextLabel"    : {
 		"message"       : "Текст:",
 		"description"   : ""
 	},
-	"dialogEditSiteColorLabel" : {
+	"dialogColorLabel"    : {
 		"message"       : "Цвет:",
+		"description"   : ""
+	},
+
+	"dialogSiteCreateHeader" : {
+		"message"       : "Добавить сайт",
+		"description"   : ""
+	},
+	"dialogSiteCreateUrlPlaceholder" : {
+		"message"       : "Введите адрес сайта",
+		"description"   : ""
+	},
+	"dialogSiteChangeHeader" : {
+		"message"       : "Изменить настройки сайта",
+		"description"   : ""
+	},
+	"dialogSiteChangeUrlPlaceholder" : {
+		"message"       : "Введите адрес сайта",
 		"description"   : ""
 	},
 	"dialogSiteDeleteHeader" : {
 		"message"       : "Удаление сайта",
 		"description"   : ""
 	},
-	"dialogSiteDeleteText" : {
+	"dialogSiteDeleteAlert" : {
 		"message"       : "Удалить \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
@@ -624,11 +633,11 @@
 			}
 		}
 	},
-	"dialogTabsCloseDomainHeader" : {
+	"dialogDomainFolderCloseHeader" : {
 		"message"       : "Закрыть домен",
 		"description"   : ""
 	},
-	"dialogTabsCloseDomainAlertText" : {
+	"dialogDomainFolderCloseAlert" : {
 		"message"       : "Закрыть все вкладки в домене \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
@@ -641,7 +650,7 @@
 		"message"       : "Удаление закладки",
 		"description"   : ""
 	},
-	"dialogBookmarkDeleteAlertText" : {
+	"dialogBookmarkDeleteAlert" : {
 		"message"       : "Удалить закладку \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
@@ -654,7 +663,7 @@
 		"message"       : "Удаление папки",
 		"description"   : ""
 	},
-	"dialogBookmarkFolderDeleteAlertText" : {
+	"dialogBookmarkFolderDeleteAlert" : {
 		"message"       : "Удалить папку \"$name$\" ? Все вложенные вкладки также будут удалены.",
 		"description"   : "",
 		"placeholders" : {
@@ -667,28 +676,16 @@
 		"message"       : "Новая RSS подписка",
 		"description"   : ""
 	},
-	"dialogRSSNewTitleLabel" : {
-		"message"       : "Имя:",
-		"description"   : ""
-	},
 	"dialogRSSNewTitlePlaceholder" : {
 		"message"       : "Имя фида (не обязательно)",
-		"description"   : ""
-	},
-	"dialogRSSNewUrlLabel" : {
-		"message"       : "Адрес:",
 		"description"   : ""
 	},
 	"dialogRSSNewUrlPlaceholder" : {
 		"message"       : "Введите адрес",
 		"description"   : ""
 	},
-	"dialogRSSEditFeedHeader" : {
+	"dialogRssFeedEditHeader" : {
 		"message"       : "Редактировать RSS канал",
-		"description"   : ""
-	},
-	"dialogRSSEditFeedTitleLabel" : {
-		"message"       : "Заголовок:",
 		"description"   : ""
 	},
 	"dialogRSSEditFeedDescriptionLabel" : {
@@ -699,7 +696,7 @@
 		"message"       : "Удаление RSS канала",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteAlertText" : {
+	"dialogRSSFeedDeleteAlert" : {
 		"message"       : "Удалить RSS канал \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
@@ -734,28 +731,20 @@
 		"message"       : "Закладки",
 		"description"   : ""
 	},
-	"dialogNewBookmarkHeader" : {
+	"dialogBookmarkNewHeader" : {
 		"message"       : "Новая закладка",
 		"description"   : ""
 	},
-	"dialogEditBookmarkHeader" : {
+	"dialogBookmarkEditHeader" : {
 		"message"       : "Редактировать закладку",
 		"description"   : ""
 	},
-	"dialogEditBookmarkFolderHeader" : {
+	"dialogBookmarkFolderEditHeader" : {
 		"message"       : "Переименовать папку",
 		"description"   : ""
 	},
 	"dialogBookmarkDefaultTitle" : {
 		"message"       : "Новая закладка",
-		"description"   : ""
-	},
-	"dialogBookmarkTitleLabel" : {
-		"message"       : "Имя:",
-		"description"   : ""
-	},
-	"dialogBookmarkUrlLabel" : {
-		"message"       : "Адрес:",
 		"description"   : ""
 	},
 	"dialogBookmarkFoldersLabel" : {

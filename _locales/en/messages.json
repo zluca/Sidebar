@@ -346,23 +346,23 @@
 		"message"       : "Ask me before...",
 		"description"   : ""
 	},
-	"optWarningsDeleteBookmarkLabel" : {
+	"optWarningsBookmarkDeleteLabel" : {
 		"message"       : "Delete bookmark",
 		"description"   : ""
 	},
-	"optWarningsDeleteBookmarkFolderLabel" : {
+	"optWarningsBookmarkFolderDeleteLabel" : {
 		"message"       : "Delete bookmark folder",
 		"description"   : ""
 	},
-	"optWarningsDeleteSiteLabel" : {
+	"optWarningsSiteDeleteLabel" : {
 		"message"       : "Delete site from start page",
 		"description"   : ""
 	},
-	"optWarningsDeleteRssFeedLabel" : {
+	"optWarningsRssFeedDeleteLabel" : {
 		"message"       : "Delete RSS feed",
 		"description"   : ""
 	},
-	"optWarningsCloseDomainFolderLabel" : {
+	"optWarningsDomainFolderCloseLabel" : {
 		"message"       : "Close multiple tabs",
 		"description"   : ""
 	},
@@ -591,35 +591,44 @@
 		"description"   : ""
 	},
 
-	"dialogSiteNewHeader" : {
-		"message"       : "Add new site",
-		"description"   : ""
-	},
-	"dialogEditSiteHeader" : {
-		"message"       : "Edit site properties",
-		"description"   : ""
-	},
-	"dialogEditSiteUrlLabel" : {
+	"dialogUrlLabel"    : {
 		"message"       : "Url:",
 		"description"   : ""
 	},
-	"dialogEditSiteUrlPlaceholder" : {
-		"message"       : "Enter site URL",
+	"dialogTitleLabel"    : {
+		"message"       : "Title:",
 		"description"   : ""
 	},
-	"dialogEditSiteTextLabel" : {
+	"dialogTextLabel"    : {
 		"message"       : "Text:",
 		"description"   : ""
 	},
-	"dialogEditSiteColorLabel" : {
+	"dialogColorLabel"    : {
 		"message"       : "Color:",
+		"description"   : ""
+	},
+
+	"dialogSiteCreateHeader" : {
+		"message"       : "Add new site",
+		"description"   : ""
+	},
+	"dialogSiteCreateUrlPlaceholder" : {
+		"message"       : "Enter site URL",
+		"description"   : ""
+	},
+	"dialogSiteChangeHeader" : {
+		"message"       : "Edit site properties",
+		"description"   : ""
+	},
+	"dialogSiteChangeUrlPlaceholder" : {
+		"message"       : "Enter site URL",
 		"description"   : ""
 	},
 	"dialogSiteDeleteHeader" : {
 		"message"       : "Site deletion",
 		"description"   : ""
 	},
-	"dialogSiteDeleteText" : {
+	"dialogSiteDeleteAlert" : {
 		"message"       : "Delete \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
@@ -628,11 +637,11 @@
 			}
 		}
 	},
-	"dialogTabsCloseDomainHeader" : {
+	"dialogDomainFolderCloseHeader" : {
 		"message"       : "Close domain",
 		"description"   : ""
 	},
-	"dialogTabsCloseDomainAlertText" : {
+	"dialogDomainFolderCloseAlert" : {
 		"message"       : "Close all tabs in \"$name$\" domain?",
 		"description"   : "",
 		"placeholders" : {
@@ -645,7 +654,7 @@
 		"message"       : "Bookmark deletion",
 		"description"   : ""
 	},
-	"dialogBookmarkDeleteAlertText" : {
+	"dialogBookmarkDeleteAlert" : {
 		"message"       : "Do you really want to delete \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
@@ -658,7 +667,7 @@
 		"message"       : "Folder deletion",
 		"description"   : ""
 	},
-	"dialogBookmarkFolderDeleteAlertText" : {
+	"dialogBookmarkFolderDeleteAlert" : {
 		"message"       : "Do you really want to delete folder \"$name$\" ? All it's content will be lost.",
 		"description"   : "",
 		"placeholders" : {
@@ -671,28 +680,16 @@
 		"message"       : "New RSS subscription",
 		"description"   : ""
 	},
-	"dialogRSSNewTitleLabel" : {
-		"message"       : "Title:",
-		"description"   : ""
-	},
 	"dialogRSSNewTitlePlaceholder" : {
 		"message"       : "Feed title (optional)",
-		"description"   : ""
-	},
-	"dialogRSSNewUrlLabel" : {
-		"message"       : "Url:",
 		"description"   : ""
 	},
 	"dialogRSSNewUrlPlaceholder" : {
 		"message"       : "Enter feed url here",
 		"description"   : ""
 	},
-	"dialogRSSEditFeedHeader" : {
+	"dialogRssFeedEditHeader" : {
 		"message"       : "Edit RSS feed",
-		"description"   : ""
-	},
-	"dialogRSSEditFeedTitleLabel" : {
-		"message"       : "Title:",
 		"description"   : ""
 	},
 	"dialogRSSEditFeedDescriptionLabel" : {
@@ -703,7 +700,7 @@
 		"message"       : "RSS feed deletion",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteAlertText" : {
+	"dialogRSSFeedDeleteAlert" : {
 		"message"       : "Do you really want to delete feed \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
@@ -738,28 +735,20 @@
 		"message"       : "Bookmarks",
 		"description"   : ""
 	},
-	"dialogNewBookmarkHeader" : {
+	"dialogBookmarkNewHeader" : {
 		"message"       : "New bookmark",
 		"description"   : ""
 	},
-	"dialogEditBookmarkHeader" : {
+	"dialogBookmarkEditHeader" : {
 		"message"       : "Edit bookmark",
 		"description"   : ""
 	},
-	"dialogEditBookmarkFolderHeader" : {
+	"dialogBookmarkFolderEditHeader" : {
 		"message"       : "Rename folder",
 		"description"   : ""
 	},
 	"dialogBookmarkDefaultTitle" : {
 		"message"       : "New bookmark",
-		"description"   : ""
-	},
-	"dialogBookmarkTitleLabel" : {
-		"message"       : "Title:",
-		"description"   : ""
-	},
-	"dialogBookmarkUrlLabel" : {
-		"message"       : "Url:",
 		"description"   : ""
 	},
 	"dialogBookmarkFoldersLabel" : {

@@ -238,32 +238,32 @@ const options = {
 		}
 	},
 	warnings: {
-		deleteBookmark       : {
+		bookmarkDelete       : {
 			value   : true,
 			type    : 'boolean',
 			targets : ['sidebar']
 		},
-		deleteBookmarkFolder : {
+		bookmarkFolderDelete : {
 			value   : true,
 			type    : 'boolean',
 			targets : ['sidebar']
 		},
-		deleteSite           : {
+		siteDelete           : {
 			value   : true,
 			type    : 'boolean',
 			targets : ['startpage']
 		},
-		deleteRssFeed        : {
+		rssFeedDelete        : {
 			value   : true,
 			type    : 'boolean',
 			targets : ['sidebar']
 		},
-		closeDomainFolder    : {
+		domainFolderClose    : {
 			value   : true,
 			type    : 'boolean',
 			targets : ['sidebar']
 		},
-		deletePocket         : {
+		pocketDelete         : {
 			value   : true,
 			type    : 'boolean',
 			targets : ['sidebar']
@@ -776,7 +776,7 @@ const messageHandler = {
 		siteDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
-		closeDomainFolder : (message, sender, sendResponse) => {
+		domainFolderClose : (message, sender, sendResponse) => {
 			const folder = getFolderById('tabs', message.data.id);
 			createDialogWindow(message.action, {id: message.data.id, title: folder.title});
 		},
@@ -786,7 +786,7 @@ const messageHandler = {
 		bookmarkFolderDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
-		newBookmark : (message, sender, sendResponse) => {
+		bookmarkNew : (message, sender, sendResponse) => {
 			const activeTab = getById('tabs', status.activeTabId);
 			if (activeTab !== false) {
 				const dataToSend = {
@@ -798,17 +798,17 @@ const messageHandler = {
 				createDialogWindow(message.action, dataToSend);
 			}
 		},
-		editBookmark : (message, sender, sendResponse) => {
+		bookmarkEdit : (message, sender, sendResponse) => {
 			const bookmark = getById('bookmarks', message.data.id);
 			if (bookmark !== false)
-				createDialogWindow('editBookmark', {'id': message.data.id, 'url': bookmark.url,'title': bookmark.title});
+				createDialogWindow('bookmarkEdit', {'id': message.data.id, 'url': bookmark.url,'title': bookmark.title});
 		},
-		editBookmarkFolder : (message, sender, sendResponse) => {
+		bookmarkFolderEdit : (message, sender, sendResponse) => {
 			const folder = getFolderById('bookmarks', message.data.id);
 			if (folder !== false)
-				createDialogWindow('editBookmarkFolder', {'id': message.data.id, 'title': folder.title});
+				createDialogWindow('bookmarkFolderEdit', {'id': message.data.id, 'title': folder.title});
 		},
-		rssAdd : (message, sender, sendResponse) => {
+		rssNew : (message, sender, sendResponse) => {
 			const activeTab = getById('tabs', status.activeTabId);
 			if (activeTab !== false)
 				if (tabIsProtected(activeTab) === false)
@@ -816,15 +816,15 @@ const messageHandler = {
 			createDialogWindow(message.action, message.data);
 		},
 		rssUrlConfirmed : (message, sender, sendResponse) => {
-			createDialogWindow('rssAdd', message.data);
+			createDialogWindow('rssNew', message.data);
 		},
-		rssEditFeed : (message, sender, sendResponse) => {
+		rssFeedEdit : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
-		rssDeleteFeed : (message, sender, sendResponse) => {
+		rssFeedDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
-		rssDeleteItem : (message, sender, sendResponse) => {
+		rssItemDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
 		downloadDelete : (message, sender, sendResponse) => {
@@ -833,7 +833,7 @@ const messageHandler = {
 		remove : (message, sender, sendResponse) => {
 			sendToTab(sender.tab.id, 'content', 'dialog', 'remove');
 		},
-		pocketAdd : (message, sender, sendResponse) => {
+		pocketNew : (message, sender, sendResponse) => {
 			const activeTab = getById('tabs', status.activeTabId);
 			if (activeTab !== false);
 				createDialogWindow(message.action, {
@@ -1110,7 +1110,7 @@ const initService = {
 					}
 				},
 				delete : (message, sender, sendResponse) => {
-					makeSite(message.data.index, false);
+					makeSite(message.data.index);
 					saveLater('speadDial');
 					send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
 				},

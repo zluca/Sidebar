@@ -346,23 +346,23 @@
 		"message"       : "执行前询问我：",
 		"description"   : ""
 	},
-	"optWarningsDeleteBookmarkLabel" : {
+	"optWarningsBookmarkDeleteLabel" : {
 		"message"       : "删除书签",
 		"description"   : ""
 	},
-	"optWarningsDeleteBookmarkFolderLabel" : {
+	"optWarningsBookmarkFolderDeleteLabel" : {
 		"message"       : "删除书签文件夹",
 		"description"   : ""
 	},
-	"optWarningsDeleteSiteLabel" : {
+	"optWarningsSiteDeleteLabel" : {
 		"message"       : "删除起始页的站点",
 		"description"   : ""
 	},
-	"optWarningsDeleteRssFeedLabel" : {
+	"optWarningsRssFeedDeleteLabel" : {
 		"message"       : "删除 RSS 收取点",
 		"description"   : ""
 	},
-	"optWarningsCloseDomainFolderLabel" : {
+	"optWarningsDomainFolderCloseLabel" : {
 		"message"       : "关闭多个标签页",
 		"description"   : ""
 	},
@@ -591,35 +591,44 @@
 		"description"   : ""
 	},
 
-	"dialogSiteNewHeader" : {
-		"message"       : "添加新站点",
-		"description"   : ""
-	},
-	"dialogEditSiteHeader" : {
-		"message"       : "编辑站点属性",
-		"description"   : ""
-	},
-	"dialogEditSiteUrlLabel" : {
+	"dialogUrlLabel"    : {
 		"message"       : "网址:",
 		"description"   : ""
 	},
-	"dialogEditSiteUrlPlaceholder" : {
-		"message"       : "输入站点网址",
+	"dialogTitleLabel"    : {
+		"message"       : "标题:",
 		"description"   : ""
 	},
-	"dialogEditSiteTextLabel" : {
+	"dialogTextLabel"    : {
 		"message"       : "文本:",
 		"description"   : ""
 	},
-	"dialogEditSiteColorLabel" : {
+	"dialogColorLabel"    : {
 		"message"       : "颜色:",
+		"description"   : ""
+	},
+
+	"dialogSiteCreateHeader" : {
+		"message"       : "添加新站点",
+		"description"   : ""
+	},
+	"dialogSiteCreateUrlPlaceholder" : {
+		"message"       : "输入站点网址",
+		"description"   : ""
+	},
+	"dialogSiteChangeHeader" : {
+		"message"       : "编辑站点属性",
+		"description"   : ""
+	},
+	"dialogSiteChangeUrlPlaceholder" : {
+		"message"       : "输入站点网址",
 		"description"   : ""
 	},
 	"dialogSiteDeleteHeader" : {
 		"message"       : "删除站点",
 		"description"   : ""
 	},
-	"dialogSiteDeleteText" : {
+	"dialogSiteDeleteAlert" : {
 		"message"       : "删除“$name$”？",
 		"description"   : "",
 		"placeholders" : {
@@ -628,11 +637,11 @@
 			}
 		}
 	},
-	"dialogTabsCloseDomainHeader" : {
+	"dialogDomainFolderCloseHeader" : {
 		"message"       : "关闭域",
 		"description"   : ""
 	},
-	"dialogTabsCloseDomainAlertText" : {
+	"dialogDomainFolderCloseAlert" : {
 		"message"       : "关闭“$name$”域名的所有标签页？",
 		"description"   : "",
 		"placeholders" : {
@@ -645,7 +654,7 @@
 		"message"       : "删除书签",
 		"description"   : ""
 	},
-	"dialogBookmarkDeleteAlertText" : {
+	"dialogBookmarkDeleteAlert" : {
 		"message"       : "确定删除“$name$”？",
 		"description"   : "",
 		"placeholders" : {
@@ -658,7 +667,7 @@
 		"message"       : "删除文件夹",
 		"description"   : ""
 	},
-	"dialogBookmarkFolderDeleteAlertText" : {
+	"dialogBookmarkFolderDeleteAlert" : {
 		"message"       : "确定删除文件夹“$name$”？里面的所有内容都将丢失。",
 		"description"   : "",
 		"placeholders" : {
@@ -671,28 +680,16 @@
 		"message"       : "新 RSS 订阅",
 		"description"   : ""
 	},
-	"dialogRSSNewTitleLabel" : {
-		"message"       : "Title:",
-		"description"   : ""
-	},
 	"dialogRSSNewTitlePlaceholder" : {
 		"message"       : "Feed title (optional)",
-		"description"   : ""
-	},
-	"dialogRSSNewUrlLabel" : {
-		"message"       : "网址:",
 		"description"   : ""
 	},
 	"dialogRSSNewUrlPlaceholder" : {
 		"message"       : "输入收取点网址",
 		"description"   : ""
 	},
-	"dialogRSSEditFeedHeader" : {
+	"dialogRssFeedEditHeader" : {
 		"message"       : "编辑 RSS 收取点",
-		"description"   : ""
-	},
-	"dialogRSSEditFeedTitleLabel" : {
-		"message"       : "标题:",
 		"description"   : ""
 	},
 	"dialogRSSEditFeedDescriptionLabel" : {
@@ -703,7 +700,7 @@
 		"message"       : "删除 RSS 收取点",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteAlertText" : {
+	"dialogRSSFeedDeleteAlert" : {
 		"message"       : "确定删除收取点“$name$”？",
 		"description"   : "",
 		"placeholders" : {
@@ -738,28 +735,20 @@
 		"message"       : "书签",
 		"description"   : ""
 	},
-	"dialogNewBookmarkHeader" : {
+	"dialogBookmarkNewHeader" : {
 		"message"       : "新建书签",
 		"description"   : ""
 	},
-	"dialogEditBookmarkHeader" : {
+	"dialogBookmarkEditHeader" : {
 		"message"       : "编辑书签",
 		"description"   : ""
 	},
-	"dialogEditBookmarkFolderHeader" : {
+	"dialogBookmarkFolderEditHeader" : {
 		"message"       : "重命名文件夹",
 		"description"   : ""
 	},
 	"dialogBookmarkDefaultTitle" : {
 		"message"       : "新建书签",
-		"description"   : ""
-	},
-	"dialogBookmarkTitleLabel" : {
-		"message"       : "标题:",
-		"description"   : ""
-	},
-	"dialogBookmarkUrlLabel" : {
-		"message"       : "网址:",
 		"description"   : ""
 	},
 	"dialogBookmarkFoldersLabel" : {
