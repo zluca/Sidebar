@@ -1098,9 +1098,6 @@ ${items[i].description}`;
 				target.appendChild(controls.pocket.item);
 		});
 
-		if (data.auth === false)
-			block.pocket.classList.add('logout');
-
 		updateItem.pocket  = (pocket, info) => {
 			let classList      = `pocket item ${info.favourite === true ? 'favourite ' : ''} domain-${info.domain}`;
 			pocket.href        = info.url;
@@ -1138,6 +1135,9 @@ ${items[i].description}`;
 		};
 
 		setView('pocket', options.misc.pocketMode, data.pocket, data.pocketFolders);
+
+		if (options.pocket.auth === false)
+			block.pocket.classList.add('logout');
 	}
 };
 
@@ -1286,6 +1286,7 @@ function initSidebar(response) {
 	options.theme                = response.options.theme;
 	options.warnings             = response.options.warnings;
 	options.sidebar              = response.options.sidebar;
+	options.pocket               = response.options.pocket;
 	i18n.header                  = response.i18n.header;
 	status.info                  = response.info;
 

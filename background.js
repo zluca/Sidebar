@@ -2824,6 +2824,7 @@ function sideBarData(side) {
 			'warnings' : optionsShort.warnings,
 			'theme'    : optionsShort.theme,
 			'misc'     : optionsShort.misc,
+			'pocket'   : optionsShort.pocket,
 			'services' : {
 				'tabs'      : optionsShort.services.tabs,
 				'bookmarks' : optionsShort.services.bookmarks,
