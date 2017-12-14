@@ -446,7 +446,7 @@
 		"description"   : ""
 	},
 
-	"notificationRssNewFeedErrorTitle" : {
+	"notificationRssErrorTitle" : {
 		"message"       : "Ошибка RSS",
 		"description"   : ""
 	},
@@ -454,12 +454,12 @@
 		"message"       : "Невозможно найти RSS по адресу ",
 		"description"   : ""
 	},
-	"notificationRssFeedExistErrorTitle" : {
-		"message"       : "Ошибка RSS",
-		"description"   : ""
-	},
 	"notificationRssFeedExistErrorText" : {
 		"message"       : "Вы уже подписаны на ",
+		"description"   : ""
+	},
+	"notificationRssNothingToExportText" : {
+		"message"       : "Нечего экспортировать",
 		"description"   : ""
 	},
 	"notificationBookmarksTitle" : {
@@ -586,6 +586,14 @@
 		"message"       : "Удалить",
 		"description"   : ""
 	},
+	"dialogImportButton" : {
+		"message"       : "Импорт",
+		"description"   : ""
+	},
+	"dialogExportButton" : {
+		"message"       : "Экспорт",
+		"description"   : ""
+	},
 
 	"dialogUrlLabel"    : {
 		"message"       : "Адрес:",
@@ -704,6 +712,18 @@
 				"content": "$1"
 			}
 		}
+	},
+	"dialogRssImportExportHeader" : {
+		"message"       : "RSS Импорт / Экспорт",
+		"description"   : ""
+	},
+	"dialogRssImportExportAlert" : {
+		"message"       : "Импортировать или экспортировать Rss через .opml файлы",
+		"description"   : ""
+	},
+	"dialogRssExportHeader" : {
+		"message"       : "RSS экспорт",
+		"description"   : ""
 	},
 	"dialogDownloadDeleteHeader" : {
 		"message"       : "Удаление закачки",

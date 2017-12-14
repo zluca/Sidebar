@@ -450,7 +450,7 @@
 		"description"   : ""
 	},
 
-	"notificationRssNewFeedErrorTitle" : {
+	"notificationRssErrorTitle" : {
 		"message"       : "RSS 错误",
 		"description"   : ""
 	},
@@ -458,12 +458,12 @@
 		"message"       : "无法找到有效的 RSS 收取点，于 ",
 		"description"   : ""
 	},
-	"notificationRssFeedExistErrorTitle" : {
-		"message"       : "RSS 错误",
-		"description"   : ""
-	},
 	"notificationRssFeedExistErrorText" : {
 		"message"       : "您已订阅，于 ",
+		"description"   : ""
+	},
+	"notificationRssNothingToExportText" : {
+		"message"       : "You don't have any Rss feeds to export",
 		"description"   : ""
 	},
 	"notificationBookmarksTitle" : {
@@ -590,6 +590,14 @@
 		"message"       : "删除",
 		"description"   : ""
 	},
+	"dialogImportButton" : {
+		"message"       : "Import",
+		"description"   : ""
+	},
+	"dialogExportButton" : {
+		"message"       : "Export",
+		"description"   : ""
+	},
 
 	"dialogUrlLabel"    : {
 		"message"       : "网址:",
@@ -708,6 +716,18 @@
 				"content": "$1"
 			}
 		}
+	},
+	"dialogRssImportExportHeader" : {
+		"message"       : "RSS Import / Export",
+		"description"   : ""
+	},
+	"dialogRssImportExportAlert" : {
+		"message"       : "Import or Export Rss throuth .opml files",
+		"description"   : ""
+	},
+	"dialogRssExportHeader" : {
+		"message"       : "RSS Export",
+		"description"   : ""
 	},
 	"dialogDownloadDeleteHeader" : {
 		"message"       : "删除下载历史",

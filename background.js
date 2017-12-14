@@ -21,10 +21,12 @@ const config = {
 
 const i18n = {
 	notification: {
-		rssNewFeedErrorTitle       : getI18n('notificationRssNewFeedErrorTitle'),
+		rssNewFeedErrorTitle       : getI18n('notificationRssErrorTitle'),
 		rssNewFeedErrorText        : getI18n('notificationRssNewFeedErrorText'),
-		rssFeedExistErrorTitle     : getI18n('notificationRssFeedExistErrorTitle'),
+		rssFeedExistErrorTitle     : getI18n('notificationRssErrorTitle'),
 		rssFeedExistErrorText      : getI18n('notificationRssFeedExistErrorText'),
+		rssNothingToExportTitle    : getI18n('notificationRssErrorTitle'),
+		rssNothingToExportText     : getI18n('notificationRssNothingToExportText'),
 		bookmarksTitle             : getI18n('notificationBookmarksTitle'),
 		bkTooManyBookmarksText     : getI18n('notificationbkTooManyBookmarksText'),
 		bkSwitchToTreeText         : getI18n('notificationbkSwitchToTreeText')
@@ -813,6 +815,9 @@ const messageHandler = {
 			if (activeTab !== false)
 				if (tabIsProtected(activeTab) === false)
 					return send('content', 'dialog', 'checkRss', '');
+			createDialogWindow(message.action, message.data);
+		},
+		rssImportExport : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
 		rssUrlConfirmed : (message, sender, sendResponse) => {
@@ -2153,6 +2158,37 @@ const initService = {
 					brauzer.alarms.clearAll();
 					for (let i = data.rssFoldersId.length - 1; i >= 0; i--)
 						update[options.misc.rssMode.value](data.rssFoldersId[i]);
+				},
+				import       : (message, sender, sendResponse) => {
+					const parser = new DOMParser();
+					const xmlDoc = parser.parseFromString(message.data, 'text/xml');
+					const feeds  = xmlDoc.querySelectorAll('outline[type="rss"]');
+					for (let i = 0, l = feeds.length; i < l; i++)
+						createRssFeed(feeds[i].getAttribute('xmlUrl'), feeds[i].getAttribute('title'));
+				},
+				export       : (message, sender, sendResponse) => {
+					if (data.rssFolders.length === 0)
+						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNothingToExportTitle, 'message':  i18n.notification.rssNothingToExportTitle});
+					else {
+						const makeFeed = feed => {
+							return `		<outline type="rss" title="${feed.title}" text="${feed.description}" version="RSS" xmlUrl="${feed.url}"/></outline>`;
+						};
+						const now = new Date();
+						let opml =
+`<opml version="1.0">
+  <head>
+    <title>Sidebar+ Rss export in OPML</title>
+    <dateCreated>${now.toString()}</dateCreated>
+  </head>
+  <body>`;
+						for (let i = 0, l = data.rssFolders.length; i < l; i++)
+							opml += makeFeed(data.rssFolders[i]);
+						opml +=
+`  </body>
+</opml>`;
+					// console.log(opml);
+					setTimeout(_ => {createDialogWindow('rssExport', {'text': opml});}, 1000);
+					}
 				}
 			};
 

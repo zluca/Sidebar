@@ -450,7 +450,7 @@
 		"description"   : ""
 	},
 
-	"notificationRssNewFeedErrorTitle" : {
+	"notificationRssErrorTitle" : {
 		"message"       : "RSS error",
 		"description"   : ""
 	},
@@ -458,12 +458,12 @@
 		"message"       : "Cannot find valid RSS feed on ",
 		"description"   : ""
 	},
-	"notificationRssFeedExistErrorTitle" : {
-		"message"       : "RSS error",
-		"description"   : ""
-	},
 	"notificationRssFeedExistErrorText" : {
 		"message"       : "You already subscribed on ",
+		"description"   : ""
+	},
+	"notificationRssNothingToExportText" : {
+		"message"       : "You don't have any Rss feeds to export",
 		"description"   : ""
 	},
 	"notificationBookmarksTitle" : {
@@ -590,6 +590,14 @@
 		"message"       : "Delete",
 		"description"   : ""
 	},
+	"dialogImportButton" : {
+		"message"       : "Import",
+		"description"   : ""
+	},
+	"dialogExportButton" : {
+		"message"       : "Export",
+		"description"   : ""
+	},
 
 	"dialogUrlLabel"    : {
 		"message"       : "Url:",
@@ -708,6 +716,18 @@
 				"content": "$1"
 			}
 		}
+	},
+	"dialogRssImportExportHeader" : {
+		"message"       : "RSS Import / Export",
+		"description"   : ""
+	},
+	"dialogRssImportExportAlert" : {
+		"message"       : "Import or Export Rss throuth .opml files",
+		"description"   : ""
+	},
+	"dialogRssExportHeader" : {
+		"message"       : "RSS Export",
+		"description"   : ""
 	},
 	"dialogDownloadDeleteHeader" : {
 		"message"       : "Download history deletion",

@@ -168,7 +168,15 @@ function makeDialogWindow(data, warnings, colors) {
 				button.textContent = getI18n('dialogCancelButton');
 				button.addEventListener('click', removeDialogWindow);
 				cancelButton = button;
-			}
+			},
+			import  : _ => {
+				button.textContent = getI18n('dialogImportButton');
+				button.addEventListener('click', callback);
+			},
+			export  : _ => {
+				button.textContent = getI18n('dialogExportButton');
+				button.addEventListener('click', callback);
+			},
 		};
 		make[type]();
 		buttons.appendChild(button);
@@ -405,6 +413,41 @@ function makeDialogWindow(data, warnings, colors) {
 			});
 			addButton('cancel');
 			inputUrl.focus();
+		},
+
+		rssImportExport : _ => {
+
+			const importInput     = document.createElement('input');
+			importInput.type      = 'file';
+			importInput.multiple  = false;
+			importInput.accept    = '.opml';
+
+			importInput.addEventListener('change', event => {
+			    const reader     = new FileReader();
+			    reader.onloadend = _ => {
+		    		send('background', 'rss', 'import', reader.result);
+		    		removeDialogWindow();
+			    };
+			    reader.readAsText(importInput.files[0]);
+			});
+
+			setHeader();
+			addAlert();
+
+			addButton('import', _ => {
+				importInput.click();
+			});
+			addButton('export', _ => {
+				send('background', 'rss', 'export');
+				removeDialogWindow();
+			});
+			addButton('cancel');
+		},
+
+		rssExport : _ => {
+			setHeader();
+			addInputRow.textarea('text');
+			addButton('cancel');
 		},
 
 		rssFeedEdit : _ => {

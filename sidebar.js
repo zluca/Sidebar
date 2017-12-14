@@ -936,6 +936,7 @@ const initBlock = {
 		controls.rss.bottom     = dce('div');
 		controls.rss.bottom.classList.add('bottom-bar');
 		makeButton('new', 'rss', 'bottom');
+		makeButton('importExport', 'rss', 'bottom');
 		makeButton('hideReadedAll', 'rss', 'bottom');
 		makeButton('showReadedAll', 'rss', 'bottom');
 		makeButton('markReadAllFeeds', 'rss', 'bottom');
@@ -1805,7 +1806,12 @@ const buttonsEvents = {
 		new : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'dialog', 'rssNew', {});
+			send('background', 'dialog', 'rssNew');
+		},
+		importExport: event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'dialog', 'rssImportExport');
 		},
 		hideReadedAll: event => {
 			event.stopPropagation();
