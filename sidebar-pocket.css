@@ -49,7 +49,7 @@
 #pocket-delete,
 #pocket-fav,
 #pocket-archive,
-#pocket-folder-archives #pocket-unarchive {
+.type-archives #pocket-unarchive {
 	display: inline-block;
 }
 .domain-articles {
@@ -71,7 +71,7 @@
 	background-color: var(--background-color-active);
 }
 .favorite #pocket-fav,
-#pocket-folder-archives #pocket-archive {
+.type-archives #pocket-archive {
 	display: none;
 }
 .favorite #pocket-unfav {

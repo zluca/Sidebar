@@ -64,6 +64,10 @@
 		"message"       : "RSS",
 		"description"   : ""
 	},
+	"sbControlsPocketTitle" : {
+		"message"       : "Pocket",
+		"description"   : ""
+	},
 
 	"tabsNewText" : {
 		"message"       : "",
@@ -215,6 +219,59 @@
 	},
 	"rssDomainModeButton" : {
 		"message"       : "Group rss elements by feed",
+		"description"   : ""
+	},
+
+	"pocketControlsLoginText" : {
+		"message"       : "Login to Pocket",
+		"description"   : ""
+	},
+	"pocketControlsLoginTitle" : {
+		"message"       : "Click here to access your Pocket",
+		"description"   : ""
+	},
+	"pocketControlsLogout" : {
+		"message"       : "Logout",
+		"description"   : ""
+	},
+	"pocketControlsNew" : {
+		"message"       : "Add to Pocket",
+		"description"   : ""
+	},
+	"pocketControlsFav" : {
+		"message"       : "Make favorite",
+		"description"   : ""
+	},
+	"pocketControlsUnfav" : {
+		"message"       : "Remove from favorite",
+		"description"   : ""
+	},
+	"pocketControlsArchive" : {
+		"message"       : "Move to archive",
+		"description"   : ""
+	},
+	"pocketControlsUnarchive" : {
+		"message"       : "Back from archive",
+		"description"   : ""
+	},
+	"pocketControlsDelete" : {
+		"message"       : "Delete from Pocket",
+		"description"   : ""
+	},
+	"pocketPlainMode" : {
+		"message"       : "Do not sort items",
+		"description"   : ""
+	},
+	"pocketTypeMode" : {
+		"message"       : "Sort items by type",
+		"description"   : ""
+	},
+	"pocketDomainMode" : {
+		"message"       : "Sort items by domain",
+		"description"   : ""
+	},
+	"pocketReload" : {
+		"message"       : "Sync with Pocket",
 		"description"   : ""
 	},
 

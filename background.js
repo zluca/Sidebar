@@ -2833,14 +2833,19 @@ const initService = {
 			};
 
 			i18n.pocket = {
-				logout    : 'logout',
-				new       : 'add',
-				plain     : 'plain mode',
-				type      : 'type mode',
-				domain    : 'domain mode',
-				reload    : 'Sync pocket account',
-				edit      : 'edit',
-				delete    : 'delete'
+				loginText : getI18n('pocketControlsLoginText'),
+				loginTitle: getI18n('pocketControlsLoginTitle'),
+				logout    : getI18n('pocketControlsLogout'),
+				new       : getI18n('pocketControlsNew'),
+				fav       : getI18n('pocketControlsFav'),
+				unfav     : getI18n('pocketControlsUnfav'),
+				archive   : getI18n('pocketControlsArchive'),
+				unarchive : getI18n('pocketControlsUnarchive'),
+				delete    : getI18n('pocketControlsDelete'),
+				plain     : getI18n('pocketPlainMode'),
+				type      : getI18n('pocketTypeMode'),
+				domain    : getI18n('pocketDomainMode'),
+				reload    : getI18n('pocketReload')
 			};
 
 			messageHandler.pocket = {

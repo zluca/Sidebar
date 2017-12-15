@@ -226,6 +226,9 @@ a:visited {
 .tree #tabs-tree::before,
 .plain #rss-plain::before,
 .domain #rss-domain::before,
+.plain #pocket-plain::before,
+.domain #pocket-domain::before,
+.type #pocket-type::before,
 #unfixed-button::before,
 .pinned .pin::before {
 	content: '';

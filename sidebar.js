@@ -1070,20 +1070,22 @@ ${items[i].description}`;
 			archive      : data => {
 				const pocket = getById('pocket', data);
 				if (pocket !== false) {
-					const archive = getFolderById('pocket', 'archives');
-					if (archive !== false) {
-						pocket.classList.add('type-archives');
-						archive.appendChild(pocket);
+					pocket.classList.add('type-archives');
+					if (options.misc.pocketMode === 'type') {
+						const archive = getFolderById('pocket', 'archives');
+						if (archive !== false)
+							archive.lastChild.appendChild(pocket);
 					}
 				}
 			},
 			unarchive   : data => {
 				const pocket = getById('pocket', data.id);
 				if (pocket !== false) {
-					const folder = getFolderById('pocket', data.pid);
-					if (folder !== false) {
-						pocket.classList.remove('type-archives');
-						folder.appendChild(pocket);
+					pocket.classList.remove('type-archives');
+					if (options.misc.pocketMode === 'type') {
+						const folder = getFolderById('pocket', data.pid);
+						if (folder !== false)
+							folder.lastChild.appendChild(pocket);
 					}
 				}
 			}
@@ -1097,7 +1099,7 @@ ${items[i].description}`;
 		const loginContainer    = dce('div');
 		const login             = makeItemButton('login', 'pocket');
 		login.id                = 'login';
-		login.textContent       = 'Log in to Pocket';
+		// login.textContent       = i18n.pocket.login;
 		controls.pocket.user    = dce('div');
 		controls.pocket.user.id = 'username';
 		controls.pocket.user.classList.add('controls');
