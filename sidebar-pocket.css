@@ -46,7 +46,8 @@
 }
 
 #pocket-edit,
-#pocket-delete {
+#pocket-delete,
+#pocket-fav {
 	display: inline-block;
 }
 .domain-articles {
@@ -60,4 +61,13 @@
 }
 .domain-other {
 	background-image: url(icons/default.svg);
+}
+.favorite {
+	background-color: var(--background-color-active);
+}
+.favorite #pocket-fav {
+	display: none;
+}
+.favorite #pocket-unfav {
+	display: inline-block;
 }

@@ -1056,6 +1056,16 @@ ${items[i].description}`;
 			},
 			logout       : data => {
 				block.pocket.classList.add('logout');
+			},
+			fav          : data => {
+				const pocket = getById('pocket', data);
+				if (pocket !== false)
+					pocket.classList.add('favorite');
+			},
+			unfav        : data => {
+				const pocket = getById('pocket', data);
+				if (pocket !== false)
+					pocket.classList.remove('favorite');
 			}
 		};
 
@@ -1077,6 +1087,8 @@ ${items[i].description}`;
 		loginContainer.appendChild(controls.pocket.user);
 		controls.pocket.item    = dce('div');
 		controls.pocket.item.classList.add('controls');
+		makeButton('fav', 'pocket', 'item');
+		makeButton('unfav', 'pocket', 'item');
 		makeButton('delete', 'pocket', 'item');
 		controls.pocket.bottom  = dce('div');
 		controls.pocket.bottom.classList.add('bottom-bar');
@@ -1099,7 +1111,7 @@ ${items[i].description}`;
 		});
 
 		updateItem.pocket  = (pocket, info) => {
-			let classList      = `pocket item ${info.favourite === true ? 'favourite ' : ''} domain-${info.domain}`;
+			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain}`;
 			pocket.href        = info.url;
 			pocket.dataset.url = info.url;
 			pocket.textContent = info.title;
@@ -1925,6 +1937,18 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			send('background', 'pocket', 'reloadAll');
+		},
+		fav : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = event.target.parentNode.parentNode.parentNode;
+			send('background', 'pocket', 'fav', target.dataset.id);
+		},
+		unfav : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = event.target.parentNode.parentNode.parentNode;
+			send('background', 'pocket', 'unfav', target.dataset.id);
 		},
 		delete : event => {
 			event.stopPropagation();

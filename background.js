@@ -2521,6 +2521,8 @@ const initService = {
 				add     : 'https://getpocket.com/v3/add',
 				get     : 'https://getpocket.com/v3/get',
 				check   : 'https://getpocket.com/v3/get',
+				fav     : 'https://getpocket.com/v3/send',
+				unfav   : 'https://getpocket.com/v3/send',
 				delete  : 'https://getpocket.com/v3/send',
 				auth    : 'https://getpocket.com/v3/oauth/authorize',
 				request : 'https://getpocket.com/v3/oauth/request'
@@ -2544,6 +2546,16 @@ const initService = {
 					'access_token' : options.pocket.accessToken.value,
 					'sort'         : 'newest',
 					'count'        : '1'
+				},
+				fav   : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'actions'      : [{'item_id': info, 'action': 'favorite', 'time': Date.now()}]
+				},
+				unfav   : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'actions'      : [{'item_id': info, 'action': 'unfavorite', 'time': Date.now()}]
 				},
 				delete   : {
 					'consumer_key' : config.pocketConsumerKey,
@@ -2572,9 +2584,23 @@ const initService = {
 				},
 				check  : response => {
 					if (response.hasOwnProperty('list')) {
-						const item = getById('pocket', info);
-						if (item !== false)
-							send('sidebar', 'pocket', 'updated', updateItem.pocket(item, response.list[info]));
+						const pocket = getById('pocket', info);
+						if (pocket !== false)
+							send('sidebar', 'pocket', 'updated', updateItem.pocket(pocket, response.list[info]));
+					}
+				},
+				fav  : response => {
+					const pocket = getById('pocket', info);
+					if (pocket !== false) {
+						pocket.favorite = true;
+						send('sidebar', 'pocket', 'fav', info);
+					}
+				},
+				unfav  : response => {
+					const pocket = getById('pocket', info);
+					if (pocket !== false) {
+						pocket.favorite = false;
+						send('sidebar', 'pocket', 'unfav', info);
 					}
 				},
 				delete  : response => {
@@ -2757,7 +2783,7 @@ const initService = {
 				newItem.url         = item.given_url || item.resolved_url;
 				newItem.status      = item.status;
 				newItem.domain      = makeDomain(item.given_url || item.resolved_url).id;
-				newItem.favourite   = parseInt(item.favourite) === 0 ? false : true;
+				newItem.favorite    = parseInt(item.favorite) === 0 ? true : false;
 				newItem.type        = type;
 				newItem.hasImage    = parseInt(item.has_image) > 0 ? true : false;
 				newItem.hasVideo    = parseInt(item.has_video) > 0 ? true : false;
@@ -2784,6 +2810,12 @@ const initService = {
 				},
 				add    : (message, sender, sendResponse) => {
 					pocketRequest('add', message.data);
+				},
+				fav : (message, sender, sendResponse) => {
+					pocketRequest('fav', message.data);
+				},
+				unfav : (message, sender, sendResponse) => {
+					pocketRequest('unfav', message.data);
 				},
 				delete : (message, sender, sendResponse) => {
 					pocketRequest('delete', message.data);
