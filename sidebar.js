@@ -1066,6 +1066,26 @@ ${items[i].description}`;
 				const pocket = getById('pocket', data);
 				if (pocket !== false)
 					pocket.classList.remove('favorite');
+			},
+			archive      : data => {
+				const pocket = getById('pocket', data);
+				if (pocket !== false) {
+					const archive = getFolderById('pocket', 'archives');
+					if (archive !== false) {
+						pocket.classList.add('type-archives');
+						archive.appendChild(pocket);
+					}
+				}
+			},
+			unarchive   : data => {
+				const pocket = getById('pocket', data.id);
+				if (pocket !== false) {
+					const folder = getFolderById('pocket', data.pid);
+					if (folder !== false) {
+						pocket.classList.remove('type-archives');
+						folder.appendChild(pocket);
+					}
+				}
 			}
 		};
 
@@ -1089,6 +1109,8 @@ ${items[i].description}`;
 		controls.pocket.item.classList.add('controls');
 		makeButton('fav', 'pocket', 'item');
 		makeButton('unfav', 'pocket', 'item');
+		makeButton('archive', 'pocket', 'item');
+		makeButton('unarchive', 'pocket', 'item');
 		makeButton('delete', 'pocket', 'item');
 		controls.pocket.bottom  = dce('div');
 		controls.pocket.bottom.classList.add('bottom-bar');
@@ -1111,7 +1133,7 @@ ${items[i].description}`;
 		});
 
 		updateItem.pocket  = (pocket, info) => {
-			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain}`;
+			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
 			pocket.href        = info.url;
 			pocket.dataset.url = info.url;
 			pocket.textContent = info.title;
@@ -1282,7 +1304,7 @@ function tryToInit() {
 
 function initSidebar(response) {
 	const onMessage = (message, sender, sendResponse) => {
-		// console.log(message);
+		console.log(message);
 		if (message.hasOwnProperty('target')) {
 			if (message.target === 'sidebar')
 				messageHandler[message.subject][message.action](message.data, sendResponse);
@@ -1385,7 +1407,7 @@ function insertFolders(mode, items, fake = false) {
 			title.addEventListener('click', event => {
 				event.preventDefault();
 				event.stopPropagation();
-				const folded = status.moving ?  false : !title.parentNode.classList.contains('folded');
+				const folded = status.moving === true ? false : !title.parentNode.classList.contains('folded');
 				send('background', 'set', 'fold', {'mode': mode, 'id': items[i].id, 'folded': folded, 'method': folded ? 'add' : 'remove'});
 			});
 		}
@@ -1949,6 +1971,18 @@ const buttonsEvents = {
 			event.preventDefault();
 			const target = event.target.parentNode.parentNode.parentNode;
 			send('background', 'pocket', 'unfav', target.dataset.id);
+		},
+		archive : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = event.target.parentNode.parentNode.parentNode;
+			send('background', 'pocket', 'archive', target.dataset.id);
+		},
+		unarchive : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = event.target.parentNode.parentNode.parentNode;
+			send('background', 'pocket', 'unarchive', target.dataset.id);
 		},
 		delete : event => {
 			event.stopPropagation();

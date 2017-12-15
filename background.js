@@ -2518,14 +2518,16 @@ const initService = {
 		const pocketRequest = (type, info = {}) => {
 
 			const links  = {
-				add     : 'https://getpocket.com/v3/add',
-				get     : 'https://getpocket.com/v3/get',
-				check   : 'https://getpocket.com/v3/get',
-				fav     : 'https://getpocket.com/v3/send',
-				unfav   : 'https://getpocket.com/v3/send',
-				delete  : 'https://getpocket.com/v3/send',
-				auth    : 'https://getpocket.com/v3/oauth/authorize',
-				request : 'https://getpocket.com/v3/oauth/request'
+				add       : 'https://getpocket.com/v3/add',
+				get       : 'https://getpocket.com/v3/get',
+				check     : 'https://getpocket.com/v3/get',
+				fav       : 'https://getpocket.com/v3/send',
+				unfav     : 'https://getpocket.com/v3/send',
+				archive   : 'https://getpocket.com/v3/send',
+				unarchive : 'https://getpocket.com/v3/send',
+				delete    : 'https://getpocket.com/v3/send',
+				auth      : 'https://getpocket.com/v3/oauth/authorize',
+				request   : 'https://getpocket.com/v3/oauth/request'
 			};
 
 			const toSend = {
@@ -2539,6 +2541,7 @@ const initService = {
 					'consumer_key' : config.pocketConsumerKey,
 					'access_token' : options.pocket.accessToken.value,
 					'detailType'   : 'complete',
+					'state'        : 'all',
 					'since'        : options.pocket.lastUpdate.value
 				},
 				check    : {
@@ -2556,6 +2559,16 @@ const initService = {
 					'consumer_key' : config.pocketConsumerKey,
 					'access_token' : options.pocket.accessToken.value,
 					'actions'      : [{'item_id': info, 'action': 'unfavorite', 'time': Date.now()}]
+				},
+				archive : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'actions'      : [{'item_id': info, 'action': 'archive', 'time': Date.now()}]
+				},
+				unarchive : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'actions'      : [{'item_id': info, 'action': 'readd', 'time': Date.now()}]
 				},
 				delete   : {
 					'consumer_key' : config.pocketConsumerKey,
@@ -2601,6 +2614,22 @@ const initService = {
 					if (pocket !== false) {
 						pocket.favorite = false;
 						send('sidebar', 'pocket', 'unfav', info);
+					}
+				},
+				archive : response => {
+					const pocket = getById('pocket', info);
+					if (pocket !== false) {
+						pocket.status = 1;
+						pocket.type   = 'archives';
+						send('sidebar', 'pocket', 'archive', info);
+					}
+				},
+				unarchive : response => {
+					const pocket = getById('pocket', info);
+					if (pocket !== false) {
+						pocket.status = 0;
+						pocket.type   = detectType(pocket);
+						send('sidebar', 'pocket', 'unarchive', {'id': info, 'pid': pocket.type});
 					}
 				},
 				delete  : response => {
@@ -2754,8 +2783,17 @@ const initService = {
 					folded  : false,
 					itemsId : []
 				},
+				{
+					id      : 'archives',
+					pid     : 0,
+					title   : 'Archives',
+					domain  : 'archives',
+					view    : 'type',
+					folded  : true,
+					itemsId : []
+				}
 			];
-			data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other'];
+			data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other', 'archives'];
 			saveNow('pocket');
 			saveNow('pocketFolders');
 			setOption('pocket', 'lastUpdate', 0);
@@ -2766,27 +2804,31 @@ const initService = {
 				send('sidebar', 'pocket', 'logout');
 		};
 
+		const detectType = pocket => {
+			if (parseInt(pocket.status) > 0)
+				return 'archives';
+			else if (parseInt(pocket.is_article) === 1)
+				return 'articles';
+			else if (parseInt(pocket.has_image) === 2)
+				return 'images';
+			else if (parseInt(pocket.has_video) === 2)
+				return 'videos';
+			return 'other';
+		};
+
 		if (start === true) {
 
 			updateItem.pocket = (newItem, item) => {
-				let type = '';
-				if (parseInt(item.is_article) === 1)
-					type = 'articles';
-				else if (parseInt(item.has_image) === 2)
-					type = 'images';
-				else if (parseInt(item.has_video) === 2)
-					type = 'videos';
-				else
-					type = 'other';
 				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
 				newItem.title       = item.given_title || item.resolved_title || item.given_url || item.resolved_url;
 				newItem.url         = item.given_url || item.resolved_url;
 				newItem.status      = item.status;
 				newItem.domain      = makeDomain(item.given_url || item.resolved_url).id;
-				newItem.favorite    = parseInt(item.favorite) === 0 ? true : false;
-				newItem.type        = type;
-				newItem.hasImage    = parseInt(item.has_image) > 0 ? true : false;
-				newItem.hasVideo    = parseInt(item.has_video) > 0 ? true : false;
+				newItem.favorite    = parseInt(item.favorite) === 0 ? false : true;
+				newItem.type        = detectType(item);
+				newItem.is_article  = item.is_article;
+				newItem.has_image   = item.has_image;
+				newItem.has_video   = item.has_video;
 				return newItem;
 			};
 
@@ -2816,6 +2858,12 @@ const initService = {
 				},
 				unfav : (message, sender, sendResponse) => {
 					pocketRequest('unfav', message.data);
+				},
+				archive : (message, sender, sendResponse) => {
+					pocketRequest('archive', message.data);
+				},
+				unarchive : (message, sender, sendResponse) => {
+					pocketRequest('unarchive', message.data);
 				},
 				delete : (message, sender, sendResponse) => {
 					pocketRequest('delete', message.data);

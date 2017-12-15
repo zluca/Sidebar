@@ -47,7 +47,9 @@
 
 #pocket-edit,
 #pocket-delete,
-#pocket-fav {
+#pocket-fav,
+#pocket-archive,
+#pocket-folder-archives #pocket-unarchive {
 	display: inline-block;
 }
 .domain-articles {
@@ -62,12 +64,22 @@
 .domain-other {
 	background-image: url(icons/default.svg);
 }
+.domain-archives {
+	background-image: url(icons/archive.svg);
+}
 .favorite {
 	background-color: var(--background-color-active);
 }
-.favorite #pocket-fav {
+.favorite #pocket-fav,
+#pocket-folder-archives #pocket-archive {
 	display: none;
 }
 .favorite #pocket-unfav {
 	display: inline-block;
+}
+.type-archives {
+	text-decoration: line-through;
+}
+.plain .type-archives {
+	display: none;
 }
