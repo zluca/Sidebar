@@ -559,21 +559,21 @@ const initBlock = {
 		});
 
 		const insertBookmarks = (items, method = 'last') => {
-			let parent     = rootFolder;
+			let folder     = rootFolder;
 			let pid        = 0;
 
 			const checkPid =
 				method === 'search' ?
 					item => {
-						parent = bookmarksSearchResults;
+						folder = bookmarksSearchResults;
 					} :
 					options.misc.bookmarksMode === 'tree' ?
 						item => {
 							if (item.pid !== pid) {
 								pid    = item.pid;
-								parent = getFolderById('bookmarks', pid);
-								if (parent === false)
-									parent = rootFolder;
+								folder = getFolderById('bookmarks', pid);
+								if (folder === false)
+									folder = rootFolder;
 							}
 						} :
 						item => {};
@@ -585,7 +585,7 @@ const initBlock = {
 				bookmark.title = items[i].url;
 				bookmark.href  = items[i].url;
 				bookmark.textContent = items[i].title;
-				parent.appendChild(bookmark);
+				folder.lastChild.appendChild(bookmark);
 			}
 		};
 

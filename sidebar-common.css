@@ -398,18 +398,21 @@ ul {
 .hover .folder.domain-view .item,
 .fixed .folder.domain-view .item {
 	padding-left: .6rem;
-	margin-left: .8rem;
-	border-left: .1rem dotted var(--border-color-active);
+	margin-left: 0;
 	background-image: none;
 }
-.hover .tree>#tabs-0>.folder>.item,
-.fixed .tree>#tabs-0>.folder>.item {
+.hover .tree>#tabs-0>.folder>.folder-content>.item,
+.fixed .tree>#tabs-0>.folder>.folder-content>.item {
 	border-left: none;
 }
-.hover .folder-content>.folder,
-.fixed .folder-content>.folder {
+.hover .folder-content,
+.fixed .folder-content {
 	margin-left: .8rem;
 	border-left: .1rem dotted var(--border-color-active);
+}
+.hidden-view>.folder-content {
+	margin-left: 0;
+	border-left: none;
 }
 .hover .tree>#tabs-0>.folder,
 .fixed .tree>#tabs-0>.folder {
