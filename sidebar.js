@@ -781,7 +781,7 @@ const initBlock = {
 			progress  : data => {
 				const download = getById('downloads', data.item.id);
 				download.firstChild.nextElementSibling.firstChild.firstChild.style.width = data.item.progressPercent;
-				download.firstChild.nextElementSibling.firstChild.nextElementSibling.textContent = data.item.progressNumbers;
+				download.firstChild.nextElementSibling.firstChild.nextElementSibling.textContent = `${data.item.progressNumbers}  |  ${data.item.speed}`;
 				download.firstChild.nextElementSibling.firstChild.nextElementSibling.nextElementSibling.textContent = data.item.fileSize;
 			},
 			filename  : data => {

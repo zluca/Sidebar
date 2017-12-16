@@ -2026,14 +2026,19 @@ const initService = {
 
 		if (start === true) {
 			updateItem.downloads       = (newItem, item) => {
+
 				const checkDownloadState = id => {
 					setTimeout(_ => {
 
+						const speedMultiplier =  1000 >> 2;
+						// 1000 ms * 2 times per second / 8bytes;
 						const updateDown = download => {
 							const index = data.downloadsId.indexOf(download[0].id);
+							if (index === -1) return;
 							data.downloads[index].bytesReceived   = download[0].bytesReceived;
 							data.downloads[index].progressPercent = `${(100 * download[0].bytesReceived / download[0].totalBytes).toFixed(2)}%`;
 							data.downloads[index].progressNumbers = `${beautySize(download[0].bytesReceived)} / ${beautySize(download[0].totalBytes)}`;
+							data.downloads[index].speed           = `${beautySize(speedMultiplier * data.downloads[index].bytesReceived / (Date.now() - data.downloads[index].startTime))}/s`;
 							send('sidebar', 'downloads', 'progress', {'item': data.downloads[index]});
 							if (download[0].state === 'in_progress')
 								checkDownloadState(id);
@@ -2042,7 +2047,7 @@ const initService = {
 						};
 
 						execMethod(brauzer.downloads.search, updateDown, {'id': id});
-					}, 200);
+					}, 500);
 				};
 
 				let filename = item.filename.split('/').pop();
@@ -2060,6 +2065,8 @@ const initService = {
 				newItem.filename        = filename;
 				newItem.totalBytes      = item.totalBytes;
 				newItem.bytesReceived   = item.bytesReceived;
+				newItem.startTime       = item.startTime || Date.now();
+				newItem.speed           = 0;
 				newItem.progressPercent = `${(100 * item.bytesReceived / item.totalBytes).toFixed(2)}%`;
 				newItem.progressNumbers = `${beautySize(item.bytesReceived)} / ${beautySize(item.totalBytes)}`;
 				newItem.fileSize        = beautySize(item.fileSize);
