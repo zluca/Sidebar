@@ -676,6 +676,10 @@
 		"message"       : "Color:",
 		"description"   : ""
 	},
+	"dialogDescriptionLabel" : {
+		"message"       : "Description:",
+		"description"   : ""
+	},
 
 	"dialogSiteCreateHeader" : {
 		"message"       : "Add new site",
@@ -759,10 +763,6 @@
 	},
 	"dialogRssFeedEditHeader" : {
 		"message"       : "Edit RSS feed",
-		"description"   : ""
-	},
-	"dialogRSSEditFeedDescriptionLabel" : {
-		"message"       : "Description:",
 		"description"   : ""
 	},
 	"dialogRSSFeedDeleteHeader" : {

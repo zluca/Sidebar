@@ -672,6 +672,10 @@
 		"message"       : "Цвет:",
 		"description"   : ""
 	},
+	"dialogDescriptionLabel" : {
+		"message"       : "Описание:",
+		"description"   : ""
+	},
 
 	"dialogSiteCreateHeader" : {
 		"message"       : "Добавить сайт",
@@ -755,10 +759,6 @@
 	},
 	"dialogRssFeedEditHeader" : {
 		"message"       : "Редактировать RSS канал",
-		"description"   : ""
-	},
-	"dialogRSSEditFeedDescriptionLabel" : {
-		"message"       : "Описание:",
 		"description"   : ""
 	},
 	"dialogRSSFeedDeleteHeader" : {

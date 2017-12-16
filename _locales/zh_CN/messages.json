@@ -676,6 +676,10 @@
 		"message"       : "颜色:",
 		"description"   : ""
 	},
+	"dialogDescriptionLabel" : {
+		"message"       : "描述:",
+		"description"   : ""
+	},
 
 	"dialogSiteCreateHeader" : {
 		"message"       : "添加新站点",
@@ -759,10 +763,6 @@
 	},
 	"dialogRssFeedEditHeader" : {
 		"message"       : "编辑 RSS 收取点",
-		"description"   : ""
-	},
-	"dialogRSSEditFeedDescriptionLabel" : {
-		"message"       : "描述:",
 		"description"   : ""
 	},
 	"dialogRSSFeedDeleteHeader" : {
