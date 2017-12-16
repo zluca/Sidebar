@@ -759,12 +759,13 @@ const initBlock = {
 			},
 			exists     : data => {
 				const download = getById('downloads', data.id);
-				download.classList[data.method]('deleted');
+				if (download !== false)
+					download.classList[data.method]('deleted');
 			},
 			startPause : data => {
 				const download = getById('downloads', data.id);
-				if (data.paused) {
-					if (data.canResume)
+				if (data.paused === true) {
+					if (data.canResume === true)
 						download.classList.add('paused');
 					else
 						download.classList.add('canceled');

@@ -1914,7 +1914,12 @@ const initService = {
 					brauzer.downloads.erase({'id': message.data.id});
 				},
 				removeFile : (message, sender, sendResponse) => {
-					brauzer.downloads.removeFile(message.data.id);
+					const down = getById('downloads', message.data.id);
+					if (down !== false) {
+						brauzer.downloads.removeFile(message.data.id);
+						down.exists = false;
+						send('sidebar', 'downloads', 'exists', {'id': message.data.id, 'method': 'add'});
+					}
 				}
 			};
 
@@ -1986,8 +1991,6 @@ const initService = {
 		};
 
 		const onChanged = delta => {
-			console.log('changed');
-			console.log(delta);
 			const download = getById('downloads', delta.id);
 			if (download === false)
 				return;
@@ -2023,8 +2026,6 @@ const initService = {
 
 		if (start === true) {
 			updateItem.downloads       = (newItem, item) => {
-				console.log('updateItem');
-				console.log(item);
 				const checkDownloadState = id => {
 					setTimeout(_ => {
 
