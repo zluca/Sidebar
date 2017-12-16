@@ -2145,9 +2145,6 @@ const initService = {
 						send('sidebar', 'rss', 'rssFeedDeleted', {'id': message.data.id});
 					}
 				},
-				readAllFeeds : (message, sender, sendResponse) => {
-					rssSetReaded('all');
-				},
 				updateFeed   : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed !== false) {
@@ -2195,20 +2192,20 @@ const initService = {
 			};
 
 			i18n.rss = {
-				options          : getI18n('rssControlsOptions'),
-				markRead         : getI18n('rssControlsMarkRead'),
-				markReadAll      : getI18n('rssControlsMarkReadAll'),
-				markReadAllFeeds : getI18n('rssControlsMarkReadAllFeeds'),
-				hideReaded       : getI18n('rssControlsHideReaded'),
-				showReaded       : getI18n('rssControlsShowReaded'),
-				hideReadedAll    : getI18n('rssControlsHideReaded'),
-				showReadedAll    : getI18n('rssControlsShowReaded'),
-				delete           : getI18n('rssControlsDeleteItem'),
-				reload           : getI18n('rssControlsReload'),
-				new              : getI18n('rssNew'),
-				reloadAll        : getI18n('rssReloadAll'),
-				plain            : getI18n('rssPlainModeButton'),
-				domain           : getI18n('rssDomainModeButton')
+				options            : getI18n('rssControlsOptions'),
+				markReaded         : getI18n('rssControlsMarkReaded'),
+				markReadedAll      : getI18n('rssControlsMarkReadedAll'),
+				markReadedAllFeeds : getI18n('rssControlsMarkReadedAllFeeds'),
+				hideReaded         : getI18n('rssControlsHideReaded'),
+				showReaded         : getI18n('rssControlsShowReaded'),
+				hideReadedAll      : getI18n('rssControlsHideReaded'),
+				showReadedAll      : getI18n('rssControlsShowReaded'),
+				delete             : getI18n('rssControlsDeleteItem'),
+				reload             : getI18n('rssControlsReload'),
+				new                : getI18n('rssNew'),
+				reloadAll          : getI18n('rssReloadAll'),
+				plain              : getI18n('rssPlainModeButton'),
+				domain             : getI18n('rssDomainModeButton')
 			};
 
 			status.init.rss = true;
@@ -2258,7 +2255,7 @@ const initService = {
 						if (desc !== undefined)
 							desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
-						fav              = (fav !== undefined) ? fav.textContent.trim() : firefox ? config.rssIcon : false;
+						fav              = (fav !== null) ? fav.textContent.trim() : firefox ? config.rssIcon : false;
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;

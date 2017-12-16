@@ -181,15 +181,15 @@
 		"message"       : "Edit feed properties",
 		"description"   : ""
 	},
-	"rssControlsMarkRead" : {
+	"rssControlsMarkReaded" : {
 		"message"       : "Mark as readed",
 		"description"   : ""
 	},
-	"rssControlsMarkReadAll" : {
+	"rssControlsMarkReadedAll" : {
 		"message"       : "Mark feed as readed",
 		"description"   : ""
 	},
-	"rssControlsMarkReadAllFeeds" : {
+	"rssControlsMarkReadedAllFeeds" : {
 		"message"       : "Mark all feeds as readed",
 		"description"   : ""
 	},
@@ -757,15 +757,15 @@
 			}
 		}
 	},
-	"dialogRSSNewHeader" : {
+	"dialogRssNewHeader" : {
 		"message"       : "New RSS subscription",
 		"description"   : ""
 	},
-	"dialogRSSNewTitlePlaceholder" : {
+	"dialogRssNewTitlePlaceholder" : {
 		"message"       : "Feed title (optional)",
 		"description"   : ""
 	},
-	"dialogRSSNewUrlPlaceholder" : {
+	"dialogRssNewUrlPlaceholder" : {
 		"message"       : "Enter feed url here",
 		"description"   : ""
 	},
@@ -773,11 +773,19 @@
 		"message"       : "Edit RSS feed",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteHeader" : {
+	"dialogRssFeedEditTitlePlaceholder" : {
+		"message"       : "Feed title (optional)",
+		"description"   : ""
+	},
+	"dialogRssFeedEditDescriptionPlaceholder" : {
+		"message"       : "Feed description (optional)",
+		"description"   : ""
+	},
+	"dialogRssFeedDeleteHeader" : {
 		"message"       : "RSS feed deletion",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteAlert" : {
+	"dialogRssFeedDeleteAlert" : {
 		"message"       : "Do you really want to delete feed \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {

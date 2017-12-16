@@ -177,15 +177,15 @@
 		"message"       : "Редактировать канал",
 		"description"   : ""
 	},
-	"rssControlsMarkRead" : {
+	"rssControlsMarkReaded" : {
 		"message"       : "Отметить как прочтённое",
 		"description"   : ""
 	},
-	"rssControlsMarkReadAll" : {
+	"rssControlsMarkReadedAll" : {
 		"message"       : "Отметить канал как прочтённый",
 		"description"   : ""
 	},
-	"rssControlsMarkReadAllFeeds" : {
+	"rssControlsMarkReadedAllFeeds" : {
 		"message"       : "Отметить все каналы как прочтённые",
 		"description"   : ""
 	},
@@ -753,15 +753,15 @@
 			}
 		}
 	},
-	"dialogRSSNewHeader" : {
+	"dialogRssNewHeader" : {
 		"message"       : "Новая RSS подписка",
 		"description"   : ""
 	},
-	"dialogRSSNewTitlePlaceholder" : {
+	"dialogRssNewTitlePlaceholder" : {
 		"message"       : "Имя фида (не обязательно)",
 		"description"   : ""
 	},
-	"dialogRSSNewUrlPlaceholder" : {
+	"dialogRssNewUrlPlaceholder" : {
 		"message"       : "Введите адрес",
 		"description"   : ""
 	},
@@ -769,11 +769,19 @@
 		"message"       : "Редактировать RSS канал",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteHeader" : {
+	"dialogRssFeedEditTitlePlaceholder" : {
+		"message"       : "Имя фида (не обязательно)",
+		"description"   : ""
+	},
+	"dialogRssFeedEditDescriptionPlaceholder" : {
+		"message"       : "Описание фида (не обязательно)",
+		"description"   : ""
+	},
+	"dialogRssFeedDeleteHeader" : {
 		"message"       : "Удаление RSS канала",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteAlert" : {
+	"dialogRssFeedDeleteAlert" : {
 		"message"       : "Удалить RSS канал \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {

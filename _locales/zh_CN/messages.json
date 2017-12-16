@@ -181,15 +181,15 @@
 		"message"       : "编辑收取点属性",
 		"description"   : ""
 	},
-	"rssControlsMarkRead" : {
+	"rssControlsMarkReaded" : {
 		"message"       : "标为已读",
 		"description"   : ""
 	},
-	"rssControlsMarkReadAll" : {
+	"rssControlsMarkReadedAll" : {
 		"message"       : "收取点标为已读",
 		"description"   : ""
 	},
-	"rssControlsMarkReadAllFeeds" : {
+	"rssControlsMarkReadedAllFeeds" : {
 		"message"       : "收取点全部标为已读",
 		"description"   : ""
 	},
@@ -757,15 +757,15 @@
 			}
 		}
 	},
-	"dialogRSSNewHeader" : {
+	"dialogRssNewHeader" : {
 		"message"       : "新 RSS 订阅",
 		"description"   : ""
 	},
-	"dialogRSSNewTitlePlaceholder" : {
+	"dialogRssNewTitlePlaceholder" : {
 		"message"       : "Feed title (optional)",
 		"description"   : ""
 	},
-	"dialogRSSNewUrlPlaceholder" : {
+	"dialogRssNewUrlPlaceholder" : {
 		"message"       : "输入收取点网址",
 		"description"   : ""
 	},
@@ -773,11 +773,19 @@
 		"message"       : "编辑 RSS 收取点",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteHeader" : {
+	"dialogRssFeedEditTitlePlaceholder" : {
+		"message"       : "Feed title (optional)",
+		"description"   : ""
+	},
+	"dialogRssFeedEditDescriptionPlaceholder" : {
+		"message"       : "Feed description (optional)",
+		"description"   : ""
+	},
+	"dialogRssFeedDeleteHeader" : {
 		"message"       : "删除 RSS 收取点",
 		"description"   : ""
 	},
-	"dialogRSSFeedDeleteAlert" : {
+	"dialogRssFeedDeleteAlert" : {
 		"message"       : "确定删除收取点“$name$”？",
 		"description"   : "",
 		"placeholders" : {

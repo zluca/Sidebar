@@ -852,71 +852,71 @@ const initBlock = {
 			insertDownload(data.downloads[i]);
 	},
 
-	rss : data => {
+	rss : info => {
 
 		messageHandler.rss = {
-			createdFeed      : data =>  {
-				insertFolders('rss', [data.feed]);
+			createdFeed      : info =>  {
+				insertFolders('rss', [info.feed]);
 			},
-			newItems         : data =>  {
+			newItems         : info =>  {
 				if (options.misc.rssMode === 'plain')
-					insertItems.rss(data.items, 'date');
+					insertItems.rss(info.items, 'date');
 				else
-					insertItems.rss(data.items, 'first');
+					insertItems.rss(info.items, 'first');
 			},
-			rssReaded        : data =>  {
-				const rssItem = getById('rss', data.id);
-				if (rssItem) {
+			rssReaded        : info =>  {
+				const rssItem = getById('rss', info.id);
+				if (rssItem !== false) {
 					rssItem.classList.remove('unreaded');
-					if (data.feedReaded)
+					if (info.feedReaded === true)
 						rssItem.parentNode.classList.remove('unreaded');
 				}
 			},
-			rssReadedAll     : data =>  {
-				const feed = getFolderById('rss', data.id);
-				if (feed) {
+			rssReadedAll     : info =>  {
+				const feed = getFolderById('rss', info.id);
+				if (feed !== false) {
 					feed.classList.remove('unreaded');
 					for (let items = feed.children, i = items.length - 1; i >= 0; i--)
 						items[i].classList.remove('unreaded');
 				}
 			},
-			rssReadedAllFeeds : data => {
-				for (let i = status.rss.length - 1; i >= 0; i--)
+			rssReadedAllFeeds : info => {
+				for (let i = data.rss.length - 1; i >= 0; i--)
 					data.rss[i].classList.remove('unreaded');
 				for (let i = data.rssFolders.length - 1; i >= 0; i--)
 					data.rssFolders[i].classList.remove('unreaded');
 			},
-			view             : data =>  {
-				setView('rss', data.view, data.items, data.folders);
+			view             : info =>  {
+				setView('rss', info.view, info.items, info.folders);
 				setReadedMode(options.misc.rssHideReaded);
 			},
-			rssHideReaded    : data =>  {
-				const feed = getFolderById('rss', data.id);
+			rssHideReaded    : info =>  {
+				const feed = getFolderById('rss', info.id);
 				if (feed !== false)
 					feed.classList.add('hide-readed');
 			},
-			rssShowReaded    : data =>  {
-				const feed = getFolderById('rss', data.id);
+			rssShowReaded    : info =>  {
+				const feed = getFolderById('rss', info.id);
 				if (feed !== false)
 					feed.classList.remove('hide-readed');
 			},
-			rssFeedChanged   : data =>  {
-				const feed = getFolderById('rss', data.id);
+			rssFeedChanged   : info =>  {
+				const feed = getFolderById('rss', info.id);
 				if (feed !== false) {
-					feed.firstChild.firstChild.textContent = data.title;
-					feed.firstChild.title                  = data.description;
+					feed.firstChild.firstChild.textContent = info.title;
+					feed.firstChild.title                  = info.description;
 				}
 			},
-			rssFeedDeleted   : data =>  {
-				removeFolderById('rss', data.id);
+			rssFeedDeleted   : info =>  {
+				removeFolderById('rss', info.id);
 			},
-			rssItemDeleted   : data => {
-				removeById('rss', data.id);
+			rssItemDeleted   : info => {
+				removeById('rss', info.id);
 			},
-			update           : data => {
-				const feed = getFolderById('rss', data.id);
+			update           : info => {
+				const feed = getFolderById('rss', info.id);
 				if (feed !== false)
-					feed.firstChild.classList[data.method]('loading');
+					feed.firstChild.classList[info.method]('loading');
 			}
 		};
 
@@ -928,8 +928,8 @@ const initBlock = {
 		controls.rss.item       = dce('div');
 		controls.rss.item.classList.add('controls');
 		makeButton('reload', 'rss', 'item');
-		makeButton('markRead', 'rss', 'item');
-		makeButton('markReadAll', 'rss', 'item');
+		makeButton('markReaded', 'rss', 'item');
+		makeButton('markReadedAll', 'rss', 'item');
 		makeButton('hideReaded', 'rss', 'item');
 		makeButton('showReaded', 'rss', 'item');
 		makeButton('options', 'rss', 'item');
@@ -940,7 +940,7 @@ const initBlock = {
 		makeButton('importExport', 'rss', 'bottom');
 		makeButton('hideReadedAll', 'rss', 'bottom');
 		makeButton('showReadedAll', 'rss', 'bottom');
-		makeButton('markReadAllFeeds', 'rss', 'bottom');
+		makeButton('markReadedAllFeeds', 'rss', 'bottom');
 		makeButton('reloadAll', 'rss', 'bottom');
 		makeButton('plain', 'rss', 'bottom');
 		makeButton('domain', 'rss', 'bottom');
@@ -1027,7 +1027,7 @@ const initBlock = {
 			}
 		};
 
-		setView('rss', options.misc.rssMode, data.rss, data.rssFolders);
+		setView('rss', options.misc.rssMode, info.rss, info.rssFolders);
 		setReadedMode(options.misc.rssHideReaded);
 	},
 
@@ -1873,23 +1873,23 @@ const buttonsEvents = {
 			event.preventDefault();
 			send('background', 'rss', 'updateAll');
 		},
-		markRead: event => {
+		markReaded: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const rss  = controls.rss.item.parentNode;
 			const feed = rss.parentNode.firstChild;
 			send('background', 'rss', 'rssReaded', {'id': rss.dataset.id});
 		},
-		markReadAll: event => {
+		markReadedAll: event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const feed = controls.rss.item.parentNode;
 			send('background', 'rss', 'rssReadedAll', {'id': feed.dataset.id});
 		},
-		markReadAllFeeds: event => {
+		markReadedAllFeeds: event => {
 			event.stopPropagation();
 			event.preventDefault();
-			send('background', 'rss', 'rssReadedAllFeeds', {});
+			send('background', 'rss', 'rssReadedAllFeeds');
 		},
 		hideReaded: event => {
 			event.stopPropagation();

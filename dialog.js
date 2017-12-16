@@ -308,16 +308,16 @@ function makeDialogWindow(data, warnings, colors) {
 			const inputText  = addInputRow.textarea('text');
 			const inputColor = addInputRow.color();
 			addButton('save', _ => {
+				removeDialogWindow();
 				if (optionsChanged === true)
 					send('background', 'startpage', 'change', {'index': data.index, 'url': inputUrl.value, 'color': inputColor.value, 'text': inputText.value});
-				removeDialogWindow();
 			});
 			addButton('delete', _ => {
+				removeDialogWindow();
 				if (warnings.siteDelete === true)
 					send('background', 'dialog', 'siteDelete', {'index': data.index, 'title': data.url});
 				else
 					send('background', 'startpage', 'delete', {'index': data.index});
-				removeDialogWindow();
 			});
 			addButton('cancel');
 		},
@@ -328,8 +328,8 @@ function makeDialogWindow(data, warnings, colors) {
 			addAlert();
 			addWarning();
 			addButton('confirm', _ => {
-				send('background', 'startpage', 'delete', {'index': data.index});
 				removeDialogWindow();
+				send('background', 'startpage', 'delete', {'index': data.index});
 			});
 			addButton('cancel');
 		},
@@ -352,8 +352,8 @@ function makeDialogWindow(data, warnings, colors) {
 			addAlert();
 			addWarning();
 			addButton('confirm', _ => {
-				send('background', 'bookmarks', 'bookmarkDelete', {'id': data.id});
 				removeDialogWindow();
+				send('background', 'bookmarks', 'bookmarkDelete', {'id': data.id});
 			});
 			addButton('cancel');
 		},
@@ -364,8 +364,8 @@ function makeDialogWindow(data, warnings, colors) {
 			addAlert();
 			addWarning();
 			addButton('confirm', _ => {
-				send('background', 'bookmarks', 'bookmarksFolderDelete', {'id': data.id});
 				removeDialogWindow();
+				send('background', 'bookmarks', 'bookmarksFolderDelete', {'id': data.id});
 			});
 			addButton('cancel');
 		},
@@ -474,18 +474,17 @@ function makeDialogWindow(data, warnings, colors) {
 				}
 			});
 			addButton('delete', _ => {
+				removeDialogWindow();
 				if (warnings.rssFeedDelete === true)
 					send('background', 'dialog', 'rssFeedDelete', {'id': data.id, 'title': data.title});
 				else
 					send('background', 'rss', 'rssFeedDelete', {'id': data.id});
-				removeDialogWindow();
 			});
 			addButton('cancel');
 			inputTitle.focus();
 		},
 
 		rssFeedDelete : _ => {
-
 			setHeader();
 			addAlert();
 			addWarning();
