@@ -2174,18 +2174,10 @@ const initService = {
 							return `		<outline type="rss" title="${feed.title}" text="${feed.description}" version="RSS" xmlUrl="${feed.url}"/></outline>`;
 						};
 						const now = new Date();
-						let opml =
-`<opml version="1.0">
-  <head>
-    <title>Sidebar+ Rss export in OPML</title>
-    <dateCreated>${now.toString()}</dateCreated>
-  </head>
-  <body>`;
+						let opml = `<opml version="1.0">\n  <head>\n    <title>Sidebar+ Rss export in OPML</title>\n    <dateCreated>${now.toString()}</dateCreated>\n  </head>\n  <body>`;
 						for (let i = 0, l = data.rssFolders.length; i < l; i++)
 							opml += makeFeed(data.rssFolders[i]);
-						opml +=
-`  </body>
-</opml>`;
+						opml += `  </body>\n</opml>`;
 					setTimeout(_ => {createDialogWindow('rssExport', {'text': opml});}, 1000);
 					}
 				}

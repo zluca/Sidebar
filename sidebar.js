@@ -1013,10 +1013,7 @@ const initBlock = {
 				item.dataset.date  = items[i].date;
 				item.href          = items[i].link;
 				item.addEventListener('mouseover', _ => {
-					item.title =
-`${items[i].title}
-
-${items[i].description}`;
+					item.title = `${items[i].title}\n\n${items[i].description}`;
 				},
 				{'passive': true, 'once': true});
 				if (items[i].readed)
