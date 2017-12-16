@@ -991,7 +991,7 @@ const initBlock = {
 						folder.lastChild.appendChild(item);
 				},
 				plaindate   : (item, data) => {
-					if (status.rss.length < 2)
+					if (data.rss.length < 2)
 						folder.lastChild.appendChild(item);
 					else
 						folder.lastChild.insertBefore(item, folder.lastChild.children[data.index]);
