@@ -63,3 +63,9 @@ p>span {
 #home {
 	background-image: url(/icons/home.svg);
 }
+#rate {
+	background-image: url(/icons/fav.svg);
+}
+#translate {
+	background-image: url(/icons/translate.svg);
+}

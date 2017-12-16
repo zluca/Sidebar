@@ -498,6 +498,14 @@
 		"message"       : "禁用",
 		"description"   : ""
 	},
+	"popupButtonRateTitle" : {
+		"message"       : "Rate this extension",
+		"description"   : ""
+	},
+	"popupButtonTranslateTitle" : {
+		"message"       : "Help translate",
+		"description"   : ""
+	},
 	"popupButtonHomeTitle" : {
 		"message"       : "首页",
 		"description"   : ""

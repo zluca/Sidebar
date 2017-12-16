@@ -498,6 +498,14 @@
 		"message"       : "Disabled",
 		"description"   : ""
 	},
+	"popupButtonRateTitle" : {
+		"message"       : "Rate this extension",
+		"description"   : ""
+	},
+	"popupButtonTranslateTitle" : {
+		"message"       : "Help translate",
+		"description"   : ""
+	},
 	"popupButtonHomeTitle" : {
 		"message"       : "Homepage",
 		"description"   : ""

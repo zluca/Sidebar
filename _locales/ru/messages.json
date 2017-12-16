@@ -494,6 +494,14 @@
 		"message"       : "Отключено",
 		"description"   : ""
 	},
+	"popupButtonRateTitle" : {
+		"message"       : "Оценить расширение",
+		"description"   : ""
+	},
+	"popupButtonTranslateTitle" : {
+		"message"       : "Помочь с переводом",
+		"description"   : ""
+	},
 	"popupButtonHomeTitle" : {
 		"message"       : "Домашняя страница",
 		"description"   : ""

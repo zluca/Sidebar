@@ -53,19 +53,39 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 		container.appendChild(form);
 	};
 
+	const buttonEvents = {
+		options   : event => {
+			event.stopPropagation();
+			brauzer.runtime.openOptionsPage();
+		},
+		home      : event => {
+			brauzer.runtime.sendMessage({'target': 'background', 'subject': 'tabs', 'action': 'new', 'data': {'url': 'https://github.com/zluca/Sidebar'}});
+		},
+		translate : event => {
+			brauzer.runtime.sendMessage({'target': 'background', 'subject': 'tabs', 'action': 'new', 'data': {'url': 'https://github.com/zluca/Sidebar/blob/master/CONTRIBUTING.md'}});
+		},
+		rate      : event => {
+			brauzer.runtime.sendMessage({'target': 'background', 'subject': 'tabs', 'action': 'new', 'data': {'url': firefox ? 'https://addons.mozilla.org/en-US/firefox/addon/sidebar_plus/' : 'https://chrome.google.com/webstore/detail/sidebar%20/dnafkfkoknddnkdajibiigkopoelnhei?hl=en'}});
+		}
+	};
+
+	const createButton = name => {
+		const button  = document.createElement('span');
+		button.id     = name;
+		button.title  = getI18n(`popupButton${name}Title`);
+		button.addEventListener('click', buttonEvents[name]);
+		return button;
+	};
+
 	const container = document.createElement('main');
 	container.id    = 'container';
 	createForm('leftBar');
 	createForm('rightBar');
 	const p         = document.createElement('p');
-	const options   = document.createElement('span');
-	options.id      = 'options';
-	options.title   = getI18n('popupButtonOptionsTitle');
-	const home      = document.createElement('span');
-	home.id         = 'home';
-	home.title      = getI18n('popupButtonHomeTitle');
-	p.appendChild(home);
-	p.appendChild(options);
+	p.appendChild(createButton('rate'));
+	p.appendChild(createButton('translate'));
+	p.appendChild(createButton('home'));
+	p.appendChild(createButton('options'));
 	container.appendChild(p);
 	document.body.appendChild(container);
 
@@ -87,13 +107,6 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 			status[section] = value;
 		}
 		brauzer.runtime.sendMessage({target: 'background', subject: 'options', action: 'handler', data: {'section': section, 'option': 'method', 'value': value}});
-	});
-	options.addEventListener('click', event => {
-		event.stopPropagation();
-		brauzer.runtime.openOptionsPage();
-	});
-	home.addEventListener('click', event => {
-		brauzer.runtime.sendMessage({target: 'background', subject: 'tabs', action: 'new', data: {url: 'https://github.com/zluca/Sidebar'}});
 	});
 });
 
