@@ -803,11 +803,11 @@
 			}
 		}
 	},
-	"dialogDownloadDeleteFromHistoryLabel" : {
+	"dialogDeleteFromHistoryLabel" : {
 		"message"       : "Delete from download history",
 		"description"   : ""
 	},
-	"dialogDownloadDeleteFileLabel" : {
+	"dialogDeleteFileLabel" : {
 		"message"       : "Remove file from disc",
 		"description"   : ""
 	},

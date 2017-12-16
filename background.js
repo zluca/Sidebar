@@ -1986,6 +1986,8 @@ const initService = {
 		};
 
 		const onChanged = delta => {
+			console.log('changed');
+			console.log(delta);
 			const download = getById('downloads', delta.id);
 			if (download === false)
 				return;
@@ -2009,7 +2011,7 @@ const initService = {
 			}
 			if (delta.hasOwnProperty('exists')) {
 				download.exists = delta.exists.current;
-				send('sidebar', 'downloads', 'exists', {'id': download.id, 'method': (download.exist === true) ? 'remove' : 'add'});
+				send('sidebar', 'downloads', 'exists', {'id': download.id, 'method': (download.exists === true) ? 'remove' : 'add'});
 			}
 		};
 
@@ -2021,7 +2023,8 @@ const initService = {
 
 		if (start === true) {
 			updateItem.downloads       = (newItem, item) => {
-
+				console.log('updateItem');
+				console.log(item);
 				const checkDownloadState = id => {
 					setTimeout(_ => {
 
@@ -2042,7 +2045,7 @@ const initService = {
 				};
 
 				let filename = item.filename.split('/').pop();
-				if (filename !== false)
+				if (filename !== '')
 					filename = item.url.split('/').pop();
 				let url = item.url;
 				if (item.hasOwnProperty('finalUrl'))
@@ -2062,7 +2065,7 @@ const initService = {
 				newItem.canResume       = item.canResume;
 				newItem.url             = url;
 				newItem.state           = item.state;
-				newItem.exists          = item.exists;
+				newItem.exists          = item.state === 'in_progress' ? true : item.exists;
 				return newItem;
 			};
 

@@ -803,11 +803,11 @@
 			}
 		}
 	},
-	"dialogDownloadDeleteFromHistoryLabel" : {
+	"dialogDeleteFromHistoryLabel" : {
 		"message"       : "删除此下载历史",
 		"description"   : ""
 	},
-	"dialogDownloadDeleteFileLabel" : {
+	"dialogDeleteFileLabel" : {
 		"message"       : "删除磁盘上的文件",
 		"description"   : ""
 	},

@@ -90,13 +90,17 @@ function makeDialogWindow(data, warnings, colors) {
 			main.appendChild(input);
 			return input;
 		},
-		checkbox : (inputType, reverse = false) => {
+		checkbox : (inputType, checked, reverse = false) => {
 			const label       = document.createElement('label');
 			label.textContent = getI18n(`dialog${inputType}Label`);
 			const input       = document.createElement('input');
 			input.type        = 'checkbox';
-			input.checked     = data[inputType];
+			input.checked     = checked;
 			if (reverse === false) {
+				label.addEventListener('click', event => {
+					event.stopPropagation();
+					label.nextElementSibling.click();
+				});
 				main.appendChild(label);
 				main.appendChild(input);
 			}
@@ -501,8 +505,8 @@ function makeDialogWindow(data, warnings, colors) {
 				title = title.substring(0, 28) + '...';
 			alert.textContent = getI18n('dialogDownloadDeleteAlert', [title]);
 			main.appendChild(alert);
-			const deleteFromHistory = addInputRow.checkbox(true, true);
-			const deleteFile        = addInputRow.checkbox(false, true);
+			const deleteFromHistory = addInputRow.checkbox('deleteFromHistory', true, true);
+			const deleteFile        = addInputRow.checkbox('deleteFile', false, true);
 			addButton('confirm', _ => {
 				if (deleteFile.checked === true)
 					send('background', 'downloads', 'removeFile', {'id': data.id});
