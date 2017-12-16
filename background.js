@@ -2186,7 +2186,6 @@ const initService = {
 						opml +=
 `  </body>
 </opml>`;
-					// console.log(opml);
 					setTimeout(_ => {createDialogWindow('rssExport', {'text': opml});}, 1000);
 					}
 				}
@@ -2246,7 +2245,7 @@ const initService = {
 						const xmlDoc     = parser.parseFromString(xhttp.responseText, 'text/xml');
 						const head       = xmlDoc.querySelector('channel, feed');
 						let rssTitle     = '';
-						if (title !== undefined)
+						if (title)
 							rssTitle = title;
 						else {
 							rssTitle = head.querySelector('title');

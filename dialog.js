@@ -309,11 +309,11 @@ function makeDialogWindow(data, warnings, colors) {
 				removeDialogWindow();
 			});
 			addButton('delete', _ => {
-				removeDialogWindow();
-				if (warnings.deleteSite === true)
+				if (warnings.siteDelete === true)
 					send('background', 'dialog', 'siteDelete', {'index': data.index, 'title': data.url});
 				else
 					send('background', 'startpage', 'delete', {'index': data.index});
+				removeDialogWindow();
 			});
 			addButton('cancel');
 		},
@@ -470,11 +470,11 @@ function makeDialogWindow(data, warnings, colors) {
 				}
 			});
 			addButton('delete', _ => {
-				if (warnings.deleteRssFeed === true)
+				if (warnings.rssFeedDelete === true)
 					send('background', 'dialog', 'rssFeedDelete', {'id': data.id, 'title': data.title});
 				else
 					send('background', 'rss', 'rssFeedDelete', {'id': data.id});
-
+				removeDialogWindow();
 			});
 			addButton('cancel');
 			inputTitle.focus();
