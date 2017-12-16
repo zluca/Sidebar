@@ -655,6 +655,10 @@
 		"message"       : "Export",
 		"description"   : ""
 	},
+	"dialogCopyButton" : {
+		"message"       : "Copy to clipboard",
+		"description"   : ""
+	},
 
 	"dialogUrlLabel"    : {
 		"message"       : "Url:",

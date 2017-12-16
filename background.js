@@ -2168,7 +2168,7 @@ const initService = {
 				},
 				export       : (message, sender, sendResponse) => {
 					if (data.rssFolders.length === 0)
-						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNothingToExportTitle, 'message':  i18n.notification.rssNothingToExportTitle});
+						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNothingToExportTitle, 'message':  i18n.notification.rssNothingToExportText});
 					else {
 						const makeFeed = feed => {
 							return `		<outline type="rss" title="${feed.title}" text="${feed.description}" version="RSS" xmlUrl="${feed.url}"/></outline>`;

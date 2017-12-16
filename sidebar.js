@@ -1306,7 +1306,7 @@ function tryToInit() {
 
 function initSidebar(response) {
 	const onMessage = (message, sender, sendResponse) => {
-		console.log(message);
+		// console.log(message);
 		if (message.hasOwnProperty('target')) {
 			if (message.target === 'sidebar')
 				messageHandler[message.subject][message.action](message.data, sendResponse);

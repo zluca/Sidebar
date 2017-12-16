@@ -651,6 +651,10 @@
 		"message"       : "Экспорт",
 		"description"   : ""
 	},
+	"dialogCopyButton" : {
+		"message"       : "Скопировать",
+		"description"   : ""
+	},
 
 	"dialogUrlLabel"    : {
 		"message"       : "Адрес:",

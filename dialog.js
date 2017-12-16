@@ -177,6 +177,10 @@ function makeDialogWindow(data, warnings, colors) {
 				button.textContent = getI18n('dialogExportButton');
 				button.addEventListener('click', callback);
 			},
+			copy   : _ => {
+				button.textContent = getI18n('dialogCopyButton');
+				button.addEventListener('click', callback);
+			}
 		};
 		make[type]();
 		buttons.appendChild(button);
@@ -446,7 +450,11 @@ function makeDialogWindow(data, warnings, colors) {
 
 		rssExport : _ => {
 			setHeader();
-			addInputRow.textarea('text');
+			const opml = addInputRow.textarea('text');
+			addButton('copy', _ => {
+				opml.select();
+				document.execCommand('copy');
+			});
 			addButton('cancel');
 		},
 
