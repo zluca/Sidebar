@@ -1033,8 +1033,6 @@ const initBlock = {
 
 	pocket : data => {
 
-		console.log(data);
-
 		messageHandler.pocket = {
 			newItems     : data =>  {
 				insertItems.pocket(data, 'first');
