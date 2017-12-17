@@ -2152,10 +2152,10 @@ const initService = {
 						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNothingToExportTitle, 'message':  i18n.notification.rssNothingToExportText});
 					else {
 						const makeFeed = feed => {
-							return `		<outline type="rss" title="${feed.title}" text="${feed.description}" version="RSS" xmlUrl="${feed.url}"/></outline>`;
+							return `		<outline type="rss" title="${feed.title}" text="${feed.description}" version="RSS" xmlUrl="${feed.url}"/>\n`;
 						};
 						const now = new Date();
-						let opml = `<opml version="1.0">\n  <head>\n    <title>Sidebar+ Rss export in OPML</title>\n    <dateCreated>${now.toString()}</dateCreated>\n  </head>\n  <body>`;
+						let opml = `<opml version="1.0">\n  <head>\n    <title>Sidebar+ Rss export in OPML</title>\n    <dateCreated>${now.toString()}</dateCreated>\n  </head>\n  <body>\n`;
 						for (let i = 0, l = data.rssFolders.length; i < l; i++)
 							opml += makeFeed(data.rssFolders[i]);
 						opml += `  </body>\n</opml>`;
