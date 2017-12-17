@@ -404,8 +404,8 @@ ul {
 	margin-left: 0;
 	background-image: none;
 }
-.hover .tree>#tabs-0>.folder>.folder-content>.item,
-.fixed .tree>#tabs-0>.folder>.folder-content>.item {
+.hover .tree>#tabs-folder-0>.folder>.folder-content>.item,
+.fixed .tree>#tabs-folder-0>.folder>.folder-content>.item {
 	border-left: none;
 }
 .hover .folder-content,
@@ -413,12 +413,13 @@ ul {
 	margin-left: .8rem;
 	border-left: .1rem dotted var(--border-color-active);
 }
-.hidden-view>.folder-content {
+.hidden-view>.folder-content,
+#tabs-folder-0>div>.tree-view>.folder-content {
 	margin-left: 0;
 	border-left: none;
 }
-.hover .tree>#tabs-0>.folder,
-.fixed .tree>#tabs-0>.folder {
+.hover .tree>#tabs-folder-0>.folder,
+.fixed .tree>#tabs-folder-0>.folder {
 	border-left: none;
 }
 .folder.folded>.folder-content>.folder,
@@ -458,9 +459,9 @@ ul {
 .search-active .search-results {
 	display: block;
 }
-.search-active #history-0,
+.search-active #history-folder-0,
 .search-active #history-getMore,
-.search-active #bookmarks-0,
+.search-active #bookmarks-folder-0,
 .search-active #bookmarks-bookmarkThis {
 	display: none;
 }

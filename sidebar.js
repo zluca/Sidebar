@@ -256,6 +256,8 @@ const initBlock = {
 
 		messageHandler.tabs = {
 			created    : info => {
+				if (options.misc.tabsMode === 'tree')
+					insertFolders('tabs', [fakeFolder(info.tab)], true);
 				insertItems.tabs([info.tab]);
 			},
 			active     : info => {
@@ -277,7 +279,13 @@ const initBlock = {
 					tab.classList[info.loading]('loading');
 			},
 			urlChanged  : info => {
-				insertItems.tabs([info.tab]);
+				if (options.misc.tabsMode !== 'tree')
+					insertItems.tabs([info.tab]);
+				else {
+					const tab = getById('tabs', info.tabs.id);
+					if (tab !== false)
+						tab.href = info.tabs.url;
+				}
 			},
 			folderChanged : info => {
 				if (options.misc.tabsMode === 'domain') {
@@ -340,12 +348,12 @@ const initBlock = {
 					removeFolderById('tabs', info);
 			},
 			view         : info => {
-				setView('tabs', info.view, info.items, info.folders);
+				checkForTree(info.items, info.folders, info.view);
 			}
 		};
 
 		rootFolder                = dce('div');
-		rootFolder.id             = 'tabs-0';
+		rootFolder.id             = 'tabs-folder-0';
 		const rootContent         = dce('div');
 		rootFolder.appendChild(rootContent);
 		controls.tabs.item        = dce('div');
@@ -397,22 +405,19 @@ const initBlock = {
 					folder.lastChild.appendChild(tab);
 				},
 				domain : i => {
-					if (pid !== tabs[i].pid) {
-						pid    = tabs[i].pid;
+					if (pid !== tabs[i].domain) {
+						pid    = tabs[i].domain;
 						folder = getFolderById('tabs', pid);
 					}
 					if (folder !== false)
 						folder.lastChild.appendChild(tab);
 				},
 				tree  : i => {
-					treeFolders[i] = {
-						id     : tabs[i].id,
-						pid    : tabs[i].openerId,
-						view   : 'hidden',
-						domain : 'default',
-						title  : '',
-						folded : false
-					};
+					folder = getFolderById('tabs', tabs[i].id);
+					if (folder.lastChild.hasChildNodes())
+						folder.lastChild.insertBefore(tab, folder.lastChild.firstChild);
+					else
+						folder.lastChild.appendChild(tab);
 				}
 			};
 
@@ -423,7 +428,7 @@ const initBlock = {
 				tab.textContent = tabs[i].title;
 				tab.title       = tabs[i].url;
 				tab.href        = tabs[i].url;
-				let classList   = `tab item domain-${tabs[i].pid} ${tabs[i].status}`;
+				let classList   = `tab item domain-${tabs[i].domain} ${tabs[i].status}`;
 				if (tabs[i].id === status.activeTabId) {
 					status.activeTab = tab;
 					classList += ' active';
@@ -432,16 +437,6 @@ const initBlock = {
 				classList += tabs[i].discarded ? ' discarded' : '';
 				tab.classList = classList;
 				postProcess[options.misc.tabsMode](i);
-			}
-			if (options.misc.tabsMode === 'tree') {
-				insertFolders('tabs', treeFolders, true);
-				for (let i = 0, l = tabs.length; i < l; i++) {
-					const folder = getFolderById('tabs', tabs[i].id);
-					if (folder !== false)
-						folder.insertBefore(getById('tabs', tabs[i].id), folder.firstChild);
-					else
-						rootFolder.lastChild.appendChild(getById('tabs', tabs[i].id));
-				}
 			}
 		};
 
@@ -460,8 +455,26 @@ const initBlock = {
 			}
 		};
 
-		setView('tabs', options.misc.tabsMode, info.tabs, info.tabsFolders);
-		setReadedMode();
+		const fakeFolder = tab => {
+			return {
+				id     : tab.id,
+				pid    : tab.opener,
+				view   : 'tree',
+				folded : false
+			};
+		};
+
+		const checkForTree = (tabs, folders, view) => {
+			if (view !== 'tree')
+				setView('tabs', view, info.tabs, folders);
+			else {
+				let fakeFolders = [];
+				for (let i = 0, l = tabs.length; i < l; i++)
+					fakeFolders.push(fakeFolder(tabs[i]));
+				setView('tabs', view, info.tabs, fakeFolders);
+			}
+		};
+		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode);
 	},
 
 	bookmarks : info => {
@@ -504,7 +517,7 @@ const initBlock = {
 
 		block.bookmarks.classList.add(options.misc.bookmarksMode);
 		rootFolder                   = dce('div');
-		rootFolder.id                = 'bookmarks-0';
+		rootFolder.id                = 'bookmarks-folder-0';
 		const rootContent            = dce('div');
 		rootFolder.appendChild(rootContent);
 		const bookmarksSearchResults = dce('div');
@@ -659,7 +672,7 @@ const initBlock = {
 		status.historyInfo.lastDate = now.toLocaleDateString();
 
 		rootFolder                 = dce('div');
-		rootFolder.id              = 'history-0';
+		rootFolder.id              = 'history-folder-0';
 		const rootContent          = dce('div');
 		rootFolder.appendChild(rootContent);
 		const historySearchResults = dce('div');
@@ -932,7 +945,7 @@ const initBlock = {
 		};
 
 		rootFolder              = dce('div');
-		rootFolder.id           = 'rss-0';
+		rootFolder.id           = 'rss-folder-0';
 		const rootContent       = dce('div');
 		rootFolder.appendChild(rootContent);
 
@@ -1120,7 +1133,7 @@ const initBlock = {
 		};
 
 		rootFolder              = dce('div');
-		rootFolder.id           = 'pocket-0';
+		rootFolder.id           = 'pocket-folder-0';
 		const rootContent       = dce('div');
 		rootFolder.appendChild(rootContent);
 
@@ -1495,8 +1508,8 @@ const updateItem = {};
 function setView(mode, view, items, folders) {
 	options.misc[`${mode}Mode`] = view;
 	block[mode].classList       = `block ${view}`;
-	while (rootFolder.lastChild.firstChild)
-		rootFolder.lastChild.removeChild(rootFolder.lastChild.firstChild);
+	while (rootFolder.firstChild.hasChildNodes())
+		rootFolder.firstChild.removeChild(rootFolder.firstChild.firstChild);
 	clearData(mode);
 	if (view !== 'plain')
 		insertFolders(mode, folders, view === 'tree' ? true : false);

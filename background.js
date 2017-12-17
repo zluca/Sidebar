@@ -1323,7 +1323,7 @@ const initService = {
 					removeFromFolder('tabs', oldTab);
 					oldTab.domain   = newDomain.id;
 					oldTab.pid      = newDomain.id;
-					const newFolder = updateFolder('tabs', newDomain);
+					const newFolder = updateFolder.tabs(oldTab, newDomain);
 					send('sidebar', 'tabs', 'folderChanged', {'tab': oldTab, 'folder': newFolder});
 				}
 				else
@@ -1357,12 +1357,12 @@ const initService = {
 		const onRemoved         = id => {
 			const tab = getById('tabs', id);
 			if (tab !== false) {
-				const newOpenerId = tab.openerId;
+				const newOpenerId = tab.opener;
 				deleteById('tabs', id);
 				removeFromFolder('tabs', tab);
 				for (let i = data.tabs.length - 1; i >= 0; i--)
-					if (data.tabs[i].openerId === id)
-						data.tabs[i].openerId = newOpenerId;
+					if (data.tabs[i].opener === id)
+						data.tabs[i].opener = newOpenerId;
 				send('sidebar', 'tabs', 'removed', {'id': id});
 			}
 		};
@@ -1386,12 +1386,11 @@ const initService = {
 				const domain = makeDomain(item.url, item.favIconUrl, item.title);
 				if (item.active === true)
 					status.activeTabId  = item.id;
-				newItem.pid        = domain.id;
 				newItem.domain     = domain.id;
 				newItem.pinned     = item.pinned;
 				newItem.index      = item.index;
 				newItem.status     = item.status;
-				newItem.openerId   = item.hasOwnProperty('openerTabId') ? item.openerTabId : 0;
+				newItem.opener     = item.hasOwnProperty('openerTabId') ? item.openerTabId : 0;
 				newItem.url        = item.url;
 				newItem.title      = item.title || '_';
 				newItem.discarded  = item.discarded;
@@ -3040,6 +3039,7 @@ function makeDomain(url, fav, title) {
 		id = 'system';
 	else if (/^chrome-extension:|^moz-extension:/i.test(newUrl))
 		id = 'extension';
+	console.log(id);
 	if (id !== '') {
 		return {
 			id    : id,
