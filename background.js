@@ -11,10 +11,7 @@ const config = {
 	extensionStartPage : `${brauzer.extension.getURL('/')}startpage.html`,
 	defaultStartPage   : firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
 	pocketRedirectPage : 'https://getpocket.com/a/read/1973998361',
-	defaultIcon        : 'icons/default.svg',
 	sidebarIcon        : 'icons/sidebar-icon-64.png',
-	systemIcon         : 'icons/wrench.svg',
-	startpageIcon      : 'icons/startpage.svg',
 	rssIcon            : 'icons/rss.svg',
 	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034'
 };
@@ -963,6 +960,7 @@ const updateItem = {
 	history    : null,
 	downloads  : null,
 	rss        : null,
+	pocket     : null,
 	domains    : (newItem, item) => {
 		newItem.fav   = item.fav;
 		newItem.title = item.title;
@@ -972,6 +970,15 @@ const updateItem = {
 		newItem.fav = item.fav;
 		return newItem.fav;
 	}
+};
+
+const updateFolder = {
+	tabs       : null,
+	bookmarks  : null,
+	history    : null,
+	downloads  : null,
+	rss        : null,
+	pocket     : null
 };
 
 const initService = {
@@ -1246,65 +1253,20 @@ const initService = {
 			status.init.tabs = true;
 		};
 
-		const makeFolder        = tab => {
-			const domain = makeDomain(tab.url, tab.favIconUrl, tab.title);
-			let folder   = createFolderById('tabs', domain.id, 'last');
-			if (folder !== false) {
-				folder.pid        = 0;
-				folder.title      = domain.title;
-				folder.folded     = getFolded(`tabs-${domain.id}`);
-				folder.view       = 'hidden';
-				folder.domain     = domain.id;
-				folder.itemsId    = [tab.id];
-				send('sidebar', 'tabs', 'newFolder', folder);
-				return folder;
-			}
-			else {
-				folder = getFolderById('tabs', domain.id);
-				if (folder !== false) {
-					const index = folder.itemsId.indexOf(tab.id);
-					if (index === -1) {
-						folder.itemsId.push(tab.id);
-						checkCount(folder);
-					}
-					return folder;
-				}
-			}
-			return false;
-		};
-
-		const checkCount        = folder => {
-			const length  = folder.itemsId.length;
-			const oldView = folder.view;
-			if (length === 0) {
-				deleteFolderById('tabs', folder.id);
-				if (options.misc.tabsMode.value === 'domain')
-					send('sidebar', 'tabs', 'domainCount', {id: folder.id, view: 'hidden'});
-			}
-			else {
-				folder.view = length === 1 ? 'hidden' : 'domain';
-				if (options.misc.tabsMode.value === 'domain') {
-					if (oldView !== folder.view)
-						send('sidebar', 'tabs', 'domainCount', {id: folder.id, view: folder.view});
-				}
-			}
-		};
-
 		const checkStartPage    = tab => tab.url === config.defaultStartPage ? true : false;
 
 		const createTab         = tab => {
-				if (status.sidebarWindowCreating === true) {
-					status.sidebarWindowCreating = false;
-					return false;
-				}
-				if (options.services.startpage.value === true)
-					if (checkStartPage(tab) === true)
-						brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
-				makeFolder(tab);
-				const newTab = createById('tabs', tab, 'last');
-				send('sidebar', 'tabs', 'created', {'tab': newTab});
-				return newTab;
-			};
+			if (status.sidebarWindowCreating === true) {
+				status.sidebarWindowCreating = false;
+				return false;
+			}
+			if (options.services.startpage.value === true)
+				if (checkStartPage(tab) === true)
+					brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
+			const newTab = createById('tabs', tab, 'last');
+			send('sidebar', 'tabs', 'created', {'tab': newTab});
+			return newTab;
+		};
 
 		const onActivated       = tabInfo => {
 			const tab = getById('tabs', tabInfo.tabId);
@@ -1339,9 +1301,8 @@ const initService = {
 		const onUpdated         = (id, info, tab) => {
 			const oldTab = getById('tabs', id);
 			if (oldTab === false)
-				return;
-			const pid    = oldTab.pid;
-			const folder = makeFolder(tab);
+				return createTab(tab);
+			const oldFolder = getFolderById('tabs', oldTab.domain);
 			if (info.hasOwnProperty('pinned')) {
 				oldTab.pinned = info.pinned;
 				if (info.pinned === true) {
@@ -1355,21 +1316,18 @@ const initService = {
 			if (info.hasOwnProperty('url')) {
 				if (options.services.startpage.value === true)
 					if (checkStartPage(tab))
-						brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
-				oldTab.url = info.url;
-				if (pid !== folder.id) {
-					oldTab.pid = folder.id;
-					const oldFolder = getFolderById('tabs', pid);
-					if (oldFolder !== false) {
-						const index = oldFolder.itemsId.indexOf(id);
-						oldFolder.itemsId.splice(index, 1);
-						checkCount(oldFolder);
-						checkCount(folder);
-						send('sidebar', 'tabs', 'urlChange', {'tab': oldTab, 'folder': folder});
-					}
+						return brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
+				const newDomain = makeDomain(info.url);
+				oldTab.url      = info.url;
+				if (newDomain.id !== oldFolder.id) {
+					removeFromFolder('tabs', oldTab);
+					oldTab.domain   = newDomain.id;
+					oldTab.pid      = newDomain.id;
+					const newFolder = createFolderById('tabs', newDomain.id, 'last');
+					send('sidebar', 'tabs', 'folderChanged', {'tab': oldTab, 'folder': newFolder});
 				}
 				else
-					send('sidebar', 'tabs', 'urlChange', {'tab': oldTab});
+					send('sidebar', 'tabs', 'urlChanged', {'tab': oldTab});
 			}
 			if (info.hasOwnProperty('title')) {
 				oldTab.title = info.title;
@@ -1390,7 +1348,7 @@ const initService = {
 				send('sidebar', 'tabs', 'status', {'id': id, 'loading': info.status === 'loading' ? 'add' : 'remove'});
 			}
 			if (info.hasOwnProperty('favIconUrl')) {
-				const domain = getById('domains', pid);
+				const domain = getById('domains', oldTab.domain);
 				if (domain !== false)
 					domain.fav = makeFav(domain.id, null, info.favIconUrl, true);
 			}
@@ -1399,14 +1357,9 @@ const initService = {
 		const onRemoved         = id => {
 			const tab = getById('tabs', id);
 			if (tab !== false) {
-				const folder      = getFolderById('tabs', tab.pid);
 				const newOpenerId = tab.openerId;
 				deleteById('tabs', id);
-				if (folder !== false) {
-					const index = folder.itemsId.indexOf(id);
-					folder.itemsId.splice(index, 1);
-					checkCount(folder);
-				}
+				removeFromFolder('tabs', tab);
 				for (let i = data.tabs.length - 1; i >= 0; i--)
 					if (data.tabs[i].openerId === id)
 						data.tabs[i].openerId = newOpenerId;
@@ -1430,11 +1383,11 @@ const initService = {
 
 		if (start === true) {
 			updateItem.tabs = (newItem, item) => {
-				const domain = makeDomain(item.url, item.favIconUrl, item.title).id;
+				const domain = makeDomain(item.url, item.favIconUrl, item.title);
 				if (item.active === true)
 					status.activeTabId  = item.id;
-				newItem.pid        = domain;
-				newItem.domain     = domain;
+				newItem.pid        = domain.id;
+				newItem.domain     = domain.id;
 				newItem.pinned     = item.pinned;
 				newItem.index      = item.index;
 				newItem.status     = item.status;
@@ -1444,14 +1397,33 @@ const initService = {
 				newItem.discarded  = item.discarded;
 				newItem.windowId   = item.windowId;
 				newItem.activated  = false;
+				updateFolder.tabs(newItem, domain);
 				return newItem;
+			};
+
+			updateFolder.tabs = (tab, domain) => {
+				let folder   = getFolderById('tabs', domain.id);
+				if (folder === false) {
+					folder            = createFolderById('tabs', domain.id, 'last');
+					folder.pid        = 0;
+					folder.title      = domain.title;
+					folder.folded     = getFolded(`tabs-${domain.id}`);
+					folder.view       = 'hidden';
+					folder.domain     = domain.id;
+					folder.itemsId    = [tab.id];
+					send('sidebar', 'tabs', 'newFolder', folder);
+				}
+				else
+					addToFolder('tabs', tab);
+				return folder;
 			};
 
 			execMethod(brauzer.tabs.query, getTabs, {});
 		}
 		else {
 			i18n.tabs           = {};
-			updateItem.tabs       = null;
+			updateItem.tabs     = null;
+			updateFolder.tabs   = null;
 			messageHandler.tabs = defaultTabsHandler;
 			data.tabs           = [];
 			data.tabsId         = [];
@@ -1532,23 +1504,6 @@ const initService = {
 			status.init.bookmarks = true;
 		};
 
-		const makeFolder    = folder => {
-			let newFolder = getFolderById('bookmarks', folder.id);
-			if (newFolder === false) {
-				newFolder           = createFolderById('bookmarks', folder.id, 'last');
-				newFolder.pid       = folder.parentId;
-				newFolder.title     = folder.title;
-				newFolder.index     = folder.index;
-				newFolder.view      = 'normal';
-				newFolder.folded    = getFolded(`bookmarks-${folder.id}`);
-				newFolder.itemsId   = [];
-				const parent        = getFolderById('bookmarks', folder.parentId);
-				if (parent !== false)
-					parent.itemsId.push(folder.id);
-			}
-			return newFolder;
-		};
-
 		const parseTree     = folder => {
 
 			const detector = firefox ?
@@ -1581,7 +1536,7 @@ const initService = {
 			}
 			if (folder.hasOwnProperty('parentId'))
 				if (folder.parentId !== undefined)
-					makeFolder(folder);
+					updateFolder.bookmarks(folder);
 			if (folder.hasOwnProperty('children'))
 				for (let i = 0, l = folder.children.length; i < l; i++)
 					detector(folder.children[i]);
@@ -1616,7 +1571,7 @@ const initService = {
 				}
 				else
 					return send('sidebar', 'bookmarks', 'createdBookmark', {'item': createById('bookmarks', bookmark, 'last')});
-				send('sidebar', 'bookmarks', 'createdFolder', {'item': makeFolder(bookmark)});
+				send('sidebar', 'bookmarks', 'createdFolder', {'item': updateFolder.bookmarks(bookmark)});
 		};
 
 		const onChanged     = (id, info) => {
@@ -1704,6 +1659,23 @@ const initService = {
 				return newItem;
 			};
 
+			updateFolder.bookmarks =  folder => {
+				let newFolder = getFolderById('bookmarks', folder.id);
+				if (newFolder === false) {
+					newFolder           = createFolderById('bookmarks', folder.id, 'last');
+					newFolder.pid       = folder.parentId;
+					newFolder.title     = folder.title;
+					newFolder.index     = folder.index;
+					newFolder.view      = 'normal';
+					newFolder.folded    = getFolded(`bookmarks-${folder.id}`);
+					newFolder.itemsId   = [];
+					const parent        = getFolderById('bookmarks', folder.parentId);
+					if (parent !== false)
+						parent.itemsId.push(folder.id);
+				}
+				return newFolder;
+			};
+
 			execMethod(brauzer.bookmarks.getRecent, getRecent, options.misc.limitBookmarks.value);
 		}
 		else if (start === 'reInit') {
@@ -1715,7 +1687,8 @@ const initService = {
 		}
 		else {
 			i18n.bookmarks           = {};
-			updateItem.bookmarks       = null;
+			updateItem.bookmarks     = null;
+			updateFolder.bookmarks   = null;
 			messageHandler.bookmarks = null;
 			data.bookmarks           = [];
 			data.bookmarksId         = [];
@@ -1768,7 +1741,7 @@ const initService = {
 				let foldersId = [];
 				for (let i = 0; i < l; i++) {
 					const item   = createById('history', history[i], 'last');
-					const folder = makeHistoryFolder(history[i], 'last');
+					const folder = updateFolder.history(history[i], 'last');
 					if (sendData !== false) {
 						if (foldersId.indexOf(folder.id) === -1) {
 							foldersId.push(folder.id);
@@ -1815,26 +1788,11 @@ const initService = {
 			execMethod(brauzer.history.search, searchHandler, searchObject);
 		};
 
-		const makeHistoryFolder = (item, position) => {
-			let title   = new Date(item.lastVisitTime);
-			title       = title.toLocaleDateString();
-			const id    = title.replace(/\./g, '');
-			let folder  = getFolderById('history', id);
-			if (folder === false) {
-				folder        = createFolderById('history', id, position);
-				folder.pid    = 0;
-				folder.view   = 'normal';
-				folder.folded = getFolded(`history-${id}`);
-				folder.title  = title;
-			}
-			return folder;
-		};
-
 		const onVisited = item => {
 			const hs = getById('history', item.id);
 			if (hs !== false)
 				deleteById('history', item.id);
-			send('sidebar', 'history', 'new', {'item': createById('history', item, 'first'), 'folder': makeHistoryFolder(item, 'first')});
+			send('sidebar', 'history', 'new', {'item': createById('history', item, 'first'), 'folder': updateFolder.history(item, 'first')});
 		};
 
 		const onVisitRemoved = info => {
@@ -1874,11 +1832,27 @@ const initService = {
 				return newItem;
 			};
 
+			updateFolder.history = (item, position) => {
+				let title   = new Date(item.lastVisitTime);
+				title       = title.toLocaleDateString();
+				const id    = title.replace(/\./g, '');
+				let folder  = getFolderById('history', id);
+				if (folder === false) {
+					folder        = createFolderById('history', id, position);
+					folder.pid    = 0;
+					folder.view   = 'normal';
+					folder.folded = getFolded(`history-${id}`);
+					folder.title  = title;
+				}
+				return folder;
+			};
+
 			searchMore(false);
 		}
 		else {
 			i18n.history           = {};
-			updateItem.history       = null;
+			updateItem.history     = null;
+			updateFolder.history   = null;
 			messageHandler.history = null;
 			data.history           = [];
 			data.historyId         = [];
@@ -2621,6 +2595,7 @@ const initService = {
 						pocket.status = 1;
 						pocket.type   = 'archives';
 						send('sidebar', 'pocket', 'archive', info);
+						removeFromFolder('pocket', pocket);
 					}
 				},
 				unarchive : response => {
@@ -2628,12 +2603,17 @@ const initService = {
 					if (pocket !== false) {
 						pocket.status = 0;
 						pocket.type   = detectType(pocket);
-						send('sidebar', 'pocket', 'unarchive', {'id': info, 'pid': pocket.type});
+						const folder  = addToFolder('pocket', pocket);
+						send('sidebar', 'pocket', 'unarchive', {'id': info, 'pid': pocket.type, 'domain': folder.id});
 					}
 				},
 				delete  : response => {
-					deleteById('pocket', info);
-					send('sidebar', 'pocket', 'deleted', info);
+					const pocket = getById('pocket', info);
+					if (pocket !== false) {
+						deleteById('pocket', info);
+						send('sidebar', 'pocket', 'deleted', info);
+						removeFromFolder('pocket', pocket);
+					}
 				},
 				auth    : response => {
 					if (response.hasOwnProperty('access_token')) {
@@ -2701,32 +2681,12 @@ const initService = {
 			}
 		};
 
-		const makeFolder = pocket => {
-			const domain = makeDomain(pocket.url);
-			let folder = getFolderById('pocket', domain.id);
-			if (folder === false) {
-				folder         = createFolderById('pocket', domain.id, 'last');
-				folder.folded  = false;
-				folder.title   = domain.title;
-				folder.itemsId = [pocket.id];
-				folder.view    = 'domain';
-				folder.domain  = domain.id;
-			}
-			else {
-				const index = folder.itemsId.indexOf(pocket.id);
-				if (index === -1)
-					folder.itemsId.push(pocket.id);
-			}
-			return folder;
-		};
-
 		const createPocket = item => {
 			let newItem = getById('pocket', item.item_id);
 			if (newItem === false) {
 				item.id   = item.item_id;
 				item.date = item.time_added;
 				newItem   = createById('pocket', item, 'date');
-				makeFolder(newItem);
 			}
 			else
 				updateItem.pocket(newItem, item);
@@ -2818,17 +2778,34 @@ const initService = {
 		if (start === true) {
 
 			updateItem.pocket = (newItem, item) => {
+				const domain        = makeDomain(item.given_url || item.resolved_url);
 				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
 				newItem.title       = item.given_title || item.resolved_title || item.given_url || item.resolved_url;
 				newItem.url         = item.given_url || item.resolved_url;
-				newItem.status      = item.status;
-				newItem.domain      = makeDomain(item.given_url || item.resolved_url).id;
+				newItem.status      = parseInt(item.status);
+				newItem.domain      = domain.id;
 				newItem.favorite    = parseInt(item.favorite) === 0 ? false : true;
 				newItem.type        = detectType(item);
 				newItem.is_article  = item.is_article;
 				newItem.has_image   = item.has_image;
 				newItem.has_video   = item.has_video;
+				if (newItem.status === 0)
+					updateFolder.pocket(newItem, domain);
 				return newItem;
+			};
+
+			updateFolder.pocket = (pocket, domain) => {
+				let folder = getFolderById('pocket', domain.id);
+				if (folder === false) {
+					folder         = createFolderById('pocket', domain.id, 'last');
+					folder.folded  = false;
+					folder.view    = 'hidden';
+					folder.title   = domain.title;
+					folder.itemsId = [pocket.id];
+					folder.domain  = domain.id;
+					return folder;
+				}
+				return addToFolder('pocket', pocket);
 			};
 
 			i18n.pocket = {
@@ -2882,6 +2859,7 @@ const initService = {
 		else {
 			i18n.pocket           = {};
 			updateItem.pocket     = null;
+			updateFolder.pocket   = null;
 			messageHandler.pocket = null;
 			data.pocket           = [];
 			data.pocketId         = [];
@@ -2951,7 +2929,7 @@ function send(target, subject, action, dataToSend) {
 			disabled : _ => {}
 		};
 
-		if (/tabs|bookmarks|history|downloads|rss/.test(subject)) {
+		if (/tabs|bookmarks|history|downloads|rss|pocket/.test(subject)) {
 			if (subject !== options[target].mode.value)
 				return;
 			if (status.init.hasOwnProperty(subject))
@@ -3041,19 +3019,8 @@ function makeFav(id, url, favIconUrl, update = false) {
 	};
 
 	let fav     = getById('favs', id);
-	let favIcon = '';
-	if (id === 'default')
-		favIcon = config.defaultIcon;
-	else if (id === 'startpage')
-		favIcon = config.startpageIcon;
-	else if (id === 'system')
-		favIcon = config.systemIcon;
-	else if (id === 'extension')
-		favIcon = config.defaultIcon;
-	else {
-		favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
-		saveLater('favs');
-	}
+	let favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
+	saveLater('favs');
 	if (update !== false)
 		sendLater('favs');
 	return favIcon;
@@ -3061,24 +3028,24 @@ function makeFav(id, url, favIconUrl, update = false) {
 
 function makeDomain(url, fav, title) {
 	let id       = '';
-	let newUrl   = url;
 	let newTitle = '';
-	if (url === '')
+	let newUrl   = (url === 'about:blank') ? (title !== undefined) ? title : url : url;
+	if (newUrl === '')
 		id = 'default';
-	else if (url === config.defaultStartPage)
+	else if (newUrl.match(config.defaultStartPage))
 		id = 'startpage';
-	else if (url === config.extensionStartPage)
+	else if (newUrl.match(config.extensionStartPage) || config.extensionStartPage.match(newUrl))
 		id = 'startpage';
-	else if (url === 'about:blank') {
-		if (title !== undefined)
-			newUrl = title;
-	}
 	else if (/^about:|^chrome:/.test(newUrl))
 		id = 'system';
 	else if (/^chrome-extension:|^moz-extension:/i.test(newUrl))
 		id = 'extension';
-	if (id !== '')
-		newTitle = i18n.domains[id];
+	if (id !== '') {
+		return {
+			id    : id,
+			title : i18n.domains[id]
+		};
+	}
 	else {
 		newTitle = domainFromUrl(newUrl, true);
 		id       = newTitle.replace(/\./g, '');
@@ -3295,6 +3262,47 @@ function deleteFolderById(mode, id, killChildrens = false) {
 		}
 		data[`${mode}Folders`].splice(index, 1);
 		data[`${mode}FoldersId`].splice(index, 1);
+	}
+}
+
+function addToFolder(mode, item) {
+	const folder = getFolderById(mode, item.domain);
+	if (folder !== false) {
+		const index = folder.itemsId.indexOf(item.id);
+		if (index === -1) {
+			folder.itemsId.push(item.id);
+			checkCount(mode, folder);
+		}
+		return folder;
+	}
+	return false;
+}
+
+function removeFromFolder(mode, item) {
+	const folder = getFolderById(mode, item.domain);
+	if (folder !== false) {
+		const index = folder.itemsId.indexOf(item.id);
+		if (index !== -1) {
+			folder.itemsId.splice(index, 1);
+			checkCount(mode, folder);
+		}
+	}
+}
+
+function checkCount(mode, folder) {
+	const length  = folder.itemsId.length;
+	const oldView = folder.view;
+	if (length === 0) {
+		deleteFolderById(mode, folder.id);
+		if (options.misc[`${mode}Mode`].value === 'domain')
+			send('sidebar', mode, 'folderRemoved', folder.id);
+	}
+	else {
+		folder.view = length === 1 ? 'hidden' : 'domain';
+		if (options.misc[`${mode}Mode`].value === 'domain') {
+			if (oldView !== folder.view)
+				send('sidebar', mode, 'domainCount', {id: folder.id, view: folder.view});
+		}
 	}
 }
 

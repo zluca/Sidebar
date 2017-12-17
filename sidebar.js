@@ -276,14 +276,16 @@ const initBlock = {
 				if (tab !== false)
 					tab.classList[info.loading]('loading');
 			},
-			urlChange   : info => {
-				const tab = getById('tabs', info.tab.id);
-				if (tab !== false) {
-					if (options.misc.tabsMode === 'domain')
-						if (info.hasOwnProperty('folder'))
-							insertFolders('tabs', [info.folder]);
-				}
+			urlChanged  : info => {
 				insertItems.tabs([info.tab]);
+			},
+			folderChanged : info => {
+				if (options.misc.tabsMode === 'domain') {
+					const tab = getById('tabs', info.tab.id);
+					if (tab !== false)
+						insertFolders('tabs', [info.folder]);
+					insertItems.tabs([info.tab]);
+				}
 			},
 			removed      : info => {
 				const removing = {
@@ -331,6 +333,11 @@ const initBlock = {
 					folder.classList.add('domain-view');
 					folder.classList.remove('hidden-view');
 				}
+			},
+			folderRemoved: info => {
+				const folder = getFolderById('tabs', info);
+				if (folder !== false)
+					removeFolderById('tabs', info);
 			},
 			view         : info => {
 				setView('tabs', info.view, info.items, info.folders);
@@ -1051,6 +1058,22 @@ const initBlock = {
 				if (pocket !== false)
 					removeById('pocket', info);
 			},
+			domainCount  : info => {
+				const folder = getFolderById('pocket', info.id);
+				if (info.view === 'hidden') {
+					folder.classList.remove('domain-view');
+					folder.classList.add('hidden-view');
+				}
+				else {
+					folder.classList.add('domain-view');
+					folder.classList.remove('hidden-view');
+				}
+			},
+			folderRemoved: info => {
+				const folder = getFolderById('pocket', info);
+				if (folder !== false)
+					removeFolderById('pocket', info);
+			},
 			view         : info => {
 				setView('pocket', info.view, info.items, info.folders);
 			},
@@ -1087,6 +1110,11 @@ const initBlock = {
 						if (folder !== false)
 							folder.lastChild.appendChild(pocket);
 					}
+					else if (options.misc.pocketMode === 'domain') {
+						const folder = getFolderById('pocket', info.domain);
+						if (folder !== false)
+							folder.lastChild.appendChild(pocket);
+					}
 				}
 			}
 		};
@@ -1099,7 +1127,6 @@ const initBlock = {
 		const loginContainer    = dce('div');
 		const login             = makeItemButton('login', 'pocket');
 		login.id                = 'login';
-		// login.textContent       = i18n.pocket.login;
 		controls.pocket.user    = dce('div');
 		controls.pocket.user.id = 'username';
 		controls.pocket.user.classList.add('controls');
@@ -1158,15 +1185,20 @@ const initBlock = {
 				}
 			};
 			for (let i = 0, l = items.length; i < l; i++) {
+				if (items[i].status > 0 && options.misc.pocketMode !== 'type')
+					continue;
 				const pocket = createById('pocket', items[i].id);
 				updateItem.pocket(pocket, items[i]);
 				if (options.misc.pocketMode !== 'plain') {
 					if (items[i][options.misc.pocketMode] !== pid) {
 						pid    = items[i][options.misc.pocketMode];
 						folder = getFolderById('pocket', items[i][options.misc.pocketMode]);
+						if (folder !== false)
+							insert[position](pocket);
 					}
 				}
-				insert[position](pocket);
+				else
+					insert[position](pocket);
 			}
 		};
 

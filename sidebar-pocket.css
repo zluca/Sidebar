@@ -80,6 +80,7 @@
 .type-archives {
 	text-decoration: line-through;
 }
-.plain .type-archives {
+.plain .type-archives,
+.domain .type-archives {
 	display: none;
 }

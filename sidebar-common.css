@@ -508,6 +508,15 @@ ul {
 .moving .controls {
 	display: none!important;
 }
-#tabs-folder-default {
-	display: none;
+.domain-default {
+	background-image: url(icons/default.svg);
+}
+.domain-startpage {
+	background-image: url(icons/startpage.svg);
+}
+.domain-system {
+	background-image: url(icons/wrench.svg);
+}
+.domain-extension {
+	background-image: url(icons/default.svg);
 }
