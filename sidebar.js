@@ -1174,6 +1174,14 @@ const initBlock = {
 				target.appendChild(controls.pocket.item);
 		});
 
+		block.pocket.addEventListener('click', event => {
+			event.stopPropagation();
+			event.preventDefault();
+			const target = event.target;
+			if (target.classList.contains('pocket'))
+				openLink(event);
+		});
+
 		updateItem.pocket  = (pocket, info) => {
 			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
 			pocket.href        = info.url;
