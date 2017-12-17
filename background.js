@@ -1323,7 +1323,7 @@ const initService = {
 					removeFromFolder('tabs', oldTab);
 					oldTab.domain   = newDomain.id;
 					oldTab.pid      = newDomain.id;
-					const newFolder = createFolderById('tabs', newDomain.id, 'last');
+					const newFolder = updateFolder('tabs', newDomain);
 					send('sidebar', 'tabs', 'folderChanged', {'tab': oldTab, 'folder': newFolder});
 				}
 				else
