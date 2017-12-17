@@ -43,7 +43,8 @@ const i18n = {
 		bookmarks : getI18n('sbControlsBookmarksTitle'),
 		history   : getI18n('sbControlsHistoryTitle'),
 		downloads : getI18n('sbControlsDownloadsTitle'),
-		rss       : getI18n('sbControlsRssTitle')
+		rss       : getI18n('sbControlsRssTitle'),
+		pocket    : getI18n('sbControlsPocketTitle')
 	},
 	startpage   : {},
 	tabs        : {},
