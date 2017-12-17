@@ -157,88 +157,88 @@ const block    = {
 
 const messageHandler = {
 	options  : {
-		wide               : data => {
-			setWide(data.value);
+		wide               : info => {
+			setWide(info.value);
 		},
-		fixed              : data => {
-			setFixed(data.value);
+		fixed              : info => {
+			setFixed(info.value);
 		},
-		width              : data => {
-			options.sidebar.width = data.value;
+		width              : info => {
+			options.sidebar.width = info.value;
 		},
-		mode               : data => {
-			blockInit(data.value, data.data);
+		mode               : info => {
+			blockInit(info.value, info.data);
 		},
-		warnings           : data => {
-			options.warnings[data.option] = data.value;
+		warnings           : info => {
+			options.warnings[info.option] = info.value;
 		},
-		fontSize           : data => {
-			setFontSize(data.value);
+		fontSize           : info => {
+			setFontSize(info.value);
 		},
-		backgroundColor       : data => {
-			setColor({'backgroundColor': data.value});
+		backgroundColor       : info => {
+			setColor({'backgroundColor': info.value});
 		},
-		backgroundColorActive : data => {
-			setColor({'backgroundColorActive': data.value});
+		backgroundColorActive : info => {
+			setColor({'backgroundColorActive': info.value});
 		},
-		fontColor          : data => {
-			setColor({'fontColor': data.value});
+		fontColor          : info => {
+			setColor({'fontColor': info.value});
 		},
-		fontColorActive    : data => {
-			setColor({'fontColorActive': data.value});
+		fontColorActive    : info => {
+			setColor({'fontColorActive': info.value});
 		},
-		fontColorInactive    : data => {
-			setColor({'fontColorInactive': data.value});
+		fontColorInactive    : info => {
+			setColor({'fontColorInactive': info.value});
 		},
-		borderColor        : data => {
-			setColor({'borderColor': data.value});
+		borderColor        : info => {
+			setColor({'borderColor': info.value});
 		},
-		borderColorActive  : data => {
-			setColor({'borderColorActive': data.value});
+		borderColorActive  : info => {
+			setColor({'borderColorActive': info.value});
 		},
-		sidebarImage       : data => {
-			doc.style.backgroundImage = `url(${data.value})`;
+		sidebarImage       : info => {
+			doc.style.backgroundImage = `url(${info.value})`;
 		},
-		rssHideReaded      : data => {
-			setReadedMode(data.value);
+		rssHideReaded      : info => {
+			setReadedMode(info.value);
 		},
-		services           : data => {
-			if (data.enabled === true)
-				enableBlock(data.service);
+		services           : info => {
+			if (info.enabled === true)
+				enableBlock(info.service);
 			else
-				button[data.service].classList.add('hidden');
+				button[info.service].classList.add('hidden');
 		}
 	},
 	set : {
-		fold         : data => {
-			if (data.mode !== options.sidebar.mode) return;
-			const folder = getFolderById(data.mode, data.id);
+		fold         : info => {
+			if (info.mode !== options.sidebar.mode) return;
+			const folder = getFolderById(info.mode, info.id);
 			if (folder !== false)
-				folder.classList[data.method]('folded');
+				folder.classList[info.method]('folded');
 		},
-		reInit       : data => {
-			initSidebar(data);
+		reInit       : info => {
+			initSidebar(info);
 		},
-		hover       : data => {
-			doc.classList[data]('hover');
+		hover       : info => {
+			doc.classList[info]('hover');
 		},
-		side        : data => {
+		side        : info => {
 			if (options.sidebar.method === 'native')
-				status.side = data;
+				status.side = info;
 		}
 	},
 	info : {
-		rssUnreaded    : data => {
-			button.rss.lastChild.textContent = data.unreaded || ' ';
+		rssUnreaded    : info => {
+			button.rss.lastChild.textContent = info.unreaded || ' ';
 		},
-		newDomain      : data => {
-			setDomainStyle.update([data.domain]);
+		newDomain      : info => {
+			setDomainStyle.update([info.domain]);
 		},
-		updateDomain   : data => {
-			setDomainStyle.update(data);
+		updateDomain   : info => {
+			setDomainStyle.update(info);
 		},
-		downloadStatus : data => {
-			setDownloadStatus[data]();
+		downloadStatus : info => {
+			setDownloadStatus[info]();
 		}
 	},
 	tabs : {},
@@ -250,50 +250,50 @@ const messageHandler = {
 
 const initBlock = {
 
-	tabs : data => {
+	tabs : info => {
 
-		status.activeTabId = data.activeTabId;
+		status.activeTabId = info.activeTabId;
 
 		messageHandler.tabs = {
-			created    : data => {
-				insertItems.tabs([data.tab]);
+			created    : info => {
+				insertItems.tabs([info.tab]);
 			},
-			active     : data => {
-				status.activeTabId = data;
+			active     : info => {
+				status.activeTabId = info;
 				if (status.activeTab !== false)
 					status.activeTab.classList.remove('active');
-				status.activeTab = getById('tabs', data);
+				status.activeTab = getById('tabs', info);
 				if (status.activeTab !== false)
 					status.activeTab.classList.add('active');
 			},
-			title      : data => {
-				const tab = getById('tabs', data.id);
+			title      : info => {
+				const tab = getById('tabs', info.id);
 				if (tab !== false)
-					tab.textContent = data.title;
+					tab.textContent = info.title;
 			},
-			status     : data => {
-				const tab = getById('tabs', data.id);
+			status     : info => {
+				const tab = getById('tabs', info.id);
 				if (tab !== false)
-					tab.classList[data.loading]('loading');
+					tab.classList[info.loading]('loading');
 			},
-			urlChange   : data => {
-				const tab = getById('tabs', data.tab.id);
+			urlChange   : info => {
+				const tab = getById('tabs', info.tab.id);
 				if (tab !== false) {
 					if (options.misc.tabsMode === 'domain')
-						if (data.hasOwnProperty('folder'))
-							insertFolders('tabs', [data.folder]);
+						if (info.hasOwnProperty('folder'))
+							insertFolders('tabs', [info.folder]);
 				}
-				insertItems.tabs([data.tab]);
+				insertItems.tabs([info.tab]);
 			},
-			removed      : data => {
+			removed      : info => {
 				const removing = {
 					plain  : tab => {
-						removeById('tabs', data.id);
+						removeById('tabs', info.id);
 					},
 					domain : tab => {
 						const pid    = tab.parentNode.firstChild.dataset.id;
 						const folder = getFolderById('tabs', pid);
-						removeById('tabs', data.id);
+						removeById('tabs', info.id);
 						if (folder !== false)
 							if (!folder.lastChild.hasChildNodes())
 								removeFolderById('tabs', pid);
@@ -304,26 +304,26 @@ const initBlock = {
 							if (folder.children[i].classList.contains('folder'))
 								folder.parentNode.insertBefore(folder.children[i], folder);
 						folder.parentNode.removeChild(folder);
-						removeById('tabs', data.id);
+						removeById('tabs', info.id);
 					}
 				};
-				const tab = getById('tabs', data.id);
+				const tab = getById('tabs', info.id);
 				if (tab !== false)
 					removing[options.misc.tabsMode](tab);
 			},
-			moved        : data => {
-				moveTab(data);
+			moved        : info => {
+				moveTab(info);
 			},
-			unpin        : data => {
-				getById('tabs', data.id).classList.remove('pinned');
+			unpin        : info => {
+				getById('tabs', info.id).classList.remove('pinned');
 			},
-			newFolder    : data => {
+			newFolder    : info => {
 				if (options.misc.tabsMode === 'domain')
-					insertFolders('tabs', [data]);
+					insertFolders('tabs', [info]);
 			},
-			domainCount  : data => {
-				const folder = getFolderById('tabs', data.id);
-				if (data.view === 'hidden') {
+			domainCount  : info => {
+				const folder = getFolderById('tabs', info.id);
+				if (info.view === 'hidden') {
 					folder.classList.remove('domain-view');
 					folder.classList.add('hidden-view');
 				}
@@ -332,8 +332,8 @@ const initBlock = {
 					folder.classList.remove('hidden-view');
 				}
 			},
-			view         : data => {
-				setView('tabs', data.view, data.items, data.folders);
+			view         : info => {
+				setView('tabs', info.view, info.items, info.folders);
 			}
 		};
 
@@ -453,33 +453,35 @@ const initBlock = {
 			}
 		};
 
-		setView('tabs', options.misc.tabsMode, data.tabs, data.tabsFolders);
+		setView('tabs', options.misc.tabsMode, info.tabs, info.tabsFolders);
 		setReadedMode();
 	},
 
-	bookmarks : data => {
+	bookmarks : info => {
 		let lastSearch = '';
 
 		messageHandler.bookmarks = {
-			removed         : data => {
-				removeById('bookmarks', data.id);
+			removed         : info => {
+				removeById('bookmarks', info.id);
 			},
-			folderRemoved   : data => {
-				removeFolderById('bookmarks', data.id);
+			folderRemoved   : info => {
+				removeFolderById('bookmarks', info.id);
 			},
-			changedBookmark : data => {
-				changeBook(data.id, data.info);
+			changedBookmark : info => {
+				changeBook(info.id, info.info);
 			},
-			changedFolder   : data => {
-				getFolderById('bookmarks', data.id).firstChild.textContent = data.title;
+			changedFolder   : info => {
+				const folde = getFolderById('bookmarks', info.id);
+				if (folder !== false)
+					folder.firstChild.textContent = info.title;
 			},
-			createdBookmark : data => {
-				insertBookmarks([data.item]);
+			createdBookmark : info => {
+				insertBookmarks([info.item]);
 			},
-			createdFolder   : data => {
-				insertFolders('bookmarks', [data.item]);
+			createdFolder   : info => {
+				insertFolders('bookmarks', [info.item]);
 			},
-			moved           : data => {
+			moved           : info => {
 				const mouseup = event => {
 					event.stopPropagation();
 					event.preventDefault();
@@ -489,7 +491,7 @@ const initBlock = {
 				if (status.moving === true)
 					doc.addEventListener('mouseup', mouseup);
 				else
-					moveBook(getById('bookmarks', data.id) , getFolderById('bookmarks', data.pid), data.index);
+					moveBook(getById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.index);
 			}
 		};
 
@@ -615,31 +617,33 @@ const initBlock = {
 		};
 
 		if (options.misc.bookmarksMode === 'tree')
-			insertFolders('bookmarks', data.bookmarksFolders);
-		insertBookmarks(data.bookmarks, 'last');
+			insertFolders('bookmarks', info.bookmarksFolders);
+		insertBookmarks(info.bookmarks, 'last');
 	},
 
-	history : data => {
+	history : info => {
 
 		messageHandler.history = {
-			new     : data =>  {
-				insertFolders('history', [data.folder]);
-				insertHistoryes([data.item], 'first');
-				if (data.historyEnd)
+			new     : info =>  {
+				insertFolders('history', [info.folder]);
+				insertHistoryes([info.item], 'first');
+				if (info.historyEnd === true)
 					getMoreButton.classList.add('hidden');
 			},
-			removed : data =>  {
-				removeHistoryItems(data.ids);
+			removed : info =>  {
+				removeHistoryItems(info.ids);
 			},
-			wiped   : data =>  {
+			wiped   : info =>  {
 				historyTotalWipe();
 			},
-			gotMore : data =>  {
-				insertFolders('history', data.historyFolders);
-				insertHistoryes(data.history, 'last');
+			gotMore : info =>  {
+				insertFolders('history', info.historyFolders);
+				insertHistoryes(info.history, 'last');
 			},
-			title   : data =>  {
-				getById('history', data.id).textContent = data.title;
+			title   : info =>  {
+				const item = getById('history', info.id);
+				if (item !== false)
+					item.textContent = info.title;
 			}
 		};
 
@@ -741,31 +745,31 @@ const initBlock = {
 				removeById('history', data.historyId[i]);
 		};
 
-		insertFolders('history', data.historyFolders);
-		insertHistoryes(data.history, 'last');
-		if (data.historyEnd)
+		insertFolders('history', info.historyFolders);
+		insertHistoryes(info.history, 'last');
+		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
 		status.historyInfoInit = true;
 	},
 
-	downloads : data => {
+	downloads : info => {
 
 		messageHandler.downloads = {
-			created    : data => {
-				insertDownload(data.item);
+			created    : info => {
+				insertDownload(info.item);
 			},
-			erased     : data => {
-				block.downloads.removeChild(getById('downloads', data.id));
+			erased     : info => {
+				block.downloads.removeChild(getById('downloads', info.id));
 			},
-			exists     : data => {
-				const download = getById('downloads', data.id);
+			exists     : info => {
+				const download = getById('downloads', info.id);
 				if (download !== false)
-					download.classList[data.method]('deleted');
+					download.classList[info.method]('deleted');
 			},
-			startPause : data => {
-				const download = getById('downloads', data.id);
-				if (data.paused === true) {
-					if (data.canResume === true)
+			startPause : info => {
+				const download = getById('downloads', info.id);
+				if (info.paused === true) {
+					if (info.canResume === true)
 						download.classList.add('paused');
 					else
 						download.classList.add('canceled');
@@ -773,20 +777,20 @@ const initBlock = {
 				else
 					download.classList.remove('paused');
 			},
-			state     : data => {
-				const download = getById('downloads', data.id);
+			state     : info => {
+				const download = getById('downloads', info.id);
 				download.classList.remove('complete', 'interrupted', 'in_progress');
-				download.classList.add(data.state);
+				download.classList.add(info.state);
 			},
-			progress  : data => {
-				const download = getById('downloads', data.item.id);
-				download.firstChild.nextElementSibling.firstChild.firstChild.style.width = data.item.progressPercent;
-				download.firstChild.nextElementSibling.firstChild.nextElementSibling.textContent = `${data.item.progressNumbers}  |  ${data.item.speed}`;
-				download.firstChild.nextElementSibling.firstChild.nextElementSibling.nextElementSibling.textContent = data.item.fileSize;
+			progress  : info => {
+				const download = getById('downloads', info.item.id);
+				download.firstChild.nextElementSibling.firstChild.firstChild.style.width = info.item.progressPercent;
+				download.firstChild.nextElementSibling.firstChild.nextElementSibling.textContent = `${info.item.progressNumbers}  |  ${info.item.speed}`;
+				download.firstChild.nextElementSibling.firstChild.nextElementSibling.nextElementSibling.textContent = info.item.fileSize;
 			},
-			filename  : data => {
-				const download = getById('downloads', data.id);
-				download.firstChild.textContent = data.filename;
+			filename  : info => {
+				const download = getById('downloads', info.id);
+				download.firstChild.textContent = info.filename;
 			}
 		};
 
@@ -848,8 +852,8 @@ const initBlock = {
 			block.downloads.insertBefore(down, block.downloads.firstChild);
 		};
 
-		for (let i = 0, l = data.downloads.length; i < l; i++)
-			insertDownload(data.downloads[i]);
+		for (let i = 0, l = info.downloads.length; i < l; i++)
+			insertDownload(info.downloads[i]);
 	},
 
 	rss : info => {
@@ -969,32 +973,32 @@ const initBlock = {
 
 		insertItems.rss = (items, method) => {
 			const insert = {
-				domainfirst : (item, data) => {
-					pidCheck(data.pid);
+				domainfirst : (item, info) => {
+					pidCheck(info.pid);
 					folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 				},
-				plainfirst  : (item, data) => {
+				plainfirst  : (item, info) => {
 					folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 				},
-				domainlast  : (item, data) => {
-					pidCheck(data.pid);
+				domainlast  : (item, info) => {
+					pidCheck(info.pid);
 					folder.lastChild.appendChild(item);
 				},
-				plainlast   : (item, data) => {
+				plainlast   : (item, info) => {
 					folder.lastChild.appendChild(item);
 				},
-				domaindate  : (item, data) => {
-					pidCheck(data.pid);
+				domaindate  : (item, info) => {
+					pidCheck(info.pid);
 					if (folder.lastChild.hasChildNodes())
 						folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 					else
 						folder.lastChild.appendChild(item);
 				},
-				plaindate   : (item, data) => {
+				plaindate   : (item, info) => {
 					if (data.rss.length < 2)
 						folder.lastChild.appendChild(item);
 					else
-						folder.lastChild.insertBefore(item, folder.lastChild.children[data.index]);
+						folder.lastChild.insertBefore(item, folder.lastChild.children[info.index]);
 				}
 			};
 
@@ -1031,40 +1035,40 @@ const initBlock = {
 		setReadedMode(options.misc.rssHideReaded);
 	},
 
-	pocket : data => {
+	pocket : info => {
 
 		messageHandler.pocket = {
-			newItems     : data =>  {
-				insertItems.pocket(data, 'first');
+			newItems     : info =>  {
+				insertItems.pocket(info, 'first');
 			},
-			updated      : data => {
-				const pocket = getById('pocket', data.id);
+			updated      : info => {
+				const pocket = getById('pocket', info.id);
 				if (pocket !== false)
-					updateItem.pocket(pocket, data);
+					updateItem.pocket(pocket, info);
 			},
-			deleted      : data => {
-				const pocket = getById('pocket', data);
+			deleted      : info => {
+				const pocket = getById('pocket', info);
 				if (pocket !== false)
-					removeById('pocket', data);
+					removeById('pocket', info);
 			},
-			view         : data => {
-				setView('pocket', data.view, data.items, data.folders);
+			view         : info => {
+				setView('pocket', info.view, info.items, info.folders);
 			},
-			logout       : data => {
+			logout       : info => {
 				block.pocket.classList.add('logout');
 			},
-			fav          : data => {
-				const pocket = getById('pocket', data);
+			fav          : info => {
+				const pocket = getById('pocket', info);
 				if (pocket !== false)
 					pocket.classList.add('favorite');
 			},
-			unfav        : data => {
-				const pocket = getById('pocket', data);
+			unfav        : info => {
+				const pocket = getById('pocket', info);
 				if (pocket !== false)
 					pocket.classList.remove('favorite');
 			},
-			archive      : data => {
-				const pocket = getById('pocket', data);
+			archive      : info => {
+				const pocket = getById('pocket', info);
 				if (pocket !== false) {
 					pocket.classList.add('type-archives');
 					if (options.misc.pocketMode === 'type') {
@@ -1074,12 +1078,12 @@ const initBlock = {
 					}
 				}
 			},
-			unarchive   : data => {
-				const pocket = getById('pocket', data.id);
+			unarchive   : info => {
+				const pocket = getById('pocket', info.id);
 				if (pocket !== false) {
 					pocket.classList.remove('type-archives');
 					if (options.misc.pocketMode === 'type') {
-						const folder = getFolderById('pocket', data.pid);
+						const folder = getFolderById('pocket', info.pid);
 						if (folder !== false)
 							folder.lastChild.appendChild(pocket);
 					}
@@ -1099,7 +1103,7 @@ const initBlock = {
 		controls.pocket.user    = dce('div');
 		controls.pocket.user.id = 'username';
 		controls.pocket.user.classList.add('controls');
-		controls.pocket.user.textContent = data.username;
+		controls.pocket.user.textContent = info.username;
 		makeButton('logout', 'pocket', 'user');
 		loginContainer.appendChild(login);
 		loginContainer.appendChild(controls.pocket.user);
@@ -1166,7 +1170,7 @@ const initBlock = {
 			}
 		};
 
-		setView('pocket', options.misc.pocketMode, data.pocket, data.pocketFolders);
+		setView('pocket', options.misc.pocketMode, info.pocket, info.pocketFolders);
 
 		if (options.pocket.auth === false)
 			block.pocket.classList.add('logout');
@@ -1237,7 +1241,7 @@ function setColor(colors) {
 		doc.style.setProperty('--border-color-active', colors.borderColorActive);
 }
 
-function blockInit(newMode, data) {
+function blockInit(newMode, info) {
 	const cleanse = _ => {
 		while (block[options.sidebar.mode].hasChildNodes())
 			block[options.sidebar.mode].removeChild(block[options.sidebar.mode].firstChild);
@@ -1246,7 +1250,7 @@ function blockInit(newMode, data) {
 	};
 
 	if (status.init[newMode] === false) {
-		i18n[newMode] = data.i18n;
+		i18n[newMode] = info.i18n;
 		const link    = dce('link');
 		link.type     = 'text/css';
 		link.rel      = 'stylesheet';
@@ -1255,13 +1259,13 @@ function blockInit(newMode, data) {
 		status.init[newMode] = true;
 	}
 	if (options.sidebar.mode !== newMode) {
-		initBlock[newMode](data);
+		initBlock[newMode](info);
 		if (options.sidebar.mode)
 			cleanse();
 	}
 	else {
 		cleanse();
-		initBlock[newMode](data);
+		initBlock[newMode](info);
 	}
 	document.body.classList = newMode;
 	options.sidebar.mode    = newMode;
