@@ -366,8 +366,7 @@ ul {
 	background-color: inherit;
 	right: 0;
 	top: 0.05rem;
-	padding-left: .8rem;
-	padding-right: .3rem;
+	padding-left: .4rem;
 }
 .item:hover>.controls,
 .folder-name:hover>.controls {
@@ -379,8 +378,9 @@ ul {
 	margin-left: .2rem;
 	display: none;
 }
-.controls>span:first-child {
-	margin-left: 0;
+.active .controls>span {
+	width: .95rem;
+	height: .95rem;
 }
 .domain-view .folder-name,
 .type-view .folder-name,
