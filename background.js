@@ -3039,7 +3039,6 @@ function makeDomain(url, fav, title) {
 		id = 'system';
 	else if (/^chrome-extension:|^moz-extension:/i.test(newUrl))
 		id = 'extension';
-	console.log(id);
 	if (id !== '') {
 		return {
 			id    : id,
