@@ -3030,16 +3030,16 @@ function makeFav(id, url, favIconUrl, update = false) {
 
 function makeDomain(url, fav) {
 	let id       = '';
-	let newUrl   = url;
-	if (newUrl === '')
+	let title    = '';
+	if (url === '')
 		id = 'default';
-	else if (newUrl.match(config.defaultStartPage))
+	else if (url.match(config.defaultStartPage))
 		id = 'startpage';
-	else if (newUrl.match(config.extensionStartPage) || config.extensionStartPage.match(newUrl))
+	else if (url.match(config.extensionStartPage) || config.extensionStartPage.match(url))
 		id = 'startpage';
-	else if (/^about:|^chrome:/.test(newUrl))
+	else if (/^about:|^chrome:/.test(url))
 		id = 'system';
-	else if (/^chrome-extension:|^moz-extension:/i.test(newUrl))
+	else if (/^chrome-extension:|^moz-extension:/i.test(url))
 		id = 'extension';
 	if (id !== '') {
 		return {
@@ -3048,12 +3048,12 @@ function makeDomain(url, fav) {
 		};
 	}
 	else {
-		newTitle = domainFromUrl(newUrl, true);
-		id       = newTitle.replace(/\./g, '');
+		title = domainFromUrl(url, true);
+		id    = title.replace(/\./g, '');
 	}
 	let domain = getById('domains', id);
 	if (domain === false) {
-		domain = createById('domains', {'id': id, 'fav': makeFav(id, newUrl, fav), title: newTitle}, 'last');
+		domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), title: title}, 'last');
 		send('sidebar', 'info', 'newDomain', {'domain': domain});
 	}
 	return domain;
