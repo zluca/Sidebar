@@ -1318,7 +1318,8 @@ const initService = {
 				if (options.services.startpage.value === true)
 					if (checkStartPage(tab))
 						return brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
-				const newDomain = makeDomain(info.url);
+				const url = info.url === 'about:blank' ? oldTab.url : info.url;
+				const newDomain = makeDomain(url);
 				oldTab.url      = info.url;
 				if (newDomain.id !== oldFolder.id) {
 					removeFromFolder('tabs', oldTab);
@@ -1384,7 +1385,8 @@ const initService = {
 
 		if (start === true) {
 			updateItem.tabs = (newItem, item) => {
-				const domain = makeDomain(item.url, item.favIconUrl, item.title);
+				const url    = item.url === 'about:blank' ? item.title : item.url;
+				const domain = makeDomain(url, item.favIconUrl);
 				if (item.active === true)
 					status.activeTabId  = item.id;
 				newItem.domain     = domain.id;
@@ -1392,7 +1394,7 @@ const initService = {
 				newItem.index      = item.index;
 				newItem.status     = item.status;
 				newItem.opener     = item.hasOwnProperty('openerTabId') ? item.openerTabId : 0;
-				newItem.url        = item.url;
+				newItem.url        = url;
 				newItem.title      = item.title || '_';
 				newItem.discarded  = item.discarded;
 				newItem.windowId   = item.windowId;
@@ -3026,10 +3028,9 @@ function makeFav(id, url, favIconUrl, update = false) {
 	return favIcon;
 }
 
-function makeDomain(url, fav, title) {
+function makeDomain(url, fav) {
 	let id       = '';
-	let newTitle = '';
-	let newUrl   = (url === 'about:blank') ? (title !== undefined) ? title : url : url;
+	let newUrl   = url;
 	if (newUrl === '')
 		id = 'default';
 	else if (newUrl.match(config.defaultStartPage))
