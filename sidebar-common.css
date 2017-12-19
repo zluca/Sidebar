@@ -506,6 +506,9 @@ ul {
 .item.moved {
 	opacity: .5;
 }
+.folder.moved>.folder-content {
+	display: none;
+}
 .moving .controls {
 	display: none!important;
 }

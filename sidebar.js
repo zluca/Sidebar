@@ -510,12 +510,14 @@ const initBlock = {
 				};
 				if (status.moving === true)
 					doc.addEventListener('mouseup', mouseup);
-				else
+				else if (info.isFolder === false)
 					moveBook(getById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.index);
+				else if (info.isFolder === true)
+					moveBook(getFolderById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.index);
 			}
 		};
 
-		block.bookmarks.classList.add(options.misc.bookmarksMode);
+		block.bookmarks.classList    = `block ${options.misc.bookmarksMode}`;
 		rootFolder                   = dce('div');
 		rootFolder.id                = 'bookmarks-folder-0';
 		const rootContent            = dce('div');
@@ -581,8 +583,9 @@ const initBlock = {
 		});
 
 		const insertBookmarks = (items, method = 'last') => {
-			let folder     = rootFolder;
-			let pid        = 0;
+			let folder = rootFolder;
+			let count  = 0;
+			let pid    = 0;
 
 			const checkPid =
 				method === 'search' ?
@@ -594,33 +597,38 @@ const initBlock = {
 							if (item.pid !== pid) {
 								pid    = item.pid;
 								folder = getFolderById('bookmarks', pid);
+								count  = folder.lastChild.children.length - 1;
 								if (folder === false)
 									folder = rootFolder;
 							}
+							count++;
 						} :
 						item => {};
 
 			for (let i = 0, l = items.length; i < l; i++) {
 				checkPid(items[i]);
-				const bookmark = createById('bookmarks', items[i].id, true);
-				bookmark.classList.add('bookmark', 'item', `domain-${items[i].domain}`);
-				bookmark.title = items[i].url;
-				bookmark.href  = items[i].url;
+				const bookmark       = createById('bookmarks', items[i].id, true);
+				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
+				bookmark.title       = items[i].url;
+				bookmark.href        = items[i].url;
 				bookmark.textContent = items[i].title;
-				folder.lastChild.appendChild(bookmark);
+				if (count > items[i].index - 1)
+					folder.lastChild.insertBefore(bookmark, folder.lastChild.children[items[i].index]);
+				else
+					folder.lastChild.appendChild(bookmark);
 			}
 		};
 
 		const moveBook = (item, parent, index) => {
 
 			const injectBook = _ => {
-				const beacon = parent.children[index + 1];
+				const beacon = parent.lastChild.children[index];
 				if (beacon !== undefined)
-					parent.insertBefore(item, beacon);
+					parent.lastChild.insertBefore(item, beacon);
 				else
-					parent.appendChild(item);
+					parent.lastChild.appendChild(item);
 			};
-			if (parent !== item.parentNode)
+			if (parent !== item.parentNode.parentNode)
 				injectBook();
 			else {
 				rootFolder.lastChild.appendChild(item);
@@ -1752,14 +1760,19 @@ const buttonsEvents = {
 
 			const mouseover = event => {
 				event.stopPropagation();
+				event.preventDefault();
 				const target = event.target;
+				if (target.parentNode === item)
+					return;
 				if (target.classList.contains('bookmark'))
 					target.parentNode.insertBefore(item, target);
 				else if (target.classList.contains('folder-name')) {
-					target.parentNode.appendChild(item);
+					target.nextElementSibling.appendChild(item);
 					if (target.parentNode.classList.contains('folded'))
 						target.click();
 				}
+				else if (target.classList.contains('folder'))
+					target.lastChild.appendChild(item);
 			};
 
 			const keydown = event => {
@@ -1787,16 +1800,13 @@ const buttonsEvents = {
 				event.stopPropagation();
 				event.preventDefault();
 				let newindex  = 0;
-				const length  = item.parentNode.children.length;
-				if (length > 2) {
-					for (let i = 1; i < length; i++)
-						if (item.parentNode.children[i] === item) {
-							newindex = i - 1;
-							break;
-						}
-				}
+				for (let i = 0, l = item.parentNode.children.length; i < l; i++)
+					if (item.parentNode.children[i] === item) {
+						newindex = i;
+						break;
+					}
 				finilize();
-				send('background', 'bookmarks', 'move', {'id': id, 'pid': item.parentNode.firstChild.dataset.id, 'index': newindex});
+				send('background', 'bookmarks', 'move', {'id': id, 'pid': item.parentNode.previousElementSibling.dataset.id, 'index': newindex, 'isFolder': isFolder});
 			};
 
 			const finilize = _ => {
@@ -1807,13 +1817,21 @@ const buttonsEvents = {
 				rootFolder.classList.remove('moving');
 			};
 
+			event.stopPropagation();
+			event.preventDefault();
+
 			status.moving = true;
-			const item    = event.target.parentNode.parentNode.parentNode;
-			const folder  = item.parentNode;
+			let isFolder  = false;
+			let item      = event.target.parentNode.parentNode.parentNode;
 			const id      = item.dataset.id;
+			if (item.classList.contains('folder-name')) {
+				isFolder = true;
+				item     = item.parentNode;
+			}
+			const folder  = item.parentNode;
 			let   index   = -1;
-			for (let i = 0, l = folder.lastChild.children.length; i < l; i++)
-				if (folder.lastChild.children[i] === item) {
+			for (let i = 0, l = folder.children.length; i < l; i++)
+				if (folder.children[i] === item) {
 					index = i;
 					break;
 				}

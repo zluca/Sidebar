@@ -7,8 +7,9 @@
 	mask-image: url(icons/search.svg);
 }
 .item #bookmarks-delete,
-.item #bookmarks-move,
 .folder-name #bookmarks-deleteFolder,
+.item #bookmarks-move,
+.folder .folder #bookmarks-move,
 #bookmarks-edit {
 	display: inline-block;
 }

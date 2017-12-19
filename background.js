@@ -1506,42 +1506,34 @@ const initService = {
 			status.init.bookmarks = true;
 		};
 
+		const isFolder = firefox ?
+			node => {
+				if (node.type === 'folder')
+					return true;
+				return false;
+			} :
+			node => {
+				if (node.hasOwnProperty('url'))
+					return false;
+				return true;
+			} ;
+
 		const parseTree     = folder => {
-
-			const detector = firefox ?
-				child => {
-					if (child.type === 'folder')
-						parseTree(child);
-					else if (child.type === 'bookmark')
-						if (!/^place:/.test(child.url)) {
-							const parent = getFolderById('bookmarks', child.parentId);
-							if (parent !== false) {
-								parent.itemsId.push(child.id);
-								createById('bookmarks', child, 'last');
-							}
-						}
-				} :
-				child => {
-					if (child.hasOwnProperty('url')) {
-						const parent = getFolderById('bookmarks', child.parentId);
-						if (parent !== false) {
-							parent.itemsId.push(child.id);
-							createById('bookmarks', child, 'last');
-						}
-					}
-					else parseTree(child);
-				};
-
 			if (Array.isArray(folder)) {
 				parseTree(folder[0]);
 				return initBookmarks();
 			}
-			if (folder.hasOwnProperty('parentId'))
-				if (folder.parentId !== undefined)
-					updateFolder.bookmarks(folder);
+			let newFolder = {itemsId: []};
+			if (folder.parentId !== undefined)
+				newFolder = updateFolder.bookmarks(folder);
 			if (folder.hasOwnProperty('children'))
-				for (let i = 0, l = folder.children.length; i < l; i++)
-					detector(folder.children[i]);
+				for (let i = 0, l = folder.children.length; i < l; i++) {
+					newFolder.itemsId.push(folder.children[i].id);
+					if (isFolder(folder.children[i]))
+						parseTree(folder.children[i]);
+					else
+						createById('bookmarks', folder.children[i], 'last');
+				}
 		};
 
 		const getRecent     = bookmarks => {
@@ -1597,33 +1589,46 @@ const initService = {
 		};
 
 		const onMoved       = (id, info) => {
-			const bookmark = getById('bookmarks', id);
+
+			const reIndex = folder => {
+
+				const moveToTheEnd = (mode, id) => {
+					const index = data[`${mode}Id`].indexOf(id);
+					const item  = data[mode].splice(index, 1)[0];
+					data[`${mode}Id`].splice(index, 1);
+					data[mode].push(item);
+					data[`${mode}Id`].push(id);
+					return item;
+				};
+
+				const onGet = items => {
+					folder.itemsId = [];
+					for (let i = 0, l = items[0].children.length; i < l; i++) {
+						if (isFolder(items[0].children[i]))
+							moveToTheEnd('bookmarksFolders', items[0].children[i].id).index = items[0].children[i].index;
+						else
+							moveToTheEnd('bookmarks', items[0].children[i].id).index = items[0].children[i].index;
+						folder.itemsId.push(items[0].children[i].id);
+					}
+				};
+
+				execMethod(brauzer.bookmarks.getSubTree, onGet, folder.id);
+			};
+
+			const bookmark  = getById('bookmarks', id);
+			const oldParent = getFolderById('bookmarks', info.oldParentId);
+			const newParent = getFolderById('bookmarks', info.parentId);
 			if (bookmark !== false) {
-				const oldParent = getFolderById('bookmarks', info.oldParentId);
-				if (oldParent !== false) {
-					if (info.parentId === info.oldParentId) {
-						const index = data.bookmarksId.indexOf(id);
-						const shift = index - info.oldIndex;
-						moveFromTo('bookmarks', index, info.index + shift);
-					}
-					else {
-						const newParent = getFolderById('bookmarks', info.parentId);
-						if (newParent !== false) {
-							oldParent.itemsId.splice(info.oldIndex, 1);
-							newParent.itemsId.splice(info.index, 0, id);
-							if (newParent.itemsId.length > 1) {
-								const beaconId    = newParent.itemsId[info.index + 1];
-								const beaconIndex = data.bookmarksId.indexOf(beaconId);
-								const itemIndex   = data.bookmarksId.indexOf(id);
-								const item        = data.bookmarks.splice(itemIndex, 1)[0];
-								data.bookmarksId.splice(itemIndex, 1);
-								data.bookmarks.splice(beaconIndex - 1, 0, item);
-								data.bookmarksId.splice(beaconIndex - 1, 0, item.id);
-							}
-						}
-					}
-				}
-				send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'index': info.index});
+				reIndex(oldParent);
+				if (oldParent !== newParent)
+					reIndex(newParent);
+				send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'index': info.index, 'isFolder': false});
+			}
+			else {
+				reIndex(oldParent);
+				if (oldParent !== newParent)
+					reIndex(newParent);
+				send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'index': info.index, 'isFolder': true});
 			}
 		};
 
@@ -1658,6 +1663,8 @@ const initService = {
 				newItem.title   = item.title;
 				newItem.index   = item.index;
 				newItem.url     = item.url;
+				if (firefox)
+					newItem.hidden  = /^place:/.test(item.url) || item.type !== 'bookmark';
 				return newItem;
 			};
 
