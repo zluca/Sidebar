@@ -1558,14 +1558,11 @@ const initService = {
 		};
 
 		const onCreated     = (id, bookmark) => {
-			if (bookmark.hasOwnProperty('url'))
-				if (firefox) {
-					if (bookmark.url !== undefined)
-						return send('sidebar', 'bookmarks', 'createdBookmark', {'item': createById('bookmarks', bookmark, 'last')});
-				}
-				else
-					return send('sidebar', 'bookmarks', 'createdBookmark', {'item': createById('bookmarks', bookmark, 'last')});
+			if (isFolder(bookmark)) {
 				send('sidebar', 'bookmarks', 'createdFolder', {'item': updateFolder.bookmarks(bookmark)});
+			}
+			else
+				send('sidebar', 'bookmarks', 'createdBookmark', {'item': createById('bookmarks', bookmark, 'last')});
 		};
 
 		const onChanged     = (id, info) => {
@@ -1588,33 +1585,32 @@ const initService = {
 			}
 		};
 
-		const onMoved       = (id, info) => {
+		const reIndex = folder => {
 
-			const reIndex = folder => {
-
-				const moveToTheEnd = (mode, id) => {
-					const index = data[`${mode}Id`].indexOf(id);
-					const item  = data[mode].splice(index, 1)[0];
-					data[`${mode}Id`].splice(index, 1);
-					data[mode].push(item);
-					data[`${mode}Id`].push(id);
-					return item;
-				};
-
-				const onGet = items => {
-					folder.itemsId = [];
-					for (let i = 0, l = items[0].children.length; i < l; i++) {
-						if (isFolder(items[0].children[i]))
-							moveToTheEnd('bookmarksFolders', items[0].children[i].id).index = items[0].children[i].index;
-						else
-							moveToTheEnd('bookmarks', items[0].children[i].id).index = items[0].children[i].index;
-						folder.itemsId.push(items[0].children[i].id);
-					}
-				};
-
-				execMethod(brauzer.bookmarks.getSubTree, onGet, folder.id);
+			const moveToTheEnd = (mode, id) => {
+				const index = data[`${mode}Id`].indexOf(id);
+				const item  = data[mode].splice(index, 1)[0];
+				data[`${mode}Id`].splice(index, 1);
+				data[mode].push(item);
+				data[`${mode}Id`].push(id);
+				return item;
 			};
 
+			const onGet = items => {
+				folder.itemsId = [];
+				for (let i = 0, l = items[0].children.length; i < l; i++) {
+					if (isFolder(items[0].children[i]))
+						moveToTheEnd('bookmarksFolders', items[0].children[i].id).index = items[0].children[i].index;
+					else
+						moveToTheEnd('bookmarks', items[0].children[i].id).index = items[0].children[i].index;
+					folder.itemsId.push(items[0].children[i].id);
+				}
+			};
+
+			execMethod(brauzer.bookmarks.getSubTree, onGet, folder.id);
+		};
+
+		const onMoved       = (id, info) => {
 			const bookmark  = getById('bookmarks', id);
 			const oldParent = getFolderById('bookmarks', info.oldParentId);
 			const newParent = getFolderById('bookmarks', info.parentId);
@@ -1633,26 +1629,21 @@ const initService = {
 		};
 
 		const onRemoved     = (id, info) => {
-			const cleaning = id => {
-				const parent = getFolderById('bookmarks', bookmark.pid);
-				if (parent !== false) {
-					const index = parent.itemsId.indexOf(id);
-					parent.itemsId.splice(index, 1);
-				}
-			};
 			let bookmark = getById('bookmarks', id);
 			if (bookmark !== false) {
-				cleaning(id);
 				deleteById('bookmarks', id);
 				send('sidebar', 'bookmarks', 'removed', {'id': id});
 			}
 			else {
 				bookmark = getFolderById('bookmarks', id);
 				if (bookmark !== false) {
-					cleaning(id);
 					deleteFolderById('bookmarks', id, true);
 					send('sidebar', 'bookmarks', 'folderRemoved', {'id': id});
 				}
+			}
+			if (bookmark !== false) {
+				const parent = getFolderById('bookmarks', bookmark.pid);
+				reIndex(parent);
 			}
 		};
 

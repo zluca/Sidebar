@@ -365,7 +365,7 @@ function makeDialogWindow(data, warnings, colors) {
 			addWarning();
 			addButton('confirm', _ => {
 				removeDialogWindow();
-				send('background', 'bookmarks', 'bookmarksFolderDelete', {'id': data.id});
+				send('background', 'bookmarks', 'bookmarkFolderDelete', {'id': data.id});
 			});
 			addButton('cancel');
 		},

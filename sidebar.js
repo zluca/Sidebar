@@ -1849,19 +1849,19 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			const target = controls.bookmarks.item.parentNode;
-			if (options.warnings.deleteBookmark)
+			if (options.warnings.bookmarkDelete === true)
 				send('background', 'dialog', 'bookmarkDelete', {'id': target.dataset.id, 'title': target.textContent});
 			else
-				send('background', 'bookmarks', 'deleteItem', {'id': target.dataset.id});
+				send('background', 'bookmarks', 'bookmarkDelete', {'id': target.dataset.id});
 		},
 		deleteFolder : event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const target = controls.bookmarks.item.parentNode;
-			if (options.warnings.deleteBookmarkFolder)
+			if (options.warnings.bookmarkFolderDelete)
 				send('background', 'dialog', 'bookmarkFolderDelete', {'id': target.dataset.id, 'title': target.textContent});
 			else
-				send('background', 'bookmarks', 'deleteFolder', {'id': target.dataset.id});
+				send('background', 'bookmarks', 'bookmarkFolderDelete', {'id': target.dataset.id});
 		},
 		bookmarkThis : event => {
 			event.stopPropagation();
