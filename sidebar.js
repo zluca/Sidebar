@@ -752,7 +752,7 @@ const initBlock = {
 				if (hist === false)
 					hist = createById('history', items[i].id);
 				if (items[i].pid !== pid) {
-					pid = items[i].pid;
+					pid    = items[i].pid;
 					folder = getFolderById('history', pid);
 				}
 				hist.classList.add('history', 'item', `domain-${items[i].domain}`);
@@ -777,7 +777,7 @@ const initBlock = {
 		insertHistoryes(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
-		status.historyInfoInit = true;
+		status.init.history = true;
 	},
 
 	downloads : info => {
