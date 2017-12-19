@@ -1,17 +1,17 @@
-.logout #pocket-0,
-.logout #username,
+.logout #pocket-folder-0,
+.logout #user,
 #login,
 .type .domain-view,
 .domain .type-view {
 	display: none;
 }
-#username {
+#user {
 	display: flex;
 }
 .logout #login {
 	display: block;
 }
-#username {
+#user {
 	align-items: center;
 	cursor: default;
 	font-size: 1.2rem;
@@ -21,7 +21,7 @@
 	user-select: none;
 	moz-user-select: none;
 }
-#username::before {
+#user::before {
 	content: '';
 	display: inline-block;
 	position: absolute;

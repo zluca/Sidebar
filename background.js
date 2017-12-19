@@ -2630,6 +2630,7 @@ const initService = {
 						if (response.hasOwnProperty('username'))
 							setOption('pocket', 'username', response.username);
 						setOption('pocket', 'auth', true);
+						send('sidebar', 'pocket', 'logout', {'method': 'remove', 'username': options.pocket.username.value});
 						pocketRequest('get');
 					}
 				},
@@ -2769,7 +2770,7 @@ const initService = {
 			setOption('pocket', 'username', '');
 			status.init.pocket   = true;
 			if (update === true)
-				send('sidebar', 'pocket', 'logout');
+				send('sidebar', 'pocket', 'logout', {'method': 'add'});
 		};
 
 		const detectType = pocket => {
@@ -2818,19 +2819,19 @@ const initService = {
 			};
 
 			i18n.pocket = {
-				loginText : getI18n('pocketControlsLoginText'),
-				loginTitle: getI18n('pocketControlsLoginTitle'),
-				logout    : getI18n('pocketControlsLogout'),
-				new       : getI18n('pocketControlsNew'),
-				fav       : getI18n('pocketControlsFav'),
-				unfav     : getI18n('pocketControlsUnfav'),
-				archive   : getI18n('pocketControlsArchive'),
-				unarchive : getI18n('pocketControlsUnarchive'),
-				delete    : getI18n('pocketControlsDelete'),
-				plain     : getI18n('pocketPlainMode'),
-				type      : getI18n('pocketTypeMode'),
-				domain    : getI18n('pocketDomainMode'),
-				reload    : getI18n('pocketReload')
+				loginText  : getI18n('pocketControlsLoginText'),
+				loginTitle : getI18n('pocketControlsLoginTitle'),
+				logout     : getI18n('pocketControlsLogout'),
+				new        : getI18n('pocketControlsNew'),
+				fav        : getI18n('pocketControlsFav'),
+				unfav      : getI18n('pocketControlsUnfav'),
+				archive    : getI18n('pocketControlsArchive'),
+				unarchive  : getI18n('pocketControlsUnarchive'),
+				delete     : getI18n('pocketControlsDelete'),
+				plain      : getI18n('pocketPlainMode'),
+				type       : getI18n('pocketTypeMode'),
+				domain     : getI18n('pocketDomainMode'),
+				reload     : getI18n('pocketReload')
 			};
 
 			messageHandler.pocket = {

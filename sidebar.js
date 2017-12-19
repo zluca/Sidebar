@@ -1099,7 +1099,9 @@ const initBlock = {
 				setView('pocket', info.view, info.items, info.folders);
 			},
 			logout       : info => {
-				block.pocket.classList.add('logout');
+				if (options.sidebar.mode === 'pocket')
+					block.pocket.classList[info.method]('logout');
+				controls.pocket.user.firstChild.textContent = info.username;
 			},
 			fav          : info => {
 				const pocket = getById('pocket', info);
@@ -1149,9 +1151,12 @@ const initBlock = {
 		const login             = makeItemButton('login', 'pocket');
 		login.id                = 'login';
 		controls.pocket.user    = dce('div');
-		controls.pocket.user.id = 'username';
+		controls.pocket.user.id = 'user';
 		controls.pocket.user.classList.add('controls');
-		controls.pocket.user.textContent = info.username;
+		const username          = dce('a');
+		username.id             = 'username';
+		username.textContent    = info.username;
+		controls.pocket.user.appendChild(username);
 		makeButton('logout', 'pocket', 'user');
 		loginContainer.appendChild(login);
 		loginContainer.appendChild(controls.pocket.user);
@@ -1222,12 +1227,9 @@ const initBlock = {
 					if (items[i][options.misc.pocketMode] !== pid) {
 						pid    = items[i][options.misc.pocketMode];
 						folder = getFolderById('pocket', items[i][options.misc.pocketMode]);
-						if (folder !== false)
-							insert[position](pocket);
 					}
 				}
-				else
-					insert[position](pocket);
+				insert[position](pocket);
 			}
 		};
 
