@@ -22,6 +22,7 @@ body {
 	height: auto;
 	overflow: hidden;
 	height: 100vh;
+	font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, “Roboto”, “Oxygen”, “Ubuntu”, “Cantarell”, “Fira Sans”, “Droid Sans”, “Helvetica Neue”, sans-serif;
 }
 a,
 a:visited {
@@ -300,7 +301,6 @@ ul {
 	white-space: nowrap;
 	font-size: .9rem;
 	line-height: .9rem;
-	font-family: Arial, Verdana, Helvetica, 'Sans Serif';
 	overflow: hidden;
 	height: auto;
 	padding: .1rem .2rem .1rem 1.45rem;
