@@ -662,7 +662,7 @@ const messageHandler = {
 				'borderColorActive' : optionsShort.theme.borderColorActive
 			});
 			if (status.dialogData !== null)
-				sendToTab(sender.tab.id, 'content', 'dialog', 'create', status.dialogType);
+				setTimeout(_ => {sendToTab(sender.tab.id, 'content', 'dialog', 'create', status.dialogType);}, 50);
 		},
 		mode : (message, sender, sendResponse) => {
 			const handler = {
@@ -716,7 +716,7 @@ const messageHandler = {
 			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method, 'status': options.status});
 		},
 		dialog : (message, sender, sendResponse) => {
-			sendResponse({data: status.dialogData, warnings: optionsShort.warnings, theme: optionsShort.theme});
+			sendResponse({'data': status.dialogData, 'warnings': optionsShort.warnings, 'theme': optionsShort.theme});
 			status.dialogData = null;
 		}
 	},
@@ -3075,7 +3075,7 @@ function createDialogWindow(type, dialogData) {
 	if (tabIsProtected(activeTab) === false)
 		sendToTab(status.activeTabId, 'content', 'dialog', 'create', type);
 	else
-		brauzer.tabs.create({url: config.extensionStartPage, windowId: status.activeWindow});
+		brauzer.tabs.create({'url': config.extensionStartPage, 'windowId': status.activeWindow});
 }
 
 function tabIsProtected(tab) {
