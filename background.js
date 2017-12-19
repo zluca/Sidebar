@@ -336,7 +336,7 @@ const options = {
 			targets : ['sidebar']
 		},
 		limitBookmarks     : {
-			value   : 999,
+			value   : 1999,
 			type    : 'integer',
 			range   : [99, 9999],
 			targets : [],
