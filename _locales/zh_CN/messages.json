@@ -853,6 +853,19 @@
 		"description"   : ""
 	},
 
+	"dialogPocketNewHeader" : {
+		"message"       : "Add to Pocket",
+		"description"   : ""
+	},
+	"dialogPocketNewUrlPlaceholder" : {
+		"message"       : "New Pocket item url",
+		"description"   : ""
+	},
+	"dialogPocketNewTitlePlaceholder" : {
+		"message"       : "Title (optional)",
+		"description"   : ""
+	},
+
 	"domainsDefault" : {
 		"message"       : "未知",
 		"description"   : ""

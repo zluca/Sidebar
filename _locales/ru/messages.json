@@ -849,6 +849,19 @@
 		"description"   : ""
 	},
 
+	"dialogPocketNewHeader" : {
+		"message"       : "Добавить в Pocket",
+		"description"   : ""
+	},
+	"dialogPocketNewUrlPlaceholder" : {
+		"message"       : "Адрес",
+		"description"   : ""
+	},
+	"dialogPocketNewTitlePlaceholder" : {
+		"message"       : "Имя (не обязательно)",
+		"description"   : ""
+	},
+
 	"domainsDefault" : {
 		"message"       : "Не известно",
 		"description"   : ""
