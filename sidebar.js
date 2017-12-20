@@ -1142,6 +1142,9 @@ const initBlock = {
 			}
 		};
 
+		if (options.pocket.auth === false)
+			block.pocket.classList.add('logout');
+
 		rootFolder              = dce('div');
 		rootFolder.id           = 'pocket-folder-0';
 		const rootContent       = dce('div');
@@ -1234,9 +1237,6 @@ const initBlock = {
 		};
 
 		setView('pocket', options.misc.pocketMode, info.pocket, info.pocketFolders);
-
-		if (options.pocket.auth === false)
-			block.pocket.classList.add('logout');
 	}
 };
 
