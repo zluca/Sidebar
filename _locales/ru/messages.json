@@ -316,6 +316,10 @@
 		"message"       : "RSS",
 		"description"   : ""
 	},
+	"optServicesPocketLabel" : {
+		"message"       : "Pocket",
+		"description"   : ""
+	},
 
 	"optThemeButton" : {
 		"message"       : "Тема",
@@ -417,6 +421,10 @@
 	},
 	"optWarningsDomainFolderCloseLabel" : {
 		"message"       : "Закрытием множества вкладок",
+		"description"   : ""
+	},
+	"optWarningsPocketDeleteLabel" : {
+		"message"       : "Удалением из Pocket",
 		"description"   : ""
 	},
 
@@ -860,6 +868,19 @@
 	"dialogPocketNewTitlePlaceholder" : {
 		"message"       : "Имя (не обязательно)",
 		"description"   : ""
+	},
+	"dialogPocketDeleteHeader" : {
+		"message"       : "Удалить из Pocket",
+		"description"   : ""
+	},
+	"dialogPocketDeleteAlert" : {
+		"message"       : "Удалить \"$name$\" из Pocket?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
 	},
 
 	"domainsDefault" : {

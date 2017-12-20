@@ -542,7 +542,7 @@ function makeDialogWindow(data, warnings, colors) {
 				title = title.substring(0, 28) + '...';
 			alert.textContent = getI18n('dialogPocketDeleteAlert', [title]);
 			main.appendChild(alert);
-
+			addWarning();
 			addButton('confirm', _ => {
 				send('background', 'pocket', 'delete', data.id);
 				removeDialogWindow();

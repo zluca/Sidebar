@@ -2063,7 +2063,7 @@ const buttonsEvents = {
 			event.stopPropagation();
 			event.preventDefault();
 			const target = event.target.parentNode.parentNode.parentNode;
-			if (options.warnings.deletePocket === true)
+			if (options.warnings.pocketDelete === true)
 				send('background', 'dialog', 'pocketDelete', target.dataset.id);
 			else
 				send('background', 'pocket', 'delete', target.dataset.id);

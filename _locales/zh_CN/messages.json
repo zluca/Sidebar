@@ -320,6 +320,10 @@
 		"message"       : "RSS",
 		"description"   : ""
 	},
+	"optServicesPocketLabel" : {
+		"message"       : "Pocket",
+		"description"   : ""
+	},
 
 	"optThemeButton" : {
 		"message"       : "主题",
@@ -421,6 +425,10 @@
 	},
 	"optWarningsDomainFolderCloseLabel" : {
 		"message"       : "关闭多个标签页",
+		"description"   : ""
+	},
+	"optWarningsPocketDeleteLabel" : {
+		"message"       : "Delete from Pocket",
 		"description"   : ""
 	},
 
@@ -864,6 +872,19 @@
 	"dialogPocketNewTitlePlaceholder" : {
 		"message"       : "Title (optional)",
 		"description"   : ""
+	},
+	"dialogPocketDeleteHeader" : {
+		"message"       : "Remove from Pocket",
+		"description"   : ""
+	},
+	"dialogPocketDeleteAlert" : {
+		"message"       : "Remove \"$name$\" from Pocket?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
 	},
 
 	"domainsDefault" : {
