@@ -1069,6 +1069,9 @@ const initBlock = {
 			newItems     : info =>  {
 				insertItems.pocket(info, 'first');
 			},
+			newFolder    : info => {
+				insertFolders('pocket', [info]);
+			},
 			updated      : info => {
 				const pocket = getById('pocket', info.id);
 				if (pocket !== false)
@@ -1101,7 +1104,13 @@ const initBlock = {
 			logout       : info => {
 				if (options.sidebar.mode === 'pocket')
 					block.pocket.classList[info.method]('logout');
-				controls.pocket.user.firstChild.textContent = info.username;
+				if (info.method === 'add') {
+					rootFolder.removeChild(rootFolder.firstChild);
+					const newContent = dce('div');
+					rootFolder.appendChild(newContent);
+				}
+				else
+					controls.pocket.user.firstChild.textContent = info.username;
 			},
 			fav          : info => {
 				const pocket = getById('pocket', info);
@@ -1237,6 +1246,8 @@ const initBlock = {
 		};
 
 		setView('pocket', options.misc.pocketMode, info.pocket, info.pocketFolders);
+		if (options.pocket.auth === false)
+			block.pocket.classList.add('logout');
 	}
 };
 

@@ -2613,6 +2613,7 @@ const initService = {
 						deleteById('pocket', info);
 						send('sidebar', 'pocket', 'deleted', info);
 						removeFromFolder('pocket', pocket);
+						saveNow('pocket');
 					}
 				},
 				auth    : response => {
@@ -2678,7 +2679,7 @@ const initService = {
 			if (toSend.length > 0) {
 				saveNow('pocket');
 				saveNow('pocketFolders');
-				send('sidebar', 'pocket', 'newItems', toSend);
+				setTimeout(_ => {send('sidebar', 'pocket', 'newItems', toSend);}, 50);
 			}
 		};
 
@@ -2706,6 +2707,8 @@ const initService = {
 		};
 
 		const resetPocket = update => {
+			data.pocket          = [];
+			data.pocketId        = [];
 			data.pocketFolders   = [
 				{
 					id      : 'articles',
@@ -2761,7 +2764,7 @@ const initService = {
 			setOption('pocket', 'username', '');
 			status.init.pocket   = true;
 			if (update === true)
-				send('sidebar', 'pocket', 'logout', {'method': 'add'});
+				send('sidebar', 'pocket', 'logout', {'method': 'add', 'folders': data.pocketFolders});
 		};
 
 		const detectType = pocket => {
@@ -2783,7 +2786,7 @@ const initService = {
 				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
 				newItem.title       = item.given_title || item.resolved_title || item.given_url || item.resolved_url;
 				newItem.url         = item.given_url || item.resolved_url;
-				newItem.status      = parseInt(item.status);
+				newItem.status      = parseInt(item.status) || 0;
 				newItem.domain      = domain.id;
 				newItem.favorite    = parseInt(item.favorite) === 0 ? false : true;
 				newItem.type        = detectType(item);
@@ -2804,6 +2807,7 @@ const initService = {
 					folder.title   = domain.title;
 					folder.itemsId = [pocket.id];
 					folder.domain  = domain.id;
+					send('sidebar', 'pocket', 'newFolder', folder);
 					return folder;
 				}
 				return addToFolder('pocket', pocket);
@@ -2826,28 +2830,28 @@ const initService = {
 			};
 
 			messageHandler.pocket = {
-				login  : (message, sender, sendResponse) => {
+				login     : (message, sender, sendResponse) => {
 					pocketRequest('request');
 				},
-				logout : (message, sender, sendResponse) => {
+				logout    : (message, sender, sendResponse) => {
 					resetPocket(true);
 				},
-				add    : (message, sender, sendResponse) => {
+				add       : (message, sender, sendResponse) => {
 					pocketRequest('add', message.data);
 				},
-				fav : (message, sender, sendResponse) => {
+				fav       : (message, sender, sendResponse) => {
 					pocketRequest('fav', message.data);
 				},
-				unfav : (message, sender, sendResponse) => {
+				unfav     : (message, sender, sendResponse) => {
 					pocketRequest('unfav', message.data);
 				},
-				archive : (message, sender, sendResponse) => {
+				archive   : (message, sender, sendResponse) => {
 					pocketRequest('archive', message.data);
 				},
 				unarchive : (message, sender, sendResponse) => {
 					pocketRequest('unarchive', message.data);
 				},
-				delete : (message, sender, sendResponse) => {
+				delete    : (message, sender, sendResponse) => {
 					pocketRequest('delete', message.data);
 				}
 			};
