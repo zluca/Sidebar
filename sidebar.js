@@ -282,9 +282,9 @@ const initBlock = {
 				if (options.misc.tabsMode !== 'tree')
 					insertItems.tabs([info.tab]);
 				else {
-					const tab = getById('tabs', info.tabs.id);
+					const tab = getById('tabs', info.tab.id);
 					if (tab !== false)
-						tab.href = info.tabs.url;
+						tab.href = info.tab.url;
 				}
 			},
 			folderChanged : info => {
