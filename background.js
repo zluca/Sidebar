@@ -10,7 +10,7 @@ const config = {
 	version            : parseInt(brauzer.runtime.getManifest().version.replace(/\./g, '')),
 	extensionStartPage : `${brauzer.extension.getURL('/')}startpage.html`,
 	defaultStartPage   : firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
-	pocketRedirectPage : 'https://getpocket.com/a/read/1973998361',
+	pocketRedirectPage : 'https://github.com/zluca/Sidebar/',
 	sidebarIcon        : 'icons/sidebar-icon-64.png',
 	rssIcon            : 'icons/rss.svg',
 	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034'
@@ -2655,6 +2655,7 @@ const initService = {
 		const redirectFromPocket = (id, info, tab) => {
 			if (tab.url === config.pocketRedirectPage) {
 				brauzer.tabs.onUpdated.removeListener(redirectFromPocket);
+				brauzer.tabs.remove(id);
 				pocketRequest('auth');
 			}
 		};
