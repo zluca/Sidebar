@@ -28,11 +28,12 @@
 	position: absolute;
 	top: .2rem;
 	left: .2rem;
-	mask-image: url(/icons/user.svg);
+	-webkit-mask-image: url(/icons/user.svg);
 	-webkit-mask-repeat: no-repeat;
 	-webkit-mask-size: 100% 100%;
 	-webkit-mask-position: center;
 	-webkit-mask-mode: alpha;
+	mask-image: url(/icons/user.svg);
 	mask-repeat: no-repeat;
 	mask-size: 100% 100%;
 	mask-position: center;
