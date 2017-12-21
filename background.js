@@ -3060,6 +3060,8 @@ function makeDomain(url, fav) {
 		domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), title: title}, 'last');
 		send('sidebar', 'info', 'newDomain', {'domain': domain});
 	}
+	else if (fav !== undefined)
+		makeFav(id, url, fav, true);
 	return domain;
 }
 
