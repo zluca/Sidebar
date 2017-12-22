@@ -7,7 +7,7 @@ const opera       = window.hasOwnProperty('opr')          ? true : false;
 const brauzer     = firefox ? browser : chrome;
 
 const config = {
-	version            : parseInt(brauzer.runtime.getManifest().version.replace(/\./g, '')),
+	version            : getVersion(),
 	extensionStartPage : `${brauzer.extension.getURL('/')}startpage.html`,
 	defaultStartPage   : firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
 	pocketRedirectPage : 'https://github.com/zluca/Sidebar/',
@@ -3426,6 +3426,11 @@ function saveLater(what) {
 			}
 		}, 30000);
 	}
+}
+
+function getVersion() {
+	const version = brauzer.runtime.getManifest().version.split('.');
+	return parseInt(version[0]) * 1000 + parseInt(version[1]) * 100 + parseInt(version[2]);
 }
 
 })();
