@@ -274,9 +274,6 @@ function init() {
 					setSearch();
 					setStyle();
 				},
-				deleteSite            : data => {
-					status.deleteSite = data;
-				},
 				backgroundColor       : data => {
 					setColor({'backgroundColor': data.value});
 				},

@@ -169,8 +169,20 @@ const messageHandler = {
 		mode               : info => {
 			blockInit(info.value, info.data);
 		},
-		warnings           : info => {
-			options.warnings[info.option] = info.value;
+		bookmarkDelete     : info => {
+			options.warnings.bookmarkDelete = info.value;
+		},
+		bookmarkFolderDelete: info => {
+			options.warnings.bookmarkFolderDelete = info.value;
+		},
+		rssFeedDelete      : info => {
+			options.warnings.rssFeedDelete = info.value;
+		},
+		domainFolderClose  : info => {
+			options.warnings.domainFolderClose = info.value;
+		},
+		pocketDelete       : info => {
+			options.warnings.pocketDelete = info.value;
 		},
 		fontSize           : info => {
 			setFontSize(info.value);
@@ -597,9 +609,9 @@ const initBlock = {
 							if (item.pid !== pid) {
 								pid    = item.pid;
 								folder = getFolderById('bookmarks', pid);
-								count  = folder.lastChild.children.length - 1;
 								if (folder === false)
 									folder = rootFolder;
+								count  = folder.lastChild.children.length - 1;
 							}
 							count++;
 						} :
@@ -1742,7 +1754,7 @@ const buttonsEvents = {
 			if (options.warnings.domainFolderClose === true)
 				send('background', 'dialog', 'domainFolderClose', {'id': controls.tabs.item.parentNode.dataset.id});
 			else
-				send('background', 'tabs', 'removeByDomain', {'id': controls.tabs.item.parentNode.dataset.id});
+				send('background', 'tabs', 'domainFolderClose', {'id': controls.tabs.item.parentNode.dataset.id});
 		},
 		new: event => {
 			event.stopPropagation();

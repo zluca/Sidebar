@@ -251,7 +251,7 @@ const options = {
 		siteDelete           : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['startpage']
+			targets : []
 		},
 		rssFeedDelete        : {
 			value   : true,
