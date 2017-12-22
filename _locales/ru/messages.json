@@ -205,6 +205,10 @@
 		"message"       : "Обновить канал",
 		"description"   : ""
 	},
+	"rssImportExport"          : {
+		"message"       : "Импортировать или экспортировать RSS",
+		"description"   : ""
+	},
 	"rssReloadAll"          : {
 		"message"       : "Обновить все каналы",
 		"description"   : ""

@@ -209,6 +209,10 @@
 		"message"       : "Update feed",
 		"description"   : ""
 	},
+	"rssImportExport"          : {
+		"message"       : "Import or export RSS",
+		"description"   : ""
+	},
 	"rssReloadAll"          : {
 		"message"       : "Update all feeds",
 		"description"   : ""

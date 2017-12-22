@@ -209,6 +209,10 @@
 		"message"       : "更新收取点",
 		"description"   : ""
 	},
+	"rssImportExport"          : {
+		"message"       : "Import or export RSS",
+		"description"   : ""
+	},
 	"rssReloadAll"          : {
 		"message"       : "更新所有收取点",
 		"description"   : ""
