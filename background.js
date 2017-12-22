@@ -2177,6 +2177,7 @@ const initService = {
 				delete             : getI18n('rssControlsDeleteItem'),
 				reload             : getI18n('rssControlsReload'),
 				new                : getI18n('rssNew'),
+				importExport       : getI18n('rssImportExport'),
 				reloadAll          : getI18n('rssReloadAll'),
 				plain              : getI18n('rssPlainModeButton'),
 				domain             : getI18n('rssDomainModeButton')
