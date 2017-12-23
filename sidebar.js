@@ -40,6 +40,7 @@ const status   = {
 		lastDate : 0,
 		lastNum  : 0
 	},
+	activeBlock         : null,
 	activeTab           : false,
 	activeTabId         : 0,
 	domainsId           : [],
@@ -51,7 +52,9 @@ const status   = {
 	lastClicked         : {
 		id   : -1,
 		time : -1
-	}
+	},
+	scrolling           : false,
+	scrollTimer         : 0
 };
 
 const data     = {
@@ -237,6 +240,17 @@ const messageHandler = {
 		side        : info => {
 			if (options.sidebar.method === 'native')
 				status.side = info;
+		},
+		scroll      : info => {
+			options.scroll[options.sidebar.mode] = info;
+			if (status.scrolling === true) {
+				if (status.scrollTimer === 0)
+					status.scrollTimer = setTimeout(_ => {status.scrolling = false;status.scrollTimer = 0;}, 500);
+			}
+			else {
+				status.scrolling = true;
+				window.scrollTo(0, info);
+			}
 		}
 	},
 	info : {
@@ -570,12 +584,12 @@ const initBlock = {
 						while (bookmarksSearchResults.firstChild)
 							bookmarksSearchResults.removeChild(bookmarksSearchResults.firstChild);
 						insertBookmarks(response, 'search');
-						block.bookmarks.classList.add('search-active');
+						searchActive(true);
 					});
 				}
 			}
 			else
-				block.bookmarks.classList.remove('search-active');
+				searchActive(false);
 		});
 
 		block.bookmarks.addEventListener('click', event => {
@@ -726,12 +740,12 @@ const initBlock = {
 						while (historySearchResults.firstChild)
 							historySearchResults.removeChild(historySearchResults.firstChild);
 						insertHistoryes(response, 'search');
-						block.history.classList.add('search-active');
+						searchActive(true);
 					});
 				}
 			}
 			else
-				block.history.classList.remove('search-active');
+				searchActive(false);
 		});
 
 		block.history.addEventListener('click', event => {
@@ -1329,11 +1343,15 @@ function setColor(colors) {
 
 function blockInit(newMode, info) {
 	const cleanse = _ => {
-		while (block[options.sidebar.mode].hasChildNodes())
-			block[options.sidebar.mode].removeChild(block[options.sidebar.mode].firstChild);
+		while (status.activeBlock.hasChildNodes())
+			status.activeBlock.removeChild(status.activeBlock.firstChild);
 		clearData(options.sidebar.mode);
-		block[options.sidebar.mode].classList.remove('search-active');
+		searchActive(false);
 	};
+
+	document.body.classList = newMode;
+	options.sidebar.mode    = newMode;
+	status.activeBlock      = block[newMode];
 
 	if (status.init[newMode] === false) {
 		i18n[newMode] = info.i18n;
@@ -1353,9 +1371,18 @@ function blockInit(newMode, info) {
 		cleanse();
 		initBlock[newMode](info);
 	}
-	document.body.classList = newMode;
-	options.sidebar.mode    = newMode;
-	status.activeBlock      = block[newMode];
+
+	window.scrollTo(0, options.scroll[options.sidebar.mode]);
+	clearTimeout(status.scrollTimer);
+	status.scrollTimer = 0;
+	status.scrolling   = false;
+	window.onscroll = event => {
+		if (status.searchActive === false) {
+			status.scrolling   = true;
+			if (Math.abs(event.pageY - options.scroll[options.sidebar.mode]) > 10)
+				send('background', 'options', 'handler', {'section': 'scroll', 'option': options.sidebar.mode, 'value': event.pageY});
+		}
+	};
 }
 
 function enableBlock(mode) {
@@ -1409,6 +1436,7 @@ function initSidebar(response) {
 	options.warnings             = response.options.warnings;
 	options.sidebar              = response.options.sidebar;
 	options.pocket               = response.options.pocket;
+	options.scroll               = response.options.scroll;
 	i18n.header                  = response.i18n.header;
 	status.info                  = response.info;
 
@@ -1627,6 +1655,18 @@ function openLink(event) {
 		id   : event.target.id,
 		time : Date.now()
 	};
+}
+
+function searchActive(isIt) {
+	if (isIt === true) {
+		status.activeBlock.classList.add('search-active');
+		status.searchActive = true;
+	}
+	else {
+		status.activeBlock.classList.remove('search-active');
+		status.searchActive = false;
+		window.scrollTo(0, options.scroll[options.sidebar.mode]);
+	}
 }
 
 function makeBlock(type) {

@@ -465,6 +465,39 @@ const options = {
 			value: 'leftBar'
 		}
 	},
+	scroll : {
+		hidden : {},
+		tabs      : {
+			value   : 0,
+			targets : [],
+			handler : 'scroll'
+		},
+		bookmarks : {
+			value   : 0,
+			targets : [],
+			handler : 'scroll'
+		},
+		history   : {
+			value   : 0,
+			targets : [],
+			handler : 'scroll'
+		},
+		downloads : {
+			value   : 0,
+			targets : [],
+			handler : 'scroll'
+		},
+		rss       : {
+			value   : 0,
+			targets : [],
+			handler : 'scroll'
+		},
+		pocket    : {
+			value   : 0,
+			targets : [],
+			handler : 'scroll'
+		}
+	},
 	pocket: {
 		hidden : {},
 		accessToken : {
@@ -647,6 +680,12 @@ const optionsHandler = {
 	},
 	restartBookmarks : (section, option, newValue) => {
 		initService.bookmarks('reInit');
+	},
+	scroll           : (section, option, newValue) => {
+		if (options.leftBar.mode.value === option)
+			send('leftBar', 'set', 'scroll', newValue);
+		if (options.rightBar.mode.value === option)
+			send('rightBar', 'set', 'scroll', newValue);
 	}
 };
 
@@ -2894,6 +2933,7 @@ function sideBarData(side) {
 			'theme'    : optionsShort.theme,
 			'misc'     : optionsShort.misc,
 			'pocket'   : optionsShort.pocket,
+			'scroll'   : optionsShort.scroll,
 			'services' : {
 				'tabs'      : optionsShort.services.tabs,
 				'bookmarks' : optionsShort.services.bookmarks,
