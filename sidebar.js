@@ -1404,6 +1404,16 @@ function tryToInit() {
 				});
 			}
 		}
+		else if (options.sidebar.method === 'iframe') {
+			if (firefox) {
+				doc.addEventListener('mouseleave', event => {
+					send('background', 'sidebar', 'sideDetection', {'sender': 'content', 'action': 'leave', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+				});
+				doc.addEventListener('mouseover', event => {
+					send('background', 'sidebar', 'sideDetection',{'sender': 'content', 'action': 'over', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+				});
+			}
+		}
 
 		initSidebar(response);
 	});

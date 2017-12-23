@@ -721,7 +721,7 @@ const messageHandler = {
 							if (options[oppositeSide[side]].method.value === 'native')
 								trueSide = oppositeSide[side];
 							else
-								optionsHandler.method(side, 'method', 'native');
+								optionsHandler.method(options.status.nativeSbPosition.value, 'method', 'native');
 					}
 					sendResponse(sideBarData(trueSide));
 				},
@@ -1058,10 +1058,8 @@ const initService = {
 			if (sidebarAction !== null) {
 				let port;
 				brauzer.runtime.onConnect.addListener(p => {
-					if (opera) {
-						setOption('leftBar', 'method', 'native');
-						optionsHandler.method('leftBar', 'method', 'native');
-					}
+					setOption(options.status.nativeSbPosition.value, 'method', 'native');
+					optionsHandler.method(options.status.nativeSbPosition.value, 'method', 'native');
 					port = p;
 					port.onDisconnect.addListener(_ => {
 						if (options.leftBar.method.value === 'native')
