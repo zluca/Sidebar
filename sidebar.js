@@ -1343,15 +1343,10 @@ function setColor(colors) {
 
 function blockInit(newMode, info) {
 	const cleanse = _ => {
-		while (status.activeBlock.hasChildNodes())
-			status.activeBlock.removeChild(status.activeBlock.firstChild);
+		while (block[options.sidebar.mode].hasChildNodes())
+			block[options.sidebar.mode].removeChild(block[options.sidebar.mode].firstChild);
 		clearData(options.sidebar.mode);
-		searchActive(false);
 	};
-
-	document.body.classList = newMode;
-	options.sidebar.mode    = newMode;
-	status.activeBlock      = block[newMode];
 
 	if (status.init[newMode] === false) {
 		i18n[newMode] = info.i18n;
@@ -1362,15 +1357,12 @@ function blockInit(newMode, info) {
 		document.head.appendChild(link);
 		status.init[newMode] = true;
 	}
-	if (options.sidebar.mode !== newMode) {
-		initBlock[newMode](info);
-		if (options.sidebar.mode)
-			cleanse();
-	}
-	else {
-		cleanse();
-		initBlock[newMode](info);
-	}
+	cleanse();
+	document.body.classList = newMode;
+	options.sidebar.mode    = newMode;
+	status.activeBlock      = block[newMode];
+	searchActive(false);
+	initBlock[newMode](info);
 
 	window.scrollTo(0, options.scroll[options.sidebar.mode]);
 	clearTimeout(status.scrollTimer);
