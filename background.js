@@ -3065,8 +3065,11 @@ function makeFav(id, url, favIconUrl, update = false) {
 		} ,
 	};
 
-	let fav     = getById('favs', id);
-	let favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
+	let fav       = getById('favs', id);
+	const domain  = getById('domains', id);
+	const favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
+	if (domain !== false)
+		domain.fav = favIcon;
 	saveLater('favs');
 	if (update !== false)
 		sendLater('favs');
