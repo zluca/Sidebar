@@ -2267,7 +2267,15 @@ const initService = {
 						if (desc !== undefined)
 							desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
-						fav              = (fav !== null) ? fav.textContent.trim() : firefox ? config.rssIcon : false;
+						fav              = (fav !== null) ? fav.textContent.trim() : false;
+						const rssDomain  = makeRssDomain(rssUrl, fav);
+						if (fav === false) {
+							const domain = getById('domains', domainFromUrl(rssUrl, true).replace(/\./g, ''));
+							if (domain !== false)
+								rssDomain.fav = domain.fav;
+							else
+								rssDomain.fav = config.rssIcon;
+						}
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;
@@ -2275,9 +2283,9 @@ const initService = {
 						feed.title       = rssTitle;
 						feed.view        = 'domain';
 						feed.description = desc;
-						feed.domain      = makeRssDomain(rssUrl, fav).id;
+						feed.domain      = rssDomain.id;
 						feed.url         = rssUrl;
-						feed.fav         = fav;
+						feed.fav         = rssDomain.fav;
 						feed.itemsId     = [];
 						feed.hideReaded  = false;
 						feed.readed      = true;
