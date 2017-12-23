@@ -1058,8 +1058,10 @@ const initService = {
 			if (sidebarAction !== null) {
 				let port;
 				brauzer.runtime.onConnect.addListener(p => {
-					setOption(options.status.nativeSbPosition.value, 'method', 'native');
-					optionsHandler.method(options.status.nativeSbPosition.value, 'method', 'native');
+					if (opera) {
+						setOption('leftBar', 'method', 'native');
+						optionsHandler.method('leftBar', 'method', 'native');
+					}
 					port = p;
 					port.onDisconnect.addListener(_ => {
 						if (options.leftBar.method.value === 'native')
@@ -1069,19 +1071,19 @@ const initService = {
 					});
 				});
 				if (firefox) {
-					data.sideDetection         = {};
-					data.sideDetection.sidebar = '';
-					data.sideDetection.content = '';
-					messageHandler.sidebar     = {
+					status.sideDetection         = {};
+					status.sideDetection.sidebar = '';
+					status.sideDetection.content = '';
+					messageHandler.sidebar       = {
 						sideDetection: (message, sender, sendResponse) => {
 
 							const setSide = (sender, side) => {
-								data.sideDetection[sender] = side;
-								setTimeout(_ => {data.sideDetection[sender] = '';}, 100);
+								status.sideDetection[sender] = side;
+								setTimeout(_ => {status.sideDetection[sender] = '';}, 100);
 							};
 
 							const detectSide = (prevSender, side) => {
-								if (data.sideDetection[prevSender] !== side)
+								if (status.sideDetection[prevSender] !== side)
 									return;
 								if (options[side].method.value !== 'native') {
 									const oppositeSide = {
