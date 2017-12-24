@@ -105,6 +105,10 @@ const messageHandler = {
 		},
 		expandOnClick     : info => {
 			options.misc.expandOnClick = info.value;
+			if (options.leftBar.method === 'iframe')
+				setSideBarFixed('leftBar');
+			if (options.rightBar.method === 'iframe')
+				setSideBarFixed('rightBar');
 		}
 	},
 	iframe: {
@@ -257,8 +261,9 @@ function makeIframe(side) {
 	sidebar[side].appendChild(border);
 	sidebar[side].appendChild(iframe);
 	border.addEventListener('mousedown', event => {
-		if (options.misc.expandOnClick === true && status[side].over === false)
-			return;
+		if (options.misc.expandOnClick === true)
+			if (status[side].over === false)
+				return;
 		if (event.which === 1)
 			resizeSideBar(side);
 	});
@@ -288,6 +293,9 @@ function setSideBarFixed(side, value) {
 			event.stopPropagation();
 		if (status[side].over === true)
 			return;
+		if (options.misc.expandOnClick === true)
+			if (options[side].wide === false)
+				return;
 		status[side].over = true;
 		if (timer.leave !== 0)
 			cleanTimer('leave');
@@ -357,13 +365,14 @@ function setSideBarFixed(side, value) {
 		cleanTimer('leave');
 		cleanTimer('over');
 	}
-	else if (options.misc.expandOnClick === true && options[side].wide === false) {
-		setListener('mouseover', false);
-		setListener('mouseleave', true);
-		setListener('borderclick', true);
-		cleanTimer('leave');
-		cleanTimer('over');
-		return setSideBarWidth(side);
+	else if (options.misc.expandOnClick === true) {
+		if (options[side].wide === false) {
+			setListener('mouseover', false);
+			setListener('mouseleave', true);
+			setListener('borderclick', true);
+			cleanTimer('leave');
+			cleanTimer('over');
+		}
 	}
 	else {
 		setListener('mouseover', true);
