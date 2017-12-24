@@ -3011,7 +3011,10 @@ function send(target, subject, action, dataToSend) {
 			brauzer.runtime.sendMessage({'target': 'startpage', 'subject': subject, 'action': action, 'data': dataToSend});
 		},
 		content   : _ => {
-			sendToTab(status.activeTabId, 'content', subject, action, dataToSend);
+			for (let i = data.tabs.length - 1; i >= 0; i--) {
+				if (!tabIsProtected(data.tabs[i].id));
+					sendToTab(data.tabs[i].id, 'content', subject, action, dataToSend);
+			}
 		}
 	};
 
