@@ -402,6 +402,10 @@
 		"message"       : "RSS update period",
 		"description"   : ""
 	},
+	"optMiscExpandOnClickLabel" : {
+		"message"       : "Expand thin iframe sidebar on click istead of hover",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Warnings",

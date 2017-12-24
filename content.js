@@ -7,7 +7,7 @@ const brauzer = firefox ? browser : chrome;
 
 const doc     = document.documentElement;
 
-const status = {
+const options = {
 	leftBar: {
 		width    : 0,
 		method   : '',
@@ -26,11 +26,39 @@ const status = {
 		over     : false,
 		resize   : false
 	},
+	theme : {
+		fontSize          : 10,
+		borderColor       : '#444',
+		borderColorActive : '#000'
+	},
+	misc : {
+		expandOnClick : false
+	}
+};
+
+const status  = {
+	leftBar: {
+		hover    : false,
+		over     : false,
+		resize   : false,
+		listeners: {
+			over  : false,
+			leave : false,
+			click : false
+		}
+	},
+	rightBar: {
+		hover    : false,
+		over     : false,
+		resize   : false,
+		listeners: {
+			over  : false,
+			leave : false,
+			click : false
+		}
+	},
 	initDone     : false,
 	docReady     : false,
-	fontSize     : 10,
-	borderColor  : '#444',
-	borderColorActive : '#000'
 };
 
 cleanOldStuff();
@@ -58,79 +86,82 @@ const checkBody = setInterval(
 
 const messageHandler = {
 	options : {
-		wide              : data => {
-			setSideBarWideMode(data.section, data.value);
+		wide              : info => {
+			setSideBarWideMode(info.section, info.value);
 		},
-		width             : data => {
-			setSideBarWidth(data.section, data.value);
+		width             : info => {
+			setSideBarWidth(info.section, info.value);
 		},
-		fixed             : data => {
-			setSideBarFixed(data.section, data.value);
+		fixed             : info => {
+			setSideBarFixed(info.section, info.value);
 		},
-		borderColor       : data => {
-			status.borderColor = data.value;
+		borderColor       : info => {
+			options.theme.borderColor = info.value;
 			setColor();
 		},
-		borderColorActive : data => {
-			status.borderColorActive = data.value;
+		borderColorActive : info => {
+			options.theme.borderColorActive = info.value;
 			setColor();
+		},
+		expandOnClick     : info => {
+			options.misc.expandOnClick = info.value;
 		}
 	},
 	iframe: {
-		remove      : data => {
-			deleteIframe(data.side);
+		remove      : info => {
+			deleteIframe(info.side);
 		},
-		add         : data => {
-			injectIframe(data.side, data.width);
+		add         : info => {
+			injectIframe(info.side, info.width);
 		}
 	},
 	reInit : {
-		sideBar      : (side, data) => {
-			if (data.options.method !== status[side].method)
-				if (data.options.method === 'iframe')
-					injectIframe(side, data.options.width);
+		sideBar      : (side, info) => {
+			if (info.options.method !== status[side].method)
+				if (info.options.method === 'iframe')
+					injectIframe(side, info.options.width);
 				else
 					deleteIframe(side);
-			if (data.options.fixed !== status[side].fixed)
-				setSideBarFixed(side, data.options.fixed);
-			if (data.options.wide !== status[side].wide)
-				setSideBarWideMode(side, data.options.wide);
-			if (data.options.width !== status[side].width)
-				setSideBarWidth(side, data.options.width);
-			if (status.fontSize !== data.theme.fontSize) {
-				status.fontSize = data.theme.fontSize;
+			if (info.options.fixed !== options[side].fixed)
+				setSideBarFixed(side, info.options.fixed);
+			if (info.options.wide !== options[side].wide)
+				setSideBarWideMode(side, info.options.wide);
+			if (info.options.width !== options[side].width)
+				setSideBarWidth(side, info.options.width);
+			if (options.theme.fontSize !== info.theme.fontSize) {
+				options.theme.fontSize = info.theme.fontSize;
 				setSideBarWidth(side);
 			}
-			if (status.borderColor !== data.theme.borderColor[0]) {
-				status.borderColor = data.theme.borderColor[0];
+			if (options.theme.borderColor !== info.theme.borderColor[0]) {
+				options.theme.borderColor = info.theme.borderColor[0];
 				setColor();
 			}
-			if (status.borderColorActive !== data.theme.borderColorActive[0]) {
-				status.borderColorActive = data.theme.borderColorActive[0];
+			if (options.theme.borderColorActive !== info.theme.borderColorActive[0]) {
+				options.theme.borderColorActive = info.theme.borderColorActive[0];
 				setColor();
 			}
 		},
-		leftBar      : data => {
-			messageHandler.reInit.sideBar('leftBar', data);
+		leftBar      : info => {
+			messageHandler.reInit.sideBar('leftBar', info);
 		},
-		rightBar     : data => {
-			messageHandler.reInit.sideBar('rightBar', data);
+		rightBar     : info => {
+			messageHandler.reInit.sideBar('rightBar', info);
 		}
 	},
 	dialog : {
-		create      : data => {
+		create      : info => {
 			if (dialog !== null)
 				document.body.removeChild(dialog);
 			dialog     = document.createElement('iframe');
 			dialog.id  = 'sbp-dialog';
-			dialog.src = `${brauzer.extension.getURL('dialog.html')}#${data}`;
+			dialog.src = `${brauzer.extension.getURL('dialog.html')}#${info}`;
 			document.body.appendChild(dialog);
 		},
-		remove      : data => {
+		remove      : info => {
 			document.body.removeChild(dialog);
 			dialog = null;
 		},
-		checkRss    : data => {
+		checkRss    : info => {
 			let rssUrl    = '';
 			let rssTitle  = '';
 			const rssLink = document.querySelector('link[type="application/rss+xml"]');
@@ -146,7 +177,7 @@ const messageHandler = {
 };
 
 function init() {
-	send('background', 'request', 'status', {needResponse: true}, response => {
+	send('background', 'request', 'content', {needResponse: true}, response => {
 		if (typeof response === 'undefined') {
 			initTimer = setTimeout(init, 200);
 			return;
@@ -168,16 +199,17 @@ function init() {
 			});
 		}
 
-		status.leftBar           = response.leftBar;
-		status.rightBar          = response.rightBar;
-		status.fontSize          = response.fontSize;
-		status.borderColor       = response.borderColor;
-		status.borderColorActive = response.borderColorActive;
+		options.leftBar                 = response.leftBar;
+		options.rightBar                = response.rightBar;
+		options.theme.fontSize          = response.fontSize;
+		options.theme.borderColor       = response.borderColor;
+		options.theme.borderColorActive = response.borderColorActive;
+		options.misc.expandOnClick      = response.expandOnClick;
 		if (status.docReady === true)
 			injectElements();
 		window.onresize = _ => {
-			if (status.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
-			if (status.rightBar.method === 'iframe') setSideBarWidth('rightBar');
+			if (options.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
+			if (options.rightBar.method === 'iframe') setSideBarWidth('rightBar');
 		};
 	});
 }
@@ -208,9 +240,9 @@ function cleanOldStuff() {
 }
 
 function injectElements() {
-	if (status.leftBar.method === 'iframe' && sidebar.leftBar.style)
+	if (options.leftBar.method === 'iframe' && sidebar.leftBar.style)
 		injectIframe('leftBar');
-	if (status.rightBar.method === 'iframe' && sidebar.rightBar.style)
+	if (options.rightBar.method === 'iframe' && sidebar.rightBar.style)
 		injectIframe('rightBar');
 	doc.appendChild(mask);
 }
@@ -225,6 +257,8 @@ function makeIframe(side) {
 	sidebar[side].appendChild(border);
 	sidebar[side].appendChild(iframe);
 	border.addEventListener('mousedown', event => {
+		if (options.misc.expandOnClick === true && status[side].over === false)
+			return;
 		if (event.which === 1)
 			resizeSideBar(side);
 	});
@@ -272,7 +306,7 @@ function setSideBarFixed(side, value) {
 		if (status[side].over === false || status[side].resize === true)
 			return;
 		status[side].over = false;
-		if (status[side].fixed === true)
+		if (options[side].fixed === true)
 			return;
 		if (timer.over !== 0)
 			cleanTimer('over');
@@ -285,31 +319,64 @@ function setSideBarFixed(side, value) {
 			}, 200);
 	};
 
-	if (status[side].fixed === value)
+	const borderClick = event => {
+		event.stopPropagation();
+		if (event.which !== 1)
+			return;
+		status[side].over = true;
+		setHover(side, true);
+	};
+
+	const setListener = (which, enabled) => {
+
+		const listeners = {
+			mouseover : action => {
+				sidebar[side][`${action}EventListener`]('mouseover', mouseOver);
+			},
+			mouseleave : action => {
+				sidebar[side][`${action}EventListener`]('mouseleave', mouseLeave);
+			},
+			borderclick : action => {
+				sidebar[side].firstChild[`${action}EventListener`]('mousedown', borderClick);
+			},
+		};
+
+		if (status[side].listeners[which] !== enabled)
+			status[side].listeners[which] = enabled;
+			listeners[which](enabled === true ? 'add' : 'remove');
+	};
+
+	if (options[side].fixed === value)
 		return;
 	if (value !== undefined)
-		status[side].fixed = value;
-	if (status[side].fixed === true) {
-		sidebar[side].removeEventListener('mouseover', mouseOver);
-		sidebar[side].removeEventListener('mouseleave', mouseLeave);
+		options[side].fixed = value;
+	if (options[side].fixed === true) {
+		setListener('mouseover', false);
+		setListener('mouseleave', false);
+		setListener('borderclick', false);
 		cleanTimer('leave');
 		cleanTimer('over');
 	}
-	else {
-		sidebar[side].addEventListener('mouseover', mouseOver);
-		sidebar[side].addEventListener('mouseleave', mouseLeave);
+	else if (options.misc.expandOnClick === true && options[side].wide === false) {
+		setListener('mouseover', false);
+		setListener('mouseleave', true);
+		setListener('borderclick', true);
+		cleanTimer('leave');
+		cleanTimer('over');
+		return setSideBarWidth(side);
 	}
-	if (status[side].over === true)
-		mouseOver();
-	else
-		mouseLeave();
+	else {
+		setListener('mouseover', true);
+		setListener('mouseleave', true);
+		setListener('borderclick', false);
+	}
 	setSideBarWidth(side);
 }
 
 function setSideBarWideMode(side, value) {
 	if (value !== undefined)
-		status[side].wide = value;
-	if (status[side].wide === true)
+		options[side].wide = value;
+	if (options[side].wide === true)
 		sidebar[side].classList.add('wide');
 	else
 		sidebar[side].classList.remove('wide');
@@ -317,26 +384,26 @@ function setSideBarWideMode(side, value) {
 }
 
 function setColor() {
-	doc.style.setProperty('--sbp-border-color', status.borderColor, 'important');
-	doc.style.setProperty('--sbp-border-color-active', status.borderColorActive, 'important');
+	doc.style.setProperty('--sbp-border-color', options.theme.borderColor, 'important');
+	doc.style.setProperty('--sbp-border-color-active', options.theme.borderColorActive, 'important');
 }
 
 function setSideBarWidth(side, value) {
-	const borderWidth = status.fontSize / 8 / window.devicePixelRatio;
-	const iconWidth   = status.fontSize * 1.7 / window.devicePixelRatio;
+	const borderWidth = options.theme.fontSize / 8 / window.devicePixelRatio;
+	const iconWidth   = options.theme.fontSize * 1.7 / window.devicePixelRatio;
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
 	sidebar[side].lastChild.style.setProperty(`margin-${side === 'leftBar' ? 'right' : 'left'}`, `${borderWidth}px`, 'important');
 	const trueSide = side.replace('Bar', '');
 	if (value !== undefined)
-		status[side].width = value;
-	if (status[side].fixed === true) {
-		doc.style.setProperty(`margin-${trueSide}`, `${status[side].width}%`, 'important');
-		sidebar[side].style.setProperty('width', `${status[side].width}%`, 'important');
+		options[side].width = value;
+	if (options[side].fixed === true) {
+		doc.style.setProperty(`margin-${trueSide}`, `${options[side].width}%`, 'important');
+		sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
 	}
 	else {
 		if (status[side].hover === true)
-			sidebar[side].style.setProperty('width', `${status[side].width}%`, 'important');
-		else if (status[side].wide === true) {
+			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+		else if (options[side].wide === true) {
 			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
 		}
@@ -349,8 +416,8 @@ function setSideBarWidth(side, value) {
 
 function resizeSideBar(side) {
 
-	const isFixed    = status[side].fixed;
-	const oldWidth   = status[side].width;
+	const isFixed    = options[side].fixed;
+	const oldWidth   = options[side].width;
 	const innerWidth = window.innerWidth;
 	const inner100   = innerWidth / 100;
 	let   oldX       = 0;
@@ -377,7 +444,7 @@ function resizeSideBar(side) {
 		if (isFixed === false)
 			setHover(side, false);
 		if (cancel === false)
-			send('background', 'options', 'handler', {section: side, option: 'width', value: status[side].width});
+			send('background', 'options', 'handler', {section: side, option: 'width', value: options[side].width});
 	};
 
 	const stopResize = _ => {
@@ -394,7 +461,7 @@ function resizeSideBar(side) {
 		setTimeout(_ => {sidebar[side].style.display = 'block';}, 1);
 	}
 	mask.classList.add('active');
-	if (status[side].fixed === false)
+	if (options[side].fixed === false)
 		setSideBarFixed(side, true);
 	status[side].resize = true;
 	document.addEventListener('mouseup', stopResize);

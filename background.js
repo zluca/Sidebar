@@ -360,6 +360,11 @@ const options = {
 			targets : ['sidebar'],
 			hidden  : true
 		},
+		expandOnClick      : {
+			value   : false,
+			type    : 'boolean',
+			targets : ['content']
+		},
 		tabsMode           : {
 			value   : 'domain',
 			type    : 'select',
@@ -692,13 +697,14 @@ const optionsHandler = {
 const messageHandler = {
 
 	request : {
-		status : (message, sender, sendResponse) => {
+		content : (message, sender, sendResponse) => {
 			sendResponse({
 				'leftBar'           : optionsShort.leftBar,
 				'rightBar'          : optionsShort.rightBar,
 				'fontSize'          : optionsShort.theme.fontSize,
 				'borderColor'       : optionsShort.theme.borderColor,
-				'borderColorActive' : optionsShort.theme.borderColorActive
+				'borderColorActive' : optionsShort.theme.borderColorActive,
+				'expandOnClick'     : optionsShort.misc.expandOnClick
 			});
 			if (status.dialogData !== null)
 				setTimeout(_ => {sendToTab(sender.tab.id, 'content', 'dialog', 'create', status.dialogType);}, 50);
@@ -2995,16 +3001,16 @@ function send(target, subject, action, dataToSend) {
 	};
 
 	const sendTo = {
-		sidebar  : _ => {
+		sidebar   : _ => {
 			sendTo.leftBar();
 			sendTo.rightBar();
 		},
-		leftBar  : _ => sendToSidebar('leftBar', subject, action, dataToSend),
-		rightBar : _ => sendToSidebar('rightBar', subject, action, dataToSend),
-		startpage    : _ => {
+		leftBar   : _ => sendToSidebar('leftBar', subject, action, dataToSend),
+		rightBar  : _ => sendToSidebar('rightBar', subject, action, dataToSend),
+		startpage : _ => {
 			brauzer.runtime.sendMessage({'target': 'startpage', 'subject': subject, 'action': action, 'data': dataToSend});
 		},
-		content  : _ => {
+		content   : _ => {
 			sendToTab(status.activeTabId, 'content', subject, action, dataToSend);
 		}
 	};

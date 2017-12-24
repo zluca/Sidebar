@@ -398,6 +398,10 @@
 		"message"       : "Период обновления RSS",
 		"description"   : ""
 	},
+	"optMiscExpandOnClickLabel" : {
+		"message"       : "Раскрывать свёрнутый ифрейм по клику, вместо наведения курсора",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Предупреждения",
