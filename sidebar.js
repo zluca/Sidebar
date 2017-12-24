@@ -1371,8 +1371,8 @@ function blockInit(newMode, info) {
 	window.onscroll = event => {
 		if (status.searchActive === false) {
 			status.scrolling   = true;
-			if (Math.abs(event.pageY - options.scroll[options.sidebar.mode]) > 10)
-				send('background', 'options', 'handler', {'section': 'scroll', 'option': options.sidebar.mode, 'value': event.pageY});
+			if (Math.abs(window.scrollY - options.scroll[options.sidebar.mode]) > 10)
+				send('background', 'options', 'handler', {'section': 'scroll', 'option': options.sidebar.mode, 'value': window.scrollY});
 		}
 	};
 }
