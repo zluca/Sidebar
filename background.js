@@ -98,26 +98,34 @@ const data = {
 	tabsId             : [],
 	tabsFolders        : [],
 	tabsFoldersId      : [],
+	tabsDomains        : [],
+	tabsDomainsId      : [],
 	bookmarks          : [],
 	bookmarksId        : [],
 	bookmarksFolders   : [],
 	bookmarksFoldersId : [],
+	bookmarksDomains   : [],
+	bookmarksDomainsId : [],
 	history            : [],
 	historyId          : [],
 	historyFolders     : [],
 	historyFoldersId   : [],
+	historyDomains     : [],
+	historyDomainsId   : [],
 	downloads          : [],
 	downloadsId        : [],
 	rss                : [],
 	rssId              : [],
 	rssFolders         : [],
 	rssFoldersId       : [],
+	rssDomains         : [],
+	rssDomainsId       : [],
 	pocket             : [],
 	pocketId           : [],
 	pocketFolders      : [],
 	pocketFoldersId    : [],
-	domains            : [],
-	domainsId          : [],
+	pocketDomains      : [],
+	pocketDomainsId    : [],
 	favs               : [],
 	favsId             : [],
 	speadDial          : [],
@@ -153,7 +161,7 @@ const options = {
 		mode   : {
 			value   : 'bookmarks',
 			type    : 'select',
-			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss'],
+			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss', 'pocket'],
 			targets : [],
 			handler : 'mode'
 		},
@@ -187,7 +195,7 @@ const options = {
 		mode   : {
 			value   : 'bookmarks',
 			type    : 'select',
-			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss'],
+			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss', 'pocket'],
 			targets : [],
 			handler : 'mode'
 		},
@@ -548,6 +556,7 @@ const modeData = {
 			i18n           : i18n.tabs,
 			tabs           : data.tabs,
 			tabsFolders    : data.tabsFolders,
+			domains        : data.tabsDomains,
 			activeTabId    : status.activeTabId
 		};
 	},
@@ -557,6 +566,7 @@ const modeData = {
 			i18n             : i18n.bookmarks,
 			bookmarks        : data.bookmarks,
 			bookmarksFolders : data.bookmarksFolders,
+			domains          : data.bookmarksDomains,
 			activeTabId      : status.activeTabId
 		};
 	},
@@ -566,7 +576,8 @@ const modeData = {
 			i18n             : i18n.history,
 			history          : data.history,
 			historyEnd       : status.historyEnd,
-			historyFolders   : data.historyFolders
+			historyFolders   : data.historyFolders,
+			domains          : data.historyDomains
 		};
 	},
 	downloads  : _ => {
@@ -581,7 +592,8 @@ const modeData = {
 			mode             : 'rss',
 			i18n             : i18n.rss,
 			rss              : data.rss,
-			rssFolders       : data.rssFolders
+			rssFolders       : data.rssFolders,
+			domains          : data.rssDomains
 		};
 	},
 	pocket    : _ => {
@@ -592,6 +604,7 @@ const modeData = {
 			i18n             : i18n.pocket,
 			pocket           : data.pocket,
 			pocketFolders    : data.pocketFolders,
+			domains          : data.pocketDomains,
 		};
 	}
 };
@@ -1018,6 +1031,12 @@ const updateItem = {
 	}
 };
 
+updateItem.tabsDomains      = updateItem.domains;
+updateItem.bookmarksDomains = updateItem.domains;
+updateItem.historyDomains   = updateItem.domains;
+updateItem.rssDomains       = updateItem.domains;
+updateItem.pocketDomains    = updateItem.domains;
+
 const updateFolder = {
 	tabs       : null,
 	bookmarks  : null,
@@ -1364,7 +1383,7 @@ const initService = {
 					if (checkStartPage(tab))
 						return brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
 				const url = info.url === 'about:blank' ? oldTab.url : info.url;
-				const newDomain = makeDomain(url);
+				const newDomain = makeDomain('tabs', url);
 				oldTab.url      = info.url;
 				if (newDomain.id !== oldFolder.id) {
 					removeFromFolder('tabs', oldTab);
@@ -1395,7 +1414,7 @@ const initService = {
 				send('sidebar', 'tabs', 'status', {'id': id, 'loading': info.status === 'loading' ? 'add' : 'remove'});
 			}
 			if (info.hasOwnProperty('favIconUrl')) {
-				const domain = getById('domains', oldTab.domain);
+				const domain = getById('tabsDomains', oldTab.domain);
 				if (domain !== false)
 					domain.fav = makeFav(domain.id, null, info.favIconUrl, true);
 			}
@@ -1431,7 +1450,7 @@ const initService = {
 		if (start === true) {
 			updateItem.tabs = (newItem, item) => {
 				const url    = item.url === 'about:blank' ? item.title : item.url;
-				const domain = makeDomain(url, item.favIconUrl);
+				const domain = makeDomain('tabs', url, item.favIconUrl);
 				if (item.active === true)
 					status.activeTabId  = item.id;
 				newItem.domain     = domain.id;
@@ -1517,7 +1536,7 @@ const initService = {
 								id       : bookmarkItems[i].id,
 								url      : bookmarkItems[i].url,
 								title    : bookmarkItems[i].title,
-								domain   : makeDomain(bookmarkItems[i].url).id
+								domain   : makeDomain('bookmarks', bookmarkItems[i].url).id
 							});
 						sendResponse(result);
 					};
@@ -1695,7 +1714,7 @@ const initService = {
 		if (start === true) {
 			updateItem.bookmarks = (newItem, item) => {
 				newItem.pid     = item.parentId;
-				newItem.domain  = makeDomain(item.url).id;
+				newItem.domain  = makeDomain('bookmarks', item.url).id;
 				newItem.title   = item.title;
 				newItem.index   = item.index;
 				newItem.url     = item.url;
@@ -1814,7 +1833,7 @@ const initService = {
 			const searchHandler = history => {
 				let results = [];
 				for (let i = 0, l = history.length; i < l && i < options.misc.limitHistory.value; i++) {
-					const domain = makeDomain(history[i].url);
+					const domain = makeDomain('history', history[i].url);
 					results.push({
 						url    : history[i].url,
 						domain : domain.id,
@@ -1871,7 +1890,7 @@ const initService = {
 				title          = title.toLocaleDateString();
 				const pid      = title.replace(/\./g, '');
 				newItem.url    = item.url;
-				newItem.domain = makeDomain(item.url).id;
+				newItem.domain = makeDomain('history', item.url).id;
 				newItem.title  = item.title || item.url;
 				newItem.pid    = pid;
 				return newItem;
@@ -2239,16 +2258,6 @@ const initService = {
 			return id;
 		};
 
-		const makeRssDomain = (url, fav) => {
-			const id   = url.replace(/\.|\:|\\|\/|\?|\s|=/g, '');
-			let domain = getById('domains', id);
-			if (domain === false) {
-				domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), 'title': ''}, 'last');
-				send('sidebar', 'info', 'newDomain', {'domain': domain});
-			}
-			return domain;
-		};
-
 		const createRssFeed = (url, title) => {
 			const rssUrl = urlFromUser(url);
 			for (let i = data.rssFolders.length - 1; i >= 0; i--)
@@ -2276,14 +2285,7 @@ const initService = {
 							desc   = desc.textContent.trim();
 						let fav          = head.querySelector('image>url');
 						fav              = (fav !== null) ? fav.textContent.trim() : false;
-						const rssDomain  = makeRssDomain(rssUrl, fav);
-						if (fav === false) {
-							const domain = getById('domains', domainFromUrl(rssUrl, true).replace(/\./g, ''));
-							if (domain !== false)
-								rssDomain.fav = domain.fav;
-							else
-								rssDomain.fav = config.rssIcon;
-						}
+						const rssDomain  = makeDomain('rss', fav !== false ? rssUrl : 'rss-' + rssUrl, fav);
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
 						feed.folded      = false;
@@ -2485,7 +2487,7 @@ const initService = {
 					data.rss          = res.rss;
 					data.rssId        = res.rssId;
 					for (let i = data.rssFolders.length - 1; i >= 0; i--) {
-						makeRssDomain(data.rssFolders[i].url, data.rssFolders[i].fav);
+						makeDomain('rss', data.rssFolders.url, data.rssFolders.fav);
 						rssSetUpdate(res.rssFolders[i], options.misc.rssUpdatePeriod.value);
 					}
 					rssSetReaded('count');
@@ -2837,7 +2839,7 @@ const initService = {
 		if (start === true) {
 
 			updateItem.pocket = (newItem, item) => {
-				const domain        = makeDomain(item.given_url || item.resolved_url);
+				const domain        = makeDomain('pocket', item.given_url || item.resolved_url);
 				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
 				newItem.title       = item.given_title || item.resolved_title || item.given_url || item.resolved_url;
 				newItem.url         = item.given_url || item.resolved_url;
@@ -2959,7 +2961,6 @@ function sideBarData(side) {
 		},
 		'data'     : modeData[options[side].mode.value](),
 		'info'     : status.info,
-		'domains'  : data.domains,
 		'i18n'     : {
 						'header' : i18n.header,
 						'mode'   : i18n[options[side].mode.value]
@@ -3021,18 +3022,6 @@ function send(target, subject, action, dataToSend) {
 	sendTo[target]();
 }
 
-function sendLater(what) {
-	const sendData = {
-		favs : _ => {
-			send('sidebar', 'info', 'updateDomain', data.favs);
-			delete status.sendTimer.favs;
-		}
-	};
-
-	if (!status.sendTimer.hasOwnProperty(what))
-		status.sendTimer[what] = setTimeout(sendData[what], 1000);
-}
-
 function sendToWindow(target, subject, action, dataToSend) {
 	if (status[target].tabId !== -1)
 		brauzer.tabs.sendMessage(status[target].tabId, {'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
@@ -3083,20 +3072,25 @@ function makeFav(id, url, favIconUrl, update = false) {
 	};
 
 	let fav       = getById('favs', id);
-	const domain  = getById('domains', id);
 	const favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
-	if (domain !== false)
-		domain.fav = favIcon;
+	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket'], i = targets.length - 1; i >= 0; i--) {
+		if (data[`${targets[i]}Domains`].indexOf(id) !== -1)
+		data[`${targets[i]}Domains`].fav = favIcon;
+		if (update !== false) {
+			if (options.leftBar.mode.value === targets[i])
+				send('leftBar', 'info', 'updateDomain', fav);
+			if (options.rightBar.mode.value === targets[i])
+				send('rightBar', 'info', 'updateDomain', fav);
+		}
+	}
 	saveLater('favs');
-	if (update !== false)
-		sendLater('favs');
 	return favIcon;
 }
 
-function makeDomain(url, fav) {
+function makeDomain(mode, url, fav) {
 	let id       = '';
 	let title    = '';
-	if (url === '')
+	if (url === '' || url === undefined)
 		id = 'default';
 	else if (url.includes(config.defaultStartPage))
 		id = 'startpage';
@@ -3116,10 +3110,13 @@ function makeDomain(url, fav) {
 		title = domainFromUrl(url, true);
 		id    = title.replace(/\./g, '');
 	}
-	let domain = getById('domains', id);
+	let domain = getById(`${mode}Domains`, id);
 	if (domain === false) {
-		domain = createById('domains', {'id': id, 'fav': makeFav(id, url, fav), title: title}, 'last');
-		send('sidebar', 'info', 'newDomain', {'domain': domain});
+		domain = createById(`${mode}Domains`, {'id': id, 'fav': makeFav(id, url, fav), title: title}, 'last');
+		if (options.leftBar.mode.value === mode)
+			send('leftBar', 'info', 'newDomain', {'domain': domain});
+		if (options.rightBar.mode.value === mode)
+			send('rightBar', 'info', 'newDomain', {'domain': domain});
 	}
 	else if (fav !== undefined)
 		makeFav(id, url, fav, true);

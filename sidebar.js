@@ -261,7 +261,7 @@ const messageHandler = {
 			setDomainStyle.update([info.domain]);
 		},
 		updateDomain   : info => {
-			setDomainStyle.update(info);
+			setDomainStyle.update([info]);
 		},
 		downloadStatus : info => {
 			setDownloadStatus[info]();
@@ -1375,6 +1375,7 @@ function blockInit(newMode, info) {
 				send('background', 'options', 'handler', {'section': 'scroll', 'option': options.sidebar.mode, 'value': window.scrollY});
 		}
 	};
+	setDomainStyle.rewrite(info.domains);
 }
 
 function enableBlock(mode) {
@@ -1475,7 +1476,6 @@ function initSidebar(response) {
 		setFixed(options.sidebar.fixed);
 	}
 
-	setDomainStyle.rewrite(response.domains);
 	blockInit(options.sidebar.mode, response.data);
 
 	brauzer.runtime.onMessage.addListener(onMessage);
