@@ -4,7 +4,7 @@
 		"description"   : "Nome da extensão"
 	},
 	"extDescription" : {
-		"message"       : "Sidebar for Chromium and Firefox",
+		"message"       : "Barra Lateral para Chromium e Firefox",
 		"description"   : "Descrição da extensão"
 	},
 	"extTitle" : {
