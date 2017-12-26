@@ -2281,21 +2281,20 @@ const initService = {
 							rssTitle = rssTitle.textContent.trim();
 						}
 						let desc         = head.querySelector('description, subtitle');
-						if (desc !== undefined)
+						if (desc !== null)
 							desc   = desc.textContent.trim();
-						let fav          = head.querySelector('image>url');
-						fav              = (fav !== null) ? fav.textContent.trim() : false;
-						const rssDomain  = makeDomain('rss', fav !== false ? rssUrl : 'rss-' + rssUrl, fav);
+						const fav        = head.querySelector('image>url');
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
+						const rssDomain  = fav !== null ? makeDomain('rss', `${guid}.rss`, fav.textContent.trim()) : makeDomain('rss', rssUrl);
 						feed.folded      = false;
 						feed.pid         = 0;
 						feed.title       = rssTitle;
 						feed.view        = 'domain';
 						feed.description = desc;
+						feed.domainUrl   = fav !== null ? `${guid}.rss` : rssUrl;
 						feed.domain      = rssDomain.id;
 						feed.url         = rssUrl;
-						feed.fav         = rssDomain.fav;
 						feed.itemsId     = [];
 						feed.hideReaded  = false;
 						feed.readed      = true;
@@ -2487,7 +2486,10 @@ const initService = {
 					data.rss          = res.rss;
 					data.rssId        = res.rssId;
 					for (let i = data.rssFolders.length - 1; i >= 0; i--) {
-						makeDomain('rss', data.rssFolders.url, data.rssFolders.fav);
+						if (data.rssFolders[i].hasOwnProperty('domainUrl'))
+							makeDomain('rss', data.rssFolders[i].domainUrl);
+						else
+							makeDomain('rss', data.rssFolders[i].url);
 						rssSetUpdate(res.rssFolders[i], options.misc.rssUpdatePeriod.value);
 					}
 					rssSetReaded('count');
