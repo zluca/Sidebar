@@ -1653,10 +1653,8 @@ function openLink(event) {
 		send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': true});
 	else
 		send('background', 'tabs', 'update', {'url': event.target.href});
-	status.lastClicked = {
-		id   : event.target.id,
-		time : Date.now()
-	};
+	status.lastClicked.id   = event.target.id;
+	status.lastClicked.time = Date.now();
 }
 
 function searchActive(isIt) {
