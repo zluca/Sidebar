@@ -1,0 +1,914 @@
+{
+	"extName" : {
+		"message"       : "Sidebar+",
+		"description"   : "Nome da extensão"
+	},
+	"extDescription" : {
+		"message"       : "Sidebar for Chromium and Firefox",
+		"description"   : "Descrição da extensão"
+	},
+	"extTitle" : {
+		"message"       : "Sidebar+",
+		"description"   : ""
+	},
+	"extRightBar" : {
+		"message"       : "Barra Direita activa",
+		"description"   : ""
+	},
+	"extLeftBar" : {
+		"message"       : "Barra Esquerda ativa",
+		"description"   : ""
+	},
+	"extBoth" : {
+		"message"       : "Ambas as Barras Laterais ativas",
+		"description"   : ""
+	},
+	"extNone" : {
+		"message"       : "Ambas as Barras Laterais desactivas",
+		"description"   : ""
+	},
+
+	"sbControlsWideTitle" : {
+		"message"       : "Colapsar Barra Lateral para a Largura dos Icons",
+		"description"   : ""
+	},
+	"sbControlsNarrowTitle" : {
+		"message"       : "Colapsar Barra Lateral para uma Linha Fina",
+		"description"   : ""
+	},
+	"sbControlsFixedTitle" : {
+		"message"       : "Fixar esta vista",
+		"description"   : ""
+	},
+	"sbControlsUnfixedTitle" : {
+		"message"       : "Desafixar esta vista",
+		"description"   : ""
+	},
+	"sbControlsTabsTitle" : {
+		"message"       : "Separadores",
+		"description"   : ""
+	},
+	"sbControlsBookmarksTitle" : {
+		"message"       : "Marcadores",
+		"description"   : ""
+	},
+	"sbControlsHistoryTitle" : {
+		"message"       : "Histórico",
+		"description"   : ""
+	},
+	"sbControlsDownloadsTitle" : {
+		"message"       : "Downloads",
+		"description"   : ""
+	},
+	"sbControlsRssTitle" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+	"sbControlsPocketTitle" : {
+		"message"       : "Pocket",
+		"description"   : ""
+	},
+
+	"tabsNewText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"tabsNewTitle" : {
+		"message"       : "Criar novo separador",
+		"description"   : ""
+	},
+	"tabsControlsReload" : {
+		"message"       : "Atualizar",
+		"description"   : ""
+	},
+	"tabsControlsPin" : {
+		"message"       : "Fixar",
+		"description"   : ""
+	},
+	"tabsControlsUnpin" : {
+		"message"       : "Desafixar",
+		"description"   : ""
+	},
+	"tabsControlsClose" : {
+		"message"       : "Fechar",
+		"description"   : ""
+	},
+	"tabsControlsCloseAll" : {
+		"message"       : "Fechar Pasta",
+		"description"   : ""
+	},
+	"tabsPlainModeButton" : {
+		"message"       : "Não Ordenar Separadores",
+		"description"   : ""
+	},
+	"tabsDomainModeButton" : {
+		"message"       : "Agrupar separadores por dominio",
+		"description"   : ""
+	},
+	"tabsTreeModeButton" : {
+		"message"       : "Organizar separadores em Vista de Árvore",
+		"description"   : ""
+	},
+	"bkBookmarkThisText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"bkBookmarkThisTitle" : {
+		"message"       : "Adicionar este separador aos marcadores",
+		"description"   : ""
+	},
+	"bkEditBookmark" : {
+		"message"       : "Editar marcador",
+		"description"   : ""
+	},
+	"bkMoveBookmark" : {
+		"message"       : "Mover marcador",
+		"description"   : ""
+	},
+	"bkDeleteBookmark" : {
+		"message"       : "Apagar marcador",
+		"description"   : ""
+	},
+	"bkDeleteBookmarkFolder" : {
+		"message"       : "Apagar pasta",
+		"description"   : ""
+	},
+	"bkSearchPlaceholder" : {
+		"message"       : "Procurar",
+		"description"   : ""
+	},
+
+	"hsGetMoreText" : {
+		"message"       : "Mostrar mais",
+		"description"   : "Texto do botão 'Mostrar mais histórico'"
+	},
+	"hsGetMoreTitle" : {
+		"message"       : "Mostrar mais entradas do histórico",
+		"description"   : ""
+	},
+	"hsSearchPlaceholder" : {
+		"message"       : "Procurar",
+		"description"   : ""
+	},
+
+	"dlControlsPause" : {
+		"message"       : "Parar",
+		"description"   : ""
+	},
+	"dlControlsResume" : {
+		"message"       : "Resumir",
+		"description"   : ""
+	},
+	"dlControlsReload" : {
+		"message"       : "Atualizar",
+		"description"   : ""
+	},
+	"dlControlsCancel" : {
+		"message"       : "Cancelar",
+		"description"   : ""
+	},
+	"dlControlsDelete" : {
+		"message"       : "Apagar",
+		"description"   : ""
+	},
+
+
+	"rssNew" : {
+		"message"       : "Adicionar nova fonte RSS",
+		"description"   : "Texto mostrado quando colocar o rato por cima do botão 'Adicionar novo RSS'"
+	},
+	"rssControlsOptions" : {
+		"message"       : "Editar propriedades da fonte RSS",
+		"description"   : ""
+	},
+	"rssControlsMarkReaded" : {
+		"message"       : "Marcar como lido",
+		"description"   : ""
+	},
+	"rssControlsMarkReadedAll" : {
+		"message"       : "Marcar fonte RSS como lida",
+		"description"   : ""
+	},
+	"rssControlsMarkReadedAllFeeds" : {
+		"message"       : "Marcar todas as fontes RSS como lidas",
+		"description"   : ""
+	},
+	"rssControlsHideReaded" : {
+		"message"       : "Ocular itens lidos",
+		"description"   : ""
+	},
+	"rssControlsShowReaded" : {
+		"message"       : "Mostrar itens lidos",
+		"description"   : ""
+	},
+	"rssControlsDeleteItem" : {
+		"message"       : "Apagar",
+		"description"   : ""
+	},
+	"rssControlsReload"          : {
+		"message"       : "Atualizar fonte RSS",
+		"description"   : ""
+	},
+	"rssImportExport"          : {
+		"message"       : "Importar ou exportar RSS",
+		"description"   : ""
+	},
+	"rssReloadAll"          : {
+		"message"       : "Atualizar todas as fontes",
+		"description"   : ""
+	},
+	"rssPlainModeButton" : {
+		"message"       : "Ordenar elementos RSS por tempo",
+		"description"   : ""
+	},
+	"rssDomainModeButton" : {
+		"message"       : "Agrupar elementos RSS por fonte",
+		"description"   : ""
+	},
+
+	"pocketControlsLoginText" : {
+		"message"       : "Entrar em Pocket",
+		"description"   : ""
+	},
+	"pocketControlsLoginTitle" : {
+		"message"       : "Clique aqui para aceder ao seu Pocket",
+		"description"   : ""
+	},
+	"pocketControlsLogout" : {
+		"message"       : "Sair",
+		"description"   : ""
+	},
+	"pocketControlsNew" : {
+		"message"       : "Adicionar ao Pocket",
+		"description"   : ""
+	},
+	"pocketControlsFav" : {
+		"message"       : "Adicionar aos favoritos",
+		"description"   : ""
+	},
+	"pocketControlsUnfav" : {
+		"message"       : "Remover dos favoritos",
+		"description"   : ""
+	},
+	"pocketControlsArchive" : {
+		"message"       : "Mover para arquivo",
+		"description"   : ""
+	},
+	"pocketControlsUnarchive" : {
+		"message"       : "Trazer do arquivo",
+		"description"   : ""
+	},
+	"pocketControlsDelete" : {
+		"message"       : "Apagar do Pocket",
+		"description"   : ""
+	},
+	"pocketPlainMode" : {
+		"message"       : "Não ordenar itens",
+		"description"   : ""
+	},
+	"pocketTypeMode" : {
+		"message"       : "ordenar itens por tipo",
+		"description"   : ""
+	},
+	"pocketDomainMode" : {
+		"message"       : "Ordenar itens por dominio",
+		"description"   : ""
+	},
+	"pocketReload" : {
+		"message"       : "Sincronizar com Pocket",
+		"description"   : ""
+	},
+
+	"optHeaderText" : {
+		"message"       : "Opções do Sidebar+",
+		"description"   : "Cabeçalho da janela de opções"
+	},
+	"optSaveText" : {
+		"message"       : "Guardar",
+		"description"   : "Texto do botão Guardar"
+	},
+	"optCancelText" : {
+		"message"       : "Cancelar",
+		"description"   : "Texto do botão Cancelar"
+	},
+
+	"optServicesButton" : {
+		"message"       : "Serviços",
+		"description"   : "Cabeçalho das Opções dos Serviços"
+	},
+	"optServicesText" : {
+		"message"       : "Desactive serviços que não sejam usados para melhorar a performance.",
+		"description"   : ""
+	},
+	"optServicesStartPageLabel" : {
+		"message"       : "Utilizar página inicial personalizada",
+		"description"   : ""
+	},
+	"optServicesTabsLabel" : {
+		"message"       : "Separadores",
+		"description"   : ""
+	},
+	"optServicesDownloadsLabel" : {
+		"message"       : "Downloads",
+		"description"   : ""
+	},
+	"optServicesBookmarksLabel" : {
+		"message"       : "Bookmarks",
+		"description"   : ""
+	},
+	"optServicesHistoryLabel" : {
+		"message"       : "Historico",
+		"description"   : ""
+	},
+	"optServicesRSSLabel" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+	"optServicesPocketLabel" : {
+		"message"       : "Pocket",
+		"description"   : ""
+	},
+
+	"optThemeButton" : {
+		"message"       : "Tema",
+		"description"   : "Cabeçalho das Opções do Tema"
+	},
+	"optThemeText" : {
+		"message"       : "Tema da Barra Lateral.",
+		"description"   : ""
+	},
+	"optThemeFontSizeLabel" : {
+		"message"       : "Tamanho do texto da Barra Lateral",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorLabel" : {
+		"message"       : "Cor de fundo da Barra Lateral",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorActiveLabel" : {
+		"message"       : "Fundo dos elementos ativos na Barra Lateral",
+		"description"   : ""
+	},
+	"optThemeFontColorLabel" : {
+		"message"       : "Cor do texto da Barra Lateral",
+		"description"   : ""
+	},
+	"optThemeFontColorActiveLabel" : {
+		"message"       : "Cor do texto do elemento ativo da Barra Lateral",
+		"description"   : ""
+	},
+	"optThemeFontColorInactiveLabel" : {
+		"message"       : "Locais e elementos inactivos",
+		"description"   : ""
+	},
+	"optThemeBorderColorLabel" : {
+		"message"       : "Cor da Barra Lateral",
+		"description"   : ""
+	},
+	"optThemeBorderColorActiveLabel" : {
+		"message"       : "Cor de linha do elemento ativo da Barra Lateral",
+		"description"   : ""
+	},
+	"optThemeSidebarImageLabel" : {
+		"message"       : "Imagem de fundo da Barra Lateral",
+		"description"   : ""
+	},
+	"optThemeStartpageImageLabel" : {
+		"message"       : "Imagem de fundo da página inicial",
+		"description"   : ""
+	},
+
+	"optMiscButton" : {
+		"message"       : "Vários",
+		"description"   : "Cabeçalho das Opções Variadas"
+	},
+	"optMiscText" : {
+		"message"       : "Várias Opções.",
+		"description"   : ""
+	},
+	"optMiscLimitHistoryLabel" : {
+		"message"       : "Número máximo de entradas do Histórico mostradas de uma vez",
+		"description"   : ""
+	},
+	"optMiscLimitBookmarksLabel" : {
+		"message"       : "Número máximo de Marcadores mostrados de uma vez",
+		"description"   : ""
+	},
+	"optMiscMaxSavedRssPerFeedLabel" : {
+		"message"       : "Número máximo de itens RSS guardados",
+		"description"   : ""
+	},
+	"optMiscRssUpdatePeriodLabel" : {
+		"message"       : "Período de atualização das RSS",
+		"description"   : ""
+	},
+	"optMiscExpandOnClickLabel" : {
+		"message"       : "Expandir Barra Lateral ao clicar em vez de tocar (para barra lateral em modo iframe e fina)",
+		"description"   : ""
+	},
+
+	"optWarningsButton" : {
+		"message"       : "Avisos",
+		"description"   : ""
+	},
+	"optWarningsText" : {
+		"message"       : "Perguntar-me antes de...",
+		"description"   : ""
+	},
+	"optWarningsBookmarkDeleteLabel" : {
+		"message"       : "Apagar marcador",
+		"description"   : ""
+	},
+	"optWarningsBookmarkFolderDeleteLabel" : {
+		"message"       : "Apagar pasta de marcadores",
+		"description"   : ""
+	},
+	"optWarningsSiteDeleteLabel" : {
+		"message"       : "Apagar site da página inical",
+		"description"   : ""
+	},
+	"optWarningsRssFeedDeleteLabel" : {
+		"message"       : "Apagar fonte RSS",
+		"description"   : ""
+	},
+	"optWarningsDomainFolderCloseLabel" : {
+		"message"       : "Fechar multiplos separadores",
+		"description"   : ""
+	},
+	"optWarningsPocketDeleteLabel" : {
+		"message"       : "Apagar do Pocket",
+		"description"   : ""
+	},
+
+	"optStartPageButton" : {
+		"message"       : "Página Inicial",
+		"description"   : ""
+	},
+	"optStartPageText" : {
+		"message"       : "Opções da Página Inicial",
+		"description"   : ""
+	},
+	"optStartPageEmptyLabel" : {
+		"message"       : "Página Inicial vazia",
+		"description"   : ""
+	},
+	"optStartPageRowsLabel" : {
+		"message"       : "Linhas",
+		"description"   : ""
+	},
+	"optStartPageColumnsLabel" : {
+		"message"       : "Colunas",
+		"description"   : ""
+	},
+	"optStartPageMarginVLabel" : {
+		"message"       : "Espaço vertical",
+		"description"   : ""
+	},
+	"optStartPageMarginHLabel" : {
+		"message"       : "Espaço horizontal",
+		"description"   : ""
+	},
+	"optStartPagePaddingLabel" : {
+		"message"       : "Espaçamento",
+		"description"   : ""
+	},
+	"optStartPageSearchEnabledLabel" : {
+		"message"       : "Ativar pesquisa",
+		"description"   : ""
+	},
+	"optStartPagewikiSearchLangLabel" : {
+		"message"       : "Idioma de pesquisa na Wikipedia",
+		"description"   : ""
+	},
+	"optStartPageTranslateFromLabel" : {
+		"message"       : "Traduzir de",
+		"description"   : ""
+	},
+	"optStartPageTranslateToLabel" : {
+		"message"       : "Traduzir para",
+		"description"   : ""
+	},
+
+
+	"popupFormTextLeftBar" : {
+		"message"       : "Barra na Esquerda:",
+		"description"   : ""
+	},
+	"popupFormTextRightBar" : {
+		"message"       : "Barra na Direita:",
+		"description"   : ""
+	},
+	"popupLabelTextIframe" : {
+		"message"       : "Iframe",
+		"description"   : ""
+	},
+	"popupLabelTextNative" : {
+		"message"       : "Nativo",
+		"description"   : ""
+	},
+	"popupLabelTextWindow" : {
+		"message"       : "Janela",
+		"description"   : ""
+	},
+	"popupLabelTextDisabled" : {
+		"message"       : "Desativada",
+		"description"   : ""
+	},
+	"popupButtonRateTitle" : {
+		"message"       : "Avaliar esta extensão",
+		"description"   : ""
+	},
+	"popupButtonTranslateTitle" : {
+		"message"       : "Ajude a Traduzir",
+		"description"   : ""
+	},
+	"popupButtonHomeTitle" : {
+		"message"       : "Página do Extra",
+		"description"   : ""
+	},
+	"popupButtonOptionsTitle" : {
+		"message"       : "Opções",
+		"description"   : ""
+	},
+
+	"notificationRssErrorTitle" : {
+		"message"       : "Erro de RSS",
+		"description"   : ""
+	},
+	"notificationRssNewFeedErrorText" : {
+		"message"       : "Não é possivel encontrar uma fonte RSS válida em ",
+		"description"   : ""
+	},
+	"notificationRssFeedExistErrorText" : {
+		"message"       : "Já se encontra inscrito em ",
+		"description"   : ""
+	},
+	"notificationRssNothingToExportText" : {
+		"message"       : "Não possui qualquer fonte RSS para exportar",
+		"description"   : ""
+	},
+	"notificationBookmarksTitle" : {
+		"message"       : "Atenção",
+		"description"   : ""
+	},
+	"notificationbkTooManyBookmarksText" : {
+		"message"       : "Demasiados Marcadores. Alterado para a última vista de marcadores. O limite pode ser alterado nas Opções.",
+		"description"   : ""
+	},
+	"notificationbkSwitchToTreeText" : {
+		"message"       : "Marcadores mudados para a Vista em Árvore.",
+		"description"   : ""
+	},
+
+	"startpagePageTitle" : {
+		"message"       : "Página Inicial",
+		"description"   : ""
+	},
+	"startpageEditButtonTitle" : {
+		"message"       : "Editar página",
+		"description"   : ""
+	},
+	"startpageAddNewSiteTitle" : {
+		"message"       : "Adicionar nova página",
+		"description"   : ""
+	},
+	"startpageSearchPlaceholder" : {
+		"message"       : "Procurar",
+		"description"   : ""
+	},
+	"startpageTranslatePlaceholder" : {
+		"message"       : "Traduzir",
+		"description"   : ""
+	},
+	"startpageBuyPlaceholder" : {
+		"message"       : "Comprar",
+		"description"   : ""
+	},
+	"startpageSearchButtonTitle" : {
+		"message"       : "Pesquisar",
+		"description"   : ""
+	},
+	"startpageDuckDuckGoLabel" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"startpageGoogleLabel" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"startpageYandexLabel" : {
+		"message"       : "Yandex",
+		"description"   : ""
+	},
+	"startpageBingLabel" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"startpageYahooLabel" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"startpageWikipediaLabel" : {
+		"message"       : "Wikipedia",
+		"description"   : ""
+	},
+	"startpageMdnLabel" : {
+		"message"       : "MDN",
+		"description"   : ""
+	},
+	"startpageStackoverflowLabel" : {
+		"message"       : "stackOverflow",
+		"description"   : ""
+	},
+	"startpageAmazonLabel" : {
+		"message"       : "Amazon",
+		"description"   : ""
+	},
+	"startpageEbayLabel" : {
+		"message"       : "Ebay",
+		"description"   : ""
+	},
+	"startpageAliexpressLabel" : {
+		"message"       : "AliExpress",
+		"description"   : ""
+	},
+	"startpageGoogleTranslateLabel" : {
+		"message"       : "Google Translate",
+		"description"   : ""
+	},
+	"startpageYandexTranslateLabel" : {
+		"message"       : "Yandex Translate",
+		"description"   : ""
+	},
+
+
+	"dialogConfirmationTitle" : {
+		"message"       : "Confirmação necessária",
+		"description"   : ""
+	},
+	"dialogUserInputTitle" : {
+		"message"       : "Informação necessária",
+		"description"   : ""
+	},
+
+	"dialogAskAgainWarning" : {
+		"message"       : "Perguntar sempre",
+		"description"   : ""
+	},
+	"dialogConfirmButton" : {
+		"message"       : "Confirmar",
+		"description"   : ""
+	},
+	"dialogCancelButton" : {
+		"message"       : "Cancelar",
+		"description"   : ""
+	},
+	"dialogSaveButton" : {
+		"message"       : "Guardar",
+		"description"   : ""
+	},
+	"dialogDeleteButton" : {
+		"message"       : "Apagar",
+		"description"   : ""
+	},
+	"dialogImportButton" : {
+		"message"       : "Importar",
+		"description"   : ""
+	},
+	"dialogExportButton" : {
+		"message"       : "Exportar",
+		"description"   : ""
+	},
+	"dialogCopyButton" : {
+		"message"       : "Copiar para a área de tranferência",
+		"description"   : ""
+	},
+
+	"dialogUrlLabel"    : {
+		"message"       : "Url:",
+		"description"   : ""
+	},
+	"dialogTitleLabel"    : {
+		"message"       : "Título:",
+		"description"   : ""
+	},
+	"dialogTextLabel"    : {
+		"message"       : "Texto:",
+		"description"   : ""
+	},
+	"dialogColorLabel"    : {
+		"message"       : "Cor:",
+		"description"   : ""
+	},
+	"dialogDescriptionLabel" : {
+		"message"       : "Descrição:",
+		"description"   : ""
+	},
+
+	"dialogSiteCreateHeader" : {
+		"message"       : "Adicionar novo site",
+		"description"   : ""
+	},
+	"dialogSiteCreateUrlPlaceholder" : {
+		"message"       : "Introduzir URL do site",
+		"description"   : ""
+	},
+	"dialogSiteChangeHeader" : {
+		"message"       : "Editar preferências do site",
+		"description"   : ""
+	},
+	"dialogSiteChangeUrlPlaceholder" : {
+		"message"       : "Introduzir URL do site",
+		"description"   : ""
+	},
+	"dialogSiteDeleteHeader" : {
+		"message"       : "Apagar Site",
+		"description"   : ""
+	},
+	"dialogSiteDeleteAlert" : {
+		"message"       : "Apagar \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDomainFolderCloseHeader" : {
+		"message"       : "Fechar dominio",
+		"description"   : ""
+	},
+	"dialogDomainFolderCloseAlert" : {
+		"message"       : "Fechar todos os separadores do dominio \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkDeleteHeader" : {
+		"message"       : "Apagar Marcador",
+		"description"   : ""
+	},
+	"dialogBookmarkDeleteAlert" : {
+		"message"       : "Quer mesmo apagar \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkFolderDeleteHeader" : {
+		"message"       : "Apagar pasta",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderDeleteAlert" : {
+		"message"       : "Quer mesmo apagar a pasta \"$name$\" ? Todo o seu conteúdo será perdido.",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogRssNewHeader" : {
+		"message"       : "Nova Subscrição RSS",
+		"description"   : ""
+	},
+	"dialogRssNewTitlePlaceholder" : {
+		"message"       : "Título da fonte (opcional)",
+		"description"   : ""
+	},
+	"dialogRssNewUrlPlaceholder" : {
+		"message"       : "Introduza aqui o URL da fonte",
+		"description"   : ""
+	},
+	"dialogRssFeedEditHeader" : {
+		"message"       : "Editar fonte RSS",
+		"description"   : ""
+	},
+	"dialogRssFeedEditTitlePlaceholder" : {
+		"message"       : "Título da fonte (opcional)",
+		"description"   : ""
+	},
+	"dialogRssFeedEditDescriptionPlaceholder" : {
+		"message"       : "Descrição da fonte(opcional)",
+		"description"   : ""
+	},
+	"dialogRssFeedDeleteHeader" : {
+		"message"       : "Apagar fonte RSS",
+		"description"   : ""
+	},
+	"dialogRssFeedDeleteAlert" : {
+		"message"       : "Quer mesmo apagar a fonte \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogRssImportExportHeader" : {
+		"message"       : "Importar / Exportar RSS",
+		"description"   : ""
+	},
+	"dialogRssImportExportAlert" : {
+		"message"       : "Importar ou Exportar RSS através de ficheiros .opml",
+		"description"   : ""
+	},
+	"dialogRssExportHeader" : {
+		"message"       : "Exportar RSS",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteHeader" : {
+		"message"       : "Download do histórico de remoções",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteAlert" : {
+		"message"       : "Quer mesmo apagar \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDeleteFromHistoryLabel" : {
+		"message"       : "Apagar do histórico de downloads",
+		"description"   : ""
+	},
+	"dialogDeleteFileLabel" : {
+		"message"       : "Remover ficheiro do disco",
+		"description"   : ""
+	},
+
+	"dialogBookmarkRootFolder" : {
+		"message"       : "Marcadores",
+		"description"   : ""
+	},
+	"dialogBookmarkNewHeader" : {
+		"message"       : "Novo Marcador",
+		"description"   : ""
+	},
+	"dialogBookmarkEditHeader" : {
+		"message"       : "Editar marcador",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderEditHeader" : {
+		"message"       : "Renomear pasta",
+		"description"   : ""
+	},
+	"dialogBookmarkDefaultTitle" : {
+		"message"       : "Novo Marcador",
+		"description"   : ""
+	},
+	"dialogBookmarkFoldersLabel" : {
+		"message"       : "Pastas:",
+		"description"   : ""
+	},
+
+	"dialogPocketNewHeader" : {
+		"message"       : "Adicionar ao Pocket",
+		"description"   : ""
+	},
+	"dialogPocketNewUrlPlaceholder" : {
+		"message"       : "URL do novo item do Pocket",
+		"description"   : ""
+	},
+	"dialogPocketNewTitlePlaceholder" : {
+		"message"       : "Título (opcional)",
+		"description"   : ""
+	},
+	"dialogPocketDeleteHeader" : {
+		"message"       : "Remover do Pocket",
+		"description"   : ""
+	},
+	"dialogPocketDeleteAlert" : {
+		"message"       : "Remover \"$name$\" do Pocket?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+
+	"domainsDefault" : {
+		"message"       : "Desconhecido",
+		"description"   : ""
+	},
+	"domainsStartPage" : {
+		"message"       : "Página Inicial",
+		"description"   : ""
+	},
+	"domainsSystem" : {
+		"message"       : "Sistema",
+		"description"   : ""
+	},
+	"domainsExtension" : {
+		"message"       : "Extensões",
+		"description"   : ""
+	}
+}
