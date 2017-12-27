@@ -2760,6 +2760,8 @@ const initService = {
 				data.pocketId        = res.pocketId;
 				data.pocketFolders   = res.pocketFolders;
 				data.pocketFoldersId = res.pocketFoldersId;
+				for (let i = data.pocket.length - 1; i >= 0; i--)
+					makeDomain('pocket', data.pocket[i].url);
 				updatePocket();
 			}
 			status.init.pocket     = true;
