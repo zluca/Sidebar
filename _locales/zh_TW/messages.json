@@ -1,0 +1,914 @@
+{
+	"extName" : {
+		"message"       : "Sidebar+",
+		"description"   : "extension name"
+	},
+	"extDescription" : {
+		"message"       : "供 Chromium 與 Firefox 使用的側邊欄",
+		"description"   : "extension description"
+	},
+	"extTitle" : {
+		"message"       : "Sidebar+",
+		"description"   : ""
+	},
+	"extRightBar" : {
+		"message"       : "右邊欄啟用",
+		"description"   : ""
+	},
+	"extLeftBar" : {
+		"message"       : "左邊欄啟用",
+		"description"   : ""
+	},
+	"extBoth" : {
+		"message"       : "雙邊欄皆啟用",
+		"description"   : ""
+	},
+	"extNone" : {
+		"message"       : "雙邊欄皆停用",
+		"description"   : ""
+	},
+
+	"sbControlsWideTitle" : {
+		"message"       : "折疊側邊欄至圖示寬度",
+		"description"   : ""
+	},
+	"sbControlsNarrowTitle" : {
+		"message"       : "折疊側邊欄至細線",
+		"description"   : ""
+	},
+	"sbControlsFixedTitle" : {
+		"message"       : "釘選此檢視",
+		"description"   : ""
+	},
+	"sbControlsUnfixedTitle" : {
+		"message"       : "取消釘選此檢視",
+		"description"   : ""
+	},
+	"sbControlsTabsTitle" : {
+		"message"       : "分頁",
+		"description"   : ""
+	},
+	"sbControlsBookmarksTitle" : {
+		"message"       : "書籤",
+		"description"   : ""
+	},
+	"sbControlsHistoryTitle" : {
+		"message"       : "歷史",
+		"description"   : ""
+	},
+	"sbControlsDownloadsTitle" : {
+		"message"       : "下載",
+		"description"   : ""
+	},
+	"sbControlsRssTitle" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+	"sbControlsPocketTitle" : {
+		"message"       : "Pocket",
+		"description"   : ""
+	},
+
+	"tabsNewText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"tabsNewTitle" : {
+		"message"       : "建立新分頁",
+		"description"   : ""
+	},
+	"tabsControlsReload" : {
+		"message"       : "重新整理",
+		"description"   : ""
+	},
+	"tabsControlsPin" : {
+		"message"       : "釘選",
+		"description"   : ""
+	},
+	"tabsControlsUnpin" : {
+		"message"       : "取消釘選",
+		"description"   : ""
+	},
+	"tabsControlsClose" : {
+		"message"       : "關閉",
+		"description"   : ""
+	},
+	"tabsControlsCloseAll" : {
+		"message"       : "關閉資料夾",
+		"description"   : ""
+	},
+	"tabsPlainModeButton" : {
+		"message"       : "不要排序分頁",
+		"description"   : ""
+	},
+	"tabsDomainModeButton" : {
+		"message"       : "以網域將分頁分組",
+		"description"   : ""
+	},
+	"tabsTreeModeButton" : {
+		"message"       : "以樹形檢視組織分頁",
+		"description"   : ""
+	},
+	"bkBookmarkThisText" : {
+		"message"       : "",
+		"description"   : ""
+	},
+	"bkBookmarkThisTitle" : {
+		"message"       : "將此分頁加入書籤",
+		"description"   : ""
+	},
+	"bkEditBookmark" : {
+		"message"       : "編輯書籤",
+		"description"   : ""
+	},
+	"bkMoveBookmark" : {
+		"message"       : "移動書籤",
+		"description"   : ""
+	},
+	"bkDeleteBookmark" : {
+		"message"       : "刪除書籤",
+		"description"   : ""
+	},
+	"bkDeleteBookmarkFolder" : {
+		"message"       : "刪除資料夾",
+		"description"   : ""
+	},
+	"bkSearchPlaceholder" : {
+		"message"       : "搜尋",
+		"description"   : ""
+	},
+
+	"hsGetMoreText" : {
+		"message"       : "顯示更多",
+		"description"   : "text on 'Get more history' button"
+	},
+	"hsGetMoreTitle" : {
+		"message"       : "顯示更多歷史項目",
+		"description"   : ""
+	},
+	"hsSearchPlaceholder" : {
+		"message"       : "搜尋",
+		"description"   : ""
+	},
+
+	"dlControlsPause" : {
+		"message"       : "暫停",
+		"description"   : ""
+	},
+	"dlControlsResume" : {
+		"message"       : "恢復",
+		"description"   : ""
+	},
+	"dlControlsReload" : {
+		"message"       : "重新整理",
+		"description"   : ""
+	},
+	"dlControlsCancel" : {
+		"message"       : "取消",
+		"description"   : ""
+	},
+	"dlControlsDelete" : {
+		"message"       : "刪除",
+		"description"   : ""
+	},
+
+
+	"rssNew" : {
+		"message"       : "新增 RSS feed",
+		"description"   : "text that shows when you hold mouse over 'add new RSS' button"
+	},
+	"rssControlsOptions" : {
+		"message"       : "編輯 feed 屬性",
+		"description"   : ""
+	},
+	"rssControlsMarkReaded" : {
+		"message"       : "標記為已讀過",
+		"description"   : ""
+	},
+	"rssControlsMarkReadedAll" : {
+		"message"       : "標記 feed 為已讀過",
+		"description"   : ""
+	},
+	"rssControlsMarkReadedAllFeeds" : {
+		"message"       : "標記所有 feed 為已讀過",
+		"description"   : ""
+	},
+	"rssControlsHideReaded" : {
+		"message"       : "隱藏已讀過的項目",
+		"description"   : ""
+	},
+	"rssControlsShowReaded" : {
+		"message"       : "顯示已讀過的項目",
+		"description"   : ""
+	},
+	"rssControlsDeleteItem" : {
+		"message"       : "刪除",
+		"description"   : ""
+	},
+	"rssControlsReload"          : {
+		"message"       : "更新 feed",
+		"description"   : ""
+	},
+	"rssImportExport"          : {
+		"message"       : "匯入或匯出 RSS",
+		"description"   : ""
+	},
+	"rssReloadAll"          : {
+		"message"       : "更新所有 feed",
+		"description"   : ""
+	},
+	"rssPlainModeButton" : {
+		"message"       : "以時間排序 RSS 元素",
+		"description"   : ""
+	},
+	"rssDomainModeButton" : {
+		"message"       : "以 feed 將 RSS 元素分組",
+		"description"   : ""
+	},
+
+	"pocketControlsLoginText" : {
+		"message"       : "登入至 Pocket",
+		"description"   : ""
+	},
+	"pocketControlsLoginTitle" : {
+		"message"       : "點選這裡以存取您的 Pocket",
+		"description"   : ""
+	},
+	"pocketControlsLogout" : {
+		"message"       : "登出",
+		"description"   : ""
+	},
+	"pocketControlsNew" : {
+		"message"       : "新增至 Pocket",
+		"description"   : ""
+	},
+	"pocketControlsFav" : {
+		"message"       : "加入最愛",
+		"description"   : ""
+	},
+	"pocketControlsUnfav" : {
+		"message"       : "從最愛中移除",
+		"description"   : ""
+	},
+	"pocketControlsArchive" : {
+		"message"       : "移動至封存",
+		"description"   : ""
+	},
+	"pocketControlsUnarchive" : {
+		"message"       : "從封存中復原",
+		"description"   : ""
+	},
+	"pocketControlsDelete" : {
+		"message"       : "從 Pocket 中刪除",
+		"description"   : ""
+	},
+	"pocketPlainMode" : {
+		"message"       : "不要排序項目",
+		"description"   : ""
+	},
+	"pocketTypeMode" : {
+		"message"       : "以類型排序項目",
+		"description"   : ""
+	},
+	"pocketDomainMode" : {
+		"message"       : "以網域排序項目",
+		"description"   : ""
+	},
+	"pocketReload" : {
+		"message"       : "與 Pocket 同步",
+		"description"   : ""
+	},
+
+	"optHeaderText" : {
+		"message"       : "Sidebar+ 選項",
+		"description"   : "header of options window"
+	},
+	"optSaveText" : {
+		"message"       : "儲存",
+		"description"   : "Save button text"
+	},
+	"optCancelText" : {
+		"message"       : "取消",
+		"description"   : "Cancel button text"
+	},
+
+	"optServicesButton" : {
+		"message"       : "服務",
+		"description"   : "header of Services options"
+	},
+	"optServicesText" : {
+		"message"       : "停用未使用的服務以取得更好的效能。",
+		"description"   : ""
+	},
+	"optServicesStartPageLabel" : {
+		"message"       : "使用自訂首頁",
+		"description"   : ""
+	},
+	"optServicesTabsLabel" : {
+		"message"       : "分頁",
+		"description"   : ""
+	},
+	"optServicesDownloadsLabel" : {
+		"message"       : "下載",
+		"description"   : ""
+	},
+	"optServicesBookmarksLabel" : {
+		"message"       : "書籤",
+		"description"   : ""
+	},
+	"optServicesHistoryLabel" : {
+		"message"       : "歷史",
+		"description"   : ""
+	},
+	"optServicesRSSLabel" : {
+		"message"       : "RSS",
+		"description"   : ""
+	},
+	"optServicesPocketLabel" : {
+		"message"       : "Pocket",
+		"description"   : ""
+	},
+
+	"optThemeButton" : {
+		"message"       : "佈景主題",
+		"description"   : "header of Theme options"
+	},
+	"optThemeText" : {
+		"message"       : "側邊欄佈景主題。",
+		"description"   : ""
+	},
+	"optThemeFontSizeLabel" : {
+		"message"       : "側邊欄字型大小",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorLabel" : {
+		"message"       : "側邊欄背景色彩",
+		"description"   : ""
+	},
+	"optThemeBackgroundColorActiveLabel" : {
+		"message"       : "側邊欄作用中元素的背景色彩",
+		"description"   : ""
+	},
+	"optThemeFontColorLabel" : {
+		"message"       : "側邊欄字型色彩",
+		"description"   : ""
+	},
+	"optThemeFontColorActiveLabel" : {
+		"message"       : "側邊欄作用中元素字形色彩",
+		"description"   : ""
+	},
+	"optThemeFontColorInactiveLabel" : {
+		"message"       : "佔位符與非作用中的元素",
+		"description"   : ""
+	},
+	"optThemeBorderColorLabel" : {
+		"message"       : "側邊欄邊框色彩",
+		"description"   : ""
+	},
+	"optThemeBorderColorActiveLabel" : {
+		"message"       : "側邊欄作用中元素邊框色彩",
+		"description"   : ""
+	},
+	"optThemeSidebarImageLabel" : {
+		"message"       : "側邊欄背景圖片",
+		"description"   : ""
+	},
+	"optThemeStartpageImageLabel" : {
+		"message"       : "首頁背景圖片",
+		"description"   : ""
+	},
+
+	"optMiscButton" : {
+		"message"       : "雜項",
+		"description"   : "header of Misc options"
+	},
+	"optMiscText" : {
+		"message"       : "其他選項。",
+		"description"   : ""
+	},
+	"optMiscLimitHistoryLabel" : {
+		"message"       : "一次最多顯示的歷史項目數",
+		"description"   : ""
+	},
+	"optMiscLimitBookmarksLabel" : {
+		"message"       : "一次最多顯示的書籤數",
+		"description"   : ""
+	},
+	"optMiscMaxSavedRssPerFeedLabel" : {
+		"message"       : "最大儲存 RSS 項目數",
+		"description"   : ""
+	},
+	"optMiscRssUpdatePeriodLabel" : {
+		"message"       : "RSS 更新週期",
+		"description"   : ""
+	},
+	"optMiscExpandOnClickLabel" : {
+		"message"       : "點選而非懸浮展開窄 iframe 側邊欄",
+		"description"   : ""
+	},
+
+	"optWarningsButton" : {
+		"message"       : "警告",
+		"description"   : ""
+	},
+	"optWarningsText" : {
+		"message"       : "之前詢問我……",
+		"description"   : ""
+	},
+	"optWarningsBookmarkDeleteLabel" : {
+		"message"       : "刪除書籤",
+		"description"   : ""
+	},
+	"optWarningsBookmarkFolderDeleteLabel" : {
+		"message"       : "刪除書籤資料夾",
+		"description"   : ""
+	},
+	"optWarningsSiteDeleteLabel" : {
+		"message"       : "從首頁刪除頁面",
+		"description"   : ""
+	},
+	"optWarningsRssFeedDeleteLabel" : {
+		"message"       : "刪除 RSS feed",
+		"description"   : ""
+	},
+	"optWarningsDomainFolderCloseLabel" : {
+		"message"       : "關閉多個分頁",
+		"description"   : ""
+	},
+	"optWarningsPocketDeleteLabel" : {
+		"message"       : "從 Pocket 中刪除",
+		"description"   : ""
+	},
+
+	"optStartPageButton" : {
+		"message"       : "首頁",
+		"description"   : ""
+	},
+	"optStartPageText" : {
+		"message"       : "首頁設定",
+		"description"   : ""
+	},
+	"optStartPageEmptyLabel" : {
+		"message"       : "空白首頁",
+		"description"   : ""
+	},
+	"optStartPageRowsLabel" : {
+		"message"       : "列",
+		"description"   : ""
+	},
+	"optStartPageColumnsLabel" : {
+		"message"       : "欄",
+		"description"   : ""
+	},
+	"optStartPageMarginVLabel" : {
+		"message"       : "垂直間距",
+		"description"   : ""
+	},
+	"optStartPageMarginHLabel" : {
+		"message"       : "水平間距",
+		"description"   : ""
+	},
+	"optStartPagePaddingLabel" : {
+		"message"       : "留白",
+		"description"   : ""
+	},
+	"optStartPageSearchEnabledLabel" : {
+		"message"       : "啟用搜尋",
+		"description"   : ""
+	},
+	"optStartPagewikiSearchLangLabel" : {
+		"message"       : "維基百科搜尋語言",
+		"description"   : ""
+	},
+	"optStartPageTranslateFromLabel" : {
+		"message"       : "翻譯從",
+		"description"   : ""
+	},
+	"optStartPageTranslateToLabel" : {
+		"message"       : "翻譯為",
+		"description"   : ""
+	},
+
+
+	"popupFormTextLeftBar" : {
+		"message"       : "左邊欄：",
+		"description"   : ""
+	},
+	"popupFormTextRightBar" : {
+		"message"       : "右邊欄：",
+		"description"   : ""
+	},
+	"popupLabelTextIframe" : {
+		"message"       : "Iframe",
+		"description"   : ""
+	},
+	"popupLabelTextNative" : {
+		"message"       : "原生",
+		"description"   : ""
+	},
+	"popupLabelTextWindow" : {
+		"message"       : "視窗",
+		"description"   : ""
+	},
+	"popupLabelTextDisabled" : {
+		"message"       : "已停用",
+		"description"   : ""
+	},
+	"popupButtonRateTitle" : {
+		"message"       : "為此套件評價",
+		"description"   : ""
+	},
+	"popupButtonTranslateTitle" : {
+		"message"       : "協助翻譯",
+		"description"   : ""
+	},
+	"popupButtonHomeTitle" : {
+		"message"       : "首頁",
+		"description"   : ""
+	},
+	"popupButtonOptionsTitle" : {
+		"message"       : "選項",
+		"description"   : ""
+	},
+
+	"notificationRssErrorTitle" : {
+		"message"       : "RSS 錯誤",
+		"description"   : ""
+	},
+	"notificationRssNewFeedErrorText" : {
+		"message"       : "找不到有效的 RSS feed 在",
+		"description"   : ""
+	},
+	"notificationRssFeedExistErrorText" : {
+		"message"       : "您已經訂閱在 ",
+		"description"   : ""
+	},
+	"notificationRssNothingToExportText" : {
+		"message"       : "您沒有任何 RSS feed 可以匯出",
+		"description"   : ""
+	},
+	"notificationBookmarksTitle" : {
+		"message"       : "注意",
+		"description"   : ""
+	},
+	"notificationbkTooManyBookmarksText" : {
+		"message"       : "太多書籤了。切換至最後的書籤檢視。可透過選項變更限制。",
+		"description"   : ""
+	},
+	"notificationbkSwitchToTreeText" : {
+		"message"       : "書籤已切換為樹狀檢視。",
+		"description"   : ""
+	},
+
+	"startpagePageTitle" : {
+		"message"       : "首頁",
+		"description"   : ""
+	},
+	"startpageEditButtonTitle" : {
+		"message"       : "編輯頁面",
+		"description"   : ""
+	},
+	"startpageAddNewSiteTitle" : {
+		"message"       : "新增頁面",
+		"description"   : ""
+	},
+	"startpageSearchPlaceholder" : {
+		"message"       : "搜尋",
+		"description"   : ""
+	},
+	"startpageTranslatePlaceholder" : {
+		"message"       : "翻譯",
+		"description"   : ""
+	},
+	"startpageBuyPlaceholder" : {
+		"message"       : "購買",
+		"description"   : ""
+	},
+	"startpageSearchButtonTitle" : {
+		"message"       : "開始",
+		"description"   : ""
+	},
+	"startpageDuckDuckGoLabel" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"startpageGoogleLabel" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"startpageYandexLabel" : {
+		"message"       : "Yandex",
+		"description"   : ""
+	},
+	"startpageBingLabel" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"startpageYahooLabel" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"startpageWikipediaLabel" : {
+		"message"       : "維基百科",
+		"description"   : ""
+	},
+	"startpageMdnLabel" : {
+		"message"       : "MDN",
+		"description"   : ""
+	},
+	"startpageStackoverflowLabel" : {
+		"message"       : "stackOverflow",
+		"description"   : ""
+	},
+	"startpageAmazonLabel" : {
+		"message"       : "亞馬遜",
+		"description"   : ""
+	},
+	"startpageEbayLabel" : {
+		"message"       : "Ebay",
+		"description"   : ""
+	},
+	"startpageAliexpressLabel" : {
+		"message"       : "AliExpress",
+		"description"   : ""
+	},
+	"startpageGoogleTranslateLabel" : {
+		"message"       : "Google 翻譯",
+		"description"   : ""
+	},
+	"startpageYandexTranslateLabel" : {
+		"message"       : "Yandex 翻譯",
+		"description"   : ""
+	},
+
+
+	"dialogConfirmationTitle" : {
+		"message"       : "需要確認",
+		"description"   : ""
+	},
+	"dialogUserInputTitle" : {
+		"message"       : "需要資訊",
+		"description"   : ""
+	},
+
+	"dialogAskAgainWarning" : {
+		"message"       : "總是詢問",
+		"description"   : ""
+	},
+	"dialogConfirmButton" : {
+		"message"       : "確認",
+		"description"   : ""
+	},
+	"dialogCancelButton" : {
+		"message"       : "取消",
+		"description"   : ""
+	},
+	"dialogSaveButton" : {
+		"message"       : "儲存",
+		"description"   : ""
+	},
+	"dialogDeleteButton" : {
+		"message"       : "刪除",
+		"description"   : ""
+	},
+	"dialogImportButton" : {
+		"message"       : "匯入",
+		"description"   : ""
+	},
+	"dialogExportButton" : {
+		"message"       : "匯出",
+		"description"   : ""
+	},
+	"dialogCopyButton" : {
+		"message"       : "複製到剪貼簿",
+		"description"   : ""
+	},
+
+	"dialogUrlLabel"    : {
+		"message"       : "URL：",
+		"description"   : ""
+	},
+	"dialogTitleLabel"    : {
+		"message"       : "標題：",
+		"description"   : ""
+	},
+	"dialogTextLabel"    : {
+		"message"       : "文字：",
+		"description"   : ""
+	},
+	"dialogColorLabel"    : {
+		"message"       : "色彩：",
+		"description"   : ""
+	},
+	"dialogDescriptionLabel" : {
+		"message"       : "描述：",
+		"description"   : ""
+	},
+
+	"dialogSiteCreateHeader" : {
+		"message"       : "新增頁面",
+		"description"   : ""
+	},
+	"dialogSiteCreateUrlPlaceholder" : {
+		"message"       : "輸入頁面 URL",
+		"description"   : ""
+	},
+	"dialogSiteChangeHeader" : {
+		"message"       : "編輯頁面屬性",
+		"description"   : ""
+	},
+	"dialogSiteChangeUrlPlaceholder" : {
+		"message"       : "輸入頁面 URL",
+		"description"   : ""
+	},
+	"dialogSiteDeleteHeader" : {
+		"message"       : "刪除頁面",
+		"description"   : ""
+	},
+	"dialogSiteDeleteAlert" : {
+		"message"       : "刪除 \"$name$\" ？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDomainFolderCloseHeader" : {
+		"message"       : "關閉網域",
+		"description"   : ""
+	},
+	"dialogDomainFolderCloseAlert" : {
+		"message"       : "關閉所有 \"$name$\" 網域的分頁嗎？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkDeleteHeader" : {
+		"message"       : "刪除書籤",
+		"description"   : ""
+	},
+	"dialogBookmarkDeleteAlert" : {
+		"message"       : "您真的想要刪除 \"$name$\" ？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogBookmarkFolderDeleteHeader" : {
+		"message"       : "刪除資料夾",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderDeleteAlert" : {
+		"message"       : "您真的想要刪除資料夾 \"$name$\" 嗎？其所有內容都會遺失。",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogRssNewHeader" : {
+		"message"       : "新 RSS 訂閱",
+		"description"   : ""
+	},
+	"dialogRssNewTitlePlaceholder" : {
+		"message"       : "Feed 標題（選擇性）",
+		"description"   : ""
+	},
+	"dialogRssNewUrlPlaceholder" : {
+		"message"       : "在此輸入 feed URL",
+		"description"   : ""
+	},
+	"dialogRssFeedEditHeader" : {
+		"message"       : "編輯 RSS feed",
+		"description"   : ""
+	},
+	"dialogRssFeedEditTitlePlaceholder" : {
+		"message"       : "Feed 標題（選擇性）",
+		"description"   : ""
+	},
+	"dialogRssFeedEditDescriptionPlaceholder" : {
+		"message"       : "Feed 描述（選擇性）",
+		"description"   : ""
+	},
+	"dialogRssFeedDeleteHeader" : {
+		"message"       : "刪除 RSS feed",
+		"description"   : ""
+	},
+	"dialogRssFeedDeleteAlert" : {
+		"message"       : "您真的想要刪除 feed \"$name$\" 嗎？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogRssImportExportHeader" : {
+		"message"       : "RSS 匯入／匯出",
+		"description"   : ""
+	},
+	"dialogRssImportExportAlert" : {
+		"message"       : "透過 .opml 檔案匯入或匯出",
+		"description"   : ""
+	},
+	"dialogRssExportHeader" : {
+		"message"       : "RSS 匯出",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteHeader" : {
+		"message"       : "刪除下載歷史",
+		"description"   : ""
+	},
+	"dialogDownloadDeleteAlert" : {
+		"message"       : "您真的想要刪除 \"$name$\" 嗎？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogDeleteFromHistoryLabel" : {
+		"message"       : "從下載歷史中刪除",
+		"description"   : ""
+	},
+	"dialogDeleteFileLabel" : {
+		"message"       : "從磁碟中移除檔案",
+		"description"   : ""
+	},
+
+	"dialogBookmarkRootFolder" : {
+		"message"       : "書籤",
+		"description"   : ""
+	},
+	"dialogBookmarkNewHeader" : {
+		"message"       : "新書籤",
+		"description"   : ""
+	},
+	"dialogBookmarkEditHeader" : {
+		"message"       : "編輯書籤",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderEditHeader" : {
+		"message"       : "重新命名資料夾",
+		"description"   : ""
+	},
+	"dialogBookmarkDefaultTitle" : {
+		"message"       : "新書籤",
+		"description"   : ""
+	},
+	"dialogBookmarkFoldersLabel" : {
+		"message"       : "資料夾：",
+		"description"   : ""
+	},
+
+	"dialogPocketNewHeader" : {
+		"message"       : "新增至 Pocket",
+		"description"   : ""
+	},
+	"dialogPocketNewUrlPlaceholder" : {
+		"message"       : "新 Pocket 項目 URL",
+		"description"   : ""
+	},
+	"dialogPocketNewTitlePlaceholder" : {
+		"message"       : "標題（選擇性）",
+		"description"   : ""
+	},
+	"dialogPocketDeleteHeader" : {
+		"message"       : "從 Pocket 中移除",
+		"description"   : ""
+	},
+	"dialogPocketDeleteAlert" : {
+		"message"       : "從 Pocket 中移除 \"$name$\" ？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+
+	"domainsDefault" : {
+		"message"       : "未知",
+		"description"   : ""
+	},
+	"domainsStartPage" : {
+		"message"       : "首頁",
+		"description"   : ""
+	},
+	"domainsSystem" : {
+		"message"       : "系統",
+		"description"   : ""
+	},
+	"domainsExtension" : {
+		"message"       : "擴充套件",
+		"description"   : ""
+	}
+}
