@@ -1,6 +1,6 @@
 .hide-readed>.folder-name #rss-showReaded,
-.unreaded>.folder-name #rss-markReadAll,
-.item.rss-item.unreaded #rss-markRead,
+.unreaded>.folder-name #rss-markReadedAll,
+.item.rss-item.unreaded #rss-markReaded,
 .item #rss-delete,
 .folder-name #rss-hideReaded,
 .hide-readed.folder-name #rss-showReaded,
