@@ -585,6 +585,7 @@ const modeData = {
 			mode             : 'downloads',
 			i18n             : i18n.downloads,
 			downloads        : data.downloads,
+			domains          : []
 		};
 	},
 	rss        : _ => {
@@ -2070,15 +2071,16 @@ const initService = {
 
 						const speedMultiplier =  1000 >> 2;
 						// 1000 ms * 2 times per second / 8bytes;
-						const updateDown = download => {
-							const index = data.downloadsId.indexOf(download[0].id);
-							if (index === -1) return;
-							data.downloads[index].bytesReceived   = download[0].bytesReceived;
-							data.downloads[index].progressPercent = `${(100 * download[0].bytesReceived / download[0].totalBytes).toFixed(2)}%`;
-							data.downloads[index].progressNumbers = `${beautySize(download[0].bytesReceived)} / ${beautySize(download[0].totalBytes)}`;
-							data.downloads[index].speed           = `${beautySize(speedMultiplier * data.downloads[index].bytesReceived / (Date.now() - data.downloads[index].startTime))}/s`;
-							send('sidebar', 'downloads', 'progress', {'item': data.downloads[index]});
-							if (download[0].state === 'in_progress')
+						const updateDown = item => {
+							const download = getById('downloads', item[0].id);
+							if (download === false)
+								return;
+							download.bytesReceived   = item[0].bytesReceived;
+							download.progressPercent = `${(100 * item[0].bytesReceived / item[0].totalBytes).toFixed(2)}%`;
+							download.progressNumbers = `${beautySize(item[0].bytesReceived)} / ${beautySize(item[0].totalBytes)}`;
+							download.speed           = `${beautySize(speedMultiplier * download.bytesReceived / (Date.now() - download.startTime))}/s`;
+							send('sidebar', 'downloads', 'progress', {'item': download});
+							if (item[0].state === 'in_progress')
 								checkDownloadState(id);
 							else
 								setDownloadsCount.delete();
@@ -2101,9 +2103,9 @@ const initService = {
 				}
 				newItem.paused          = item.paused;
 				newItem.filename        = filename;
-				newItem.totalBytes      = item.totalBytes;
-				newItem.bytesReceived   = item.bytesReceived;
-				newItem.startTime       = item.startTime || Date.now();
+				newItem.totalBytes      = item.totalBytes || 0;
+				newItem.bytesReceived   = item.bytesReceived || 0;
+				newItem.startTime       = Date.parse(item.startTime) || Date.now();
 				newItem.speed           = 0;
 				newItem.progressPercent = `${(100 * item.bytesReceived / item.totalBytes).toFixed(2)}%`;
 				newItem.progressNumbers = `${beautySize(item.bytesReceived)} / ${beautySize(item.totalBytes)}`;

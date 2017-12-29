@@ -833,8 +833,10 @@ const initBlock = {
 			},
 			state     : info => {
 				const download = getById('downloads', info.id);
-				download.classList.remove('complete', 'interrupted', 'in_progress');
-				download.classList.add(info.state);
+				if (download !== false) {
+					download.classList.remove('complete', 'interrupted', 'in_progress');
+					download.classList.add(info.state);
+				}
 			},
 			progress  : info => {
 				const download = getById('downloads', info.item.id);
@@ -844,7 +846,8 @@ const initBlock = {
 			},
 			filename  : info => {
 				const download = getById('downloads', info.id);
-				download.firstChild.textContent = info.filename;
+				if (download !== false)
+					download.firstChild.textContent = info.filename;
 			}
 		};
 
@@ -879,7 +882,8 @@ const initBlock = {
 		const insertDownload = item => {
 			const down           = createById('downloads', item.id);
 			down.title           = item.url;
-			down.textContent     = item.filename;
+			const filename       = dce('p');
+			filename.textContent = item.filename;
 			let classList        = `download item ${item.state}`;
 			classList            += item.exists ? '' : ' deleted';
 			if (item.paused)
@@ -902,6 +906,7 @@ const initBlock = {
 			status.appendChild(progress);
 			status.appendChild(recived);
 			status.appendChild(fileSize);
+			down.appendChild(filename);
 			down.appendChild(status);
 			block.downloads.insertBefore(down, block.downloads.firstChild);
 		};

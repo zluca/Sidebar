@@ -28,6 +28,9 @@ a,
 a:visited {
 	color: unset;
 }
+p {
+	margin: 0;
+}
 .leftBar {
 	padding-right: .1rem;
 }
