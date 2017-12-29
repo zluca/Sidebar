@@ -12,8 +12,8 @@
 .folder-name #rss-reload {
 	display: inline-block;
 }
-#rss-plain-show-readed,
-#rss-plain-hide-readed {
+#rss-showReadedAll,
+#rss-hideReadedAll {
 	display: none;
 }
 
