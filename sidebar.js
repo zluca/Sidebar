@@ -288,11 +288,17 @@ const initBlock = {
 			},
 			active     : info => {
 				status.activeTabId = info;
-				if (status.activeTab !== false)
+				if (status.activeTab !== false) {
 					status.activeTab.classList.remove('active');
+					if (options.misc.tabsMode === 'domain')
+						status.activeTab.parentNode.firstChild.classList.remove('active');
+				}
 				status.activeTab = getById('tabs', info);
-				if (status.activeTab !== false)
+				if (status.activeTab !== false) {
 					status.activeTab.classList.add('active');
+					if (options.misc.tabsMode === 'domain')
+						status.activeTab.parentNode.firstChild.classList.add('active');
+				}
 			},
 			title      : info => {
 				const tab = getById('tabs', info.id);
@@ -437,8 +443,11 @@ const initBlock = {
 						pid    = tabs[i].domain;
 						folder = getFolderById('tabs', pid);
 					}
-					if (folder !== false)
+					if (folder !== false) {
 						folder.lastChild.appendChild(tab);
+						if (status.activeTab === tab)
+							folder.firstChild.classList.add('active');
+					}
 				},
 				tree  : i => {
 					folder = getFolderById('tabs', tabs[i].id);
