@@ -494,11 +494,11 @@
 	},
 
 	"optCoverLabel" : {
-		"message"       : "Растянуть",
+		"message"       : "Растянуть до наименьшего размера",
 		"description"   : ""
 	},
 	"optContainLabel" : {
-		"message"       : "Растянуть с сохранением пропорций",
+		"message"       : "Растянуть до наибольшего размера",
 		"description"   : ""
 	},
 	"optCenterLabel" : {

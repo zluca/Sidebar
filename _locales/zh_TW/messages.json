@@ -498,11 +498,11 @@
 	},
 
 	"optCoverLabel" : {
-		"message"       : "Stretch to cover",
+		"message"       : "Stretch for a smallest dimension",
 		"description"   : ""
 	},
 	"optContainLabel" : {
-		"message"       : "Stretch with proportions",
+		"message"       : "Stretch for a biggest dimension",
 		"description"   : ""
 	},
 	"optCenterLabel" : {
