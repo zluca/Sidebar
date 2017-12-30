@@ -365,7 +365,8 @@ const options = {
 		rssHideReaded      : {
 			value   : false,
 			type    : 'boolean',
-			targets : ['sidebar'],
+			targets : [],
+			handler : 'rssReadedMode',
 			hidden  : true
 		},
 		expandOnClick      : {
@@ -705,6 +706,9 @@ const optionsHandler = {
 			send('leftBar', 'set', 'scroll', newValue);
 		if (options.rightBar.mode.value === option)
 			send('rightBar', 'set', 'scroll', newValue);
+	},
+	rssReadedMode    : (section, option, newValue) => {
+		send('sidebar', 'rss', 'readedMode', newValue);
 	}
 };
 

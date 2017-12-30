@@ -214,9 +214,6 @@ const messageHandler = {
 		sidebarImage       : info => {
 			doc.style.backgroundImage = `url(${info.value})`;
 		},
-		rssHideReaded      : info => {
-			setReadedMode(info.value);
-		},
 		services           : info => {
 			if (info.enabled === true)
 				enableBlock(info.service);
@@ -378,6 +375,8 @@ const initBlock = {
 			}
 		};
 
+		setBlockClass('tabs');
+
 		rootFolder                = dce('div');
 		rootFolder.id             = 'tabs-folder-0';
 		const rootContent         = dce('div');
@@ -491,6 +490,7 @@ const initBlock = {
 		};
 
 		const checkForTree = (tabs, folders, view) => {
+			setBlockClass('tabs');
 			if (view !== 'tree')
 				setView('tabs', view, info.tabs, folders);
 			else {
@@ -917,6 +917,18 @@ const initBlock = {
 
 	rss : info => {
 
+		const setReadedMode = mode => {
+			options.misc.rssHideReaded = mode;
+			if (mode === true) {
+				block.rss.classList.add('hide-readed');
+				block.rss.classList.remove('show-readed');
+			}
+			else {
+				block.rss.classList.add('show-readed');
+				block.rss.classList.remove('hide-readed');
+			}
+		};
+
 		messageHandler.rss = {
 			createdFeed      : info =>  {
 				insertFolders('rss', [info.feed]);
@@ -950,6 +962,7 @@ const initBlock = {
 					data.rssFolders[i].classList.remove('unreaded');
 			},
 			view             : info =>  {
+				setBlockClass('rss', info.view);
 				setView('rss', info.view, info.items, info.folders);
 				setReadedMode(options.misc.rssHideReaded);
 			},
@@ -980,8 +993,13 @@ const initBlock = {
 				const feed = getFolderById('rss', info.id);
 				if (feed !== false)
 					feed.firstChild.classList[info.method]('loading');
-			}
+			},
+			readedMode       : info => {
+				setReadedMode(info);
+			},
 		};
+
+		setBlockClass('rss');
 
 		rootFolder              = dce('div');
 		rootFolder.id           = 'rss-folder-0';
@@ -1130,6 +1148,7 @@ const initBlock = {
 					removeFolderById('pocket', info);
 			},
 			view         : info => {
+				setBlockClass('pocket', info.view);
 				setView('pocket', info.view, info.items, info.folders);
 			},
 			logout       : info => {
@@ -1182,9 +1201,7 @@ const initBlock = {
 			}
 		};
 
-		if (options.pocket.auth === false)
-			block.pocket.classList.add('logout');
-
+		setBlockClass('pocket', options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
 		rootFolder              = dce('div');
 		rootFolder.id           = 'pocket-folder-0';
 		const rootContent       = dce('div');
@@ -1277,8 +1294,6 @@ const initBlock = {
 		};
 
 		setView('pocket', options.misc.pocketMode, info.pocket, info.pocketFolders);
-		if (options.pocket.auth === false)
-			block.pocket.classList.add('logout');
 	}
 };
 
@@ -1307,18 +1322,6 @@ function setFixed(mode) {
 	else {
 		doc.classList.remove('fixed');
 		doc.classList.add('unfixed');
-	}
-}
-
-function setReadedMode(mode) {
-	options.misc.rssHideReaded = mode;
-	if (mode) {
-		block.rss.classList.add('hide-readed');
-		block.rss.classList.remove('show-readed');
-	}
-	else {
-		block.rss.classList.add('show-readed');
-		block.rss.classList.remove('hide-readed');
 	}
 }
 
@@ -1581,14 +1584,18 @@ const insertItems = {};
 
 const updateItem = {};
 
+function setBlockClass(mode, view = undefined, extraClass = '') {
+	if (view !== undefined)
+		options.misc[`${mode}Mode`] = view;
+	block[mode].classList = `block ${options.misc[`${mode}Mode`]} ${extraClass}`;
+}
+
 function setView(mode, view, items, folders) {
-	options.misc[`${mode}Mode`] = view;
-	block[mode].classList       = `block ${view}`;
 	while (rootFolder.firstChild.hasChildNodes())
 		rootFolder.firstChild.removeChild(rootFolder.firstChild.firstChild);
 	clearData(mode);
 	if (view !== 'plain')
-		insertFolders(mode, folders, view === 'tree' ? true : false);
+		insertFolders(mode, folders, view === 'tree');
 	insertItems[mode](items, 'first');
 }
 
