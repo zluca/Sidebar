@@ -2358,7 +2358,6 @@ const initService = {
 		};
 
 		const rssSetUpdate = (feed, timeout) => {
-			brauzer.alarms.clearAll();
 			if (feed.lastUpdate < (Date.now() - (timeout * 60000)))
 				updateRssFeed(feed.id);
 			else
@@ -2552,7 +2551,7 @@ const initService = {
 		else {
 			i18n.rss            = null;
 			messageHandler.rss  = null;
-			updateItem.rss        = null;
+			updateItem.rss      = null;
 			data.rss            = [];
 			data.rssId          = [];
 			data.rssFolders     = [];
