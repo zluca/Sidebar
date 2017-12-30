@@ -112,7 +112,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 				form.appendChild(radio);
 				if (response[section][option].values[opt] === response[section][option].value)
 					radio.checked = true;
-				addLabel(`${section}${response[section][option].values[opt]}`, form);
+				addLabel(`${response[section][option].values[opt]}`, form);
 			}
 		},
 		text    : (section, option) => {

@@ -214,6 +214,9 @@ const messageHandler = {
 		sidebarImage       : info => {
 			doc.style.backgroundImage = `url(${info.value})`;
 		},
+		sidebarImageStyle  : info => {
+			setImageStyle[info.value]();
+		},
 		services           : info => {
 			if (info.enabled === true)
 				enableBlock(info.service);
@@ -1453,6 +1456,7 @@ function initSidebar(response) {
 
 	setFontSize();
 	setColor(options.theme);
+	setImageStyle[options.theme.sidebarImageStyle]();
 
 	doc.style.backgroundImage = `url(${options.theme.sidebarImage})`;
 
@@ -1559,6 +1563,29 @@ function setStyle(item) {
 	style.textContent = `.domain-${item.id}{background-image: url(${item.fav})}`;
 	document.head.appendChild(style);
 }
+
+const setImageStyle = {
+	cover   : _ => {
+		doc.style.backgroundSize     = 'cover';
+		doc.style.backgroundRepeat   = 'no-repeat';
+		doc.style.backgroundPosition = 'initial';
+	},
+	contain : _ => {
+		doc.style.backgroundSize     = 'contain';
+		doc.style.backgroundRepeat   = 'no-repeat';
+		doc.style.backgroundPosition = 'center';
+	},
+	center  : _ => {
+		doc.style.backgroundSize     = 'initial';
+		doc.style.backgroundRepeat   = 'no-repeat';
+		doc.style.backgroundPosition = 'center';
+	},
+	repeat  : _ => {
+		doc.style.backgroundSize     = 'initial';
+		doc.style.backgroundRepeat   = 'repeat';
+		doc.style.backgroundPosition = 'initial';
+	}
+};
 
 const setDomainStyle = {
 	rewrite : items => {

@@ -22,8 +22,8 @@
 	font-size: 10px;
 }
 body {
-	background-size: cover;
-	background-repeat: no-repeat;
+	// background-size: cover;
+	// background-repeat: no-repeat;
 	background-clip: border-box;
 	padding: var(--padding);
 	width: auto;

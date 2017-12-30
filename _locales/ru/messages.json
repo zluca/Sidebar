@@ -369,8 +369,8 @@
 		"message"       : "Фоновая картинка боковой панели",
 		"description"   : ""
 	},
-	"optThemeStartpageImageLabel" : {
-		"message"       : "Фоновая картинка стартовой страницы",
+	"optThemeSidebarImageStyleText" : {
+		"message"       : "Стиль фоновой картинки:",
 		"description"   : ""
 	},
 
@@ -484,7 +484,31 @@
 		"message"       : "Переводить на",
 		"description"   : ""
 	},
+	"optStartpageImageLabel" : {
+		"message"       : "Фоновая картинка стартовой страницы",
+		"description"   : ""
+	},
+	"optStartpageImageStyleText" : {
+		"message"       : "Стиль фоновой картинки:",
+		"description"   : ""
+	},
 
+	"optCoverLabel" : {
+		"message"       : "Растянуть",
+		"description"   : ""
+	},
+	"optContainLabel" : {
+		"message"       : "Растянуть с сохранением пропорций",
+		"description"   : ""
+	},
+	"optCenterLabel" : {
+		"message"       : "По центру",
+		"description"   : ""
+	},
+	"optRepeatLabel" : {
+		"message"       : "Повторять",
+		"description"   : ""
+	},
 
 	"popupFormTextLeftBar" : {
 		"message"       : "Левая панель:",

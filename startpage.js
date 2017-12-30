@@ -51,7 +51,7 @@ function init() {
 		document.body.appendChild(siteContainer);
 		document.body.appendChild(editButton);
 		document.body.appendChild(placeholder);
-		document.body.style.backgroundImage = `url(${status.theme.startpageImage})`;
+		document.body.style.backgroundImage = `url(${status.options.image})`;
 
 		const setSearch = _ => {
 
@@ -254,8 +254,32 @@ function init() {
 			target.classList.add(`lines-${site.text.split('\n').length}`);
 		};
 
+		const setImageStyle = {
+			cover   : _ => {
+				document.body.style.backgroundSize     = 'cover';
+				document.body.style.backgroundRepeat   = 'no-repeat';
+				document.body.style.backgroundPosition = 'initial';
+			},
+			contain : _ => {
+				document.body.style.backgroundSize     = 'contain';
+				document.body.style.backgroundRepeat   = 'no-repeat';
+				document.body.style.backgroundPosition = 'center';
+			},
+			center  : _ => {
+				document.body.style.backgroundSize     = 'initial';
+				document.body.style.backgroundRepeat   = 'no-repeat';
+				document.body.style.backgroundPosition = 'center';
+			},
+			repeat  : _ => {
+				document.body.style.backgroundSize     = 'initial';
+				document.body.style.backgroundRepeat   = 'repeat';
+				document.body.style.backgroundPosition = 'initial';
+			}
+		};
+
 		setStyle();
 		setColor(response.theme);
+		setImageStyle[response.startpage.imageStyle]();
 		window.addEventListener('resize', setStyle);
 
 		if (status.options.searchEnabled === true)
@@ -319,19 +343,22 @@ function init() {
 					status.theme.fontSize = data.value;
 					setStyle();
 				},
-				startpageImage        : data => {
+				image                 : data => {
 					document.body.style.backgroundImage = `url(${data.value})`;
 				},
-				wikiSearchLang        : data => {
-						status.options.wikiSearchLang = data.value;
-					},
-				translateFrom         : data => {
-						status.options.translateFrom = data.value;
-					},
-				translateTo           : data => {
-						status.options.translateTo = data.value;
-					}
+				imageStyle            : data => {
+					setImageStyle[data.value]();
 				},
+				wikiSearchLang        : data => {
+					status.options.wikiSearchLang = data.value;
+				},
+				translateFrom         : data => {
+					status.options.translateFrom = data.value;
+				},
+				translateTo           : data => {
+					status.options.translateTo = data.value;
+				}
+			},
 			site    : {
 				changed       : data => {
 					setSiteProperties(sites[data.index], data.site);

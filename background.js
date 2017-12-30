@@ -330,10 +330,11 @@ const options = {
 			type    : 'image',
 			targets : ['sidebar']
 		},
-		startpageImage : {
-			value   : '',
-			type    : 'image',
-			targets : ['startpage']
+		sidebarImageStyle : {
+			value   : 'cover',
+			type    : 'select',
+			values  : ['cover', 'contain', 'center', 'repeat'],
+			targets : ['sidebar']
 		}
 	},
 	misc: {
@@ -470,6 +471,17 @@ const options = {
 		translateTo    : {
 			value   : 'en',
 			type    : 'text',
+			targets : ['startpage']
+		},
+		image : {
+			value   : '',
+			type    : 'image',
+			targets : ['startpage']
+		},
+		imageStyle : {
+			value   : 'cover',
+			type    : 'select',
+			values  : ['cover', 'contain', 'center', 'repeat'],
 			targets : ['startpage']
 		}
 	},

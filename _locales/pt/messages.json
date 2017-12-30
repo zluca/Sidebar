@@ -373,8 +373,8 @@
 		"message"       : "Imagem de fundo da Barra Lateral",
 		"description"   : ""
 	},
-	"optThemeStartpageImageLabel" : {
-		"message"       : "Imagem de fundo da página inicial",
+	"optThemeSidebarImageStyleText" : {
+		"message"       : "Sidebar background image style:",
 		"description"   : ""
 	},
 
@@ -488,7 +488,31 @@
 		"message"       : "Traduzir para",
 		"description"   : ""
 	},
+	"optStartpageImageLabel" : {
+		"message"       : "Imagem de fundo da página inicial",
+		"description"   : ""
+	},
+	"optStartpageImageStyleText" : {
+		"message"       : "Startpage background image style:",
+		"description"   : ""
+	},
 
+	"optCoverLabel" : {
+		"message"       : "Stretch to cover",
+		"description"   : ""
+	},
+	"optContainLabel" : {
+		"message"       : "Stretch with proportions",
+		"description"   : ""
+	},
+	"optCenterLabel" : {
+		"message"       : "Center image",
+		"description"   : ""
+	},
+	"optRepeatLabel" : {
+		"message"       : "Repeat image",
+		"description"   : ""
+	},
 
 	"popupFormTextLeftBar" : {
 		"message"       : "Barra na Esquerda:",
