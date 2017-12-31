@@ -506,7 +506,7 @@ const initBlock = {
 		};
 
 		const checkForTree = (tabs, folders, view) => {
-			setBlockClass('tabs');
+			setBlockClass('tabs', view);
 			if (view !== 'tree')
 				setView('tabs', view, info.tabs, folders);
 			else {
