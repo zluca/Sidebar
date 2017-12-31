@@ -121,7 +121,7 @@ const messageHandler = {
 	},
 	reInit : {
 		sideBar      : (side, info) => {
-			if (info.options.method !== status[side].method)
+			if (info.options.method !== options[side].method)
 				if (info.options.method === 'iframe')
 					injectIframe(side, info.options.width);
 				else
