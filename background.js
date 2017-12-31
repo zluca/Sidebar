@@ -2,8 +2,8 @@
 
 'use strict';
 
-const firefox     = typeof InstallTrigger !== 'undefined' ? true : false;
-const opera       = window.hasOwnProperty('opr')          ? true : false;
+const firefox     = typeof InstallTrigger !== 'undefined';
+const opera       = window.hasOwnProperty('opr');
 const brauzer     = firefox ? browser : chrome;
 
 const config = {

@@ -2,7 +2,7 @@
 
 'use strict';
 
-const firefox  = (typeof InstallTrigger !== 'undefined') ? true : false;
+const firefox  = typeof InstallTrigger !== 'undefined';
 const brauzer  = firefox ? browser : chrome;
 const doc      = document.documentElement;
 const mask     = window.CSS.supports('mask-image') ? 'mask-image' : '-webkit-mask-image';

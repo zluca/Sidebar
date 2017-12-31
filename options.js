@@ -2,7 +2,7 @@
 
 'use strict';
 
-const firefox = (typeof InstallTrigger !== 'undefined') ? true : false;
+const firefox = typeof InstallTrigger !== 'undefined';
 const brauzer = firefox ? browser : chrome;
 
 let mode      = document.location.hash.replace('#', '');
