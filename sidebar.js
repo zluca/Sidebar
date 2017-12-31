@@ -350,6 +350,10 @@ const initBlock = {
 					}
 				};
 				const tab = getById('tabs', info.id);
+				if (status.activeTabId === info.id) {
+					status.activeTabId = -1;
+					status.activeTab   = false;
+				}
 				if (tab !== false)
 					removing[options.misc.tabsMode](tab);
 			},
