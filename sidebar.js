@@ -291,13 +291,13 @@ const initBlock = {
 				if (status.activeTab !== false) {
 					status.activeTab.classList.remove('active');
 					if (options.misc.tabsMode === 'domain')
-						status.activeTab.parentNode.firstChild.classList.remove('active');
+						status.activeTab.parentNode.parentNode.firstChild.classList.remove('active');
 				}
 				status.activeTab = getById('tabs', info);
 				if (status.activeTab !== false) {
 					status.activeTab.classList.add('active');
 					if (options.misc.tabsMode === 'domain')
-						status.activeTab.parentNode.firstChild.classList.add('active');
+						status.activeTab.parentNode.parentNode.firstChild.classList.add('active');
 				}
 			},
 			title      : info => {
