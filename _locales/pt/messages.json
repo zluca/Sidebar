@@ -313,7 +313,7 @@
 		"description"   : ""
 	},
 	"optServicesBookmarksLabel" : {
-		"message"       : "Bookmarks",
+		"message"       : "Marcadores",
 		"description"   : ""
 	},
 	"optServicesHistoryLabel" : {
@@ -493,24 +493,24 @@
 		"description"   : ""
 	},
 	"optStartpageImageStyleText" : {
-		"message"       : "Startpage background image style:",
+		"message"       : "Estilo da Imagem de Fundo da Página Inicial:",
 		"description"   : ""
 	},
 
 	"optCoverLabel" : {
-		"message"       : "Stretch for a smallest dimension",
+		"message"       : "Esticar para uma dimensão menor",
 		"description"   : ""
 	},
 	"optContainLabel" : {
-		"message"       : "Stretch for a biggest dimension",
+		"message"       : "Esticar para uma dimensão maior",
 		"description"   : ""
 	},
 	"optCenterLabel" : {
-		"message"       : "Center image",
+		"message"       : "Centrar imagem",
 		"description"   : ""
 	},
 	"optRepeatLabel" : {
-		"message"       : "Repeat image",
+		"message"       : "Repetir imagem",
 		"description"   : ""
 	},
 
