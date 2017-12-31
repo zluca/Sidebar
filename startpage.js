@@ -7,55 +7,39 @@ const brauzer = firefox ? browser : chrome;
 const doc     = document.documentElement;
 
 let initTimer = -1;
-init();
+tryToInit();
 
-function init() {
+function tryToInit() {
 	send('background', 'request', 'startpage', {needResponse: true}, response => {
 		// console.log(response);
 		if (response === undefined) {
-			initTimer = setTimeout(init, 200);
+			initTimer = setTimeout(tryToInit, 200);
 			return;
 		}
-
 		if (response.startpage.empty === true) return;
+		init(response);
+	});
+}
 
-		document.title = response.i18n.pageTitle;
+function init(response) {
 
-		const status = {
-			theme               : response.theme,
-			options             : response.startpage,
+		const status   = {
 			initDone            : false,
 			siteSettingsChanged : false,
 			bigFontSize         : 0,
 			dragging            : false,
 		};
 
-		let sites = [];
+		const options  = {
+			theme               : response.theme,
+			startpage           : response.startpage,
+		};
 
-		const siteStyle       = document.createElement('style');
-		siteStyle.id          = 'site-style';
-		const siteContainer   = document.createElement('main');
-		siteContainer.id      = 'site-container';
-		const editButton      = document.createElement('span');
-		editButton.id         = 'edit-button';
-		editButton.title      = response.i18n.editButtonTitle;
-		const icon            = document.createElement('span');
-		editButton.appendChild(icon);
-		const placeholder     = document.createElement('section');
-		placeholder.id        = 'placeholder';
-		let search            = null;
-		let searchContainer   = null;
-		let searchSelect      = null;
-		let searchField       = null;
-		document.head.appendChild(siteStyle);
-		document.body.appendChild(siteContainer);
-		document.body.appendChild(editButton);
-		document.body.appendChild(placeholder);
-		document.body.style.backgroundImage = `url(${status.options.image})`;
+		let sites      = [];
 
 		const setSearch = _ => {
 
-			if (status.options.searchEnabled === false) {
+			if (options.startpage.searchEnabled === false) {
 				if (search !== null) {
 					document.body.removeChild(search);
 					search = null;
@@ -120,17 +104,17 @@ function init() {
 					yandex          : `https://yandex.com/search/?text=`,
 					bing            : `https://www.bing.com/search?q=`,
 					yahoo           : `https://search.yahoo.com/search?p=`,
-					wikipedia       : `https://${status.options.wikiSearchLang}.wikipedia.org/w/index.php?search=`,
+					wikipedia       : `https://${options.startpage.wikiSearchLang}.wikipedia.org/w/index.php?search=`,
 					mdn             : `https://developer.mozilla.org/en/search?q=`,
 					stackoverflow   : `https://stackoverflow.com/search?q=`,
 					amazon          : `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=`,
 					ebay            : `https://www.ebay.com/sch/i.html?_nkw=`,
 					aliexpress      : `https://www.aliexpress.com/wholesale?SearchText=`,
-					googletranslate : `https://translate.google.com/#${status.options.translateFrom}/${status.options.translateTo}/`,
-					yandextranslate : `https://translate.yandex.com/?lang=${status.options.translateFrom}-${status.options.translateTo}&text=`
+					googletranslate : `https://translate.google.com/#${options.startpage.translateFrom}/${options.startpage.translateTo}/`,
+					yandextranslate : `https://translate.yandex.com/?lang=${options.startpage.translateFrom}-${options.startpage.translateTo}&text=`
 				};
 				if (subject !== '')
-					document.location.href = searchPath[status.options.searchEngine] + subject.replace(' ', '+');
+					document.location.href = searchPath[options.startpage.searchEngine] + subject.replace(' ', '+');
 			});
 
 			searchField.addEventListener('keydown', event => {
@@ -169,11 +153,11 @@ function init() {
 		};
 
 		const setSearchEngine = _ => {
-			searchContainer.classList = status.options.searchEngine;
+			searchContainer.classList = options.startpage.searchEngine;
 			searchSelect.classList.remove('show-selection');
-			if (/translate/i.test(status.options.searchEngine))
+			if (/translate/i.test(options.startpage.searchEngine))
 				searchField.placeholder = response.i18n.translatePlaceholder;
-			else if (/aliexpress|ebay|amazon/i.test(status.options.searchEngine))
+			else if (/aliexpress|ebay|amazon/i.test(options.startpage.searchEngine))
 				searchField.placeholder = response.i18n.buyPlaceholder;
 			else
 				searchField.placeholder = response.i18n.searchPlaceholder;
@@ -198,12 +182,12 @@ function init() {
 		};
 
 		const setStyle = _ => {
-			const fontSize        = status.theme.fontSize  / window.devicePixelRatio * 1.6;
-			const marginH         = status.options.marginH / window.devicePixelRatio;
-			const marginV         = status.options.marginV / window.devicePixelRatio;
-			const padding         = status.options.padding / window.devicePixelRatio;
-			const containerHeight = window.innerHeight - (2 * padding) - (status.options.searchEnabled * (fontSize + padding));
-			const sectionSize     = Math.round(((containerHeight - ((status.options.rows + 1) * marginV)) / status.options.rows));
+			const fontSize        = options.theme.fontSize  / window.devicePixelRatio * 1.6;
+			const marginH         = options.startpage.marginH / window.devicePixelRatio;
+			const marginV         = options.startpage.marginV / window.devicePixelRatio;
+			const padding         = options.startpage.padding / window.devicePixelRatio;
+			const containerHeight = window.innerHeight - (2 * padding) - (options.startpage.searchEnabled * (fontSize + padding));
+			const sectionSize     = Math.round(((containerHeight - ((options.startpage.rows + 1) * marginV)) / options.startpage.rows));
 			doc.style.fontSize    = fontSize;
 			doc.style.setProperty('--marginH', `${marginH}px`);
 			doc.style.setProperty('--marginV', `${marginV}px`);
@@ -214,9 +198,9 @@ function init() {
 			doc.style.setProperty('--bigFont4', `${sectionSize / 4}px`);
 			doc.style.setProperty('--bigFont5', `${sectionSize / 5}px`);
 			doc.style.setProperty('--bigFont6', `${sectionSize / 6}px`);
-			doc.style.setProperty('--rows', status.options.rows);
-			doc.style.setProperty('--columns', status.options.columns);
-			doc.style.setProperty('--searchDisplay', status.options.searchEnabled ? "block" : "none");
+			doc.style.setProperty('--rows', options.startpage.rows);
+			doc.style.setProperty('--columns', options.startpage.columns);
+			doc.style.setProperty('--searchDisplay', options.startpage.searchEnabled ? "block" : "none");
 		};
 
 		const initSites = sites => {
@@ -227,7 +211,7 @@ function init() {
 
 		const addFinisher = _ => {
 			siteContainer.appendChild(document.createElement('div'));
-			siteContainer.lastChild.id = `site-${status.options.rows * status.options.columns}`;
+			siteContainer.lastChild.id = `site-${options.startpage.rows * options.startpage.columns}`;
 			status.initDone = true;
 		};
 
@@ -277,24 +261,14 @@ function init() {
 			}
 		};
 
-		setStyle();
-		setColor(response.theme);
-		setImageStyle[response.startpage.imageStyle]();
-		window.addEventListener('resize', setStyle);
-
-		if (status.options.searchEnabled === true)
-			setSearch();
-
-		initSites(response.sites);
-
 		const messageHandler = {
 			options : {
 				searchEngine          : data => {
-					status.options.searchEngine = data.value;
+					options.startpage.searchEngine = data.value;
 					setSearchEngine();
 				},
 				searchEnabled         : data => {
-					status.options.searchEnabled = data.value;
+					options.startpage.searchEnabled = data.value;
 					setSearch();
 					setStyle();
 				},
@@ -320,27 +294,27 @@ function init() {
 					setColor({'borderColorActive': data.value});
 				},
 				rows                  : data => {
-					status.options.rows    = data.value;
+					options.startpage.rows    = data.value;
 					setStyle();
 				},
 				columns               : data => {
-					status.options.columns = data.value;
+					options.startpage.columns = data.value;
 					setStyle();
 				},
 				marginV               : data => {
-					status.options.marginV = data.value;
+					options.startpage.marginV = data.value;
 					setStyle();
 				},
 				marginH               : data => {
-					status.options.marginH = data.value;
+					options.startpage.marginH = data.value;
 					setStyle();
 				},
 				padding               : data => {
-					status.options.padding = data.value;
+					options.startpage.padding = data.value;
 					setStyle();
 				},
 				fontSize              : data => {
-					status.theme.fontSize = data.value;
+					options.theme.fontSize = data.value;
 					setStyle();
 				},
 				image                 : data => {
@@ -350,13 +324,13 @@ function init() {
 					setImageStyle[data.value]();
 				},
 				wikiSearchLang        : data => {
-					status.options.wikiSearchLang = data.value;
+					options.startpage.wikiSearchLang = data.value;
 				},
 				translateFrom         : data => {
-					status.options.translateFrom = data.value;
+					options.startpage.translateFrom = data.value;
 				},
 				translateTo           : data => {
-					status.options.translateTo = data.value;
+					options.startpage.translateTo = data.value;
 				}
 			},
 			site    : {
@@ -380,7 +354,7 @@ function init() {
 					}
 				},
 				remove        : _ => {
-					const count = status.options.rows * status.options.columns;
+					const count = options.startpage.rows * options.startpage.columns;
 					while (count < siteContainer.children.length)
 						siteContainer.removeChild(siteContainer.lastChild);
 					addFinisher();
@@ -394,6 +368,37 @@ function init() {
 				}
 			}
 		};
+
+		document.title = response.i18n.pageTitle;
+		const siteStyle       = document.createElement('style');
+		siteStyle.id          = 'site-style';
+		const siteContainer   = document.createElement('main');
+		siteContainer.id      = 'site-container';
+		const editButton      = document.createElement('span');
+		editButton.id         = 'edit-button';
+		editButton.title      = response.i18n.editButtonTitle;
+		const icon            = document.createElement('span');
+		editButton.appendChild(icon);
+		const placeholder     = document.createElement('section');
+		placeholder.id        = 'placeholder';
+		let search            = null;
+		let searchContainer   = null;
+		let searchSelect      = null;
+		let searchField       = null;
+		document.head.appendChild(siteStyle);
+		document.body.appendChild(siteContainer);
+		document.body.appendChild(editButton);
+		document.body.appendChild(placeholder);
+		document.body.style.backgroundImage = `url(${options.startpage.image})`;
+		setStyle();
+		setColor(response.theme);
+		setImageStyle[response.startpage.imageStyle]();
+		window.addEventListener('resize', setStyle);
+
+		if (options.startpage.searchEnabled === true)
+			setSearch();
+
+		initSites(response.sites);
 
 		chrome.runtime.onMessage.addListener(message => {
 			// console.log(message);
@@ -413,10 +418,10 @@ function init() {
 			const makeDraggable = _ => {
 
 				let shiftX, shiftY, lastX = 0, lastY = 0, color, w, h, startPosition, placeholderPosition, newPosition;
-				const lastColumn   = status.options.columns - 1;
-				const lastRow      = status.options.rows - 1;
-				const dx           = 1 / status.options.columns;
-				const dy           = 1 / status.options.rows;
+				const lastColumn   = options.startpage.columns - 1;
+				const lastRow      = options.startpage.rows - 1;
+				const dx           = 1 / options.startpage.columns;
+				const dy           = 1 / options.startpage.rows;
 				const rect         = siteContainer.getClientRects()[0];
 				const topBorder    = rect.top;
 				const bottomBorder = rect.bottom;
@@ -445,10 +450,10 @@ function init() {
 					if (y < topBorder)
 						newPosition = nx;
 					else if (y > bottomBorder)
-						newPosition = (lastRow * status.options.columns) + nx;
+						newPosition = (lastRow * options.startpage.columns) + nx;
 					else {
 						const ny = Math.floor((y - topBorder) / height / dy);
-						newPosition = ny * status.options.columns + nx;
+						newPosition = ny * options.startpage.columns + nx;
 					}
 					if (newPosition < placeholderPosition) {
 						siteContainer.insertBefore(placeholder, children[newPosition]);
@@ -534,7 +539,6 @@ function init() {
 			event.preventDefault();
 			send('background', 'dialog', 'siteChange', {index: editButton.parentNode.dataset.index});
 		});
-	});
 }
 
 function send(target, subject, action, data, callback) {
