@@ -375,6 +375,7 @@ function setSideBarFixed(side, value) {
 		}
 	}
 	else {
+		setHover(side, false);
 		setListener('mouseover', true);
 		setListener('mouseleave', true);
 		setListener('borderclick', false);
