@@ -396,6 +396,7 @@ const initBlock = {
 		rootFolder.appendChild(rootContent);
 		controls.tabs.item        = dce('div');
 		controls.tabs.item.classList.add('controls');
+		makeButton('fav', 'tabs', 'item');
 		makeButton('reload', 'tabs', 'item');
 		makeButton('pin', 'tabs', 'item');
 		makeButton('unpin', 'tabs', 'item');
@@ -1820,6 +1821,11 @@ const buttonsEvents = {
 		}
 	},
 	tabs      : {
+		fav: event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'dialog', 'bookmarkTab', {'id': parseInt(controls.tabs.item.parentNode.dataset.id)});
+		},
 		reload: event => {
 			event.stopPropagation();
 			event.preventDefault();

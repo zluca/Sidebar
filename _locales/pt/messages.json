@@ -77,6 +77,10 @@
 		"message"       : "Criar novo separador",
 		"description"   : ""
 	},
+	"tabsControlsFav" : {
+		"message"       : "Make bookmark",
+		"description"   : ""
+	},
 	"tabsControlsReload" : {
 		"message"       : "Atualizar",
 		"description"   : ""

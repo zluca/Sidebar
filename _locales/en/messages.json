@@ -77,6 +77,10 @@
 		"message"       : "Create new tab",
 		"description"   : ""
 	},
+	"tabsControlsFav" : {
+		"message"       : "Make bookmark",
+		"description"   : ""
+	},
 	"tabsControlsReload" : {
 		"message"       : "Reload",
 		"description"   : ""

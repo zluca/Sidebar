@@ -77,6 +77,10 @@
 		"message"       : "创建新标签页",
 		"description"   : ""
 	},
+	"tabsControlsFav" : {
+		"message"       : "Make bookmark",
+		"description"   : ""
+	},
 	"tabsControlsReload" : {
 		"message"       : "重新载入",
 		"description"   : ""

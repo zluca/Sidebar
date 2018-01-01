@@ -43,6 +43,7 @@
 .plain .item.pinned #tabs-unpin,
 .item #tabs-close,
 .item #tabs-reload,
+.item #tabs-fav,
 .folder-name #tabs-closeAll {
 	display: inline-block;
 }

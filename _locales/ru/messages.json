@@ -77,6 +77,10 @@
 		"message"       : "Новая вкладка",
 		"description"   : ""
 	},
+	"tabsControlsFav" : {
+		"message"       : "Сделать закладку",
+		"description"   : ""
+	},
 	"tabsControlsReload" : {
 		"message"       : "Перезагрузить",
 		"description"   : ""

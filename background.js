@@ -873,6 +873,18 @@ const messageHandler = {
 				createDialogWindow(message.action, dataToSend);
 			}
 		},
+		bookmarkTab : (message, sender, sendResponse) => {
+			const tab = getById('tabs', message.data.id);
+			if (tab !== false) {
+				const dataToSend = {
+					'id'      : tab.id,
+					'url'     : tab.url,
+					'title'   : tab.title,
+					'folders' : data.bookmarksFolders
+				};
+				createDialogWindow('bookmarkNew', dataToSend);
+			}
+		},
 		bookmarkEdit : (message, sender, sendResponse) => {
 			const bookmark = getById('bookmarks', message.data.id);
 			if (bookmark !== false)
