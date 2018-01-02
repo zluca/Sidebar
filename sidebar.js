@@ -333,12 +333,15 @@ const initBlock = {
 						removeById('tabs', info.id);
 					},
 					domain : tab => {
-						const pid    = tab.parentNode.firstChild.dataset.id;
+						const pid    = tab.parentNode.parentNode.firstChild.dataset.id;
 						const folder = getFolderById('tabs', pid);
 						removeById('tabs', info.id);
-						if (folder !== false)
+						if (folder !== false) {
 							if (!folder.lastChild.hasChildNodes())
 								removeFolderById('tabs', pid);
+							else
+								folder.firstChild.classList.remove('active');
+						}
 					},
 					tree   : tab => {
 						const folder = tab.parentNode;
