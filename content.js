@@ -77,12 +77,8 @@ makeIframe('rightBar');
 let initTimer = -1;
 init();
 
-const checkBody = setInterval(
-	_ => {if (document.body !== null) {
-		clearInterval(checkBody);
-		status.docReady = true;
-		injectElements();
-	}}, 50);
+document.onreadystatechange = checkDocumentReady;
+checkDocumentReady();
 
 const messageHandler = {
 	options : {
@@ -216,6 +212,14 @@ function init() {
 			if (options.rightBar.method === 'iframe') setSideBarWidth('rightBar');
 		};
 	});
+}
+
+function checkDocumentReady() {
+	if (document.readyState === 'interactive' || document.readyState === 'complete') {
+		document.onreadystatechange = null;
+		status.docReady             = true;
+		injectElements();
+	}
 }
 
 function injectIframe(side, width) {
