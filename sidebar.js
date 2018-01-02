@@ -1017,6 +1017,7 @@ const initBlock = {
 		};
 
 		setBlockClass('rss');
+		setReadedMode(options.misc.rssHideReaded);
 
 		rootFolder              = dce('div');
 		rootFolder.id           = 'rss-folder-0';
@@ -1126,7 +1127,6 @@ const initBlock = {
 		};
 
 		setView('rss', options.misc.rssMode, info.rss, info.rssFolders);
-		setReadedMode(options.misc.rssHideReaded);
 	},
 
 	pocket : info => {
