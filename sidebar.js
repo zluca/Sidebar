@@ -1014,6 +1014,9 @@ const initBlock = {
 			readedMode       : info => {
 				setReadedMode(info);
 			},
+			updateAll        : info => {
+				block.rss.classList[info]('updated');
+			}
 		};
 
 		setBlockClass('rss');
@@ -1215,6 +1218,9 @@ const initBlock = {
 							folder.lastChild.appendChild(pocket);
 					}
 				}
+			},
+			update      : info => {
+				block.pocket.classList[info]('updated');
 			}
 		};
 
@@ -1545,7 +1551,7 @@ function insertFolders(mode, items, fake = false) {
 			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
 			title.title       = items[i].description || items[i].title;
 			title.dataset.id  = items[i].id;
-			title.classList.add('folder-name', `domain-${items[i].domain}`);
+			title.classList.add('folder-name', `domain-${items[i].domain}`, items[i].status);
 			title.appendChild(text);
 			data[`${mode}Folders`][index].appendChild(title);
 			title.addEventListener('click', event => {

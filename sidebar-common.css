@@ -66,6 +66,12 @@ p {
 	background-image: url('icons/loader.svg')!important;
 
 }
+.updated #rss-reloadAll>span,
+.updated #pocket-reload>span {
+	animation: spin 1.8s linear infinite;
+	mask-image: url(icons/loader.svg) !important;
+	-webkit-mask-image: url(icons/loader.svg) !important;
+}
 .folder.domain-view .loading.item {
 	padding-left: 1.4rem!important;
 }

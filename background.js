@@ -57,9 +57,11 @@ const i18n = {
 
 const status = {
 	info               : {
-		rssUnreaded    : 0,
-		downloadStatus : 'idle',
-		downloadsCount : 0
+		rssUnreaded     : 0,
+		rssUpdated      : false,
+		rssUpdatedCount : 0,
+		downloadStatus  : 'idle',
+		downloadsCount  : 0
 	},
 	init               : {
 		'data'      : false,
@@ -607,7 +609,8 @@ const modeData = {
 			i18n             : i18n.rss,
 			rss              : data.rss,
 			rssFolders       : data.rssFolders,
-			domains          : data.rssDomains
+			domains          : data.rssDomains,
+			updated          : status.info.rssUpdated
 		};
 	},
 	pocket    : _ => {
@@ -2216,24 +2219,14 @@ const initService = {
 				updateFeed   : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed !== false) {
-						send('sidebar', 'rss', 'update', {id: feed.id, method: 'add'});
 						brauzer.alarms.clear(`rss-update**${feed.id}`);
 						updateRssFeed(message.data.id);
 					}
 				},
 				updateAll    : (message, sender, sendResponse) => {
-					const update = {
-						domain : id => {
-							send('sidebar', 'rss', 'update', {id: id, method: 'add'});
-							updateRssFeed(id);
-						},
-						plain  : id => {
-							updateRssFeed(id);
-						}
-					};
 					brauzer.alarms.clearAll();
 					for (let i = data.rssFoldersId.length - 1; i >= 0; i--)
-						update[options.misc.rssMode.value](data.rssFoldersId[i]);
+						updateRssFeed(data.rssFoldersId[i]);
 				},
 				import       : (message, sender, sendResponse) => {
 					const parser = new DOMParser();
@@ -2280,6 +2273,19 @@ const initService = {
 			status.init.rss = true;
 		};
 
+		const setUpdated = (count, feed) => {
+			const oldStatus             = status.info.rssUpdated;
+			status.info.rssUpdatedCount += count;
+			status.info.rssUpdated      = status.info.rssUpdatedCount > 0;
+			if (status.info.rssUpdated !== oldStatus)
+				send('sidebar', 'rss', 'updateAll', status.info.rssUpdated === true ? 'add' : 'remove');
+			if (feed !== undefined) {
+				feed.status = count === 1 ? 'loading' : 'complete';
+				if (options.misc.rssMode.value === 'domain')
+					send('sidebar', 'rss', 'update', {'id': feed.id, 'method': feed.status === 'loading' ? 'add' : 'remove'});
+			}
+		};
+
 		const guidFromUrl = url => {
 			let id = '';
 			for (let i = 0, l = url.length; i < l; i++)
@@ -2296,6 +2302,7 @@ const initService = {
 							${data.rssFolders[i].title}`});
 			const xhttp  = new XMLHttpRequest();
 			xhttp.open("GET", rssUrl, true);
+			setUpdated(1);
 			xhttp.send();
 			xhttp.onreadystatechange = _ => {
 				if (xhttp.readyState === 4) {
@@ -2325,6 +2332,7 @@ const initService = {
 						feed.domainUrl   = fav !== null ? `${guid}.rss` : rssUrl;
 						feed.domain      = rssDomain.id;
 						feed.url         = rssUrl;
+						feed.status      = 'complete';
 						feed.itemsId     = [];
 						feed.hideReaded  = false;
 						feed.readed      = true;
@@ -2338,14 +2346,15 @@ const initService = {
 					else
 						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
 							${url}`});
+					setUpdated(-1);
 				}
-
 			};
 		};
 
 		const updateRssFeed = id => {
 
 			const feed  = getFolderById('rss', id);
+			setUpdated(1, feed);
 			const xhttp = new XMLHttpRequest();
 			xhttp.open("GET", feed.url, true);
 			xhttp.send();
@@ -2363,8 +2372,7 @@ const initService = {
 						feed.lastUpdate = Date.now();
 						rssSetUpdate(feed, 10);
 					}
-					if (options.misc.rssMode.value === 'domain')
-						send('sidebar', 'rss', 'update', {id: id, method: 'remove'});
+					setUpdated(-1, feed);
 				}
 			};
 		};
@@ -2725,16 +2733,19 @@ const initService = {
 			xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 			xhttp.setRequestHeader('X-Accept', 'application/json');
 			xhttp.send(JSON.stringify(toSend[type]));
+			send('sidebar', 'pocket', 'update', 'add');
 			xhttp.onreadystatechange = _ => {
-			if (xhttp.readyState === 4)
-				if (xhttp.status === 200) {
-					const response = JSON.parse(xhttp.responseText);
-					if (response.hasOwnProperty('status')) {
-						if (parseInt(response.status) === 1)
+				if (xhttp.readyState === 4) {
+					if (xhttp.status === 200) {
+						const response = JSON.parse(xhttp.responseText);
+						if (response.hasOwnProperty('status')) {
+							if (parseInt(response.status) === 1)
+								onReady[type](response);
+						}
+						else if (type === 'auth' || type === 'request')
 							onReady[type](response);
 					}
-					else if (type === 'auth' || type === 'request')
-						onReady[type](response);
+					send('sidebar', 'pocket', 'update', 'remove');
 				}
 			};
 		};
@@ -2943,6 +2954,9 @@ const initService = {
 				},
 				delete    : (message, sender, sendResponse) => {
 					pocketRequest('delete', message.data);
+				},
+				reloadAll : (message, sender, sendResponse) => {
+					pocketRequest('get');
 				}
 			};
 

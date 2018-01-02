@@ -38,3 +38,6 @@
 	font-weight: bold;
 	color: var(--font-color-active);
 }
+.loading.folder-name::before {
+	top: .65rem;
+}
