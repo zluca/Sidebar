@@ -3310,11 +3310,7 @@ function createById(mode, item, position) {
 
 	let index = data[`${mode}Id`].indexOf(item.id);
 
-
-	if (index !== -1)
-		return data[mode][index];
-	else
-		return updateItem[mode](insert[position](), item);
+	return index !== -1 ? data[mode][index] : updateItem[mode](insert[position](), item);
 }
 
 function deleteById(mode, id) {
