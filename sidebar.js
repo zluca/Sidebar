@@ -1650,7 +1650,10 @@ function setView(mode, view, items, folders) {
 }
 
 function createById(mode, id, search = false) {
-	const item      = dce(element[mode]);
+	let item        = getById(mode, id);
+	if (item !== false)
+		return item;
+	item            = dce(element[mode]);
 	item.id         = (search === true) ? `search-${mode}-${id}` : `${mode}-${id}`;
 	item.dataset.id = id;
 	data[mode].push(item);
@@ -1659,11 +1662,7 @@ function createById(mode, id, search = false) {
 }
 
 function getById(mode, id) {
-	const index = data[`${mode}Id`].indexOf(id);
-	if (index !== -1)
-		return data[mode][index];
-	else
-		return false;
+	return data[`${mode}Id`].indexOf(id) !== -1 ? data[mode][index] : false;
 }
 
 function removeById(mode, id) {
