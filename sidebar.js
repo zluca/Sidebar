@@ -1662,7 +1662,8 @@ function createById(mode, id, search = false) {
 }
 
 function getById(mode, id) {
-	return data[`${mode}Id`].indexOf(id) !== -1 ? data[mode][index] : false;
+	const index = data[`${mode}Id`].indexOf(id);
+	return index !== -1 ? data[mode][index] : false;
 }
 
 function removeById(mode, id) {
