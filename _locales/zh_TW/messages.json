@@ -78,7 +78,7 @@
 		"description"   : ""
 	},
 	"tabsControlsFav" : {
-		"message"       : "Make bookmark",
+		"message"       : "加入書籤",
 		"description"   : ""
 	},
 	"tabsControlsReload" : {
@@ -378,7 +378,7 @@
 		"description"   : ""
 	},
 	"optThemeSidebarImageStyleText" : {
-		"message"       : "Sidebar background image style:",
+		"message"       : "側邊欄背景圖片樣式：",
 		"description"   : ""
 	},
 
@@ -497,24 +497,24 @@
 		"description"   : ""
 	},
 	"optStartpageImageStyleText" : {
-		"message"       : "Startpage background image style:",
+		"message"       : "首頁背景圖片樣式：",
 		"description"   : ""
 	},
 
 	"optCoverLabel" : {
-		"message"       : "Stretch for a smallest dimension",
+		"message"       : "延展最小的尺寸",
 		"description"   : ""
 	},
 	"optContainLabel" : {
-		"message"       : "Stretch for a biggest dimension",
+		"message"       : "延展最大的尺寸",
 		"description"   : ""
 	},
 	"optCenterLabel" : {
-		"message"       : "Center image",
+		"message"       : "圖片置中",
 		"description"   : ""
 	},
 	"optRepeatLabel" : {
-		"message"       : "Repeat image",
+		"message"       : "圖片重複",
 		"description"   : ""
 	},
 
