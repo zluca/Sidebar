@@ -407,13 +407,7 @@ const initBlock = {
 
 		setBlockClass('tabs');
 
-		rootFolder                = dce('div');
-		rootFolder.id             = 'tabs-folder-0';
-		const rootFakeTitle       = dce('div');
-		rootFakeTitle.dataset.id  = 0;
-		rootFolder.appendChild(rootFakeTitle);
-		const rootContent         = dce('div');
-		rootFolder.appendChild(rootContent);
+		createRootFolder('tabs');
 		controls.tabs.item        = dce('div');
 		controls.tabs.item.classList.add('controls');
 		makeButton('move', 'tabs', 'item');
@@ -586,13 +580,7 @@ const initBlock = {
 		};
 
 		block.bookmarks.classList    = `block ${options.misc.bookmarksMode}`;
-		rootFolder                   = dce('div');
-		rootFolder.id                = 'bookmarks-folder-0';
-		const rootFakeTitle          = dce('div');
-		rootFakeTitle.dataset.id     = 0;
-		rootFolder.appendChild(rootFakeTitle);
-		const rootContent            = dce('div');
-		rootFolder.appendChild(rootContent);
+		createRootFolder('bookmarks');
 		const bookmarksSearchResults = dce('div');
 		bookmarksSearchResults.id    = 'bookmarks-search-results';
 		bookmarksSearchResults.classList.add('search-results');
@@ -748,10 +736,7 @@ const initBlock = {
 		const now = new Date();
 		status.historyInfo.lastDate = now.toLocaleDateString();
 
-		rootFolder                 = dce('div');
-		rootFolder.id              = 'history-folder-0';
-		const rootContent          = dce('div');
-		rootFolder.appendChild(rootContent);
+		createRootFolder('history');
 		const historySearchResults = dce('div');
 		historySearchResults.id    = 'history-search-results';
 		historySearchResults.classList.add('search-results');
@@ -1054,14 +1039,7 @@ const initBlock = {
 		setBlockClass('rss');
 		setReadedMode(options.misc.rssHideReaded);
 
-		rootFolder               = dce('div');
-		rootFolder.id            = 'rss-folder-0';
-		const rootFakeTitle      = dce('div');
-		rootFakeTitle.dataset.id = 0;
-		rootFolder.appendChild(rootFakeTitle);
-		const rootContent        = dce('div');
-		rootFolder.appendChild(rootContent);
-
+		createRootFolder('rss');
 		controls.rss.item        = dce('div');
 		controls.rss.item.classList.add('controls');
 		makeButton('reload', 'rss', 'item');
@@ -1267,14 +1245,7 @@ const initBlock = {
 		};
 
 		setBlockClass('pocket', options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
-		rootFolder              = dce('div');
-		rootFolder.id           = 'pocket-folder-0';
-		const rootFakeTitle     = dce('div');
-		rootFakeTitle.dataset.id = '0';
-		rootFolder.appendChild(rootFakeTitle);
-		const rootContent       = dce('div');
-		rootFolder.appendChild(rootContent);
-
+		createRootFolder('pocket');
 		const loginContainer    = dce('div');
 		const login             = makeItemButton('login', 'pocket');
 		login.id                = 'login';
@@ -2006,6 +1977,16 @@ function makeItemButton(type, block) {
 		button.appendChild(icon);
 	}
 	return item;
+}
+
+function createRootFolder(mode) {
+	rootFolder                = dce('div');
+	rootFolder.id             = `${mode}-folder-0`;
+	const rootFakeTitle       = dce('div');
+	rootFakeTitle.dataset.id  = 0;
+	rootFolder.appendChild(rootFakeTitle);
+	const rootContent         = dce('div');
+	rootFolder.appendChild(rootContent);
 }
 
 const buttonsEvents = {
