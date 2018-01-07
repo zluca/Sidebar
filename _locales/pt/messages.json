@@ -81,6 +81,10 @@
 		"message"       : "Make bookmark",
 		"description"   : ""
 	},
+	"tabsControlsMove" : {
+		"message"       : "Move tab",
+		"description"   : ""
+	},
 	"tabsControlsReload" : {
 		"message"       : "Atualizar",
 		"description"   : ""
@@ -213,6 +217,10 @@
 		"message"       : "Atualizar fonte RSS",
 		"description"   : ""
 	},
+	"rssControlsMove" : {
+		"message"       : "Move feed",
+		"description"   : ""
+	},
 	"rssImportExport"          : {
 		"message"       : "Importar ou exportar RSS",
 		"description"   : ""
@@ -258,12 +266,24 @@
 		"message"       : "Mover para arquivo",
 		"description"   : ""
 	},
+	"pocketControlsFolderArchive" : {
+		"message"       : "Move all items to archive",
+		"description"   : ""
+	},
 	"pocketControlsUnarchive" : {
 		"message"       : "Trazer do arquivo",
 		"description"   : ""
 	},
 	"pocketControlsDelete" : {
 		"message"       : "Apagar do Pocket",
+		"description"   : ""
+	},
+	"pocketControlsFolderDelete" : {
+		"message"       : "Delete all items",
+		"description"   : ""
+	},
+	"pocketControlsMove" : {
+		"message"       : "Move folder",
 		"description"   : ""
 	},
 	"pocketPlainMode" : {
@@ -441,6 +461,10 @@
 	},
 	"optWarningsPocketDeleteLabel" : {
 		"message"       : "Apagar do Pocket",
+		"description"   : ""
+	},
+	"optWarningsPocketFolderDeleteLabel" : {
+		"message"       : "Delete pocket folder",
 		"description"   : ""
 	},
 
@@ -915,6 +939,19 @@
 	},
 	"dialogPocketDeleteAlert" : {
 		"message"       : "Remover \"$name$\" do Pocket?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogPocketFolderDeleteHeader" : {
+		"message"       : "Remove folder from Pocket",
+		"description"   : ""
+	},
+	"dialogPocketFolderDeleteAlert" : {
+		"message"       : "Remove \"$name$\" and all its content from Pocket?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

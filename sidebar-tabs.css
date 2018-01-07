@@ -41,6 +41,10 @@
 }
 
 .plain .item.pinned #tabs-unpin,
+.plain .item #tabs-move,
+.domain .item #tabs-move,
+.domain .folder-name #tabs-move,
+.tree #tabs-folder-0>div>.folder>.folder-content>a>.controls #tabs-move,
 .item #tabs-close,
 .item #tabs-reload,
 .item #tabs-fav,

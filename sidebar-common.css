@@ -518,6 +518,11 @@ ul {
 .folder.moved>.folder-content {
 	display: none;
 }
+.moved.hidden-view>.folder-content,
+.moved.tree-view>.folder-content {
+	display: block;
+}
+.tree-view.moved>.folder-content .folder,
 .moving .controls {
 	display: none!important;
 }

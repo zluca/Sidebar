@@ -81,6 +81,10 @@
 		"message"       : "Make bookmark",
 		"description"   : ""
 	},
+	"tabsControlsMove" : {
+		"message"       : "Move tab",
+		"description"   : ""
+	},
 	"tabsControlsReload" : {
 		"message"       : "重新载入",
 		"description"   : ""
@@ -213,6 +217,10 @@
 		"message"       : "更新收取点",
 		"description"   : ""
 	},
+	"rssControlsMove" : {
+		"message"       : "Move feed",
+		"description"   : ""
+	},
 	"rssImportExport"          : {
 		"message"       : "Import or export RSS",
 		"description"   : ""
@@ -258,12 +266,24 @@
 		"message"       : "Move to archive",
 		"description"   : ""
 	},
+	"pocketControlsFolderArchive" : {
+		"message"       : "Move all items to archive",
+		"description"   : ""
+	},
 	"pocketControlsUnarchive" : {
 		"message"       : "Back from archive",
 		"description"   : ""
 	},
 	"pocketControlsDelete" : {
 		"message"       : "Delete from Pocket",
+		"description"   : ""
+	},
+	"pocketControlsFolderDelete" : {
+		"message"       : "Delete all items",
+		"description"   : ""
+	},
+	"pocketControlsMove" : {
+		"message"       : "Move folder",
 		"description"   : ""
 	},
 	"pocketPlainMode" : {
@@ -441,6 +461,10 @@
 	},
 	"optWarningsPocketDeleteLabel" : {
 		"message"       : "Delete from Pocket",
+		"description"   : ""
+	},
+	"optWarningsPocketFolderDeleteLabel" : {
+		"message"       : "Delete pocket folder",
 		"description"   : ""
 	},
 
@@ -915,6 +939,19 @@
 	},
 	"dialogPocketDeleteAlert" : {
 		"message"       : "Remove \"$name$\" from Pocket?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogPocketFolderDeleteHeader" : {
+		"message"       : "Remove folder from Pocket",
+		"description"   : ""
+	},
+	"dialogPocketFolderDeleteAlert" : {
+		"message"       : "Remove \"$name$\" and all its content from Pocket?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

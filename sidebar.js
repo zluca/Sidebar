@@ -222,6 +222,15 @@ const messageHandler = {
 				enableBlock(info.service);
 			else
 				button[info.service].classList.add('hidden');
+		},
+		tabsMode           : info => {
+			options.misc.tabsMode = info;
+		},
+		rssMode            : info => {
+			options.misc.rssMode = info;
+		},
+		pocketMode         : info => {
+			options.misc.pocketMode = info;
 		}
 	},
 	set : {
@@ -360,8 +369,13 @@ const initBlock = {
 				if (tab !== false)
 					removing[options.misc.tabsMode](tab);
 			},
-			moved        : info => {
-				moveTab(info);
+			moved           : info => {
+				if (status.moving === true)
+					doc.addEventListener('mouseup', finishMoving, {'once': true});
+				else if (info.isFolder === false)
+					moveTab(info);
+				else
+					moveFolder('tabs', info);
 			},
 			unpin        : info => {
 				getById('tabs', info.id).classList.remove('pinned');
@@ -395,10 +409,14 @@ const initBlock = {
 
 		rootFolder                = dce('div');
 		rootFolder.id             = 'tabs-folder-0';
+		const rootFakeTitle       = dce('div');
+		rootFakeTitle.dataset.id  = 0;
+		rootFolder.appendChild(rootFakeTitle);
 		const rootContent         = dce('div');
 		rootFolder.appendChild(rootContent);
 		controls.tabs.item        = dce('div');
 		controls.tabs.item.classList.add('controls');
+		makeButton('move', 'tabs', 'item');
 		makeButton('fav', 'tabs', 'item');
 		makeButton('reload', 'tabs', 'item');
 		makeButton('pin', 'tabs', 'item');
@@ -420,6 +438,8 @@ const initBlock = {
 		block.tabs.addEventListener('click', event => {
 			event.stopPropagation();
 			event.preventDefault();
+			if (status.moving === true)
+				return;
 			const target = event.target;
 			if (target.classList.contains('active'))
 				return;
@@ -488,11 +508,18 @@ const initBlock = {
 		const moveTab = info => {
 			const tab = getById('tabs', info.id);
 			if (tab !== false) {
-				if (options.misc.tabsMode === 'plain')
-					if (info.toIndex < info.fromIndex)
-						rootFolder.lastChild.insertBefore(tab, rootFolder.children[info.toIndex]);
+				if (options.misc.tabsMode === 'plain') {
+					if (info.newIndex < info.oldIndex)
+						rootFolder.lastChild.insertBefore(tab, rootFolder.lastChild.children[info.newIndex]);
 					else
-						rootFolder.lastChild.insertBefore(tab, rootFolder.children[info.toIndex + 1]);
+						rootFolder.lastChild.insertBefore(tab, rootFolder.lastChild.children[info.newIndex + 1]);
+				}
+				else if (options.misc.tabsMode === 'tree') {
+					if (info.newIndex < info.oldIndex)
+						rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex]);
+					else
+						rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex + 1]);
+				}
 				if (info.hasOwnProperty('pinned'))
 					tab.classList.add('pinned');
 				else
@@ -517,9 +544,10 @@ const initBlock = {
 				let fakeFolders = [];
 				for (let i = 0, l = tabs.length; i < l; i++)
 					fakeFolders.push(fakeFolder(tabs[i]));
-				setView('tabs', view, info.tabs, fakeFolders);
+				setView('tabs', 'tree', info.tabs, fakeFolders);
 			}
 		};
+
 		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode);
 	},
 
@@ -548,24 +576,22 @@ const initBlock = {
 				insertFolders('bookmarks', [info.item]);
 			},
 			moved           : info => {
-				const mouseup = event => {
-					event.stopPropagation();
-					event.preventDefault();
-					doc.removeEventListener('mouseup', mouseup);
-					setTimeout(_ => {status.moving = false;}, 500);
-				};
+				console.log(info);
 				if (status.moving === true)
-					doc.addEventListener('mouseup', mouseup);
+					doc.addEventListener('mouseup', finishMoving, {'once': true});
 				else if (info.isFolder === false)
-					moveBook(getById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.index);
+					moveBook(getById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.newIndex);
 				else if (info.isFolder === true)
-					moveBook(getFolderById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.index);
+					moveBook(getFolderById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.newIndex);
 			}
 		};
 
 		block.bookmarks.classList    = `block ${options.misc.bookmarksMode}`;
 		rootFolder                   = dce('div');
 		rootFolder.id                = 'bookmarks-folder-0';
+		const rootFakeTitle          = dce('div');
+		rootFakeTitle.dataset.id     = 0;
+		rootFolder.appendChild(rootFakeTitle);
 		const rootContent            = dce('div');
 		rootFolder.appendChild(rootContent);
 		const bookmarksSearchResults = dce('div');
@@ -576,7 +602,7 @@ const initBlock = {
 		makeButton('edit', 'bookmarks', 'item');
 		makeButton('move', 'bookmarks', 'item');
 		makeButton('delete', 'bookmarks', 'item');
-		makeButton('deleteFolder', 'bookmarks', 'item');
+		makeButton('folderDelete', 'bookmarks', 'item');
 		controls.bookmarks.bottom    = dce('div');
 		controls.bookmarks.bottom.classList.add('bottom-bar');
 		const bookmarksSearch        = dce('input');
@@ -615,8 +641,6 @@ const initBlock = {
 		block.bookmarks.addEventListener('click', event => {
 			event.stopPropagation();
 			event.preventDefault();
-			if (status.moving)
-				return;
 			if (event.target.classList.contains('bookmark'))
 				openLink(event);
 		});
@@ -1014,6 +1038,12 @@ const initBlock = {
 				if (feed !== false)
 					feed.firstChild.classList[info.method]('loading');
 			},
+			moved            : info => {
+				if (status.moving === true)
+					doc.addEventListener('mouseup', finishMoving, {'once': true});
+				else
+					moveFolder('rss', info);
+			},
 			readedMode       : info => {
 				setReadedMode(info);
 			},
@@ -1025,14 +1055,18 @@ const initBlock = {
 		setBlockClass('rss');
 		setReadedMode(options.misc.rssHideReaded);
 
-		rootFolder              = dce('div');
-		rootFolder.id           = 'rss-folder-0';
-		const rootContent       = dce('div');
+		rootFolder               = dce('div');
+		rootFolder.id            = 'rss-folder-0';
+		const rootFakeTitle      = dce('div');
+		rootFakeTitle.dataset.id = 0;
+		rootFolder.appendChild(rootFakeTitle);
+		const rootContent        = dce('div');
 		rootFolder.appendChild(rootContent);
 
-		controls.rss.item       = dce('div');
+		controls.rss.item        = dce('div');
 		controls.rss.item.classList.add('controls');
 		makeButton('reload', 'rss', 'item');
+		makeButton('move', 'rss', 'item');
 		makeButton('markReaded', 'rss', 'item');
 		makeButton('markReadedAll', 'rss', 'item');
 		makeButton('hideReaded', 'rss', 'item');
@@ -1224,12 +1258,21 @@ const initBlock = {
 			},
 			update      : info => {
 				block.pocket.classList[info]('updated');
+			},
+			moved       : info => {
+				if (status.moving === true)
+					doc.addEventListener('mouseup', finishMoving, {'once': true});
+				else
+					moveFolder('pocket', info);
 			}
 		};
 
 		setBlockClass('pocket', options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
 		rootFolder              = dce('div');
 		rootFolder.id           = 'pocket-folder-0';
+		const rootFakeTitle     = dce('div');
+		rootFakeTitle.dataset.id = '0';
+		rootFolder.appendChild(rootFakeTitle);
 		const rootContent       = dce('div');
 		rootFolder.appendChild(rootContent);
 
@@ -1248,11 +1291,14 @@ const initBlock = {
 		loginContainer.appendChild(controls.pocket.user);
 		controls.pocket.item    = dce('div');
 		controls.pocket.item.classList.add('controls');
+		makeButton('move', 'pocket', 'item');
 		makeButton('fav', 'pocket', 'item');
 		makeButton('unfav', 'pocket', 'item');
 		makeButton('archive', 'pocket', 'item');
+		makeButton('folderArchive', 'pocket', 'item');
 		makeButton('unarchive', 'pocket', 'item');
 		makeButton('delete', 'pocket', 'item');
+		makeButton('folderDelete', 'pocket', 'item');
 		controls.pocket.bottom  = dce('div');
 		controls.pocket.bottom.classList.add('bottom-bar');
 		makeButton('new', 'pocket', 'bottom');
@@ -1270,6 +1316,8 @@ const initBlock = {
 			event.stopPropagation();
 			const target = event.target;
 			if (target.classList.contains('pocket'))
+				target.appendChild(controls.pocket.item);
+			else if (target.classList.contains('folder-name'))
 				target.appendChild(controls.pocket.item);
 		});
 
@@ -1318,7 +1366,6 @@ const initBlock = {
 				insert[position](pocket);
 			}
 		};
-
 		setView('pocket', options.misc.pocketMode, info.pocket, info.pocketFolders);
 	}
 };
@@ -1547,8 +1594,9 @@ function insertFolders(mode, items, fake = false) {
 		let classList = 'folder';
 		classList += ` ${items[i].view}-view`;
 		classList += items[i].folded === true ? ' folded' : '';
-		data[`${mode}Folders`][index].classList = classList;
-		data[`${mode}Folders`][index].id        = `${mode}-folder-${items[i].id}`;
+		data[`${mode}Folders`][index].classList  = classList;
+		data[`${mode}Folders`][index].id         = `${mode}-folder-${items[i].id}`;
+		data[`${mode}Folders`][index].dataset.id = items[i].id;
 		if (fake === false) {
 			const title       = dce('div');
 			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
@@ -1641,8 +1689,8 @@ function setBlockClass(mode, view = undefined, extraClass = '') {
 }
 
 function setView(mode, view, items, folders) {
-	while (rootFolder.firstChild.hasChildNodes())
-		rootFolder.firstChild.removeChild(rootFolder.firstChild.firstChild);
+	while (rootFolder.lastChild.hasChildNodes())
+		rootFolder.lastChild.removeChild(rootFolder.lastChild.firstChild);
 	clearData(mode);
 	if (view !== 'plain')
 		insertFolders(mode, folders, view === 'tree');
@@ -1706,6 +1754,8 @@ function send(target, subject, action, data = {}, callback = _ => {}) {
 }
 
 function openLink(event) {
+	if (status.moving === true)
+		return;
 	if (event.target.id === status.lastClicked.id)
 		if (Date.now() - status.lastClicked.time < 1000)
 			return;
@@ -1717,6 +1767,197 @@ function openLink(event) {
 		send('background', 'tabs', 'update', {'url': event.target.href});
 	status.lastClicked.id   = event.target.id;
 	status.lastClicked.time = Date.now();
+}
+
+function finishMoving(event) {
+	event.stopPropagation();
+	event.preventDefault();
+	setTimeout(_ => {status.moving = false;}, 500);
+}
+
+function moveItem(mode, eventTarget) {
+
+	let lastPosition = -1;
+	let movingUp     = false;
+
+	const moveItemOverTree = event => {
+
+		event.stopPropagation();
+		event.preventDefault();
+		const target = event.target;
+		if (target.parentNode === item)
+			return;
+		movingUp   = event.screenY < lastPosition;
+		lastPosition = event.screenY;
+		if (target.classList.contains('item')) {
+			if (movingUp)
+				target.parentNode.insertBefore(item, target);
+			else if (target.nextElementSibling !== null)
+				target.parentNode.insertBefore(item, target.nextElementSibling);
+			else
+				target.parentNode.appendChild(item);
+		}
+		else if (target.classList.contains('folder-name')) {
+			target.nextElementSibling.appendChild(item);
+			if (target.parentNode.classList.contains('folded'))
+				target.click();
+		}
+		else if (target.classList.contains('folder'))
+			target.lastChild.appendChild(item);
+	};
+
+	const moveItemOverFolder = event => {
+		event.preventDefault();
+		let target = event.target;
+		if (isFolder || options.misc.tabsMode === 'tree') {
+			if (target.classList.contains('item'))
+				target = target.parentNode.parentNode;
+			else if (target.classList.contains('folder-name'))
+				target = target.parentNode;
+			else return;
+		}
+		else if (!target.classList.contains('item'))
+			return;
+		if (target.parentNode !== folder)
+			return;
+		movingUp   = event.screenY < lastPosition;
+		lastPosition = event.screenY;
+		if (movingUp)
+			target.parentNode.insertBefore(item, target);
+		else if (target.nextElementSibling !== null)
+			target.parentNode.insertBefore(item, target.nextElementSibling);
+		else
+			target.parentNode.appendChild(item);
+	};
+
+	const keydown = event => {
+		if (event.key === 'Escape') {
+			finilize();
+			status.moving = false;
+			if (folder !== item.parentNode)
+				folder.insertBefore(item, folder.children[oldIndex]);
+			else if (oldIndex >= folder.children.length - 1)
+				folder.appendChild(item);
+			else {
+				let newIndex  = -1;
+				for (let i = 0, l = folder.children.length; i < l; i++)
+					if (folder.children[i] === item) {
+						newIndex = i;
+						break;
+					}
+				const k = newIndex < oldIndex ? 1 : 0;
+				folder.insertBefore(item, folder.children[oldIndex + k]);
+			}
+		}
+	};
+
+	const getIndex = event => {
+		event.stopPropagation();
+		event.preventDefault();
+		let newIndex  = 0;
+		for (let i = 0, l = item.parentNode.children.length; i < l; i++)
+			if (item.parentNode.children[i] === item) {
+				newIndex = i;
+				break;
+			}
+		finilize();
+		console.log(oldIndex);
+		console.log(newIndex);
+		if (newIndex !== oldIndex)
+			send('background', mode, 'move', {'id': id, 'pid': item.parentNode.previousElementSibling.dataset.id, 'oldIndex': oldIndex, 'newIndex': newIndex, 'isFolder': isFolder});
+		else
+			status.moving = false;
+	};
+
+	const getSiblings = event => {
+		event.stopPropagation();
+		event.preventDefault();
+		const prevElementId = item.previousElementSibling !== null ? item.previousElementSibling.dataset.id : false;
+		send('background', mode, 'move', {'id': id, 'pid': item.parentNode.previousElementSibling.dataset.id, 'prevElementId': prevElementId, 'isFolder': isFolder});
+		finilize();
+	};
+
+	const finilize = _ => {
+		doc.removeEventListener('keydown', keydown);
+		block[mode].removeEventListener('mouseover', moveItemOverTree);
+		block[mode].removeEventListener('mouseover', moveItemOverFolder);
+		doc.removeEventListener('mousedown', getIndex);
+		doc.removeEventListener('mousedown', getSiblings);
+		item.classList.remove('moved');
+		rootFolder.classList.remove('moving');
+	};
+
+	const setListeners = {
+		tabs      : _ => {
+			const modes = {
+				plain  : _ => {
+					block.tabs.addEventListener('mouseover', moveItemOverFolder);
+					doc.addEventListener('mousedown', getIndex);
+				},
+				domain : _ => {
+					block[mode].addEventListener('mouseover', moveItemOverFolder);
+					if (isFolder)
+						doc.addEventListener('mousedown', getIndex);
+					else
+						doc.addEventListener('mousedown', getSiblings);
+				},
+				tree   : _ => {
+					block[mode].addEventListener('mouseover', moveItemOverFolder);
+					doc.addEventListener('mousedown', getSiblings);
+				}
+			};
+			modes[options.misc.tabsMode]();
+		},
+		bookmarks : _ => {
+			block.bookmarks.addEventListener('mouseover', moveItemOverTree);
+			doc.addEventListener('mousedown', getIndex);
+		},
+		rss : _ => {
+			block.rss.addEventListener('mouseover', moveItemOverFolder);
+			doc.addEventListener('mousedown', getIndex);
+		},
+		pocket : _ => {
+			block.pocket.addEventListener('mouseover', moveItemOverFolder);
+			doc.addEventListener('mousedown', getIndex);
+		}
+	};
+
+	let item = eventTarget;
+	if (eventTarget.classList.contains('item')) {
+		if (options.sidebar.mode === 'tabs') {
+			if (eventTarget.parentNode.parentNode.classList.contains('hidden-view'))
+				item = eventTarget.parentNode.parentNode;
+			else if (eventTarget.parentNode.parentNode.classList.contains('tree-view'))
+				item = eventTarget.parentNode.parentNode;
+		}
+	}
+	else if (eventTarget.classList.contains('folder-name'))
+		item = eventTarget.parentNode;
+	const isFolder = item.classList.contains('folder') && (options.sidebar.mode !== 'tabs' || options.misc.tabsMode !== 'tree');
+	const id       = item.dataset.id;
+	const folder   = item.parentNode;
+	let   oldIndex = -1;
+	status.moving  = true;
+	for (let i = 0, l = folder.children.length; i < l; i++)
+		if (folder.children[i] === item) {
+			oldIndex = i;
+			break;
+		}
+	rootFolder.classList.add('moving');
+	item.classList.add('moved');
+
+	doc.addEventListener('keydown', keydown);
+	setListeners[mode]();
+}
+
+function moveFolder(mode, info) {
+	const folder = getFolderById(mode, info.id);
+	if (folder !== false) {
+		if (info.newIndex < info.oldIndex)
+			folder.parentNode.insertBefore(folder, folder.parentNode.children[info.newIndex]);
+		else
+			folder.parentNode.insertBefore(folder, folder.parentNode.children[info.newIndex + 1]);
+	}
 }
 
 function searchActive(isIt) {
@@ -1835,6 +2076,11 @@ const buttonsEvents = {
 			event.preventDefault();
 			send('background', 'dialog', 'bookmarkTab', {'id': parseInt(controls.tabs.item.parentNode.dataset.id)});
 		},
+		move: event => {
+			event.stopPropagation();
+			event.preventDefault();
+			moveItem('tabs', controls.tabs.item.parentNode);
+		},
 		reload: event => {
 			event.stopPropagation();
 			event.preventDefault();
@@ -1889,91 +2135,9 @@ const buttonsEvents = {
 	},
 	bookmarks : {
 		move : event => {
-
-			const mouseover = event => {
-				event.stopPropagation();
-				event.preventDefault();
-				const target = event.target;
-				if (target.parentNode === item)
-					return;
-				if (target.classList.contains('bookmark'))
-					target.parentNode.insertBefore(item, target);
-				else if (target.classList.contains('folder-name')) {
-					target.nextElementSibling.appendChild(item);
-					if (target.parentNode.classList.contains('folded'))
-						target.click();
-				}
-				else if (target.classList.contains('folder'))
-					target.lastChild.appendChild(item);
-			};
-
-			const keydown = event => {
-				if (event.key === 'Escape') {
-					finilize();
-					status.moving = false;
-					if (folder !== item.parentNode)
-						folder.lastChild.insertBefore(item, folder.children[index]);
-					else if (index >= folder.children.length - 1)
-						folder.lastChild.appendChild(item);
-					else {
-						let newindex  = -1;
-						for (let i = 0, l = folder.lastChild.children.length; i < l; i++)
-							if (folder.lastChild.children[i] === item) {
-								newindex = i;
-								break;
-							}
-						const k = newindex < index ? 1 : 0;
-						folder.lastChild.insertBefore(item, folder.lastChild.children[index + k]);
-					}
-				}
-			};
-
-			const mousedown = event => {
-				event.stopPropagation();
-				event.preventDefault();
-				let newindex  = 0;
-				for (let i = 0, l = item.parentNode.children.length; i < l; i++)
-					if (item.parentNode.children[i] === item) {
-						newindex = i;
-						break;
-					}
-				finilize();
-				send('background', 'bookmarks', 'move', {'id': id, 'pid': item.parentNode.previousElementSibling.dataset.id, 'index': newindex, 'isFolder': isFolder});
-			};
-
-			const finilize = _ => {
-				block.bookmarks.removeEventListener('mouseover', mouseover);
-				doc.removeEventListener('keydown', keydown);
-				doc.removeEventListener('mousedown', mousedown);
-				item.classList.remove('moved');
-				rootFolder.classList.remove('moving');
-			};
-
 			event.stopPropagation();
 			event.preventDefault();
-
-			status.moving = true;
-			let isFolder  = false;
-			let item      = event.target.parentNode.parentNode.parentNode;
-			const id      = item.dataset.id;
-			if (item.classList.contains('folder-name')) {
-				isFolder = true;
-				item     = item.parentNode;
-			}
-			const folder  = item.parentNode;
-			let   index   = -1;
-			for (let i = 0, l = folder.children.length; i < l; i++)
-				if (folder.children[i] === item) {
-					index = i;
-					break;
-				}
-			rootFolder.classList.add('moving');
-			item.classList.add('moved');
-
-			block.bookmarks.addEventListener('mouseover', mouseover);
-			doc.addEventListener('keydown', keydown);
-			doc.addEventListener('mousedown', mousedown);
-
+			moveItem('bookmarks', controls.bookmarks.item.parentNode);
 		},
 		delete : event => {
 			event.stopPropagation();
@@ -1984,7 +2148,7 @@ const buttonsEvents = {
 			else
 				send('background', 'bookmarks', 'bookmarkDelete', {'id': target.dataset.id});
 		},
-		deleteFolder : event => {
+		folderDelete : event => {
 			event.stopPropagation();
 			event.preventDefault();
 			const target = controls.bookmarks.item.parentNode;
@@ -2068,6 +2232,11 @@ const buttonsEvents = {
 			event.preventDefault();
 			const folderTitle = controls.rss.item.parentNode;
 			send('background', 'dialog', 'rssFeedEdit', {'id': folderTitle.dataset.id, 'title': folderTitle.textContent.trim(), 'description': folderTitle.title});
+		},
+		move: event => {
+			event.stopPropagation();
+			event.preventDefault();
+			moveItem('rss', controls.rss.item.parentNode);
 		},
 		reload: event => {
 			event.stopPropagation();
@@ -2165,38 +2334,51 @@ const buttonsEvents = {
 			event.preventDefault();
 			send('background', 'pocket', 'reloadAll');
 		},
+		move: event => {
+			event.stopPropagation();
+			event.preventDefault();
+			moveItem('pocket', controls.pocket.item.parentNode);
+		},
 		fav : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			const target = event.target.parentNode.parentNode.parentNode;
-			send('background', 'pocket', 'fav', target.dataset.id);
+			send('background', 'pocket', 'fav', controls.pocket.item.parentNode.dataset.id);
 		},
 		unfav : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			const target = event.target.parentNode.parentNode.parentNode;
-			send('background', 'pocket', 'unfav', target.dataset.id);
+			send('background', 'pocket', 'unfav', controls.pocket.item.parentNode.dataset.id);
 		},
 		archive : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			const target = event.target.parentNode.parentNode.parentNode;
-			send('background', 'pocket', 'archive', target.dataset.id);
+			send('background', 'pocket', 'archive', controls.pocket.item.parentNode.dataset.id);
+		},
+		folderArchive : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			send('background', 'pocket', 'folderArchive', controls.pocket.item.parentNode.dataset.id);
 		},
 		unarchive : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			const target = event.target.parentNode.parentNode.parentNode;
-			send('background', 'pocket', 'unarchive', target.dataset.id);
+			send('background', 'pocket', 'unarchive', controls.pocket.item.parentNode.dataset.id);
 		},
 		delete : event => {
 			event.stopPropagation();
 			event.preventDefault();
-			const target = event.target.parentNode.parentNode.parentNode;
 			if (options.warnings.pocketDelete === true)
-				send('background', 'dialog', 'pocketDelete', target.dataset.id);
+				send('background', 'dialog', 'pocketDelete', controls.pocket.item.parentNode.dataset.id);
 			else
-				send('background', 'pocket', 'delete', target.dataset.id);
+				send('background', 'pocket', 'delete', controls.pocket.item.parentNode.dataset.id);
+		},
+		folderDelete : event => {
+			event.stopPropagation();
+			event.preventDefault();
+			if (options.warnings.pocketFolderDelete === true)
+				send('background', 'dialog', 'pocketFolderDelete', controls.pocket.item.parentNode.dataset.id);
+			else
+				send('background', 'pocket', 'folderDelete', controls.pocket.item.parentNode.dataset.id);
 		}
 	}
 };

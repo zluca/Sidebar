@@ -8,6 +8,7 @@
 .plain.hide-readed #rss-showReadedAll,
 .plain.show-readed #rss-hideReadedAll,
 .plain #rss-markRealAll,
+.domain .folder-name #rss-move,
 #rss-reloadAll,
 .folder-name #rss-reload {
 	display: inline-block;

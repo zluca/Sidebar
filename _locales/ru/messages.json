@@ -81,6 +81,10 @@
 		"message"       : "Сделать закладку",
 		"description"   : ""
 	},
+	"tabsControlsMove" : {
+		"message"       : "Переместить вкладку",
+		"description"   : ""
+	},
 	"tabsControlsReload" : {
 		"message"       : "Перезагрузить",
 		"description"   : ""
@@ -209,6 +213,10 @@
 		"message"       : "Обновить канал",
 		"description"   : ""
 	},
+	"rssControlsMove" : {
+		"message"       : "Переместить канал",
+		"description"   : ""
+	},
 	"rssImportExport"          : {
 		"message"       : "Импортировать или экспортировать RSS",
 		"description"   : ""
@@ -254,12 +262,24 @@
 		"message"       : "Переместить в архив",
 		"description"   : ""
 	},
+	"pocketControlsFolderArchive" : {
+		"message"       : "Переместить всё в архив",
+		"description"   : ""
+	},
 	"pocketControlsUnarchive" : {
 		"message"       : "Вернуть из архива",
 		"description"   : ""
 	},
 	"pocketControlsDelete" : {
 		"message"       : "Удалить из Pocket",
+		"description"   : ""
+	},
+	"pocketControlsFolderDelete" : {
+		"message"       : "Удалить всё",
+		"description"   : ""
+	},
+	"pocketControlsMove" : {
+		"message"       : "Переместить папку",
 		"description"   : ""
 	},
 	"pocketPlainMode" : {
@@ -437,6 +457,10 @@
 	},
 	"optWarningsPocketDeleteLabel" : {
 		"message"       : "Удалением из Pocket",
+		"description"   : ""
+	},
+	"optWarningsPocketFolderDeleteLabel" : {
+		"message"       : "Удалением папки из Pocket",
 		"description"   : ""
 	},
 
@@ -911,6 +935,19 @@
 	},
 	"dialogPocketDeleteAlert" : {
 		"message"       : "Удалить \"$name$\" из Pocket?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogPocketFolderDeleteHeader" : {
+		"message"       : "Удалить папку из Pocket",
+		"description"   : ""
+	},
+	"dialogPocketFolderDeleteAlert" : {
+		"message"       : "Удалить \"$name$\" и всё её содержимое из Pocket?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

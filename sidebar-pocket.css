@@ -56,11 +56,15 @@
 	margin-left: .4rem;
 }
 
-#pocket-edit,
-#pocket-delete,
-#pocket-fav,
-#pocket-archive,
-.type-archives #pocket-unarchive {
+.item #pocket-edit,
+.item #pocket-delete,
+.domain .folder-name #pocket-folderDelete,
+.item #pocket-fav,
+.item #pocket-archive,
+.domain .folder-name #pocket-folderArchive,
+.type-archives.item #pocket-unarchive,
+.type .folder-name #pocket-move,
+.domain .folder-name #pocket-move {
 	display: inline-block;
 }
 .domain-articles {

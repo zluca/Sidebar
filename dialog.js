@@ -549,6 +549,18 @@ function makeDialogWindow(data, warnings, colors) {
 			});
 			addButton('cancel');
 		},
+
+		pocketFolderDelete : _ => {
+
+			setHeader();
+			addAlert();
+			addWarning();
+			addButton('confirm', _ => {
+				removeDialogWindow();
+				send('background', 'pocket', 'folderDelete', data.id);
+			});
+			addButton('cancel');
+		},
 	};
 
 	fillWindow[type]();

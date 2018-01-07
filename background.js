@@ -278,6 +278,11 @@ const options = {
 			type    : 'boolean',
 			targets : ['sidebar']
 		},
+		pocketFolderDelete   : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
 		tooManyBookmarks     : {
 			value   : true,
 			type    : 'boolean',
@@ -704,8 +709,12 @@ const optionsHandler = {
 		const mode = option.replace('Mode', '');
 		if (options.leftBar.mode.value === mode)
 			send('leftBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
+		else
+			send('leftBar', 'options', option, newValue);
 		if (options.rightBar.mode.value === mode)
 			send('rightBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
+		else
+			send('rightBar', 'options', option, newValue);
 	},
 	empty   : (section, option, newValue) => {
 		for (let i = data.tabs.length - 1; i >= 0; i--) {
@@ -938,6 +947,11 @@ const messageHandler = {
 			const pocket = getById('pocket', message.data);
 			if (pocket !== false)
 				createDialogWindow(message.action, {'id': pocket.id, 'title': pocket.title});
+		},
+		pocketFolderDelete: (message, sender, sendResponse) => {
+			const folder = getFolderById('pocket', message.data);
+			if (folder !== false)
+				createDialogWindow(message.action, {'id': folder.id, 'title': folder.title});
 		}
 	},
 
@@ -1317,7 +1331,45 @@ const initService = {
 					}
 				},
 				move : (message, sender, sendResponse) => {
-					brauzer.tabs.move(message.data.id, {index: message.data.to});
+					const id = parseInt(message.data.id);
+					const handler = {
+						plain  : _ => {
+							brauzer.tabs.move(id, {'index': message.data.newIndex});
+						},
+						domain : _ => {
+							if (message.data.isFolder === false) {
+								if (message.data.prevElementId === false)
+									return brauzer.tabs.move(id, {'index': 0});
+								const oldIndex = data.tabsId.indexOf(id);
+								const newIndex = data.tabsId.indexOf(parseInt(message.data.prevElementId));
+								if (newIndex === -1) return;
+								if (oldIndex < newIndex)
+									brauzer.tabs.move(id, {'index': newIndex});
+								else
+									brauzer.tabs.move(id, {'index': newIndex + 1});
+							}
+							else {
+								const oldIndex = data.tabsFoldersId.indexOf(message.data.id);
+								if (oldIndex !== -1) {
+									moveFromTo('tabsFolders', oldIndex, message.data.newIndex);
+									send('sidebar', 'tabs', 'moved', {'id': message.data.id, 'newIndex': message.data.newIndex, 'oldIndex': oldIndex, 'isFolder': true});
+								}
+							}
+						},
+						tree   : _ => {
+							if (message.data.prevElementId === false)
+								return brauzer.tabs.move(id, {'index': 0});
+							const oldIndex = data.tabsId.indexOf(id);
+							const newIndex = data.tabsId.indexOf(parseInt(message.data.prevElementId));
+							if (newIndex === -1) return;
+							if (oldIndex < newIndex)
+								brauzer.tabs.move(id, {'index': newIndex});
+							else
+								brauzer.tabs.move(id, {'index': newIndex + 1});
+						}
+					};
+
+					handler[options.misc.tabsMode.value]();
 				},
 				pin : (message, sender, sendResponse) => {
 					brauzer.tabs.update(message.data.id, {pinned: true});
@@ -1331,6 +1383,8 @@ const initService = {
 				newText    : getI18n('tabsNewText'),
 				newTitle   : getI18n('tabsNewTitle'),
 				new        : getI18n('tabsNewTitle'),
+				fav        : getI18n('tabsControlsFav'),
+				move       : getI18n('tabsControlsMove'),
 				reload     : getI18n('tabsControlsReload'),
 				pin        : getI18n('tabsControlsPin'),
 				unpin      : getI18n('tabsControlsUnpin'),
@@ -1467,7 +1521,7 @@ const initService = {
 
 		const onMoved           = (id, moveInfo) => {
 			moveFromTo('tabs', moveInfo.fromIndex, moveInfo.toIndex);
-			send('sidebar', 'tabs', 'moved', {'id': id, 'fromIndex': moveInfo.fromIndex, 'toIndex': moveInfo.toIndex});
+			send('sidebar', 'tabs', 'moved', {'id': id, 'oldIndex': moveInfo.fromIndex, 'newIndex': moveInfo.toIndex, 'isFolder': false});
 		};
 
 		const getTabs           = tabs => {
@@ -1556,7 +1610,7 @@ const initService = {
 					brauzer.bookmarks.update(message.data.id, message.data.changes);
 				},
 				move : (message, sender, sendResponse) => {
-					brauzer.bookmarks.move(message.data.id, {'parentId': message.data.pid, 'index': message.data.index});
+					brauzer.bookmarks.move(message.data.id, {'parentId': message.data.pid, 'index': message.data.newIndex});
 				},
 				search : (message, sender, sendResponse) => {
 					const onFulfilled = bookmarkItems => {
@@ -1714,13 +1768,13 @@ const initService = {
 				reIndex(oldParent);
 				if (oldParent !== newParent)
 					reIndex(newParent);
-				send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'index': info.index, 'isFolder': false});
+				send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'newIndex': info.index, 'isFolder': false});
 			}
 			else {
 				reIndex(oldParent);
 				if (oldParent !== newParent)
 					reIndex(newParent);
-				send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'index': info.index, 'isFolder': true});
+				send('sidebar', 'bookmarks', 'moved', {'id': id, 'pid': info.parentId, 'newIndex': info.index, 'isFolder': true});
 			}
 		};
 
@@ -2228,6 +2282,13 @@ const initService = {
 					for (let i = data.rssFoldersId.length - 1; i >= 0; i--)
 						updateRssFeed(data.rssFoldersId[i]);
 				},
+				move         : (message, sender, sendResponse) => {
+					const oldIndex = data.rssFoldersId.indexOf(message.data.id);
+					if (oldIndex !== -1) {
+						moveFromTo('rssFolders', oldIndex, message.data.newIndex);
+						send('sidebar', 'rss', 'moved', {'id': message.data.id, 'newIndex': message.data.newIndex, 'oldIndex': oldIndex, 'isFolder': true});
+					}
+				},
 				import       : (message, sender, sendResponse) => {
 					const parser = new DOMParser();
 					const xmlDoc = parser.parseFromString(message.data, 'text/xml');
@@ -2263,6 +2324,7 @@ const initService = {
 				showReadedAll      : getI18n('rssControlsShowReaded'),
 				delete             : getI18n('rssControlsDeleteItem'),
 				reload             : getI18n('rssControlsReload'),
+				move               : getI18n('rssControlsMove'),
 				new                : getI18n('rssNew'),
 				importExport       : getI18n('rssImportExport'),
 				reloadAll          : getI18n('rssReloadAll'),
@@ -2698,8 +2760,8 @@ const initService = {
 					if (pocket !== false) {
 						pocket.status = 0;
 						pocket.type   = detectType(pocket);
-						const folder  = addToFolder('pocket', pocket);
-						send('sidebar', 'pocket', 'unarchive', {'id': info, 'pid': pocket.type, 'domain': folder.id});
+						updateFolder.pocket(pocket, getById('pocketDomains', pocket.domain));
+						send('sidebar', 'pocket', 'unarchive', {'id': info, 'pid': pocket.type, 'domain': pocket.domain});
 					}
 				},
 				delete  : response => {
@@ -2915,19 +2977,22 @@ const initService = {
 			};
 
 			i18n.pocket = {
-				loginText  : getI18n('pocketControlsLoginText'),
-				loginTitle : getI18n('pocketControlsLoginTitle'),
-				logout     : getI18n('pocketControlsLogout'),
-				new        : getI18n('pocketControlsNew'),
-				fav        : getI18n('pocketControlsFav'),
-				unfav      : getI18n('pocketControlsUnfav'),
-				archive    : getI18n('pocketControlsArchive'),
-				unarchive  : getI18n('pocketControlsUnarchive'),
-				delete     : getI18n('pocketControlsDelete'),
-				plain      : getI18n('pocketPlainMode'),
-				type       : getI18n('pocketTypeMode'),
-				domain     : getI18n('pocketDomainMode'),
-				reload     : getI18n('pocketReload')
+				loginText     : getI18n('pocketControlsLoginText'),
+				loginTitle    : getI18n('pocketControlsLoginTitle'),
+				logout        : getI18n('pocketControlsLogout'),
+				new           : getI18n('pocketControlsNew'),
+				fav           : getI18n('pocketControlsFav'),
+				unfav         : getI18n('pocketControlsUnfav'),
+				archive       : getI18n('pocketControlsArchive'),
+				folderArchive : getI18n('pocketControlsFolderArchive'),
+				unarchive     : getI18n('pocketControlsUnarchive'),
+				delete        : getI18n('pocketControlsDelete'),
+				folderDelete  : getI18n('pocketControlsFolderDelete'),
+				move          : getI18n('pocketControlsMove'),
+				plain         : getI18n('pocketPlainMode'),
+				type          : getI18n('pocketTypeMode'),
+				domain        : getI18n('pocketDomainMode'),
+				reload        : getI18n('pocketReload')
 			};
 
 			messageHandler.pocket = {
@@ -2949,14 +3014,33 @@ const initService = {
 				archive   : (message, sender, sendResponse) => {
 					pocketRequest('archive', message.data);
 				},
+				folderArchive : (message, sender, sendResponse) => {
+					const domain = getFolderById('pocket', message.data);
+					if (domain !== false)
+						for (let i = domain.itemsId.length - 1; i >= 0; i--)
+							pocketRequest('archive', domain.itemsId[i]);
+				},
 				unarchive : (message, sender, sendResponse) => {
 					pocketRequest('unarchive', message.data);
 				},
 				delete    : (message, sender, sendResponse) => {
 					pocketRequest('delete', message.data);
 				},
+				folderDelete : (message, sender, sendResponse) => {
+					const domain = getFolderById('pocket', message.data);
+					if (domain !== false)
+						for (let i = domain.itemsId.length - 1; i >= 0; i--)
+							pocketRequest('delete', domain.itemsId[i]);
+				},
 				reloadAll : (message, sender, sendResponse) => {
 					pocketRequest('get');
+				},
+				move      : (message, sender, sendResponse) => {
+					const oldIndex = data.pocketFoldersId.indexOf(message.data.id);
+					if (oldIndex !== -1) {
+						moveFromTo('pocketFolders', oldIndex, message.data.newIndex);
+						send('sidebar', 'pocket', 'moved', {'id': message.data.id, 'newIndex': message.data.newIndex, 'oldIndex': oldIndex, 'isFolder': true});
+					}
 				}
 			};
 
