@@ -576,7 +576,6 @@ const initBlock = {
 				insertFolders('bookmarks', [info.item]);
 			},
 			moved           : info => {
-				console.log(info);
 				if (status.moving === true)
 					doc.addEventListener('mouseup', finishMoving, {'once': true});
 				else if (info.isFolder === false)
@@ -1861,8 +1860,6 @@ function moveItem(mode, eventTarget) {
 				break;
 			}
 		finilize();
-		console.log(oldIndex);
-		console.log(newIndex);
 		if (newIndex !== oldIndex)
 			send('background', mode, 'move', {'id': id, 'pid': item.parentNode.previousElementSibling.dataset.id, 'oldIndex': oldIndex, 'newIndex': newIndex, 'isFolder': isFolder});
 		else
