@@ -533,12 +533,12 @@ const initBlock = {
 		const checkForTree = (tabs, folders, view) => {
 			setBlockClass('tabs', view);
 			if (view !== 'tree')
-				setView('tabs', view, info.tabs, folders);
+				setView('tabs', view, tabs, folders);
 			else {
 				let fakeFolders = [];
 				for (let i = 0, l = tabs.length; i < l; i++)
 					fakeFolders.push(fakeFolder(tabs[i]));
-				setView('tabs', 'tree', info.tabs, fakeFolders);
+				setView('tabs', 'tree', tabs, fakeFolders);
 			}
 		};
 
