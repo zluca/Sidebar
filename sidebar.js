@@ -377,8 +377,15 @@ const initBlock = {
 				else
 					moveFolder('tabs', info);
 			},
-			unpin        : info => {
-				getById('tabs', info.id).classList.remove('pinned');
+			pinned       : info => {
+				const tab = getById('tabs', info.id);
+				if (tab !== false)
+					tab.classList.add('pinned');
+			},
+			unpinned       : info => {
+				const tab = getById('tabs', info.id);
+				if (tab !== false)
+					tab.classList.remove('pinned');
 			},
 			newFolder    : info => {
 				if (options.misc.tabsMode === 'domain')
@@ -514,10 +521,6 @@ const initBlock = {
 					else
 						rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex + 1]);
 				}
-				if (info.hasOwnProperty('pinned'))
-					tab.classList.add('pinned');
-				else
-					tab.classList.remove('pinned');
 			}
 		};
 

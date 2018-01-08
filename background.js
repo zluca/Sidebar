@@ -1456,13 +1456,7 @@ const initService = {
 			const oldFolder = getFolderById('tabs', oldTab.domain);
 			if (info.hasOwnProperty('pinned')) {
 				oldTab.pinned = info.pinned;
-				if (info.pinned === true) {
-					const index  = data.tabsId.indexOf(id);
-					moveFromTo('tabs', index, 0);
-					send('sidebar', 'tabs', 'moved', {'id': id, 'fromIndex': index, 'toIndex': tab.index, 'pinned': info.pinned});
-				}
-				else
-					send('sidebar', 'tabs', 'unpin', {'id': id});
+				send('sidebar', 'tabs', info.pinned === true ? 'pinned' : 'unpinned', {'id': id});
 			}
 			if (info.hasOwnProperty('url')) {
 				if (options.services.startpage.value === true)
