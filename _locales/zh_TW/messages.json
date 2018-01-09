@@ -82,7 +82,7 @@
 		"description"   : ""
 	},
 	"tabsControlsMove" : {
-		"message"       : "Move tab",
+		"message"       : "移動分頁",
 		"description"   : ""
 	},
 	"tabsControlsReload" : {
@@ -218,7 +218,7 @@
 		"description"   : ""
 	},
 	"rssControlsMove" : {
-		"message"       : "Move feed",
+		"message"       : "移動 feed",
 		"description"   : ""
 	},
 	"rssImportExport"          : {
@@ -267,7 +267,7 @@
 		"description"   : ""
 	},
 	"pocketControlsFolderArchive" : {
-		"message"       : "Move all items to archive",
+		"message"       : "移動所有項目到封存",
 		"description"   : ""
 	},
 	"pocketControlsUnarchive" : {
@@ -279,11 +279,11 @@
 		"description"   : ""
 	},
 	"pocketControlsFolderDelete" : {
-		"message"       : "Delete all items",
+		"message"       : "刪除所有項目",
 		"description"   : ""
 	},
 	"pocketControlsMove" : {
-		"message"       : "Move folder",
+		"message"       : "移動資料夾",
 		"description"   : ""
 	},
 	"pocketPlainMode" : {
@@ -464,7 +464,7 @@
 		"description"   : ""
 	},
 	"optWarningsPocketFolderDeleteLabel" : {
-		"message"       : "Delete pocket folder",
+		"message"       : "刪除 Pocket 資料夾",
 		"description"   : ""
 	},
 
@@ -947,11 +947,11 @@
 		}
 	},
 	"dialogPocketFolderDeleteHeader" : {
-		"message"       : "Remove folder from Pocket",
+		"message"       : "從 Pocket 中移除資料夾",
 		"description"   : ""
 	},
 	"dialogPocketFolderDeleteAlert" : {
-		"message"       : "Remove \"$name$\" and all its content from Pocket?",
+		"message"       : "從 Pocket 中移除 \"$name$\" 及其所有內容？",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {
