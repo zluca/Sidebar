@@ -1422,13 +1422,8 @@ function blockInit(newMode, info) {
 	clearTimeout(status.scrollTimer);
 	status.scrollTimer = 0;
 	status.scrolling   = false;
-	window.onscroll = event => {
-		if (status.searchActive === false) {
-			status.scrolling   = true;
-			if (Math.abs(window.scrollY - options.scroll[options.sidebar.mode]) > 10)
-				send('background', 'options', 'handler', {'section': 'scroll', 'option': options.sidebar.mode, 'value': window.scrollY});
-		}
-	};
+	window.removeEventListener('scroll', onscroll);
+	window.addEventListener('scroll', onscroll, {'passive': true});
 	setDomainStyle.rewrite(info.domains);
 }
 
@@ -1438,6 +1433,14 @@ function enableBlock(mode) {
 		const unreaded  = dce('div');
 		unreaded.id     = 'rss-unreaded';
 		button.rss.appendChild(unreaded);
+	}
+}
+
+function onscroll(event) {
+	if (status.searchActive === false) {
+		status.scrolling = true;
+		if (Math.abs(window.scrollY - options.scroll[options.sidebar.mode]) > 10)
+			send('background', 'options', 'handler', {'section': 'scroll', 'option': options.sidebar.mode, 'value': window.scrollY});
 	}
 }
 
