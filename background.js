@@ -3214,6 +3214,8 @@ function makeDomain(mode, url, fav) {
 	let title    = '';
 	if (url === '' || url === undefined)
 		id = 'default';
+	else if (url === 'chrome://startpage/extensions')
+		id = 'system';
 	else if (url.includes(config.defaultStartPage))
 		id = 'startpage';
 	else if (url.includes(config.extensionStartPage) || config.extensionStartPage.includes(url))
