@@ -650,6 +650,7 @@ const optionsHandler = {
 				send('content', 'iframe', 'add', {'side': section, 'width': options[section].width.value});},
 			native   : _ => {
 				send('sidebar', 'set', 'side', section);
+				status.nativeActive = true;
 			},
 			window   : _ => {
 				createSidebarWindow(section);
@@ -1147,7 +1148,6 @@ const initService = {
 					status.sideDetection.content = '';
 					messageHandler.sidebar       = {
 						sideDetection: (message, sender, sendResponse) => {
-
 							const setSide = (sender, side) => {
 								status.sideDetection[sender] = side;
 								setTimeout(_ => {status.sideDetection[sender] = '';}, 100);
