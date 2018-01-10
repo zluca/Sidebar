@@ -1450,7 +1450,7 @@ const initService = {
 		};
 
 		const onActivated       = tabInfo => {
-			reInit(tabInfo.id);
+			reInit(tabInfo.tabId);
 		};
 
 		const onUpdated         = (id, info, tab) => {
