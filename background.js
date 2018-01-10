@@ -1404,25 +1404,10 @@ const initService = {
 			status.init.tabs = true;
 		};
 
-		const checkStartPage    = tab => tab.url === config.defaultStartPage ? true : false;
-
-		const createTab         = tab => {
-			if (status.sidebarWindowCreating === true) {
-				status.sidebarWindowCreating = false;
-				return false;
-			}
-			if (options.services.startpage.value === true)
-				if (checkStartPage(tab) === true)
-					brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
-			const newTab = createById('tabs', tab, 'last');
-			send('sidebar', 'tabs', 'created', {'tab': newTab});
-			return newTab;
-		};
-
-		const onActivated       = tabInfo => {
-			const tab = getById('tabs', tabInfo.tabId);
+		const reInit  = id => {
+			const tab = getById('tabs', id);
 			if (tab !== false) {
-				status.activeTabId = tabInfo.tabId;
+				status.activeTabId = id;
 				send('sidebar', 'tabs', 'active', status.activeTabId);
 				if (options.leftBar.method.value === 'iframe') {
 					send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
@@ -1449,6 +1434,25 @@ const initService = {
 			}
 		};
 
+		const checkStartPage    = tab => tab.url === config.defaultStartPage ? true : false;
+
+		const createTab         = tab => {
+			if (status.sidebarWindowCreating === true) {
+				status.sidebarWindowCreating = false;
+				return false;
+			}
+			if (options.services.startpage.value === true)
+				if (checkStartPage(tab) === true)
+					brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
+			const newTab = createById('tabs', tab, 'last');
+			send('sidebar', 'tabs', 'created', {'tab': newTab});
+			return newTab;
+		};
+
+		const onActivated       = tabInfo => {
+			reInit(tabInfo.id);
+		};
+
 		const onUpdated         = (id, info, tab) => {
 			const oldTab = getById('tabs', id);
 			if (oldTab === false)
@@ -1459,6 +1463,7 @@ const initService = {
 				send('sidebar', 'tabs', info.pinned === true ? 'pinned' : 'unpinned', {'id': id});
 			}
 			if (info.hasOwnProperty('url')) {
+				reInit(id);
 				if (options.services.startpage.value === true)
 					if (checkStartPage(tab))
 						return brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
