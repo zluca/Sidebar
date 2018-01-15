@@ -1,20 +1,10 @@
-#bookmarks-bookmarkThis>.button>span {
-	-webkit-mask-image: url(icons/new.svg);
-	mask-image: url(icons/new.svg);
-}
-#bookmarks>.bottom-bar>.button {
-	-webkit-mask-image: url(icons/search.svg);
-	mask-image: url(icons/search.svg);
-}
 .item #bookmarks-delete,
-.folder-name #bookmarks-deleteFolder,
 .item #bookmarks-move,
-.folder .folder #bookmarks-move,
+.folder-name #bookmarks-folderDelete,
+#bookmarks-move,
 #bookmarks-edit {
 	display: inline-block;
 }
-#bookmarks-0>.folder>.folder-name #bookmarks-edit,
-.search-active #bookmarks-move,
-.plain #bookmarks-move {
+#root-folder>div>.folder>.folder-name>.controls {
 	display: none;
 }

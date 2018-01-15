@@ -96,7 +96,6 @@ function init(response) {
 			setSearchEngine();
 
 			letsSearch.addEventListener('click', event => {
-				event.stopPropagation();
 				const subject    = searchField.value;
 				const searchPath = {
 					duckduckgo      : `https://duckduckgo.com/?q=`,
@@ -115,16 +114,14 @@ function init(response) {
 				};
 				if (subject !== '')
 					document.location.href = searchPath[options.startpage.searchEngine] + subject.replace(' ', '+');
-			});
+			}, {'passive': true});
 
 			searchField.addEventListener('keydown', event => {
-				event.stopPropagation();
 				if (event.key === 'Enter')
 					letsSearch.click();
-			});
+			}, {'passive': true});
 
 			searchSelect.addEventListener('click', event => {
-				event.stopPropagation();
 				const target = event.target;
 				if (searchSelect.classList.contains('show-selection')) {
 					if (target.classList.contains('search-engine')) {
@@ -142,9 +139,9 @@ function init(response) {
 						searchSelect.style.setProperty('max-height', `${maxHeight}px`);
 						searchSelect.style.setProperty('overflow-y', 'scroll');
 					}
-					document.body.addEventListener('click', cancelSelection);
+					setTimeout(_ => {document.body.addEventListener('click', cancelSelection, {'passive': true});}, 0);
 				}
-			});
+			}, {'passive': true});
 
 			if (document.body.firstChild !== undefined)
 				document.body.insertBefore(search, document.body.firstChild);
@@ -393,7 +390,7 @@ function init(response) {
 		setStyle();
 		setColor(response.theme);
 		setImageStyle[response.startpage.imageStyle]();
-		window.addEventListener('resize', setStyle);
+		window.addEventListener('resize', setStyle, {'passive': true});
 
 		if (options.startpage.searchEnabled === true)
 			setSearch();
@@ -505,11 +502,11 @@ function init(response) {
 
 			const cancelDrag = _ => {
 				clearTimeout(timer);
-				document.body.removeEventListener('mouseup', cancelDrag);
+				document.body.removeEventListener('mouseup', cancelDrag, {'passive': true});
 			};
 
 			timer = setTimeout(makeDraggable, 500);
-			document.body.addEventListener('mouseup', cancelDrag);
+			document.body.addEventListener('mouseup', cancelDrag, {'passive': true});
 		});
 
 		document.body.addEventListener('mouseover', event => {
@@ -517,10 +514,9 @@ function init(response) {
 			if (status.dragging === true) return;
 			if (target.classList.contains('site'))
 				target.appendChild(editButton);
-		});
+		}, {'passive': true});
 
 		siteContainer.addEventListener('click', event => {
-			event.stopPropagation();
 			const target = event.target;
 			if (target.classList.contains('add-new'))
 				send('background', 'dialog', 'siteCreate', {'index': target.dataset.index});
@@ -532,7 +528,7 @@ function init(response) {
 				else
 					document.location = event.target.title;
 			}
-		});
+		}, {'passive': true});
 
 		editButton.addEventListener('click', event => {
 			event.stopPropagation();

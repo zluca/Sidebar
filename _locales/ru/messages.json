@@ -69,11 +69,7 @@
 		"description"   : ""
 	},
 
-	"tabsNewText" : {
-		"message"       : "",
-		"description"   : ""
-	},
-	"tabsNewTitle" : {
+	"tabsNew" : {
 		"message"       : "Новая вкладка",
 		"description"   : ""
 	},
@@ -117,12 +113,12 @@
 		"message"       : "Отображать вкладки в виде дерева",
 		"description"   : ""
 	},
-	"bkBookmarkThisText" : {
-		"message"       : "",
+	"bkBookmarkThis" : {
+		"message"       : "Сделать закладку",
 		"description"   : ""
 	},
-	"bkBookmarkThisTitle" : {
-		"message"       : "Сделать закладку",
+	"bkBookmarkFolderNew" : {
+		"message"       : "Создать папку",
 		"description"   : ""
 	},
 	"bkMoveBookmark" : {
@@ -898,6 +894,10 @@
 	},
 	"dialogBookmarkNewHeader" : {
 		"message"       : "Новая закладка",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderNewHeader" : {
+		"message"       : "Новая папка",
 		"description"   : ""
 	},
 	"dialogBookmarkEditHeader" : {

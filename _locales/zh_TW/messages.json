@@ -69,11 +69,7 @@
 		"description"   : ""
 	},
 
-	"tabsNewText" : {
-		"message"       : "",
-		"description"   : ""
-	},
-	"tabsNewTitle" : {
+	"tabsNew" : {
 		"message"       : "建立新分頁",
 		"description"   : ""
 	},
@@ -117,12 +113,12 @@
 		"message"       : "以樹形檢視組織分頁",
 		"description"   : ""
 	},
-	"bkBookmarkThisText" : {
-		"message"       : "",
+	"bkBookmarkThis" : {
+		"message"       : "將此分頁加入書籤",
 		"description"   : ""
 	},
-	"bkBookmarkThisTitle" : {
-		"message"       : "將此分頁加入書籤",
+	"bkBookmarkFolderNew" : {
+		"message"       : "Create new folder",
 		"description"   : ""
 	},
 	"bkEditBookmark" : {
@@ -902,6 +898,10 @@
 	},
 	"dialogBookmarkNewHeader" : {
 		"message"       : "新書籤",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderNewHeader" : {
+		"message"       : "New bookmark",
 		"description"   : ""
 	},
 	"dialogBookmarkEditHeader" : {

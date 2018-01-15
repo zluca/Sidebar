@@ -27,23 +27,13 @@ const i18n     = {
 
 const status   = {
 	side              : window.location.hash.replace('#', '').split('-')[0],
-	init: {
-		tabs         : false,
-		bookmarks    : false,
-		downloads    : false,
-		history      : false,
-		rss          : false,
-		pocket       : false
-	},
 	bookmarkFolders  : [],
 	historyInfo       : {
 		lastDate : 0,
 		lastNum  : 0
 	},
-	activeBlock         : null,
 	activeTab           : false,
 	activeTabId         : 0,
-	domainsId           : [],
 	info                : {
 		rssUnreaded    : 0,
 		downloadStatus : ''
@@ -53,6 +43,7 @@ const status   = {
 		id   : -1,
 		time : -1
 	},
+	lastSearch          : '',
 	scrolling           : false,
 	scrollTimer         : 0
 };
@@ -80,7 +71,8 @@ const data     = {
 	pocketId            : [],
 	pocketFolders       : [],
 	pocketFoldersId     : [],
-	domains             : []
+	domains             : [],
+	domainsId           : []
 };
 
 const options  = {
@@ -96,49 +88,85 @@ const options  = {
 	warnings         : null,
 };
 
-let initTimer = -1;
+let initTimer  = -1;
 tryToInit();
+
+let onClick    = _ => {};
 
 document.title = options.sidebar.method;
 doc.classList.add(status.side);
 
-let rootFolder = null;
+const blockStyle = dce('link');
+blockStyle.type  = 'text/css';
+blockStyle.rel   = 'stylesheet';
+document.head.appendChild(blockStyle);
 
 const controls = {
-	header: {
-		main      : dce('nav'),
-		sidebar   : dce('div'),
-		iframe    : null
-	},
-	tabs      : {
-		item     : null,
-		bottom   : null
-	},
-	bookmarks : {
-		item     : null,
-		bottom   : null
-	},
-	history   : {
-		bottom   : null
-	},
-	downloads : {
-		item     : null
-	},
-	rss       : {
-		item     : null,
-		bottom   : null
-	},
-	pocket    : {
-		item     : null,
-		bottom   : null,
-		user     : null
-	}
+	main     : dce('nav'),
+	sidebar  : dce('div'),
+	iframe   : null,
+
+	item     : dce('div'),
+	button   : dce('div'),
+	bottom   : dce('div'),
+	user     : dce('div')
 };
 
-controls.header.main.id    = 'controls';
-controls.header.sidebar.id = 'controls-block';
-controls.header.main.appendChild(controls.header.sidebar);
-document.body.appendChild(controls.header.main);
+controls.sidebar.classList.add('controls');
+controls.bottom.classList.add('controls');
+controls.item.classList.add('controls');
+controls.button.classList.add('controls');
+controls.user.classList.add('controls');
+controls.sidebar.id = 'controls-sidebar';
+controls.bottom.id  = 'controls-bottom';
+controls.item.id    = 'controls-item';
+controls.button.id  = 'controls-button';
+controls.user.id    = 'controls-user';
+controls.main.appendChild(controls.sidebar);
+
+const block         = dce('main');
+const searchResults = dce('div');
+const rootFolder    = dce('div');
+rootFolder.id       = 'root-folder';
+rootFolder.appendChild(dce('div'));
+rootFolder.firstChild.dataset.id = 0;
+rootFolder.appendChild(dce('div'));
+block.appendChild(controls.user);
+block.appendChild(rootFolder);
+block.appendChild(searchResults);
+block.appendChild(controls.button);
+block.appendChild(controls.bottom);
+block.appendChild(controls.item);
+
+document.body.appendChild(controls.main);
+document.body.appendChild(block);
+
+block.addEventListener('mouseover', event => {
+	const target = event.target;
+	if (target.classList.contains('item')) {
+		target.appendChild(controls.item);
+		if (options.sidebar.mode === 'rss')
+			target.title = target.dataset.title;
+	}
+	else if (target.classList.contains('folder-name'))
+		target.appendChild(controls.item);
+	else if (target.parentNode.classList.contains('item'))
+		target.parentNode.appendChild(controls.item);
+}, {'passive': true});
+
+block.addEventListener('click', event => {
+	if (event.button !== 0) return;
+	event.stopPropagation();
+	event.preventDefault();
+	if (event.target.classList.contains('folder-name')) {
+		const folded = status.moving === true ? false : !event.target.parentNode.classList.contains('folded');
+		send('background', 'set', 'fold', {'mode': options.sidebar.mode, 'id': event.target.parentNode.dataset.id, 'folded': folded, 'method': folded ? 'add' : 'remove'});
+	}
+	else if (status.moving === true)
+		return;
+	else
+		onClick(event);
+});
 
 const button   = {
 	tabs        : null,
@@ -149,17 +177,8 @@ const button   = {
 	pocket      : null
 };
 
-const block    = {
-	tabs        : makeBlock('tabs'),
-	bookmarks   : makeBlock('bookmarks'),
-	history     : makeBlock('history'),
-	downloads   : makeBlock('downloads'),
-	rss         : makeBlock('rss'),
-	pocket      : makeBlock('pocket')
-};
-
 const messageHandler = {
-	options  : {
+	options   : {
 		wide               : info => {
 			setWide(info.value);
 		},
@@ -170,7 +189,7 @@ const messageHandler = {
 			options.sidebar.width = info.value;
 		},
 		mode               : info => {
-			blockInit(info.value, info.data);
+			initBlock[info.value](info.data);
 		},
 		bookmarkDelete     : info => {
 			options.warnings.bookmarkDelete = info.value;
@@ -218,10 +237,7 @@ const messageHandler = {
 			setImageStyle[info.value]();
 		},
 		services           : info => {
-			if (info.enabled === true)
-				enableBlock(info.service);
-			else
-				button[info.service].classList.add('hidden');
+			button[info.service].classList[info.enabled === true ? 'remove' : 'add']('hidden');
 		},
 		tabsMode           : info => {
 			options.misc.tabsMode = info;
@@ -233,7 +249,7 @@ const messageHandler = {
 			options.misc.pocketMode = info;
 		}
 	},
-	set : {
+	set       : {
 		fold         : info => {
 			if (info.mode !== options.sidebar.mode) return;
 			const folder = getFolderById(info.mode, info.id);
@@ -262,7 +278,7 @@ const messageHandler = {
 			}
 		}
 	},
-	info : {
+	info      : {
 		rssUnreaded    : info => {
 			button.rss.lastChild.textContent = info.unreaded || ' ';
 		},
@@ -276,18 +292,213 @@ const messageHandler = {
 			setDownloadStatus[info]();
 		}
 	},
-	tabs : {},
+	tabs      : {},
 	bookmarks : {},
-	history : {},
+	history   : {},
 	downloads : {},
-	rss : {}
+	rss       : {},
+	pocket    : {}
 };
+
+function tryToInit() {
+	send('background', 'request', 'mode', {'side': status.side, 'method': options.sidebar.method, needResponse: true}, response => {
+		if (response === undefined) {
+			initTimer = setTimeout(tryToInit, 200);
+			return;
+		}
+
+		if (options.sidebar.method === 'native') {
+			const port = brauzer.runtime.connect({name: 'sidebar-alive'});
+			if (firefox) {
+				doc.addEventListener('mouseleave', event => {
+					send('background', 'sidebar', 'sideDetection', {'sender': 'sidebar', 'action': 'leave', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+				}, {'passive': true});
+				doc.addEventListener('mouseover', event => {
+					send('background', 'sidebar', 'sideDetection',{'sender': 'sidebar', 'action': 'over', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+				}, {'passive': true});
+			}
+		}
+		else if (options.sidebar.method === 'iframe') {
+			if (firefox) {
+				doc.addEventListener('mouseleave', event => {
+					send('background', 'sidebar', 'sideDetection', {'sender': 'content', 'action': 'leave', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+				}, {'passive': true});
+				doc.addEventListener('mouseover', event => {
+					send('background', 'sidebar', 'sideDetection',{'sender': 'content', 'action': 'over', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
+				}, {'passive': true});
+			}
+		}
+
+		initSidebar(response);
+	});
+}
+
+function initSidebar(response) {
+	const onMessage = (message, sender, sendResponse) => {
+		// console.log(message);
+		if (message.hasOwnProperty('target'))
+			if (message.target === 'sidebar' || message.target === status.side)
+				if (messageHandler.hasOwnProperty(message.subject))
+					if (messageHandler[message.subject].hasOwnProperty(message.action))
+						messageHandler[message.subject][message.action](message.data, sendResponse);
+	};
+
+	brauzer.runtime.onMessage.removeListener(onMessage);
+
+	status.side                  = response.side;
+	options.misc                 = response.options.misc;
+	options.theme                = response.options.theme;
+	options.warnings             = response.options.warnings;
+	options.sidebar              = response.options.sidebar;
+	options.pocket               = response.options.pocket;
+	options.scroll               = response.options.scroll;
+	i18n.header                  = response.i18n.header;
+	status.info                  = response.info;
+
+	setFontSize();
+	setColor(options.theme);
+	setImageStyle[options.theme.sidebarImageStyle]();
+
+	doc.style.backgroundImage = `url(${options.theme.sidebarImage})`;
+
+	for (let service in response.options.services)
+		if (button[service] === null) {
+			button[service] = makeButton(service, 'header', 'sidebar', !response.options.services[service]);
+			if (service === 'rss') {
+				const unreaded  = dce('div');
+				unreaded.id     = 'rss-unreaded';
+				button.rss.appendChild(unreaded);
+			}
+		}
+		else
+			button[service].classList[response.options.services[service] === true ? 'remove' : 'add']('hidden');
+
+	setRssUnreaded(status.info.rssUnreaded);
+	setDownloadStatus[status.info.downloadStatus]();
+
+	if (options.sidebar.method === 'iframe') {
+		doc.classList.remove('fixed');
+		window.onresize              = _ => {setFontSize();};
+		if (controls.iframe === null) {
+			controls.iframe       = dce('div');
+			controls.iframe.id    = 'controls-iframe';
+			controls.iframe.classList.add('controls');
+			makeButton('pin', 'header', 'iframe');
+			makeButton('unpin', 'header', 'iframe');
+			makeButton('wide', 'header', 'iframe');
+			makeButton('narrow', 'header', 'iframe');
+			controls.main.appendChild(controls.iframe);
+		}
+		setWide(options.sidebar.wide);
+		setFixed(options.sidebar.fixed);
+	}
+
+	initBlock[options.sidebar.mode](response.data);
+
+	brauzer.runtime.onMessage.addListener(onMessage);
+}
+
+function prepareBlock(mode) {
+
+	if (rootFolder.lastChild.hasChildNodes()) {
+		rootFolder.removeChild(rootFolder.lastChild);
+		rootFolder.appendChild(dce('div'));
+	}
+	if (controls.user.hasChildNodes()) {
+		block.removeChild(controls.user);
+		controls.user      = dce('div');
+		controls.user.id   = 'controls-user';
+		controls.user.classList.add('controls');
+		block.insertBefore(controls.user, rootFolder);
+	}
+	if (controls.item.hasChildNodes()) {
+		controls.item.parentNode.removeChild(controls.item);
+		controls.item    = dce('div');
+		controls.item.id = 'controls-item';
+		controls.item.classList.add('controls');
+		block.appendChild(controls.item);
+	}
+	if (controls.button.hasChildNodes()) {
+		block.removeChild(controls.button);
+		controls.button    = dce('div');
+		controls.button.id = 'controls-button';
+		controls.button.classList.add('controls');
+		block.appendChild(controls.button);
+	}
+	if (controls.bottom.hasChildNodes()) {
+		block.removeChild(controls.bottom);
+		controls.bottom    = dce('div');
+		controls.bottom.id = 'controls-bottom';
+		controls.bottom.classList.add('controls');
+		block.appendChild(controls.bottom);
+	}
+
+	clearData(options.sidebar.mode);
+
+	clearTimeout(status.scrollTimer);
+	window.removeEventListener('scroll', onscroll);
+	status.scrollTimer = 0;
+	status.scrolling   = false;
+	blockStyle.href    = `sidebar-${mode}.css`;
+
+	document.body.classList = mode;
+	if (options.sidebar.mode !== mode) {
+		options.sidebar.mode    = mode;
+		messageHandler[options.sidebar.mode] = {};
+	}
+	searchActive(false);
+
+	window.scrollTo(0, options.scroll[options.sidebar.mode]);
+	window.addEventListener('scroll', onscroll, {'passive': true});
+}
 
 const initBlock = {
 
 	tabs : info => {
 
-		status.activeTabId = info.activeTabId;
+		const moveTab       = info => {
+			const tab = getById('tabs', info.id);
+			if (tab === false) return;
+			if (options.misc.tabsMode === 'plain') {
+				if (info.newIndex < info.oldIndex)
+					rootFolder.lastChild.insertBefore(tab, rootFolder.lastChild.children[info.newIndex]);
+				else
+					rootFolder.lastChild.insertBefore(tab, rootFolder.lastChild.children[info.newIndex + 1]);
+			}
+			else if (options.misc.tabsMode === 'tree') {
+				if (info.newIndex < info.oldIndex)
+					rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex]);
+				else
+					rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex + 1]);
+			}
+		};
+
+		const fakeFolder    = tab => {
+			return {
+				id     : tab.id,
+				pid    : tab.opener,
+				view   : 'tree',
+				folded : false
+			};
+		};
+
+		const checkForTree  = (tabs, folders, view) => {
+			setBlockClass('tabs', view);
+			if (view !== 'tree')
+				setView('tabs', view, tabs, folders);
+			else {
+				let fakeFolders = [];
+				for (let i = 0, l = tabs.length; i < l; i++)
+					fakeFolders.push(fakeFolder(tabs[i]));
+				setView('tabs', 'tree', tabs, fakeFolders);
+			}
+		};
+
+		prepareBlock('tabs');
+		setBlockClass('tabs');
+		setDomainStyle.rewrite(info.domains);
+		i18n.tabs           = info.i18n;
+		status.activeTabId  = info.activeTabId;
 
 		messageHandler.tabs = {
 			created    : info => {
@@ -303,11 +514,10 @@ const initBlock = {
 						status.activeTab.parentNode.parentNode.firstChild.classList.remove('active');
 				}
 				status.activeTab = getById('tabs', info);
-				if (status.activeTab !== false) {
-					status.activeTab.classList.add('active');
-					if (options.misc.tabsMode === 'domain')
-						status.activeTab.parentNode.parentNode.firstChild.classList.add('active');
-				}
+				if (status.activeTab === false) return;
+				status.activeTab.classList.add('active');
+				if (options.misc.tabsMode === 'domain')
+					status.activeTab.parentNode.parentNode.firstChild.classList.add('active');
 			},
 			title      : info => {
 				const tab = getById('tabs', info.id);
@@ -345,12 +555,11 @@ const initBlock = {
 						const pid    = tab.parentNode.parentNode.firstChild.dataset.id;
 						const folder = getFolderById('tabs', pid);
 						removeById('tabs', info.id);
-						if (folder !== false) {
-							if (!folder.lastChild.hasChildNodes())
-								removeFolderById('tabs', pid);
-							else
-								folder.firstChild.classList.remove('active');
-						}
+						if (folder === false) return;
+						if (!folder.lastChild.hasChildNodes())
+							removeFolderById('tabs', pid);
+						else
+							folder.firstChild.classList.remove('active');
 					},
 					tree   : tab => {
 						const folder = tab.parentNode;
@@ -412,52 +621,7 @@ const initBlock = {
 			}
 		};
 
-		setBlockClass('tabs');
-
-		createRootFolder('tabs');
-		controls.tabs.item        = dce('div');
-		controls.tabs.item.classList.add('controls');
-		makeButton('move', 'tabs', 'item');
-		makeButton('fav', 'tabs', 'item');
-		makeButton('reload', 'tabs', 'item');
-		makeButton('pin', 'tabs', 'item');
-		makeButton('unpin', 'tabs', 'item');
-		makeButton('close', 'tabs', 'item');
-		makeButton('closeAll', 'tabs', 'item');
-		controls.tabs.bottom      = dce('div');
-		controls.tabs.bottom.classList.add('bottom-bar');
-		makeButton('new', 'tabs', 'bottom');
-		makeButton('plain', 'tabs', 'bottom');
-		makeButton('domain', 'tabs', 'bottom');
-		makeButton('tree', 'tabs', 'bottom');
-
-		block.tabs.appendChild(rootFolder);
-		block.tabs.appendChild(makeItemButton('new', 'tabs'));
-		block.tabs.appendChild(controls.tabs.item);
-		block.tabs.appendChild(controls.tabs.bottom);
-
-		block.tabs.addEventListener('click', event => {
-			event.stopPropagation();
-			event.preventDefault();
-			if (status.moving === true)
-				return;
-			const target = event.target;
-			if (target.classList.contains('active'))
-				return;
-			else if (target.classList.contains('tab'))
-				send('background', 'tabs', 'setActive', {'id': parseInt(target.dataset.id)});
-		});
-
-		block.tabs.addEventListener('mouseover', event => {
-			event.stopPropagation();
-			const target = event.target;
-			if (target.classList.contains('tab'))
-				target.appendChild(controls.tabs.item);
-			else if (target.classList.contains('folder-name'))
-				target.appendChild(controls.tabs.item);
-		});
-
-		insertItems.tabs = tabs => {
+		insertItems.tabs    = tabs => {
 			let pid         = 0;
 			let tab         = null;
 			let folder      = rootFolder;
@@ -472,11 +636,10 @@ const initBlock = {
 						pid    = tabs[i].domain;
 						folder = getFolderById('tabs', pid);
 					}
-					if (folder !== false) {
-						folder.lastChild.appendChild(tab);
-						if (status.activeTab === tab)
-							folder.firstChild.classList.add('active');
-					}
+					if (folder === false) return;
+					folder.lastChild.appendChild(tab);
+					if (status.activeTab === tab)
+						folder.firstChild.classList.add('active');
 				},
 				tree  : i => {
 					folder = getFolderById('tabs', tabs[i].id);
@@ -506,50 +669,97 @@ const initBlock = {
 			}
 		};
 
-		const moveTab = info => {
-			const tab = getById('tabs', info.id);
-			if (tab !== false) {
-				if (options.misc.tabsMode === 'plain') {
-					if (info.newIndex < info.oldIndex)
-						rootFolder.lastChild.insertBefore(tab, rootFolder.lastChild.children[info.newIndex]);
-					else
-						rootFolder.lastChild.insertBefore(tab, rootFolder.lastChild.children[info.newIndex + 1]);
-				}
-				else if (options.misc.tabsMode === 'tree') {
-					if (info.newIndex < info.oldIndex)
-						rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex]);
-					else
-						rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex + 1]);
-				}
-			}
+		onClick = event => {
+			if (event.target.classList.contains('active'))
+				return;
+			else if (event.target.classList.contains('tab'))
+				send('background', 'tabs', 'setActive', {'id': parseInt(event.target.dataset.id)});
 		};
 
-		const fakeFolder = tab => {
-			return {
-				id     : tab.id,
-				pid    : tab.opener,
-				view   : 'tree',
-				folded : false
-			};
-		};
-
-		const checkForTree = (tabs, folders, view) => {
-			setBlockClass('tabs', view);
-			if (view !== 'tree')
-				setView('tabs', view, tabs, folders);
-			else {
-				let fakeFolders = [];
-				for (let i = 0, l = tabs.length; i < l; i++)
-					fakeFolders.push(fakeFolder(tabs[i]));
-				setView('tabs', 'tree', tabs, fakeFolders);
-			}
-		};
+		makeButton('new', 'tabs', 'button');
+		makeButton('move', 'tabs', 'item');
+		makeButton('fav', 'tabs', 'item');
+		makeButton('reload', 'tabs', 'item');
+		makeButton('pin', 'tabs', 'item');
+		makeButton('unpin', 'tabs', 'item');
+		makeButton('close', 'tabs', 'item');
+		makeButton('closeAll', 'tabs', 'item');
+		makeButton('new', 'tabs', 'bottom');
+		makeButton('plain', 'tabs', 'bottom');
+		makeButton('domain', 'tabs', 'bottom');
+		makeButton('tree', 'tabs', 'bottom');
 
 		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode);
 	},
 
 	bookmarks : info => {
-		let lastSearch = '';
+
+		const insertBookmarks = (items, method = 'last') => {
+			let folder = rootFolder;
+			let count  = 0;
+			let pid    = 0;
+
+			const checkPid =
+				method === 'search' ?
+					item => {
+						folder = searchResults;
+					} :
+					options.misc.bookmarksMode === 'tree' ?
+						item => {
+							if (item.pid !== pid) {
+								pid    = item.pid;
+								folder = getFolderById('bookmarks', pid);
+								if (folder === false)
+									folder = rootFolder;
+								count  = folder.lastChild.children.length - 1;
+							}
+							count++;
+						} :
+						item => {};
+
+			for (let i = 0, l = items.length; i < l; i++) {
+				checkPid(items[i]);
+				const bookmark       = createById('bookmarks', items[i].id, true);
+				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
+				bookmark.title       = items[i].url;
+				bookmark.href        = items[i].url;
+				bookmark.textContent = items[i].title;
+				if (count > items[i].index - 1)
+					folder.lastChild.insertBefore(bookmark, folder.lastChild.children[items[i].index]);
+				else
+					folder.lastChild.appendChild(bookmark);
+			}
+		};
+
+		const moveBook        = (item, parent, index) => {
+
+			const injectBook = _ => {
+				const beacon = parent.lastChild.children[index];
+				if (beacon !== undefined)
+					parent.lastChild.insertBefore(item, beacon);
+				else
+					parent.lastChild.appendChild(item);
+			};
+			if (parent !== item.parentNode.parentNode)
+				injectBook();
+			else {
+				rootFolder.lastChild.appendChild(item);
+				injectBook();
+			}
+		};
+
+		const changeBook      = (id, info) => {
+			const bookmark = getById('bookmarks', id);
+			if (info.hasOwnProperty('url'))
+				bookmark.title = info.url;
+			if (info.hasOwnProperty('title'))
+				bookmark.textContent = info.title;
+		};
+
+		prepareBlock('bookmarks');
+		setBlockClass('bookmarks');
+		setDomainStyle.rewrite(info.domains);
+		i18n.bookmarks = info.i18n;
 
 		messageHandler.bookmarks = {
 			removed         : info => {
@@ -582,127 +792,18 @@ const initBlock = {
 			}
 		};
 
-		block.bookmarks.classList    = `block ${options.misc.bookmarksMode}`;
-		createRootFolder('bookmarks');
-		const bookmarksSearchResults = dce('div');
-		bookmarksSearchResults.id    = 'bookmarks-search-results';
-		bookmarksSearchResults.classList.add('search-results');
-		controls.bookmarks.item      = dce('div');
-		controls.bookmarks.item.classList.add('controls');
+		onClick               = event => {
+			if (event.target.classList.contains('bookmark'))
+				openLink(event);
+		};
+
+		makeButton('new', 'bookmarks', 'button');
+		makeButton('folderNew', 'bookmarks', 'button');
 		makeButton('edit', 'bookmarks', 'item');
 		makeButton('move', 'bookmarks', 'item');
 		makeButton('delete', 'bookmarks', 'item');
 		makeButton('folderDelete', 'bookmarks', 'item');
-		controls.bookmarks.bottom    = dce('div');
-		controls.bookmarks.bottom.classList.add('bottom-bar');
-		const bookmarksSearch        = dce('input');
-		bookmarksSearch.id           = 'bookmarks-search';
-		bookmarksSearch.classList.add('search');
-		bookmarksSearch.type         = 'text';
-		bookmarksSearch.placeholder  = i18n.bookmarks.searchPlaceholder;
-		controls.bookmarks.bottom.appendChild(bookmarksSearch);
-		const searchIcon             = dce('span');
-		searchIcon.classList.add('search-icon');
-		controls.bookmarks.bottom.appendChild(searchIcon);
-		block.bookmarks.appendChild(rootFolder);
-		block.bookmarks.appendChild(makeItemButton('bookmarkThis', 'bookmarks'));
-		block.bookmarks.appendChild(bookmarksSearchResults);
-		block.bookmarks.appendChild(controls.bookmarks.item);
-		block.bookmarks.appendChild(controls.bookmarks.bottom);
-
-		bookmarksSearch.addEventListener('keyup', event => {
-			event.stopPropagation();
-			const value = bookmarksSearch.value;
-			if (value.length > 1) {
-				if (lastSearch !== value) {
-					lastSearch = value;
-					send('background', 'bookmarks', 'search', {'request': value, needResponse: true}, response => {
-						while (bookmarksSearchResults.firstChild)
-							bookmarksSearchResults.removeChild(bookmarksSearchResults.firstChild);
-						insertBookmarks(response, 'search');
-						searchActive(true);
-					});
-				}
-			}
-			else
-				searchActive(false);
-		});
-
-		block.bookmarks.addEventListener('click', event => {
-			event.stopPropagation();
-			event.preventDefault();
-			if (event.target.classList.contains('bookmark'))
-				openLink(event);
-		});
-
-		block.bookmarks.addEventListener('mouseover', event => {
-			event.stopPropagation();
-			const target = event.target;
-			if (target.classList.contains('bookmark') || target.classList.contains('folder-name'))
-				target.appendChild(controls.bookmarks.item);
-		});
-
-		const insertBookmarks = (items, method = 'last') => {
-			let folder = rootFolder;
-			let count  = 0;
-			let pid    = 0;
-
-			const checkPid =
-				method === 'search' ?
-					item => {
-						folder = bookmarksSearchResults;
-					} :
-					options.misc.bookmarksMode === 'tree' ?
-						item => {
-							if (item.pid !== pid) {
-								pid    = item.pid;
-								folder = getFolderById('bookmarks', pid);
-								if (folder === false)
-									folder = rootFolder;
-								count  = folder.lastChild.children.length - 1;
-							}
-							count++;
-						} :
-						item => {};
-
-			for (let i = 0, l = items.length; i < l; i++) {
-				checkPid(items[i]);
-				const bookmark       = createById('bookmarks', items[i].id, true);
-				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
-				bookmark.title       = items[i].url;
-				bookmark.href        = items[i].url;
-				bookmark.textContent = items[i].title;
-				if (count > items[i].index - 1)
-					folder.lastChild.insertBefore(bookmark, folder.lastChild.children[items[i].index]);
-				else
-					folder.lastChild.appendChild(bookmark);
-			}
-		};
-
-		const moveBook = (item, parent, index) => {
-
-			const injectBook = _ => {
-				const beacon = parent.lastChild.children[index];
-				if (beacon !== undefined)
-					parent.lastChild.insertBefore(item, beacon);
-				else
-					parent.lastChild.appendChild(item);
-			};
-			if (parent !== item.parentNode.parentNode)
-				injectBook();
-			else {
-				rootFolder.lastChild.appendChild(item);
-				injectBook();
-			}
-		};
-
-		const changeBook = (id, info) => {
-			const bookmark = getById('bookmarks', id);
-			if (info.hasOwnProperty('url'))
-				bookmark.title = info.url;
-			if (info.hasOwnProperty('title'))
-				bookmark.textContent = info.title;
-		};
+		makeSearch('bookmarks');
 
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders('bookmarks', info.bookmarksFolders);
@@ -711,82 +812,7 @@ const initBlock = {
 
 	history : info => {
 
-		messageHandler.history = {
-			new     : info =>  {
-				insertFolders('history', [info.folder]);
-				insertHistoryes([info.item], 'first');
-				if (info.historyEnd === true)
-					getMoreButton.classList.add('hidden');
-			},
-			removed : info =>  {
-				removeHistoryItems(info.ids);
-			},
-			wiped   : info =>  {
-				historyTotalWipe();
-			},
-			gotMore : info =>  {
-				insertFolders('history', info.historyFolders);
-				insertHistoryes(info.history, 'last');
-			},
-			title   : info =>  {
-				const item = getById('history', info.id);
-				if (item !== false)
-					item.textContent = info.title;
-			}
-		};
-
-		let lastSearch = '';
-		const now = new Date();
-		status.historyInfo.lastDate = now.toLocaleDateString();
-
-		createRootFolder('history');
-		const historySearchResults = dce('div');
-		historySearchResults.id    = 'history-search-results';
-		historySearchResults.classList.add('search-results');
-		controls.history.bottom    = dce('div');
-		controls.history.bottom.classList.add('bottom-bar');
-		const searchIcon           = dce('span');
-		const historySearch        = dce('input');
-		historySearch.id           = 'historySearch';
-		historySearch.classList.add('search');
-		historySearch.type         = 'text';
-		historySearch.placeholder  = i18n.history.searchPlaceholder;
-		controls.history.bottom.appendChild(historySearch);
-		searchIcon.classList.add('search-icon');
-		controls.history.bottom.appendChild(searchIcon);
-		const getMoreButton        = makeItemButton('getMore', 'history');
-
-		block.history.appendChild(rootFolder);
-		block.history.appendChild(getMoreButton);
-		block.history.appendChild(historySearchResults);
-		block.history.appendChild(controls.history.bottom);
-
-		historySearch.addEventListener('keyup', event => {
-			event.stopPropagation();
-			const value = historySearch.value;
-			if (value.length > 1) {
-				if (lastSearch !== value) {
-					lastSearch = value;
-					send('background', 'history', 'search', {'request': value, needResponse: true}, response => {
-						while (historySearchResults.firstChild)
-							historySearchResults.removeChild(historySearchResults.firstChild);
-						insertHistoryes(response, 'search');
-						searchActive(true);
-					});
-				}
-			}
-			else
-				searchActive(false);
-		});
-
-		block.history.addEventListener('click', event => {
-			event.stopPropagation();
-			event.preventDefault();
-			if (event.target.classList.contains('history'))
-				openLink(event);
-		});
-
-		const insertHistoryes = (items, method) => {
+		const insertHistoryes    = (items, method) => {
 			let pid = -1;
 			let folder = null;
 			const insert = {
@@ -797,7 +823,7 @@ const initBlock = {
 						folder.lastChild.appendChild(item);
 				},
 				search : item => {
-					historySearchResults.appendChild(item);
+					searchResults.appendChild(item);
 				},
 				last : item => {
 					status.historyInfo.lastNum++;
@@ -825,90 +851,57 @@ const initBlock = {
 				removeById('history', ids[i]);
 		};
 
-		const historyTotalWipe = _ => {
+		const historyTotalWipe   = _ => {
 			for (let i = data.historyId.length - 1; i >= 0; i--)
 				removeById('history', data.historyId[i]);
+			getMoreButton.classList.add('hidden');
 		};
+
+		prepareBlock('history');
+		setBlockClass('history');
+		setDomainStyle.rewrite(info.domains);
+		i18n.history = info.i18n;
+
+		messageHandler.history   = {
+			new     : info =>  {
+				insertFolders('history', [info.folder]);
+				insertHistoryes([info.item], 'first');
+				if (info.historyEnd === true)
+					getMoreButton.classList.add('hidden');
+			},
+			removed : info =>  {
+				removeHistoryItems(info.ids);
+			},
+			wiped   : info =>  {
+				historyTotalWipe();
+			},
+			gotMore : info =>  {
+				insertFolders('history', info.historyFolders);
+				insertHistoryes(info.history, 'last');
+				if (info.historyEnd === true)
+					getMoreButton.classList.add('hidden');
+			},
+			title   : info =>  {
+				const item = getById('history', info.id);
+				if (item !== false)
+					item.textContent = info.title;
+			}
+		};
+
+		const now = new Date();
+		status.historyInfo.lastDate = now.toLocaleDateString();
+
+		const getMoreButton         = makeButton('getMore', 'history', 'button');
+
+		makeSearch('history');
 
 		insertFolders('history', info.historyFolders);
 		insertHistoryes(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
-		status.init.history = true;
 	},
 
 	downloads : info => {
-
-		messageHandler.downloads = {
-			created    : info => {
-				insertDownload(info.item);
-			},
-			erased     : info => {
-				block.downloads.removeChild(getById('downloads', info.id));
-			},
-			exists     : info => {
-				const download = getById('downloads', info.id);
-				if (download !== false)
-					download.classList[info.method]('deleted');
-			},
-			startPause : info => {
-				const download = getById('downloads', info.id);
-				if (info.paused === true) {
-					if (info.canResume === true)
-						download.classList.add('paused');
-					else
-						download.classList.add('canceled');
-				}
-				else
-					download.classList.remove('paused');
-			},
-			state     : info => {
-				const download = getById('downloads', info.id);
-				if (download !== false) {
-					download.classList.remove('complete', 'interrupted', 'in_progress');
-					download.classList.add(info.state);
-				}
-			},
-			progress  : info => {
-				const download = getById('downloads', info.item.id);
-				download.firstChild.nextElementSibling.firstChild.firstChild.style.width = info.item.progressPercent;
-				download.firstChild.nextElementSibling.firstChild.nextElementSibling.textContent = `${info.item.progressNumbers}  |  ${info.item.speed}`;
-				download.firstChild.nextElementSibling.firstChild.nextElementSibling.nextElementSibling.textContent = info.item.fileSize;
-			},
-			filename  : info => {
-				const download = getById('downloads', info.id);
-				if (download !== false)
-					download.firstChild.textContent = info.filename;
-			}
-		};
-
-		controls.downloads.item = dce('div');
-		controls.downloads.item.classList.add('controls');
-		makeButton('pause', 'downloads', 'item');
-		makeButton('resume', 'downloads', 'item');
-		makeButton('reload', 'downloads', 'item');
-		makeButton('stop', 'downloads', 'item');
-		makeButton('delete', 'downloads', 'item');
-
-		block.downloads.addEventListener('click', event => {
-			event.stopPropagation();
-			const target = event.target;
-			if (target.classList.contains('download')) {
-				if (event.pageX - target.offsetLeft < 20)
-					brauzer.downloads.show(parseInt(target.dataset.id));
-				else
-					brauzer.downloads.open(parseInt(target.dataset.id));
-			}
-		});
-
-		block.downloads.addEventListener('mouseover', event => {
-			event.stopPropagation();
-			const target = event.target;
-			if (target.classList.contains('item'))
-				return target.appendChild(controls.downloads.item);
-			if (target.parentNode.classList.contains('item'))
-				return target.parentNode.appendChild(controls.downloads.item);
-		});
 
 		const insertDownload = item => {
 			const down           = createById('downloads', item.id);
@@ -916,9 +909,9 @@ const initBlock = {
 			const filename       = dce('p');
 			filename.textContent = item.filename;
 			let classList        = `download item ${item.state}`;
-			classList            += item.exists ? '' : ' deleted';
-			if (item.paused)
-				classList += item.canResume ? ' paused' : ' canceled';
+			classList            += item.exists === true ? '' : ' deleted';
+			if (item.paused === true)
+				classList += item.canResume === true ? ' paused' : ' canceled';
 			down.classList       = classList;
 			const status         = dce('div');
 			status.classList.add('status');
@@ -939,8 +932,72 @@ const initBlock = {
 			status.appendChild(fileSize);
 			down.appendChild(filename);
 			down.appendChild(status);
-			block.downloads.insertBefore(down, block.downloads.firstChild);
+			rootFolder.lastChild.insertBefore(down, rootFolder.lastChild.lastChild);
 		};
+
+		prepareBlock('downloads');
+		setBlockClass('downloads');
+		setDomainStyle.rewrite(info.domains);
+		i18n.downloads = info.i18n;
+
+		messageHandler.downloads = {
+			created    : info => {
+				insertDownload(info.item);
+			},
+			erased     : info => {
+				removeById('downloads', info.id);
+			},
+			exists     : info => {
+				const download = getById('downloads', info.id);
+				if (download === false) return;
+				download.classList[info.method]('deleted');
+			},
+			startPause : info => {
+				const download = getById('downloads', info.id);
+				if (download === false) return;
+				if (info.paused === true) {
+					if (info.canResume === true)
+						download.classList.add('paused');
+					else
+						download.classList.add('canceled');
+				}
+				else
+					download.classList.remove('paused');
+			},
+			state     : info => {
+				const download = getById('downloads', info.id);
+				if (download === false) return;
+				download.classList.remove('complete', 'interrupted', 'in_progress');
+				download.classList.add(info.state);
+			},
+			progress  : info => {
+				const download = getById('downloads', info.item.id);
+				if (download === false) return;
+				download.firstChild.nextElementSibling.firstChild.firstChild.style.width = info.item.progressPercent;
+				download.firstChild.nextElementSibling.firstChild.nextElementSibling.textContent = `${info.item.progressNumbers}  |  ${info.item.speed}`;
+				download.firstChild.nextElementSibling.firstChild.nextElementSibling.nextElementSibling.textContent = info.item.fileSize;
+			},
+			filename  : info => {
+				const download = getById('downloads', info.id);
+				if (download === false) return;
+				download.firstChild.textContent = info.filename;
+			}
+		};
+
+		onClick = event => {
+			if (event.target.classList.contains('download')) {
+				if (event.pageX - target.offsetLeft < 20)
+					brauzer.downloads.show(parseInt(event.target.dataset.id));
+				else
+					brauzer.downloads.open(parseInt(event.target.dataset.id));
+			}
+		};
+
+		makeButton('pause', 'downloads', 'item');
+		makeButton('resume', 'downloads', 'item');
+		makeButton('reload', 'downloads', 'item');
+		makeButton('stop', 'downloads', 'item');
+		makeButton('delete', 'downloads', 'item');
 
 		for (let i = 0, l = info.downloads.length; i < l; i++)
 			insertDownload(info.downloads[i]);
@@ -950,15 +1007,13 @@ const initBlock = {
 
 		const setReadedMode = mode => {
 			options.misc.rssHideReaded = mode;
-			if (mode === true) {
-				block.rss.classList.add('hide-readed');
-				block.rss.classList.remove('show-readed');
-			}
-			else {
-				block.rss.classList.add('show-readed');
-				block.rss.classList.remove('hide-readed');
-			}
+			setBlockClass('rss', options.misc.rssMode, mode === true ? 'hide-readed' : 'show-readed');
 		};
+
+		prepareBlock('rss');
+		setReadedMode(options.misc.rssHideReaded);
+		setDomainStyle.rewrite(info.domains);
+		i18n.rss = info.i18n;
 
 		messageHandler.rss = {
 			createdFeed      : info =>  {
@@ -972,19 +1027,17 @@ const initBlock = {
 			},
 			rssReaded        : info =>  {
 				const rssItem = getById('rss', info.id);
-				if (rssItem !== false) {
-					rssItem.classList.remove('unreaded');
-					if (info.feedReaded === true)
-						rssItem.parentNode.classList.remove('unreaded');
-				}
+				if (rssItem === false) return;
+				rssItem.classList.remove('unreaded');
+				if (info.feedReaded === true)
+					rssItem.parentNode.classList.remove('unreaded');
 			},
 			rssReadedAll     : info =>  {
 				const feed = getFolderById('rss', info.id);
-				if (feed !== false) {
-					feed.classList.remove('unreaded');
-					for (let items = feed.children, i = items.length - 1; i >= 0; i--)
-						items[i].classList.remove('unreaded');
-				}
+				if (feed === false) return;
+				feed.classList.remove('unreaded');
+				for (let items = feed.children, i = items.length - 1; i >= 0; i--)
+					items[i].classList.remove('unreaded');
 			},
 			rssReadedAllFeeds : info => {
 				for (let i = data.rss.length - 1; i >= 0; i--)
@@ -1009,10 +1062,9 @@ const initBlock = {
 			},
 			rssFeedChanged   : info =>  {
 				const feed = getFolderById('rss', info.id);
-				if (feed !== false) {
-					feed.firstChild.firstChild.textContent = info.title;
-					feed.firstChild.title                  = info.description;
-				}
+				if (feed === false) return;
+				feed.firstChild.firstChild.textContent = info.title;
+				feed.firstChild.title                  = info.description;
 			},
 			rssFeedDeleted   : info =>  {
 				removeFolderById('rss', info.id);
@@ -1035,56 +1087,9 @@ const initBlock = {
 				setReadedMode(info);
 			},
 			updateAll        : info => {
-				block.rss.classList[info]('updated');
+				block.classList[info]('updated');
 			}
 		};
-
-		setBlockClass('rss');
-		setReadedMode(options.misc.rssHideReaded);
-
-		createRootFolder('rss');
-		controls.rss.item        = dce('div');
-		controls.rss.item.classList.add('controls');
-		makeButton('reload', 'rss', 'item');
-		makeButton('move', 'rss', 'item');
-		makeButton('markReaded', 'rss', 'item');
-		makeButton('markReadedAll', 'rss', 'item');
-		makeButton('hideReaded', 'rss', 'item');
-		makeButton('showReaded', 'rss', 'item');
-		makeButton('options', 'rss', 'item');
-
-		controls.rss.bottom     = dce('div');
-		controls.rss.bottom.classList.add('bottom-bar');
-		makeButton('new', 'rss', 'bottom');
-		makeButton('importExport', 'rss', 'bottom');
-		makeButton('hideReadedAll', 'rss', 'bottom');
-		makeButton('showReadedAll', 'rss', 'bottom');
-		makeButton('markReadedAllFeeds', 'rss', 'bottom');
-		makeButton('reloadAll', 'rss', 'bottom');
-		makeButton('plain', 'rss', 'bottom');
-		makeButton('domain', 'rss', 'bottom');
-
-		block.rss.appendChild(rootFolder);
-		block.rss.appendChild(controls.rss.item);
-		block.rss.appendChild(controls.rss.bottom);
-
-		block.rss.addEventListener('click', event => {
-			event.preventDefault();
-			event.stopPropagation();
-			if (event.target.classList.contains('rss-item')) {
-				openLink(event);
-				send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
-			}
-		});
-
-		block.rss.addEventListener('mouseover', event => {
-			event.stopPropagation();
-			const target = event.target;
-			if (target.classList.contains('rss-item'))
-				target.appendChild(controls.rss.item);
-			else if (target.classList.contains('folder-name'))
-				target.appendChild(controls.rss.item);
-		});
 
 		insertItems.rss = (items, method) => {
 			const insert = {
@@ -1132,10 +1137,11 @@ const initBlock = {
 				item.dataset.link  = items[i].link;
 				item.dataset.date  = items[i].date;
 				item.href          = items[i].link;
-				item.addEventListener('mouseover', _ => {
-					item.title = `${items[i].title}\n\n${items[i].description}`;
-				},
-				{'passive': true, 'once': true});
+				item.dataset.title = `${items[i].title}\n\n${items[i].description}`;
+				// item.addEventListener('mouseover', _ => {
+				// 	item.title = `${items[i].title}\n\n${items[i].description}`;
+				// },
+				// {'passive': true, 'once': true});
 				if (items[i].readed)
 					item.classList.add('item', 'rss-item', `domain-${items[i].domain}`);
 				else {
@@ -1146,10 +1152,37 @@ const initBlock = {
 			}
 		};
 
+		makeButton('new', 'rss', 'button');
+		makeButton('reload', 'rss', 'item');
+		makeButton('move', 'rss', 'item');
+		makeButton('markReaded', 'rss', 'item');
+		makeButton('markReadedAll', 'rss', 'item');
+		makeButton('hideReaded', 'rss', 'item');
+		makeButton('showReaded', 'rss', 'item');
+		makeButton('options', 'rss', 'item');
+		makeButton('new', 'rss', 'bottom');
+		makeButton('importExport', 'rss', 'bottom');
+		makeButton('hideReadedAll', 'rss', 'bottom');
+		makeButton('showReadedAll', 'rss', 'bottom');
+		makeButton('markReadedAllFeeds', 'rss', 'bottom');
+		makeButton('reloadAll', 'rss', 'bottom');
+		makeButton('plain', 'rss', 'bottom');
+		makeButton('domain', 'rss', 'bottom');
+		onClick = event => {
+			if (event.target.classList.contains('item')) {
+				openLink(event);
+				send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
+			}
+		};
 		setView('rss', options.misc.rssMode, info.rss, info.rssFolders);
 	},
 
 	pocket : info => {
+
+		prepareBlock('pocket');
+		setBlockClass('pocket', options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
+		setDomainStyle.rewrite(info.domains);
+		i18n.pocket = info.i18n;
 
 		messageHandler.pocket = {
 			newItems     : info =>  {
@@ -1170,6 +1203,7 @@ const initBlock = {
 			},
 			domainCount  : info => {
 				const folder = getFolderById('pocket', info.id);
+				if (folder === false) return;
 				if (info.view === 'hidden') {
 					folder.classList.remove('domain-view');
 					folder.classList.add('hidden-view');
@@ -1189,15 +1223,18 @@ const initBlock = {
 				setView('pocket', info.view, info.items, info.folders);
 			},
 			logout       : info => {
-				if (options.sidebar.mode === 'pocket')
-					block.pocket.classList[info.method]('logout');
+				block.classList[info.method]('logout');
 				if (info.method === 'add') {
-					rootFolder.removeChild(rootFolder.firstChild);
-					const newContent = dce('div');
-					rootFolder.appendChild(newContent);
+					rootFolder.removeChild(rootFolder.lastChild);
+					rootFolder.appendChild(dce('div'));
+					clearData('pocket');
 				}
-				else
-					controls.pocket.user.firstChild.textContent = info.username;
+				else {
+					i18n.pocket.usernameText             = info.username;
+					i18n.pocket.username                 = info.username;
+					controls.user.firstChild.textContent = info.username;
+					controls.user.firstChild.title       = info.username;
+				}
 			},
 			fav          : info => {
 				const pocket = getById('pocket', info);
@@ -1211,33 +1248,31 @@ const initBlock = {
 			},
 			archive      : info => {
 				const pocket = getById('pocket', info);
-				if (pocket !== false) {
-					pocket.classList.add('type-archives');
-					if (options.misc.pocketMode === 'type') {
-						const archive = getFolderById('pocket', 'archives');
-						if (archive !== false)
-							archive.lastChild.appendChild(pocket);
-					}
+				if (pocket === false) return;
+				pocket.classList.add('type-archives');
+				if (options.misc.pocketMode === 'type') {
+					const archive = getFolderById('pocket', 'archives');
+					if (archive !== false)
+						archive.lastChild.appendChild(pocket);
 				}
 			},
 			unarchive   : info => {
 				const pocket = getById('pocket', info.id);
-				if (pocket !== false) {
-					pocket.classList.remove('type-archives');
-					if (options.misc.pocketMode === 'type') {
-						const folder = getFolderById('pocket', info.pid);
-						if (folder !== false)
-							folder.lastChild.appendChild(pocket);
-					}
-					else if (options.misc.pocketMode === 'domain') {
-						const folder = getFolderById('pocket', info.domain);
-						if (folder !== false)
-							folder.lastChild.appendChild(pocket);
-					}
+				if (pocket === false) return;
+				pocket.classList.remove('type-archives');
+				if (options.misc.pocketMode === 'type') {
+					const folder = getFolderById('pocket', info.pid);
+					if (folder !== false)
+						folder.lastChild.appendChild(pocket);
+				}
+				else if (options.misc.pocketMode === 'domain') {
+					const folder = getFolderById('pocket', info.domain);
+					if (folder !== false)
+						folder.lastChild.appendChild(pocket);
 				}
 			},
 			update      : info => {
-				block.pocket.classList[info]('updated');
+				block.classList[info]('updated');
 			},
 			moved       : info => {
 				if (status.moving === true)
@@ -1247,62 +1282,12 @@ const initBlock = {
 			}
 		};
 
-		setBlockClass('pocket', options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
-		createRootFolder('pocket');
-		const loginContainer    = dce('div');
-		const login             = makeItemButton('login', 'pocket');
-		login.id                = 'login';
-		controls.pocket.user    = dce('div');
-		controls.pocket.user.id = 'user';
-		controls.pocket.user.classList.add('controls');
-		const username          = dce('a');
-		username.id             = 'username';
-		username.textContent    = info.username;
-		controls.pocket.user.appendChild(username);
-		makeButton('logout', 'pocket', 'user');
-		loginContainer.appendChild(login);
-		loginContainer.appendChild(controls.pocket.user);
-		controls.pocket.item    = dce('div');
-		controls.pocket.item.classList.add('controls');
-		makeButton('move', 'pocket', 'item');
-		makeButton('fav', 'pocket', 'item');
-		makeButton('unfav', 'pocket', 'item');
-		makeButton('archive', 'pocket', 'item');
-		makeButton('folderArchive', 'pocket', 'item');
-		makeButton('unarchive', 'pocket', 'item');
-		makeButton('delete', 'pocket', 'item');
-		makeButton('folderDelete', 'pocket', 'item');
-		controls.pocket.bottom  = dce('div');
-		controls.pocket.bottom.classList.add('bottom-bar');
-		makeButton('new', 'pocket', 'bottom');
-		makeButton('plain', 'pocket', 'bottom');
-		makeButton('type', 'pocket', 'bottom');
-		makeButton('domain', 'pocket', 'bottom');
-		makeButton('reload', 'pocket', 'bottom');
-
-		block.pocket.appendChild(loginContainer);
-		block.pocket.appendChild(rootFolder);
-		block.pocket.appendChild(controls.pocket.bottom);
-		block.pocket.appendChild(controls.pocket.item);
-
-		block.pocket.addEventListener('mouseover', event => {
-			event.stopPropagation();
-			const target = event.target;
-			if (target.classList.contains('pocket'))
-				target.appendChild(controls.pocket.item);
-			else if (target.classList.contains('folder-name'))
-				target.appendChild(controls.pocket.item);
-		});
-
-		block.pocket.addEventListener('click', event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const target = event.target;
-			if (target.classList.contains('pocket'))
+		onClick               = event => {
+			if (event.target.classList.contains('item'))
 				openLink(event);
-		});
+		};
 
-		updateItem.pocket  = (pocket, info) => {
+		updateItem.pocket     = (pocket, info) => {
 			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
 			pocket.href        = info.url;
 			pocket.dataset.url = info.url;
@@ -1311,7 +1296,7 @@ const initBlock = {
 			pocket.title       = info.description !== '' ? info.description : info.url;
 		};
 
-		insertItems.pocket = (items, position = 'last') => {
+		insertItems.pocket    = (items, position = 'last') => {
 			let pid    = 0;
 			let folder = rootFolder;
 			const insert = {
@@ -1339,13 +1324,30 @@ const initBlock = {
 				insert[position](pocket);
 			}
 		};
+
+		i18n.pocket.usernameText = info.username;
+		i18n.pocket.username     = info.username;
+		makeButton('username', 'pocket', 'user');
+		makeButton('login', 'pocket', 'user');
+		makeButton('logout', 'pocket', 'user');
+		makeButton('new', 'pocket', 'button');
+		makeButton('move', 'pocket', 'item');
+		makeButton('fav', 'pocket', 'item');
+		makeButton('unfav', 'pocket', 'item');
+		makeButton('archive', 'pocket', 'item');
+		makeButton('folderArchive', 'pocket', 'item');
+		makeButton('unarchive', 'pocket', 'item');
+		makeButton('delete', 'pocket', 'item');
+		makeButton('folderDelete', 'pocket', 'item');
+		makeButton('new', 'pocket', 'bottom');
+		makeButton('plain', 'pocket', 'bottom');
+		makeButton('type', 'pocket', 'bottom');
+		makeButton('domain', 'pocket', 'bottom');
+		makeButton('reload', 'pocket', 'bottom');
+
 		setView('pocket', options.misc.pocketMode, info.pocket, info.pocketFolders);
 	}
 };
-
-///------------------------------------------------------------------///
-//                     Commons Block
-///------------------------------------------------------------------///
 
 function setWide(mode) {
 	options.sidebar.wide = mode;
@@ -1395,148 +1397,12 @@ function setColor(colors) {
 		doc.style.setProperty('--border-color-active', colors.borderColorActive);
 }
 
-function blockInit(newMode, info) {
-	const cleanse = _ => {
-		while (block[options.sidebar.mode].hasChildNodes())
-			block[options.sidebar.mode].removeChild(block[options.sidebar.mode].firstChild);
-		clearData(options.sidebar.mode);
-	};
-
-	if (status.init[newMode] === false) {
-		i18n[newMode] = info.i18n;
-		const link    = dce('link');
-		link.type     = 'text/css';
-		link.rel      = 'stylesheet';
-		link.href     = `sidebar-${newMode}.css`;
-		document.head.appendChild(link);
-		status.init[newMode] = true;
-	}
-	cleanse();
-	document.body.classList = newMode;
-	options.sidebar.mode    = newMode;
-	status.activeBlock      = block[newMode];
-	searchActive(false);
-	initBlock[newMode](info);
-
-	window.scrollTo(0, options.scroll[options.sidebar.mode]);
-	clearTimeout(status.scrollTimer);
-	status.scrollTimer = 0;
-	status.scrolling   = false;
-	window.removeEventListener('scroll', onscroll);
-	window.addEventListener('scroll', onscroll, {'passive': true});
-	setDomainStyle.rewrite(info.domains);
-}
-
-function enableBlock(mode) {
-	button[mode].classList.remove('hidden');
-	if (mode === 'rss') {
-		const unreaded  = dce('div');
-		unreaded.id     = 'rss-unreaded';
-		button.rss.appendChild(unreaded);
-	}
-}
-
 function onscroll(event) {
 	if (status.searchActive === false) {
 		status.scrolling = true;
 		if (Math.abs(window.scrollY - options.scroll[options.sidebar.mode]) > 10)
 			send('background', 'options', 'handler', {'section': 'scroll', 'option': options.sidebar.mode, 'value': window.scrollY});
 	}
-}
-
-function tryToInit() {
-	send('background', 'request', 'mode', {'side': status.side, 'method': options.sidebar.method, needResponse: true}, response => {
-		if (response === undefined) {
-			initTimer = setTimeout(tryToInit, 200);
-			return;
-		}
-
-		if (options.sidebar.method === 'native') {
-			const port = brauzer.runtime.connect({name: 'sidebar-alive'});
-			if (firefox) {
-				doc.addEventListener('mouseleave', event => {
-					send('background', 'sidebar', 'sideDetection', {'sender': 'sidebar', 'action': 'leave', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-				});
-				doc.addEventListener('mouseover', event => {
-					send('background', 'sidebar', 'sideDetection',{'sender': 'sidebar', 'action': 'over', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-				});
-			}
-		}
-		else if (options.sidebar.method === 'iframe') {
-			if (firefox) {
-				doc.addEventListener('mouseleave', event => {
-					send('background', 'sidebar', 'sideDetection', {'sender': 'content', 'action': 'leave', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-				});
-				doc.addEventListener('mouseover', event => {
-					send('background', 'sidebar', 'sideDetection',{'sender': 'content', 'action': 'over', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-				});
-			}
-		}
-
-		initSidebar(response);
-	});
-}
-
-function initSidebar(response) {
-	const onMessage = (message, sender, sendResponse) => {
-		// console.log(message);
-		if (message.hasOwnProperty('target')) {
-			if (message.target === 'sidebar')
-				messageHandler[message.subject][message.action](message.data, sendResponse);
-			else if (message.target === status.side)
-				messageHandler[message.subject][message.action](message.data, sendResponse);
-		}
-	};
-
-	brauzer.runtime.onMessage.removeListener(onMessage);
-
-	status.side                  = response.side;
-	options.misc                 = response.options.misc;
-	options.theme                = response.options.theme;
-	options.warnings             = response.options.warnings;
-	options.sidebar              = response.options.sidebar;
-	options.pocket               = response.options.pocket;
-	options.scroll               = response.options.scroll;
-	i18n.header                  = response.i18n.header;
-	status.info                  = response.info;
-
-	setFontSize();
-	setColor(options.theme);
-	setImageStyle[options.theme.sidebarImageStyle]();
-
-	doc.style.backgroundImage = `url(${options.theme.sidebarImage})`;
-
-	for (let service in response.options.services) {
-		if (button[service] === null)
-			button[service] = makeButton(service, 'header', 'sidebar');
-		if (response.options.services[service] === true)
-			enableBlock(service);
-		else
-			button[service].classList.add('hidden');
-	}
-
-	setRssUnreaded(status.info.rssUnreaded);
-	setDownloadStatus[status.info.downloadStatus]();
-
-	if (options.sidebar.method === 'iframe') {
-		doc.classList.remove('fixed');
-		window.onresize              = _ => {setFontSize();};
-		if (controls.header.iframe === null) {
-			controls.header.iframe       = dce('div');
-			controls.header.iframe.id    = 'controls-sidebar';
-			makeButton('pin', 'header', 'iframe');
-			makeButton('unpin', 'header', 'iframe');
-			makeButton('wide', 'header', 'iframe');
-			makeButton('narrow', 'header', 'iframe');
-			controls.header.main.appendChild(controls.header.iframe);
-		}
-		setWide(options.sidebar.wide);
-		setFixed(options.sidebar.fixed);
-	}
-
-	blockInit(options.sidebar.mode, response.data);
-
-	brauzer.runtime.onMessage.addListener(onMessage);
 }
 
 function setRssUnreaded(count) {
@@ -1558,52 +1424,6 @@ const setDownloadStatus = {
 		status.info.downloadStatus = 'idle';
 	}
 };
-
-function insertFolders(mode, items, fake = false) {
-	let folders = [];
-	for (let i = 0, l = items.length; i < l; i++) {
-		if (getFolderById(mode, items[i].id) !== false)
-			continue;
-		const index = data[`${mode}Folders`].push(dce('ul')) - 1;
-		data[`${mode}FoldersId`].push(items[i].id);
-		folders.push({'index': index, 'pid': items[i].pid});
-		let classList = 'folder';
-		classList += ` ${items[i].view}-view`;
-		classList += items[i].folded === true ? ' folded' : '';
-		data[`${mode}Folders`][index].classList  = classList;
-		data[`${mode}Folders`][index].id         = `${mode}-folder-${items[i].id}`;
-		data[`${mode}Folders`][index].dataset.id = items[i].id;
-		if (fake === false) {
-			const title       = dce('div');
-			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
-			title.title       = items[i].description || items[i].title;
-			title.dataset.id  = items[i].id;
-			title.classList.add('folder-name', `domain-${items[i].domain}`, items[i].status);
-			title.appendChild(text);
-			data[`${mode}Folders`][index].appendChild(title);
-			title.addEventListener('click', event => {
-				event.preventDefault();
-				event.stopPropagation();
-				const folded = status.moving === true ? false : !title.parentNode.classList.contains('folded');
-				send('background', 'set', 'fold', {'mode': mode, 'id': items[i].id, 'folded': folded, 'method': folded ? 'add' : 'remove'});
-			});
-		}
-		const content = dce('div');
-		content.classList.add('folder-content');
-		data[`${mode}Folders`][index].appendChild(content);
-	}
-	for (let i = 0, l = folders.length; i < l; i++) {
-		if (folders[i].pid === 0)
-			rootFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
-		else {
-			const parentFolder = getFolderById(mode, folders[i].pid);
-			if (parentFolder !== false)
-				parentFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
-			else
-				rootFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
-		}
-	}
-}
 
 function setStyle(item) {
 	const style       = createById('domains', item.id);
@@ -1654,24 +1474,67 @@ const setDomainStyle = {
 	}
 };
 
-const insertItems = {};
-
-const updateItem = {};
-
-function setBlockClass(mode, view = undefined, extraClass = '') {
+function setBlockClass(mode, view, extraClass = '') {
 	if (view !== undefined)
 		options.misc[`${mode}Mode`] = view;
-	block[mode].classList = `block ${options.misc[`${mode}Mode`]} ${extraClass}`;
+	block.classList = `hidden ${mode} ${view !== undefined ? options.misc[`${mode}Mode`] : ''} ${extraClass}`;
+	setTimeout(_ => {block.classList.remove('hidden');}, 1);
 }
 
 function setView(mode, view, items, folders) {
-	while (rootFolder.lastChild.hasChildNodes())
-		rootFolder.lastChild.removeChild(rootFolder.lastChild.firstChild);
+	if (rootFolder.lastChild.hasChildNodes()) {
+		rootFolder.removeChild(rootFolder.lastChild);
+		rootFolder.appendChild(dce('div'));
+	}
 	clearData(mode);
 	if (view !== 'plain')
 		insertFolders(mode, folders, view === 'tree');
 	insertItems[mode](items, 'first');
 }
+
+function insertFolders(mode, items, fake = false) {
+	let folders = [];
+	for (let i = 0, l = items.length; i < l; i++) {
+		if (getFolderById(mode, items[i].id) !== false)
+			continue;
+		const index = data[`${mode}Folders`].push(dce('ul')) - 1;
+		data[`${mode}FoldersId`].push(items[i].id);
+		folders.push({'index': index, 'pid': items[i].pid});
+		let classList = 'folder';
+		classList += ` ${items[i].view}-view`;
+		classList += items[i].folded === true ? ' folded' : '';
+		data[`${mode}Folders`][index].classList  = classList;
+		data[`${mode}Folders`][index].id         = `${mode}-folder-${items[i].id}`;
+		data[`${mode}Folders`][index].dataset.id = items[i].id;
+		if (fake === false) {
+			const title       = dce('div');
+			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
+			title.title       = items[i].description || items[i].title;
+			title.dataset.id  = items[i].id;
+			title.classList.add('folder-name', `domain-${items[i].domain}`, items[i].status);
+			title.appendChild(text);
+			data[`${mode}Folders`][index].appendChild(title);
+		}
+		const content = dce('div');
+		content.classList.add('folder-content');
+		data[`${mode}Folders`][index].appendChild(content);
+	}
+	for (let i = 0, l = folders.length; i < l; i++) {
+		if (folders[i].pid === 0)
+			rootFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
+		else {
+			const parentFolder = getFolderById(mode, folders[i].pid);
+			if (parentFolder !== false)
+				parentFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
+			else
+				rootFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
+		}
+	}
+}
+
+const insertItems = {};
+
+const updateItem = {};
 
 function createById(mode, id, search = false) {
 	let item        = getById(mode, id);
@@ -1692,11 +1555,10 @@ function getById(mode, id) {
 
 function removeById(mode, id) {
 	const index = data[`${mode}Id`].indexOf(id);
-	if (index !== -1) {
-		data[mode][index].parentNode.removeChild(data[mode][index]);
-		data[mode].splice(index, 1);
-		data[`${mode}Id`].splice(index, 1);
-	}
+	if (index === -1) return;
+	data[mode][index].parentNode.removeChild(data[mode][index]);
+	data[mode].splice(index, 1);
+	data[`${mode}Id`].splice(index, 1);
 }
 
 function getFolderById(mode, id) {
@@ -1711,11 +1573,10 @@ function getFolderById(mode, id) {
 
 function removeFolderById(mode, id) {
 	const index = data[`${mode}FoldersId`].indexOf(id);
-	if (index !== -1) {
-		data[`${mode}Folders`][index].parentNode.removeChild(data[`${mode}Folders`][index]);
-		data[`${mode}Folders`].splice(index, 1);
-		data[`${mode}FoldersId`].splice(index, 1);
-	}
+	if (index === -1) return;
+	data[`${mode}Folders`][index].parentNode.removeChild(data[`${mode}Folders`][index]);
+	data[`${mode}Folders`].splice(index, 1);
+	data[`${mode}FoldersId`].splice(index, 1);
 }
 
 function clearData(mode) {
@@ -1853,8 +1714,8 @@ function moveItem(mode, eventTarget) {
 
 	const finilize = _ => {
 		doc.removeEventListener('keydown', keydown);
-		block[mode].removeEventListener('mouseover', moveItemOverTree);
-		block[mode].removeEventListener('mouseover', moveItemOverFolder);
+		block.removeEventListener('mouseover', moveItemOverTree);
+		block.removeEventListener('mouseover', moveItemOverFolder);
 		doc.removeEventListener('mousedown', getIndex);
 		doc.removeEventListener('mousedown', getSiblings);
 		item.classList.remove('moved');
@@ -1865,33 +1726,33 @@ function moveItem(mode, eventTarget) {
 		tabs      : _ => {
 			const modes = {
 				plain  : _ => {
-					block.tabs.addEventListener('mouseover', moveItemOverFolder);
+					block.addEventListener('mouseover', moveItemOverFolder);
 					doc.addEventListener('mousedown', getIndex);
 				},
 				domain : _ => {
-					block[mode].addEventListener('mouseover', moveItemOverFolder);
+					block.addEventListener('mouseover', moveItemOverFolder);
 					if (isFolder)
 						doc.addEventListener('mousedown', getIndex);
 					else
 						doc.addEventListener('mousedown', getSiblings);
 				},
 				tree   : _ => {
-					block[mode].addEventListener('mouseover', moveItemOverFolder);
+					block.addEventListener('mouseover', moveItemOverFolder);
 					doc.addEventListener('mousedown', getSiblings);
 				}
 			};
 			modes[options.misc.tabsMode]();
 		},
 		bookmarks : _ => {
-			block.bookmarks.addEventListener('mouseover', moveItemOverTree);
+			block.addEventListener('mouseover', moveItemOverTree);
 			doc.addEventListener('mousedown', getIndex);
 		},
 		rss : _ => {
-			block.rss.addEventListener('mouseover', moveItemOverFolder);
+			block.addEventListener('mouseover', moveItemOverFolder);
 			doc.addEventListener('mousedown', getIndex);
 		},
 		pocket : _ => {
-			block.pocket.addEventListener('mouseover', moveItemOverFolder);
+			block.addEventListener('mouseover', moveItemOverFolder);
 			doc.addEventListener('mousedown', getIndex);
 		}
 	};
@@ -1926,230 +1787,184 @@ function moveItem(mode, eventTarget) {
 
 function moveFolder(mode, info) {
 	const folder = getFolderById(mode, info.id);
-	if (folder !== false) {
-		if (info.newIndex < info.oldIndex)
-			folder.parentNode.insertBefore(folder, folder.parentNode.children[info.newIndex]);
-		else
-			folder.parentNode.insertBefore(folder, folder.parentNode.children[info.newIndex + 1]);
-	}
+	if (folder === false) return;
+	if (info.newIndex < info.oldIndex)
+		folder.parentNode.insertBefore(folder, folder.parentNode.children[info.newIndex]);
+	else
+		folder.parentNode.insertBefore(folder, folder.parentNode.children[info.newIndex + 1]);
 }
 
 function searchActive(isIt) {
 	if (isIt === true) {
-		status.activeBlock.classList.add('search-active');
+		block.classList.add('search-active');
 		status.searchActive = true;
 	}
 	else {
-		status.activeBlock.classList.remove('search-active');
+		block.classList.remove('search-active');
 		status.searchActive = false;
 		window.scrollTo(0, options.scroll[options.sidebar.mode]);
 	}
 }
 
-function makeBlock(type) {
-	const block = dce('div');
-	block.id    = type;
-	block.classList.add('block');
-	document.body.appendChild(block);
-	return block;
-}
-
-function makeButton(type, block, sub) {
+function makeButton(type, mode, sub, hidden = false) {
 	const button     = dce('span');
-	button.id        = `${block}-${type}`;
-	button.classList = 'button';
-	button.title     = i18n[block][type];
-	const icon       = dce('span');
-	icon.style.setProperty(mask, `url('icons/${type}.svg')`);
-	button.appendChild(icon);
-	controls[block][sub].appendChild(button);
-	button.addEventListener('click', buttonsEvents[block][type]);
+	button.id        = `${mode}-${type}`;
+	button.title     = i18n[mode][type];
+	if (i18n[mode].hasOwnProperty(`${type}Text`)) {
+		button.classList   = `text-button ${hidden === true ? ' hidden' : ''}`;
+		button.textContent = i18n[mode][`${type}Text`];
+	}
+	else {
+		button.classList = `button ${hidden === true ? ' hidden' : ''}`;
+		const icon       = dce('span');
+		icon.style.setProperty(mask, `url('icons/${type}.svg')`);
+		button.appendChild(icon);
+	}
+	controls[sub].appendChild(button);
+	button.addEventListener('click', event => {
+		event.stopPropagation();
+		event.preventDefault();
+		buttonsEvents[mode][type]();
+	});
 	return button;
 }
 
-function makeItemButton(type, block) {
-	const item       = dce('span');
-	item.title       = i18n[block][`${type}Title`];
-	item.id          = `${block}-${type}`;
-	item.classList.add('item-button');
-	item.addEventListener('click', buttonsEvents[block][type]);
-	if (i18n[block][`${type}Text`] !== '')
-		item.textContent = i18n[block][`${type}Text`];
-	else {
-		const button     = dce('span');
-		button.classList.add('button');
-		item.appendChild(button);
-		const icon       = dce('span');
-		button.appendChild(icon);
-	}
-	return item;
-}
+function makeSearch(mode) {
+	status.lastSearch   = '';
+	const search        = dce('input');
+	search.id           = 'search';
+	search.classList.add('search');
+	search.type         = 'text';
+	search.placeholder  = i18n[mode].searchPlaceholder;
+	controls.bottom.appendChild(search);
+	const searchIcon    = dce('span');
+	searchIcon.classList.add('search-icon');
+	controls.bottom.appendChild(searchIcon);
 
-function createRootFolder(mode) {
-	rootFolder                = dce('div');
-	rootFolder.id             = `${mode}-folder-0`;
-	const rootFakeTitle       = dce('div');
-	rootFakeTitle.dataset.id  = 0;
-	rootFolder.appendChild(rootFakeTitle);
-	const rootContent         = dce('div');
-	rootFolder.appendChild(rootContent);
+	search.addEventListener('keyup', event => {
+		const value = search.value;
+		if (value.length > 1) {
+			if (status.lastSearch !== value) {
+				status.lastSearch = value;
+				send('background', mode, 'search', {'request': value, needResponse: true}, response => {
+					while (searchResults.firstChild)
+						searchResults.removeChild(searchResults.firstChild);
+					insertBookmarks(response, 'search');
+					searchActive(true);
+				});
+			}
+		}
+		else
+			searchActive(false);
+	}, {'passive': true});
 }
 
 const buttonsEvents = {
 	header    : {
 		tabs : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.sidebar.mode !== 'tabs')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'tabs'});
 		},
 		bookmarks : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.sidebar.mode !== 'bookmarks')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'bookmarks'});
 		},
 		history : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.sidebar.mode !== 'history')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'history'});
 		},
 		downloads : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.sidebar.mode !== 'downloads')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'downloads'});
 		},
 		rss : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.sidebar.mode !== 'rss')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'rss'});
 		},
 		pocket : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.sidebar.mode !== 'pocket')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'pocket'});
 		},
 		pin: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': status.side, 'option': 'fixed', 'value': true});
 		},
 		unpin: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': status.side, 'option': 'fixed', 'value': false});
 		},
 		wide: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': status.side, 'option': 'wide', 'value': false});
 		},
 		narrow: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': status.side, 'option': 'wide', 'value': true});
 		}
 	},
 	tabs      : {
 		fav: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'dialog', 'bookmarkTab', {'id': parseInt(controls.tabs.item.parentNode.dataset.id)});
+			send('background', 'dialog', 'bookmarkTab', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		move: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			moveItem('tabs', controls.tabs.item.parentNode);
 		},
 		reload: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'tabs', 'reload', {'id': parseInt(controls.tabs.item.parentNode.dataset.id)});
+			send('background', 'tabs', 'reload', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		pin: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'tabs', 'pin', {'id': parseInt(controls.tabs.item.parentNode.dataset.id)});
+			send('background', 'tabs', 'pin', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		unpin: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'tabs', 'unpin', {'id': parseInt(controls.tabs.item.parentNode.dataset.id)});
+			send('background', 'tabs', 'unpin', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		close: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'tabs', 'removeById', {'idList': [parseInt(controls.tabs.item.parentNode.dataset.id)]});
+			send('background', 'tabs', 'removeById', {'idList': [parseInt(controls.item.parentNode.dataset.id)]});
 		},
 		closeAll: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.warnings.domainFolderClose === true)
-				send('background', 'dialog', 'domainFolderClose', {'id': controls.tabs.item.parentNode.dataset.id});
+				send('background', 'dialog', 'domainFolderClose', {'id': controls.item.parentNode.dataset.id});
 			else
-				send('background', 'tabs', 'domainFolderClose', {'id': controls.tabs.item.parentNode.dataset.id});
+				send('background', 'tabs', 'domainFolderClose', {'id': controls.item.parentNode.dataset.id});
 		},
 		new: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'tabs', 'new', {'url': ''});
 		},
 		plain: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.misc.tabsMode !== 'plain')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'plain'});
 		},
 		domain: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.misc.tabsMode !== 'domain')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'domain'});
 		},
 		tree: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.misc.tabsMode !== 'tree')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'tree'});
 		}
 	},
 	bookmarks : {
 		move : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			moveItem('bookmarks', controls.bookmarks.item.parentNode);
+			moveItem('bookmarks', controls.item.parentNode);
 		},
 		delete : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const target = controls.bookmarks.item.parentNode;
+			const target = controls.item.parentNode;
 			if (options.warnings.bookmarkDelete === true)
 				send('background', 'dialog', 'bookmarkDelete', {'id': target.dataset.id, 'title': target.textContent});
 			else
 				send('background', 'bookmarks', 'bookmarkDelete', {'id': target.dataset.id});
 		},
 		folderDelete : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const target = controls.bookmarks.item.parentNode;
+			const target = controls.item.parentNode;
 			if (options.warnings.bookmarkFolderDelete)
 				send('background', 'dialog', 'bookmarkFolderDelete', {'id': target.dataset.id, 'title': target.textContent});
 			else
 				send('background', 'bookmarks', 'bookmarkFolderDelete', {'id': target.dataset.id});
 		},
-		bookmarkThis : event => {
-			event.stopPropagation();
-			event.preventDefault();
+		new : event => {
 			send('background', 'dialog', 'bookmarkNew', '');
 		},
+		folderNew : event => {
+			send('background', 'dialog', 'bookmarkFolderNew', '');
+		},
 		edit : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const target = controls.bookmarks.item.parentNode;
+			const target = controls.item.parentNode;
 			if (target.nodeName === 'DIV')
 				send('background', 'dialog', 'bookmarkFolderEdit', {'id': target.dataset.id});
 			else
@@ -2158,211 +1973,134 @@ const buttonsEvents = {
 	},
 	history   : {
 		getMore : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'history', 'getMore', '');
 		}
 	},
 	downloads : {
 		pause: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'downloads', 'pause', {'id': parseInt(controls.downloads.item.parentNode.dataset.id)});
+			send('background', 'downloads', 'pause', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		resume: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'downloads', 'resume', {'id': parseInt(controls.downloads.item.parentNode.dataset.id)});
+			send('background', 'downloads', 'resume', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		reload: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'downloads', 'reload', {'id': parseInt(controls.downloads.item.parentNode.dataset.id)});
+			send('background', 'downloads', 'reload', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		cancel: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'downloads', 'cancel', {'id': parseInt(controls.downloads.item.parentNode.dataset.id), 'url': controls.downloads.item.parentNode.title});
+			send('background', 'downloads', 'cancel', {'id': parseInt(controls.item.parentNode.dataset.id), 'url': controls.downloads.item.parentNode.title});
 		},
 		delete: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'dialog', 'downloadDelete', {'id': parseInt(controls.downloads.item.parentNode.dataset.id), 'title': controls.downloads.item.parentNode.firstChild.textContent});
+			send('background', 'dialog', 'downloadDelete', {'id': parseInt(controls.item.parentNode.dataset.id), 'title': controls.item.parentNode.firstChild.textContent});
 		}
 	},
 	rss       : {
 		new : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'dialog', 'rssNew');
 		},
 		importExport: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'dialog', 'rssImportExport');
 		},
 		hideReadedAll: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssHideReaded', 'value': true});
 		},
 		showReadedAll: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssHideReaded', 'value': false});
 		},
 		options: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const folderTitle = controls.rss.item.parentNode;
+			const folderTitle = controls.item.parentNode;
 			send('background', 'dialog', 'rssFeedEdit', {'id': folderTitle.dataset.id, 'title': folderTitle.textContent.trim(), 'description': folderTitle.title});
 		},
 		move: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			moveItem('rss', controls.rss.item.parentNode);
+			moveItem('rss', controls.item.parentNode);
 		},
 		reload: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const id = controls.rss.item.parentNode.dataset.id;
+			const id = controls.item.parentNode.dataset.id;
 			send('background', 'rss', 'updateFeed', {'id': id});
 		},
 		reloadAll: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'rss', 'updateAll');
 		},
 		markReaded: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const rss  = controls.rss.item.parentNode;
-			const feed = rss.parentNode.firstChild;
-			send('background', 'rss', 'rssReaded', {'id': rss.dataset.id});
+			send('background', 'rss', 'rssReaded', {'id': controls.item.parentNode.dataset.id});
 		},
 		markReadedAll: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const feed = controls.rss.item.parentNode;
-			send('background', 'rss', 'rssReadedAll', {'id': feed.dataset.id});
+			send('background', 'rss', 'rssReadedAll', {'id': controls.item.parentNode.dataset.id});
 		},
 		markReadedAllFeeds: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'rss', 'rssReadedAllFeeds');
 		},
 		hideReaded: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const feed = controls.rss.item.parentNode;
-			send('background', 'rss', 'rssHideReaded', {'id': feed.dataset.id});
+			send('background', 'rss', 'rssHideReaded', {'id': controls.item.parentNode.dataset.id});
 		},
 		showReaded: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const feed = controls.rss.item.parentNode;
-			send('background', 'rss', 'rssShowReaded', {'id': feed.dataset.id});
+			send('background', 'rss', 'rssShowReaded', {'id': controls.item.parentNode.dataset.id});
 		},
 		delete: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			const item = controls.rss.item.parentNode;
-			send('background', 'dialog', 'rssItemDelete', {'id': item.dataset.id, 'title': item.textContent});
+			send('background', 'dialog', 'rssItemDelete', {'id': controls.item.parentNode.dataset.id, 'title': controls.item.parentNode.textContent});
 		},
 		plain: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.misc.rssMode !== 'plain')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssMode', 'value': 'plain'});
 		},
 		domain: event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.misc.rssMode !== 'domain')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssMode', 'value': 'domain'});
 		}
 	},
 	pocket    : {
 		login : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'pocket', 'login');
 		},
 		logout : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'pocket', 'logout');
 		},
+		username : event => {
+			send('background', 'tabs', 'new', {'url': 'https://getpocket.com/a/queue/'});
+		},
 		new : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'dialog', 'pocketNew');
 		},
 		plain : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'plain'});
 		},
 		type : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'type'});
 		},
 		domain : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'domain'});
 		},
 		reload : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			send('background', 'pocket', 'reloadAll');
 		},
 		move: event => {
-			event.stopPropagation();
-			event.preventDefault();
-			moveItem('pocket', controls.pocket.item.parentNode);
+			moveItem('pocket', controls.item.parentNode);
 		},
 		fav : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'pocket', 'fav', controls.pocket.item.parentNode.dataset.id);
+			send('background', 'pocket', 'fav', controls.item.parentNode.dataset.id);
 		},
 		unfav : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'pocket', 'unfav', controls.pocket.item.parentNode.dataset.id);
+			send('background', 'pocket', 'unfav', controls.item.parentNode.dataset.id);
 		},
 		archive : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'pocket', 'archive', controls.pocket.item.parentNode.dataset.id);
+			send('background', 'pocket', 'archive', controls.item.parentNode.dataset.id);
 		},
 		folderArchive : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'pocket', 'folderArchive', controls.pocket.item.parentNode.dataset.id);
+			send('background', 'pocket', 'folderArchive', controls.item.parentNode.dataset.id);
 		},
 		unarchive : event => {
-			event.stopPropagation();
-			event.preventDefault();
-			send('background', 'pocket', 'unarchive', controls.pocket.item.parentNode.dataset.id);
+			send('background', 'pocket', 'unarchive', controls.item.parentNode.dataset.id);
 		},
 		delete : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.warnings.pocketDelete === true)
-				send('background', 'dialog', 'pocketDelete', controls.pocket.item.parentNode.dataset.id);
+				send('background', 'dialog', 'pocketDelete', controls.item.parentNode.dataset.id);
 			else
-				send('background', 'pocket', 'delete', controls.pocket.item.parentNode.dataset.id);
+				send('background', 'pocket', 'delete', controls.item.parentNode.dataset.id);
 		},
 		folderDelete : event => {
-			event.stopPropagation();
-			event.preventDefault();
 			if (options.warnings.pocketFolderDelete === true)
-				send('background', 'dialog', 'pocketFolderDelete', controls.pocket.item.parentNode.dataset.id);
+				send('background', 'dialog', 'pocketFolderDelete', controls.item.parentNode.dataset.id);
 			else
-				send('background', 'pocket', 'folderDelete', controls.pocket.item.parentNode.dataset.id);
+				send('background', 'pocket', 'folderDelete', controls.item.parentNode.dataset.id);
 		}
 	}
 };

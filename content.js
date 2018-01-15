@@ -256,7 +256,7 @@ function injectElements() {
 }
 
 function makeIframe(side) {
-	sidebar[side]    = document.createElement('div');
+	sidebar[side]    = document.createElement('aside');
 	sidebar[side].id = `sbp-${side}`;
 	sidebar[side].classList.add('sbp-sidebar');
 	const iframe     = document.createElement('iframe');
@@ -270,7 +270,7 @@ function makeIframe(side) {
 				return;
 		if (event.which === 1)
 			resizeSideBar(side);
-	});
+	}, {'passive': true});
 }
 
 function setHover(side, hover) {
@@ -478,9 +478,9 @@ function resizeSideBar(side) {
 	if (options[side].fixed === false)
 		setSideBarFixed(side, true);
 	status[side].resize = true;
-	document.addEventListener('mouseup', stopResize);
-	document.addEventListener('keydown', cancelResize);
-	document.addEventListener('mousemove', resize);
+	document.addEventListener('mouseup', stopResize, {'passive': true});
+	document.addEventListener('keydown', cancelResize, {'passive': true});
+	document.addEventListener('mousemove', resize, {'passive': true});
 }
 
 function send(target, subject, action, data = {}, callback = _ => {}) {

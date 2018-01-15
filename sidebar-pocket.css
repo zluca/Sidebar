@@ -1,33 +1,28 @@
-.logout #pocket-folder-0,
-.logout #user,
-.logout .bottom-bar,
-#login,
+.logout #root-folder,
+.logout #pocket-logout,
+.logout #controls-bottom,
+.logout #controls-button,
+.logout #pocket-username,
+.logout #pocket-username::before,
+#pocket-login,
 .type .domain-view,
 .domain .type-view {
 	display: none;
 }
-#user {
-	display: flex;
-}
-.logout #login {
+.logout #pocket-login {
 	display: block;
 }
-#user {
-	align-items: center;
-	cursor: default;
-	font-size: 1.2rem;
+.logout #controls-user {
+	justify-content: center;
+}
+#pocket-username {
 	padding-left: 1.5rem;
 	position: relative;
-	margin-bottom: .8rem;
-	user-select: none;
-	moz-user-select: none;
 }
-#user::before,
-.unfixed #login::before {
+#pocket-username::before {
 	content: '';
 	display: inline-block;
 	position: absolute;
-	top: .2rem;
 	left: .2rem;
 	-webkit-mask-image: url(/icons/user.svg);
 	-webkit-mask-repeat: no-repeat;
@@ -43,16 +38,8 @@
 	width: 1rem;
 	height: 1rem;
 }
-.hover #login::before,
-.fixed #login::before {
-	display: none;
-}
-#login {
-	text-indent: 1.5rem;
-	margin-left: 0;
-}
 #pocket-logout {
-	display: inline-block;
+	display: inline-flex;
 	margin-left: .4rem;
 }
 
@@ -65,7 +52,7 @@
 .type-archives.item #pocket-unarchive,
 .type .folder-name #pocket-move,
 .domain .folder-name #pocket-move {
-	display: inline-block;
+	display: inline-flex;
 }
 .domain-articles {
 	background-image: url(icons/article.svg);

@@ -69,11 +69,7 @@
 		"description"   : ""
 	},
 
-	"tabsNewText" : {
-		"message"       : "",
-		"description"   : ""
-	},
-	"tabsNewTitle" : {
+	"tabsNew" : {
 		"message"       : "创建新标签页",
 		"description"   : ""
 	},
@@ -117,12 +113,12 @@
 		"message"       : "以树视图管理标签页",
 		"description"   : ""
 	},
-	"bkBookmarkThisText" : {
-		"message"       : "",
+	"bkBookmarkThis" : {
+		"message"       : "将此标签页加入书签",
 		"description"   : ""
 	},
-	"bkBookmarkThisTitle" : {
-		"message"       : "将此标签页加入书签",
+	"bkBookmarkFolderNew" : {
+		"message"       : "Create new folder",
 		"description"   : ""
 	},
 	"bkEditBookmark" : {
@@ -902,6 +898,10 @@
 	},
 	"dialogBookmarkNewHeader" : {
 		"message"       : "新建书签",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderNewHeader" : {
+		"message"       : "New bookmark",
 		"description"   : ""
 	},
 	"dialogBookmarkEditHeader" : {

@@ -13,8 +13,8 @@
 .folder-name #rss-reload {
 	display: inline-block;
 }
-#rss-showReadedAll,
-#rss-hideReadedAll {
+#rss-showReadedAll.button,
+#rss-hideReadedAll.button {
 	display: none;
 }
 

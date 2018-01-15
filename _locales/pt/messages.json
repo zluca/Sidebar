@@ -69,11 +69,7 @@
 		"description"   : ""
 	},
 
-	"tabsNewText" : {
-		"message"       : "",
-		"description"   : ""
-	},
-	"tabsNewTitle" : {
+	"tabsNew" : {
 		"message"       : "Criar novo separador",
 		"description"   : ""
 	},
@@ -117,12 +113,12 @@
 		"message"       : "Organizar separadores em Vista de Árvore",
 		"description"   : ""
 	},
-	"bkBookmarkThisText" : {
-		"message"       : "",
+	"bkBookmarkThis" : {
+		"message"       : "Adicionar este separador aos marcadores",
 		"description"   : ""
 	},
-	"bkBookmarkThisTitle" : {
-		"message"       : "Adicionar este separador aos marcadores",
+	"bkBookmarkFolderNew" : {
+		"message"       : "Create new folder",
 		"description"   : ""
 	},
 	"bkEditBookmark" : {
@@ -902,6 +898,10 @@
 	},
 	"dialogBookmarkNewHeader" : {
 		"message"       : "Novo Marcador",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderNewHeader" : {
+		"message"       : "New bookmark",
 		"description"   : ""
 	},
 	"dialogBookmarkEditHeader" : {

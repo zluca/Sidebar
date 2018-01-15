@@ -69,11 +69,7 @@
 		"description"   : ""
 	},
 
-	"tabsNewText" : {
-		"message"       : "",
-		"description"   : ""
-	},
-	"tabsNewTitle" : {
+	"tabsNew" : {
 		"message"       : "Create new tab",
 		"description"   : ""
 	},
@@ -117,12 +113,12 @@
 		"message"       : "Organize tabs in tree view",
 		"description"   : ""
 	},
-	"bkBookmarkThisText" : {
-		"message"       : "",
+	"bkBookmarkThis" : {
+		"message"       : "Bookmark this tab",
 		"description"   : ""
 	},
-	"bkBookmarkThisTitle" : {
-		"message"       : "Bookmark this tab",
+	"bkBookmarkFolderNew" : {
+		"message"       : "Create new folder",
 		"description"   : ""
 	},
 	"bkEditBookmark" : {
@@ -902,6 +898,10 @@
 	},
 	"dialogBookmarkNewHeader" : {
 		"message"       : "New bookmark",
+		"description"   : ""
+	},
+	"dialogBookmarkFolderNewHeader" : {
+		"message"       : "New folder",
 		"description"   : ""
 	},
 	"dialogBookmarkEditHeader" : {

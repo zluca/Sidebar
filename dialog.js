@@ -383,6 +383,18 @@ function makeDialogWindow(data, warnings, colors) {
 			addButton('cancel');
 		},
 
+		bookmarkFolderNew : _ => {
+
+			setHeader();
+			const inputTitle  = addInputRow.text('title');
+			const folder      = addSelectRow(getI18n('dialogBookmarkFoldersLabel'), data.folders);
+			addButton('save', _ => {
+				send('background', 'bookmarks', 'bookmarkFolderNew', {'title': inputTitle.value, 'parentId': folder.value || "0"});
+				removeDialogWindow();
+			});
+			addButton('cancel');
+		},
+
 		bookmarkEdit : _ => {
 
 			setHeader();

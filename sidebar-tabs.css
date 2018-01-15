@@ -1,8 +1,3 @@
-#tabs-new>.button>span {
-	-webkit-mask-image: url(icons/new.svg);
-	mask-image: url(icons/new.svg);
-}
-
 .domain .folder.domain-view {
 	margin-bottom: .5rem;
 }
@@ -44,7 +39,7 @@
 .plain .item #tabs-move,
 .domain .item #tabs-move,
 .domain .folder-name #tabs-move,
-.tree #tabs-folder-0>div>.folder>.folder-content>a>.controls #tabs-move,
+.tree #root-folder>div>.folder>.folder-content>a>.controls #tabs-move,
 .item #tabs-close,
 .item #tabs-reload,
 .item #tabs-fav,
