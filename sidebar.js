@@ -1005,9 +1005,11 @@ const initBlock = {
 
 	rss : info => {
 
-		const setReadedMode = mode => {
-			options.misc.rssHideReaded = mode;
-			setBlockClass('rss', options.misc.rssMode, mode === true ? 'hide-readed' : 'show-readed');
+		const setReadedMode = (readedMode, rssMode) => {
+			if (view !== undefined)
+				options.misc.rssMode = rssMode;
+			options.misc.rssHideReaded = readedMode;
+			setBlockClass('rss', options.misc.rssMode, readedMode === true ? 'hide-readed' : 'show-readed');
 		};
 
 		prepareBlock('rss');
@@ -1046,9 +1048,8 @@ const initBlock = {
 					data.rssFolders[i].classList.remove('unreaded');
 			},
 			view             : info =>  {
-				setBlockClass('rss', info.view);
+				setReadedMode(options.misc.rssHideReaded, info.view);
 				setView('rss', info.view, info.items, info.folders);
-				setReadedMode(options.misc.rssHideReaded);
 			},
 			rssHideReaded    : info =>  {
 				const feed = getFolderById('rss', info.id);
@@ -1478,7 +1479,7 @@ function setBlockClass(mode, view, extraClass = '') {
 	if (view !== undefined)
 		options.misc[`${mode}Mode`] = view;
 	block.classList = `hidden ${mode} ${view !== undefined ? options.misc[`${mode}Mode`] : ''} ${extraClass}`;
-	setTimeout(_ => {block.classList.remove('hidden');}, 1);
+	setTimeout(_ => {block.classList.remove('hidden');}, 100);
 }
 
 function setView(mode, view, items, folders) {
