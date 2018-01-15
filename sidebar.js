@@ -1006,7 +1006,7 @@ const initBlock = {
 	rss : info => {
 
 		const setReadedMode = (readedMode, rssMode) => {
-			if (view !== undefined)
+			if (rssMode !== undefined)
 				options.misc.rssMode = rssMode;
 			options.misc.rssHideReaded = readedMode;
 			setBlockClass('rss', options.misc.rssMode, readedMode === true ? 'hide-readed' : 'show-readed');
