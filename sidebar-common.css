@@ -485,10 +485,10 @@ nav>.controls {
 	transform: rotate(-90deg);
 }
 
-.search-results {
+#search-results {
 	display: none;
 }
-.search-active .search-results {
+.search-active #search-results {
 	display: block;
 }
 .search-active #root-folder,

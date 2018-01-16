@@ -91,7 +91,8 @@ const options  = {
 let initTimer  = -1;
 tryToInit();
 
-let onClick    = _ => {};
+let onClick     = _ => {};
+let insertItems = _ => {};
 
 document.title = options.sidebar.method;
 doc.classList.add(status.side);
@@ -126,6 +127,10 @@ controls.main.appendChild(controls.sidebar);
 
 const block         = dce('main');
 const searchResults = dce('div');
+searchResults.id    = 'search-results';
+searchResults.appendChild(dce('div'));
+searchResults.firstChild.dataset.id = 'search-results';
+searchResults.appendChild(dce('div'));
 const rootFolder    = dce('div');
 rootFolder.id       = 'root-folder';
 rootFolder.appendChild(dce('div'));
@@ -504,7 +509,7 @@ const initBlock = {
 			created    : info => {
 				if (options.misc.tabsMode === 'tree')
 					insertFolders('tabs', [fakeFolder(info.tab)], true);
-				insertItems.tabs([info.tab]);
+				insertItems([info.tab]);
 			},
 			active     : info => {
 				status.activeTabId = info;
@@ -531,7 +536,7 @@ const initBlock = {
 			},
 			urlChanged  : info => {
 				if (options.misc.tabsMode !== 'tree')
-					insertItems.tabs([info.tab]);
+					insertItems([info.tab]);
 				else {
 					const tab = getById('tabs', info.tab.id);
 					if (tab !== false)
@@ -543,7 +548,7 @@ const initBlock = {
 					const tab = getById('tabs', info.tab.id);
 					if (tab !== false)
 						insertFolders('tabs', [info.folder]);
-					insertItems.tabs([info.tab]);
+					insertItems([info.tab]);
 				}
 			},
 			removed      : info => {
@@ -621,7 +626,7 @@ const initBlock = {
 			}
 		};
 
-		insertItems.tabs    = tabs => {
+		insertItems = tabs => {
 			let pid         = 0;
 			let tab         = null;
 			let folder      = rootFolder;
@@ -669,7 +674,7 @@ const initBlock = {
 			}
 		};
 
-		onClick = event => {
+		onClick     = event => {
 			if (event.target.classList.contains('active'))
 				return;
 			else if (event.target.classList.contains('tab'))
@@ -693,43 +698,6 @@ const initBlock = {
 	},
 
 	bookmarks : info => {
-
-		const insertBookmarks = (items, method = 'last') => {
-			let folder = rootFolder;
-			let count  = 0;
-			let pid    = 0;
-
-			const checkPid =
-				method === 'search' ?
-					item => {
-						folder = searchResults;
-					} :
-					options.misc.bookmarksMode === 'tree' ?
-						item => {
-							if (item.pid !== pid) {
-								pid    = item.pid;
-								folder = getFolderById('bookmarks', pid);
-								if (folder === false)
-									folder = rootFolder;
-								count  = folder.lastChild.children.length - 1;
-							}
-							count++;
-						} :
-						item => {};
-
-			for (let i = 0, l = items.length; i < l; i++) {
-				checkPid(items[i]);
-				const bookmark       = createById('bookmarks', items[i].id, true);
-				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
-				bookmark.title       = items[i].url;
-				bookmark.href        = items[i].url;
-				bookmark.textContent = items[i].title;
-				if (count > items[i].index - 1)
-					folder.lastChild.insertBefore(bookmark, folder.lastChild.children[items[i].index]);
-				else
-					folder.lastChild.appendChild(bookmark);
-			}
-		};
 
 		const moveBook        = (item, parent, index) => {
 
@@ -777,7 +745,7 @@ const initBlock = {
 					folder.firstChild.textContent = info.title;
 			},
 			createdBookmark : info => {
-				insertBookmarks([info.item]);
+				insertItems([info.item]);
 			},
 			createdFolder   : info => {
 				insertFolders('bookmarks', [info.item]);
@@ -797,6 +765,43 @@ const initBlock = {
 				openLink(event);
 		};
 
+		insertItems = (items, method = 'last') => {
+			let folder = rootFolder;
+			let count  = -1;
+			let pid    = 0;
+
+			const checkPid =
+				method === 'search' ?
+					item => {
+						folder = searchResults;
+					} :
+					options.misc.bookmarksMode === 'tree' ?
+						item => {
+							if (item.pid !== pid) {
+								pid    = item.pid;
+								folder = getFolderById('bookmarks', pid);
+								if (folder === false)
+									folder = rootFolder;
+								count  = folder.lastChild.children.length - 1;
+							}
+							count++;
+						} :
+						item => {};
+
+			for (let i = 0, l = items.length; i < l; i++) {
+				checkPid(items[i]);
+				const bookmark       = createById('bookmarks', items[i].id, true);
+				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
+				bookmark.title       = items[i].url;
+				bookmark.href        = items[i].url;
+				bookmark.textContent = items[i].title;
+				if (count > items[i].index - 1)
+					folder.lastChild.insertBefore(bookmark, folder.lastChild.children[items[i].index]);
+				else
+					folder.lastChild.appendChild(bookmark);
+			}
+		};
+
 		makeButton('new', 'bookmarks', 'button');
 		makeButton('folderNew', 'bookmarks', 'button');
 		makeButton('edit', 'bookmarks', 'item');
@@ -807,12 +812,12 @@ const initBlock = {
 
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders('bookmarks', info.bookmarksFolders);
-		insertBookmarks(info.bookmarks, 'last');
+		insertItems(info.bookmarks, 'last');
 	},
 
 	history : info => {
 
-		const insertHistoryes    = (items, method) => {
+		insertItems    = (items, method) => {
 			let pid = -1;
 			let folder = null;
 			const insert = {
@@ -823,7 +828,7 @@ const initBlock = {
 						folder.lastChild.appendChild(item);
 				},
 				search : item => {
-					searchResults.appendChild(item);
+					searchResults.lastChild.appendChild(item);
 				},
 				last : item => {
 					status.historyInfo.lastNum++;
@@ -865,7 +870,7 @@ const initBlock = {
 		messageHandler.history   = {
 			new     : info =>  {
 				insertFolders('history', [info.folder]);
-				insertHistoryes([info.item], 'first');
+				insertItems([info.item], 'first');
 				if (info.historyEnd === true)
 					getMoreButton.classList.add('hidden');
 			},
@@ -877,7 +882,7 @@ const initBlock = {
 			},
 			gotMore : info =>  {
 				insertFolders('history', info.historyFolders);
-				insertHistoryes(info.history, 'last');
+				insertItems(info.history, 'last');
 				if (info.historyEnd === true)
 					getMoreButton.classList.add('hidden');
 			},
@@ -896,7 +901,7 @@ const initBlock = {
 		makeSearch('history');
 
 		insertFolders('history', info.historyFolders);
-		insertHistoryes(info.history, 'last');
+		insertItems(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
 	},
@@ -1029,9 +1034,9 @@ const initBlock = {
 			},
 			newItems         : info =>  {
 				if (options.misc.rssMode === 'plain')
-					insertItems.rss(info.items, 'date');
+					insertItems(info.items, 'date');
 				else
-					insertItems.rss(info.items, 'first');
+					insertItems(info.items, 'first');
 			},
 			rssReaded        : info =>  {
 				const rssItem = getById('rss', info.id);
@@ -1098,7 +1103,7 @@ const initBlock = {
 			}
 		};
 
-		insertItems.rss = (items, method) => {
+		insertItems = (items, method) => {
 			const insert = {
 				domainfirst : (item, info) => {
 					pidCheck(info.pid);
@@ -1186,6 +1191,15 @@ const initBlock = {
 
 	pocket : info => {
 
+		const updateItem      = (pocket, info) => {
+			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
+			pocket.href        = info.url;
+			pocket.dataset.url = info.url;
+			pocket.textContent = info.title;
+			pocket.classList   = classList;
+			pocket.title       = info.description !== '' ? info.description : info.url;
+		};
+
 		prepareBlock('pocket');
 		setBlockClass('pocket', options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
 		setDomainStyle.rewrite(info.domains);
@@ -1193,7 +1207,7 @@ const initBlock = {
 
 		messageHandler.pocket = {
 			newItems     : info =>  {
-				insertItems.pocket(info, 'first');
+				insertItems(info, 'first');
 			},
 			newFolder    : info => {
 				insertFolders('pocket', [info]);
@@ -1201,7 +1215,7 @@ const initBlock = {
 			updated      : info => {
 				const pocket = getById('pocket', info.id);
 				if (pocket !== false)
-					updateItem.pocket(pocket, info);
+					updateItem(pocket, info);
 			},
 			deleted      : info => {
 				const pocket = getById('pocket', info);
@@ -1294,16 +1308,7 @@ const initBlock = {
 				openLink(event);
 		};
 
-		updateItem.pocket     = (pocket, info) => {
-			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
-			pocket.href        = info.url;
-			pocket.dataset.url = info.url;
-			pocket.textContent = info.title;
-			pocket.classList   = classList;
-			pocket.title       = info.description !== '' ? info.description : info.url;
-		};
-
-		insertItems.pocket    = (items, position = 'last') => {
+		insertItems           = (items, position = 'last') => {
 			let pid    = 0;
 			let folder = rootFolder;
 			const insert = {
@@ -1321,7 +1326,7 @@ const initBlock = {
 				if (items[i].status > 0 && options.misc.pocketMode !== 'type')
 					continue;
 				const pocket = createById('pocket', items[i].id);
-				updateItem.pocket(pocket, items[i]);
+				updateItem(pocket, items[i]);
 				if (options.misc.pocketMode !== 'plain') {
 					if (items[i][options.misc.pocketMode] !== pid) {
 						pid    = items[i][options.misc.pocketMode];
@@ -1496,7 +1501,7 @@ function setView(mode, view, items, folders) {
 	clearData(mode);
 	if (view !== 'plain')
 		insertFolders(mode, folders, view === 'tree');
-	insertItems[mode](items, 'first');
+	insertItems(items, 'first');
 }
 
 function insertFolders(mode, items, fake = false) {
@@ -1538,10 +1543,6 @@ function insertFolders(mode, items, fake = false) {
 		}
 	}
 }
-
-const insertItems = {};
-
-const updateItem = {};
 
 function createById(mode, id, search = false) {
 	let item        = getById(mode, id);
@@ -1854,9 +1855,9 @@ function makeSearch(mode) {
 			if (status.lastSearch !== value) {
 				status.lastSearch = value;
 				send('background', mode, 'search', {'request': value, needResponse: true}, response => {
-					while (searchResults.firstChild)
-						searchResults.removeChild(searchResults.firstChild);
-					insertBookmarks(response, 'search');
+					while (searchResults.lastChild.firstChild)
+						searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
+					insertItems(response, 'search');
 					searchActive(true);
 				});
 			}
