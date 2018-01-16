@@ -985,12 +985,18 @@ const initBlock = {
 		};
 
 		onClick = event => {
-			if (event.target.classList.contains('download')) {
-				if (event.pageX - target.offsetLeft < 20)
-					brauzer.downloads.show(parseInt(event.target.dataset.id));
-				else
-					brauzer.downloads.open(parseInt(event.target.dataset.id));
-			}
+			const target = event.target.classList.contains('download') ?
+				event.target :
+				event.target.parentNode.classList.contains('download') ?
+					event.target.parentNode :
+					null;
+			if (target !== null)
+				if (target.classList.contains('complete')) {
+					if (event.pageX - target.offsetLeft < options.theme.fontSize)
+						brauzer.downloads.show(parseInt(target.dataset.id));
+					else
+						brauzer.downloads.open(parseInt(target.dataset.id));
+				}
 		};
 
 		makeButton('pause', 'downloads', 'item');
