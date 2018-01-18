@@ -978,15 +978,6 @@ const messageHandler = {
 
 	startpage : null,
 
-	defaultTabsHandler : {
-		new : (message, sender, sendResponse) => {
-			createNewTab(message.data.url, message.data.newWindow);
-		},
-		update : (message, sender, sendResponse) => {
-			brauzer.tabs.update(status.activeTabId, {'url': message.data.url});
-		}
-	},
-
 	tabs      : null,
 
 	bookmarks : null,
@@ -1130,8 +1121,6 @@ const initService = {
 
 			if (options.services.startpage.value === true)
 				initService.startpage(true);
-			if (options.services.tabs.value === false)
-				messageHandler.tabs = messageHandler.defaultTabsHandler;
 
 			for (let service in options.services)
 				if (options.services[service]) {
@@ -1547,7 +1536,7 @@ const initService = {
 			initTabs();
 		};
 
-		if (start === true) {
+		if (status.init.tabs === false) {
 			updateItem.tabs = (newItem, item) => {
 				const url    = item.url === 'about:blank' ? item.title : item.url;
 				const domain = makeDomain('tabs', url, item.favIconUrl);
@@ -1589,22 +1578,6 @@ const initService = {
 			};
 
 			execMethod(brauzer.tabs.query, getTabs, {});
-		}
-		else {
-			i18n.tabs           = {};
-			updateItem.tabs     = null;
-			updateFolder.tabs   = null;
-			messageHandler.tabs = defaultTabsHandler;
-			data.tabs           = [];
-			data.tabsId         = [];
-			data.tabsFolders    = [];
-			data.tabsFoldersId  = [];
-			brauzer.tabs.onCreated.removeListener(createTab);
-			brauzer.tabs.onActivated.removeListener(onActivated);
-			brauzer.tabs.onUpdated.removeListener(onUpdated);
-			brauzer.tabs.onRemoved.removeListener(onRemoved);
-			brauzer.tabs.onMoved.removeListener(onMoved);
-			status.init.tabs      = false;
 		}
 	},
 
