@@ -267,7 +267,6 @@ const messageHandler = {
 				folder.classList[info.method]('folded');
 		},
 		reInit       : info => {
-			console.log(info.timeStamp);
 			if (info.timeStamp.options !== status.timeStamp.options)
 				return initSidebar(info);
 			if (info.timeStamp.info !== status.timeStamp.info) {

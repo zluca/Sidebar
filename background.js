@@ -834,10 +834,8 @@ const messageHandler = {
 			if (options[section][option].hasOwnProperty('handler'))
 				optionsHandler[options[section][option].handler](section, option, value);
 			setOption(section, option, value);
-			for (let i = options[section][option].targets.length - 1; i >= 0; i--) {
-				console.log(options[section][option].targets[i]);
+			for (let i = options[section][option].targets.length - 1; i >= 0; i--)
 				send(options[section][option].targets[i], 'options', option, {'section': section, 'option': option, value: value});
-			}
 		},
 	},
 
