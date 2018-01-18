@@ -132,12 +132,12 @@ const messageHandler = {
 				options.theme.fontSize = info.theme.fontSize;
 				setSideBarWidth(side);
 			}
-			if (options.theme.borderColor !== info.theme.borderColor[0]) {
-				options.theme.borderColor = info.theme.borderColor[0];
+			if (options.theme.borderColor !== info.theme.borderColor) {
+				options.theme.borderColor = info.theme.borderColor;
 				setColor();
 			}
-			if (options.theme.borderColorActive !== info.theme.borderColorActive[0]) {
-				options.theme.borderColorActive = info.theme.borderColorActive[0];
+			if (options.theme.borderColorActive !== info.theme.borderColorActive) {
+				options.theme.borderColorActive = info.theme.borderColorActive;
 				setColor();
 			}
 		},
@@ -184,7 +184,6 @@ function init() {
 		}
 
 		brauzer.runtime.onMessage.addListener(message => {
-			// console.log(message);
 			if (message.hasOwnProperty('target'))
 				if (message.target === 'content')
 					messageHandler[message.subject][message.action](message.data);

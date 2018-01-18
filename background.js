@@ -92,7 +92,18 @@ const status = {
 	toSave               : {},
 	saverActive          : false,
 	sendTimer            : {},
-	pocketCode           : ''
+	pocketCode           : '',
+	timeStamp            : {
+		options   : 0,
+		info      : 0,
+		startpage : 0,
+		tabs      : 0,
+		bookmarks : 0,
+		history   : 0,
+		downloads : 0,
+		rss       : 0,
+		pocket    : 0
+	}
 };
 
 const data = {
@@ -572,17 +583,19 @@ const sidebarAction =
 const modeData = {
 	tabs       : _ => {
 		return {
-			mode           : 'tabs',
-			i18n           : i18n.tabs,
-			tabs           : data.tabs,
-			tabsFolders    : data.tabsFolders,
-			domains        : data.tabsDomains,
-			activeTabId    : status.activeTabId
+			mode             : 'tabs',
+			timeStamp        : status.timeStamp.tabs,
+			i18n             : i18n.tabs,
+			tabs             : data.tabs,
+			tabsFolders      : data.tabsFolders,
+			domains          : data.tabsDomains,
+			activeTabId      : status.activeTabId
 		};
 	},
 	bookmarks  : _ => {
 		return {
 			mode             : 'bookmarks',
+			timeStamp        : status.timeStamp.bookmarks,
 			i18n             : i18n.bookmarks,
 			bookmarks        : data.bookmarks,
 			bookmarksFolders : data.bookmarksFolders,
@@ -593,6 +606,7 @@ const modeData = {
 	history    : _ => {
 		return {
 			mode             : 'history',
+			timeStamp        : status.timeStamp.history,
 			i18n             : i18n.history,
 			history          : data.history,
 			historyEnd       : status.historyEnd,
@@ -603,6 +617,7 @@ const modeData = {
 	downloads  : _ => {
 		return {
 			mode             : 'downloads',
+			timeStamp        : status.timeStamp.downloads,
 			i18n             : i18n.downloads,
 			downloads        : data.downloads,
 			domains          : []
@@ -611,6 +626,7 @@ const modeData = {
 	rss        : _ => {
 		return {
 			mode             : 'rss',
+			timeStamp        : status.timeStamp.rss,
 			i18n             : i18n.rss,
 			rss              : data.rss,
 			rssFolders       : data.rssFolders,
@@ -621,6 +637,7 @@ const modeData = {
 	pocket    : _ => {
 		return {
 			mode             : 'pocket',
+			timeStamp        : status.timeStamp.pocket,
 			username         : optionsShort.pocket.username,
 			auth             : optionsShort.pocket.auth,
 			i18n             : i18n.pocket,
@@ -817,8 +834,10 @@ const messageHandler = {
 			if (options[section][option].hasOwnProperty('handler'))
 				optionsHandler[options[section][option].handler](section, option, value);
 			setOption(section, option, value);
-			for (let i = options[section][option].targets.length - 1; i >= 0; i--)
+			for (let i = options[section][option].targets.length - 1; i >= 0; i--) {
+				console.log(options[section][option].targets[i]);
 				send(options[section][option].targets[i], 'options', option, {'section': section, 'option': option, value: value});
+			}
 		},
 	},
 
@@ -839,6 +858,7 @@ const messageHandler = {
 				saveNow('foldedId');
 			}
 			folder.folded = message.data.folded;
+			makeTimeStamp(message.data.mode);
 			send('sidebar', 'set', 'fold', message.data);
 		},
 		hover : (message, sender, sendResponse) => {
@@ -1095,7 +1115,7 @@ const updateFolder = {
 
 const initService = {
 
-	data: _ => {
+	data      : _ => {
 
 		const gettingStorage = res => {
 
@@ -1208,7 +1228,7 @@ const initService = {
 		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId']);
 	},
 
-	startpage: start => {
+	startpage : start => {
 
 		const gettingStorage = res => {
 			if (Array.isArray(res.speadDial))
@@ -1291,7 +1311,7 @@ const initService = {
 		}
 	},
 
-	tabs: start => {
+	tabs      : start => {
 
 		const initTabs = _ => {
 			messageHandler.tabs = {
@@ -1444,10 +1464,12 @@ const initService = {
 
 		const onActivated       = tabInfo => {
 			status.activeTabId  = tabInfo.tabId;
+			makeTimeStamp('tabs');
 			reInit(tabInfo.tabId);
 		};
 
 		const onUpdated         = (id, info, tab) => {
+			makeTimeStamp('tabs');
 			const oldTab = getById('tabs', id);
 			if (oldTab === false)
 				return createTab(tab);
@@ -1501,6 +1523,7 @@ const initService = {
 		};
 
 		const onRemoved         = id => {
+			makeTimeStamp('tabs');
 			const tab = getById('tabs', id);
 			if (tab === false) return;
 			const newOpenerId = tab.opener;
@@ -1513,6 +1536,7 @@ const initService = {
 		};
 
 		const onMoved           = (id, moveInfo) => {
+			makeTimeStamp('tabs');
 			moveFromTo('tabs', moveInfo.fromIndex, moveInfo.toIndex);
 			send('sidebar', 'tabs', 'moved', {'id': id, 'oldIndex': moveInfo.fromIndex, 'newIndex': moveInfo.toIndex, 'isFolder': false});
 		};
@@ -1540,6 +1564,8 @@ const initService = {
 				newItem.windowId   = item.windowId;
 				newItem.activated  = false;
 				updateFolder.tabs(newItem, domain);
+				if (status.init.tabs === true)
+					makeTimeStamp('tabs');
 				return newItem;
 			};
 
@@ -1557,6 +1583,8 @@ const initService = {
 				}
 				else
 					addToFolder('tabs', tab);
+				if (status.init.tabs === true)
+					makeTimeStamp('tabs');
 				return folder;
 			};
 
@@ -1580,7 +1608,7 @@ const initService = {
 		}
 	},
 
-	bookmarks: start => {
+	bookmarks : start => {
 
 		const initBookmarks = _ => {
 			messageHandler.bookmarks = {
@@ -1701,6 +1729,7 @@ const initService = {
 		};
 
 		const onCreated     = (id, bookmark) => {
+			makeTimeStamp('bookmarks');
 			if (isFolder(bookmark)) {
 				send('sidebar', 'bookmarks', 'createdFolder', {'item': updateFolder.bookmarks(bookmark)});
 			}
@@ -1709,6 +1738,7 @@ const initService = {
 		};
 
 		const onChanged     = (id, info) => {
+			makeTimeStamp('bookmarks');
 			const bookmark = getById('bookmarks', id);
 			if (bookmark !== false) {
 				if (info.hasOwnProperty('url'))
@@ -1753,6 +1783,7 @@ const initService = {
 		};
 
 		const onMoved       = (id, info) => {
+			makeTimeStamp('bookmarks');
 			const bookmark  = getById('bookmarks', id);
 			const oldParent = getFolderById('bookmarks', info.oldParentId);
 			const newParent = getFolderById('bookmarks', info.parentId);
@@ -1771,6 +1802,7 @@ const initService = {
 		};
 
 		const onRemoved     = (id, info) => {
+			makeTimeStamp('bookmarks');
 			let bookmark = getById('bookmarks', id);
 			if (bookmark !== false) {
 				deleteById('bookmarks', id);
@@ -1798,10 +1830,12 @@ const initService = {
 				newItem.url     = item.url;
 				if (firefox)
 					newItem.hidden  = /^place:/.test(item.url) || item.type !== 'bookmark';
+				if (status.init.bookmarks === true)
+					makeTimeStamp('bookmarks');
 				return newItem;
 			};
 
-			updateFolder.bookmarks =  folder => {
+			updateFolder.bookmarks = folder => {
 				let newFolder = getFolderById('bookmarks', folder.id);
 				if (newFolder === false) {
 					newFolder           = createFolderById('bookmarks', folder.id, 'last');
@@ -1815,6 +1849,8 @@ const initService = {
 					if (parent !== false)
 						parent.itemsId.push(folder.id);
 				}
+				if (status.init.bookmarks === true)
+					makeTimeStamp('bookmarks');
 				return newFolder;
 			};
 
@@ -1825,6 +1861,7 @@ const initService = {
 			data.bookmarksId         = [];
 			data.bookmarksFolders    = [];
 			data.bookmarksFoldersId  = [];
+			makeTimeStamp('bookmarks');
 			execMethod(brauzer.bookmarks.getRecent, getRecent, options.misc.limitBookmarks.value);
 		}
 		else {
@@ -1840,11 +1877,11 @@ const initService = {
 			brauzer.bookmarks.onChanged.removeListener(onChanged);
 			brauzer.bookmarks.onMoved.removeListener(onMoved);
 			brauzer.bookmarks.onRemoved.removeListener(onRemoved);
-			status.init.bookmarks      = false;
+			status.init.bookmarks    = false;
 		}
 	},
 
-	history: start => {
+	history   : start => {
 
 		const initHistory = _ => {
 			messageHandler.history = {
@@ -1931,6 +1968,7 @@ const initService = {
 		};
 
 		const onVisited = item => {
+			makeTimeStamp('history');
 			const hs = getById('history', item.id);
 			if (hs !== false)
 				deleteById('history', item.id);
@@ -1938,6 +1976,7 @@ const initService = {
 		};
 
 		const onVisitRemoved = info => {
+			makeTimeStamp('history');
 			const urls = info.urls;
 			if (info.allHistory === true) {
 				data.historyId = [];
@@ -1971,6 +2010,8 @@ const initService = {
 				newItem.domain = makeDomain('history', item.url).id;
 				newItem.title  = item.title || item.url;
 				newItem.pid    = pid;
+				if (status.init.history === true)
+					makeTimeStamp('history');
 				return newItem;
 			};
 
@@ -1986,6 +2027,8 @@ const initService = {
 					folder.folded = getFolded(`history-${id}`);
 					folder.title  = title;
 				}
+				if (status.init.history === true)
+					makeTimeStamp('history');
 				return folder;
 			};
 
@@ -2002,11 +2045,11 @@ const initService = {
 			data.historyFoldersId  = [];
 			brauzer.history.onVisited.removeListener(onVisited);
 			brauzer.history.onVisitRemoved.removeListener(onVisitRemoved);
-			status.init.history      = false;
+			status.init.history    = false;
 		}
 	},
 
-	downloads: start => {
+	downloads : start => {
 
 		const initDownloads = _ => {
 			messageHandler.downloads = {
@@ -2050,6 +2093,7 @@ const initService = {
 			brauzer.downloads.onErased.addListener(onErased);
 			brauzer.downloads.onChanged.addListener(onChanged);
 
+			makeTimeStamp('downloads');
 			status.init.downloads = true;
 		};
 
@@ -2072,6 +2116,7 @@ const initService = {
 					status.info.downloadStatus = 'progress';
 					send('sidebar', 'info', 'downloadStatus', 'progress');
 				}
+				makeTimeStamp('downloads', true);
 			},
 			delete : _ => {
 				status.info.downloadsCount--;
@@ -2081,6 +2126,7 @@ const initService = {
 					status.info.downloadStatus = 'idle';
 					send('sidebar', 'info', 'downloadStatus', 'idle');
 				}
+				makeTimeStamp('downloads', true);
 			},
 			info   : _ => {
 				let count = 0;
@@ -2093,19 +2139,23 @@ const initService = {
 				else
 					status.info.downloadStatus = 'idle';
 				send('sidebar', 'info', 'downloadStatus', status.info.downloadStatus);
+				makeTimeStamp('downloads', true);
 			}
 		};
 
 		const onCreated = download => {
+			makeTimeStamp('downloads');
 			send('sidebar', 'downloads', 'created', {'item': createById('downloads', download, 'last')});
 		};
 
 		const onErased = id => {
+			makeTimeStamp('downloads');
 			deleteById('downloads', id);
 			send('sidebar', 'downloads', 'erased', {'id': id});
 		};
 
 		const onChanged = delta => {
+			makeTimeStamp('downloads');
 			const download = getById('downloads', delta.id);
 			if (download === false)
 				return;
@@ -2190,6 +2240,8 @@ const initService = {
 				newItem.url             = url;
 				newItem.state           = item.state;
 				newItem.exists          = item.state === 'in_progress' ? true : item.exists;
+				if (status.init.downloads === true)
+					makeTimeStamp('downloads');
 				return newItem;
 			};
 
@@ -2208,7 +2260,7 @@ const initService = {
 		}
 	},
 
-	rss: start => {
+	rss       : start => {
 
 		const initRss = _ => {
 			messageHandler.rss = {
@@ -2333,6 +2385,7 @@ const initService = {
 				if (options.misc.rssMode.value === 'domain')
 					send('sidebar', 'rss', 'update', {'id': feed.id, 'method': feed.status === 'loading' ? 'add' : 'remove'});
 			}
+			makeTimeStamp('rss', true);
 		};
 
 		const guidFromUrl = url => {
@@ -2560,6 +2613,7 @@ const initService = {
 			};
 			setReaded[method]();
 			send('sidebar', 'info', 'rssUnreaded', {'unreaded': status.info.rssUnreaded});
+			makeTimeStamp('rss', true);
 		};
 
 		const getRss = res => {
@@ -2610,6 +2664,8 @@ const initService = {
 					}
 				if (success === false)
 					feed.itemsId.push(item.id);
+				if (status.init.rss === true)
+					makeTimeStamp('rss', true);
 				return newItem;
 			};
 
@@ -2628,7 +2684,7 @@ const initService = {
 		}
 	},
 
-	pocket: start => {
+	pocket    : start => {
 
 		const pocketRequest = (type, info = {}) => {
 
@@ -3074,6 +3130,7 @@ function sideBarData(side) {
 						'header' : i18n.header,
 						'mode'   : i18n[options[side].mode.value]
 					 },
+		'timeStamp': status.timeStamp
 	};
 }
 
@@ -3542,12 +3599,19 @@ function makeSite(index, site) {
 }
 
 function setOption(section, option, newValue) {
+	makeTimeStamp('options');
 	options[section][option].value = newValue;
 	optionsShort[section][option]  = newValue;
 	saveNow('options');
 }
 
-function saveNow(what) {
+function makeTimeStamp(mode, info = false) {
+	status.timeStamp[mode] = Date.now();
+	if (info)
+		status.timeStamp.info = Date.now();
+}
+
+function saveNow(what, noStamp = false) {
 	const dataToSave = {
 		options       : {'options': optionsShort},
 		favs          : {'favs': data.favs, 'favsId': data.favsId},
@@ -3560,9 +3624,12 @@ function saveNow(what) {
 		foldedId      : {'foldedId': data.foldedId}
 	};
 	brauzer.storage.local.set(dataToSave[what]);
+	if (noStamp === false)
+		makeTimeStamp(what.replace('Folders', ''));
 }
 
 function saveLater(what) {
+	makeTimeStamp(what);
 	if (status.toSave.hasOwnProperty(what))
 		return;
 	status.toSave[what] = true;
@@ -3572,7 +3639,7 @@ function saveLater(what) {
 			status.saverActive = false;
 			for (let target in status.toSave) {
 				delete status.toSave[target];
-				saveNow(target);
+				saveNow(target, true);
 			}
 		}, 30000);
 	}

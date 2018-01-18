@@ -45,7 +45,12 @@ const status   = {
 	},
 	lastSearch          : '',
 	scrolling           : false,
-	scrollTimer         : 0
+	scrollTimer         : 0,
+	timeStamp           : {
+		mode    : 0,
+		options : 0,
+		info    : 0
+	}
 };
 
 const data     = {
@@ -262,7 +267,22 @@ const messageHandler = {
 				folder.classList[info.method]('folded');
 		},
 		reInit       : info => {
-			initSidebar(info);
+			console.log(info.timeStamp);
+			if (info.timeStamp.options !== status.timeStamp.options)
+				return initSidebar(info);
+			if (info.timeStamp.info !== status.timeStamp.info) {
+				info.timeStamp.info = status.timeStamp.info;
+				button.rss.lastChild.textContent = info.info.rssUnreaded || ' ';
+				setDownloadStatus[info.info.downloadStatus]();
+			}
+			if (info.data.mode !== options.sidebar.mode)
+				return initBlock[info.data.mode](info.data);
+			if (info.timeStamp[options.sidebar.mode] !== status.timeStamp.mode)
+				return initBlock[info.data.mode](info.data);
+			if (info.timeStamp.favs !== status.timeStamp.info.favs) {
+				info.timeStamp.favs = status.timeStamp.info.favs;
+				setDomainStyle.update(info.data.domains);
+			}
 		},
 		hover       : info => {
 			doc.classList[info]('hover');
@@ -350,15 +370,16 @@ function initSidebar(response) {
 
 	brauzer.runtime.onMessage.removeListener(onMessage);
 
-	status.side                  = response.side;
-	options.misc                 = response.options.misc;
-	options.theme                = response.options.theme;
-	options.warnings             = response.options.warnings;
-	options.sidebar              = response.options.sidebar;
-	options.pocket               = response.options.pocket;
-	options.scroll               = response.options.scroll;
-	i18n.header                  = response.i18n.header;
-	status.info                  = response.info;
+	status.side         = response.side;
+	status.timeStamp    = response.timeStamp;
+	options.misc        = response.options.misc;
+	options.theme       = response.options.theme;
+	options.warnings    = response.options.warnings;
+	options.sidebar     = response.options.sidebar;
+	options.pocket      = response.options.pocket;
+	options.scroll      = response.options.scroll;
+	i18n.header         = response.i18n.header;
+	status.info         = response.info;
 
 	setFontSize();
 	setColor(options.theme);
@@ -383,7 +404,7 @@ function initSidebar(response) {
 
 	if (options.sidebar.method === 'iframe') {
 		doc.classList.remove('fixed');
-		window.onresize              = _ => {setFontSize();};
+		window.onresize = _ => {setFontSize();};
 		if (controls.iframe === null) {
 			controls.iframe       = dce('div');
 			controls.iframe.id    = 'controls-iframe';
@@ -502,10 +523,11 @@ const initBlock = {
 		prepareBlock('tabs');
 		setBlockClass('tabs');
 		setDomainStyle.rewrite(info.domains);
-		i18n.tabs           = info.i18n;
-		status.activeTabId  = info.activeTabId;
+		i18n.tabs             = info.i18n;
+		status.activeTabId    = info.activeTabId;
+		status.timeStamp.mode = info.timeStamp;
 
-		messageHandler.tabs = {
+		messageHandler.tabs   = {
 			created    : info => {
 				if (options.misc.tabsMode === 'tree')
 					insertFolders('tabs', [fakeFolder(info.tab)], true);
@@ -727,7 +749,8 @@ const initBlock = {
 		prepareBlock('bookmarks');
 		setBlockClass('bookmarks');
 		setDomainStyle.rewrite(info.domains);
-		i18n.bookmarks = info.i18n;
+		i18n.bookmarks           = info.i18n;
+		status.timeStamp.mode    = info.timeStamp;
 
 		messageHandler.bookmarks = {
 			removed         : info => {
@@ -865,7 +888,8 @@ const initBlock = {
 		prepareBlock('history');
 		setBlockClass('history');
 		setDomainStyle.rewrite(info.domains);
-		i18n.history = info.i18n;
+		i18n.history             = info.i18n;
+		status.timeStamp.mode    = info.timeStamp;
 
 		messageHandler.history   = {
 			new     : info =>  {
@@ -943,7 +967,8 @@ const initBlock = {
 		prepareBlock('downloads');
 		setBlockClass('downloads');
 		setDomainStyle.rewrite(info.domains);
-		i18n.downloads = info.i18n;
+		i18n.downloads           = info.i18n;
+		status.timeStamp.mode    = info.timeStamp;
 
 		messageHandler.downloads = {
 			created    : info => {
@@ -1026,9 +1051,10 @@ const initBlock = {
 		prepareBlock('rss');
 		setReadedMode(options.misc.rssHideReaded);
 		setDomainStyle.rewrite(info.domains);
-		i18n.rss = info.i18n;
+		i18n.rss              = info.i18n;
+		status.timeStamp.mode = info.timeStamp;
 
-		messageHandler.rss = {
+		messageHandler.rss    = {
 			createdFeed      : info =>  {
 				insertFolders('rss', [info.feed]);
 			},
@@ -1203,7 +1229,8 @@ const initBlock = {
 		prepareBlock('pocket');
 		setBlockClass('pocket', options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
 		setDomainStyle.rewrite(info.domains);
-		i18n.pocket = info.i18n;
+		i18n.pocket           = info.i18n;
+		status.timeStamp.mode = info.timeStamp;
 
 		messageHandler.pocket = {
 			newItems     : info =>  {
