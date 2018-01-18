@@ -157,7 +157,6 @@ nav>.controls {
 }
 #controls-button {
 	width: 100%;
-	flex-wrap: wrap;
 	justify-content: center;
 }
 .history #controls-button {
@@ -215,7 +214,10 @@ nav>.controls {
 }
 #controls-sidebar>.button,
 #controls-button>.button {
+	box-sizing: border-box;
+	width: 48%;
 	display: inline-block;
+	text-align: center;
 }
 
 #controls-sidebar>.button,
