@@ -917,6 +917,11 @@ const initBlock = {
 			}
 		};
 
+		onClick               = event => {
+			if (event.target.classList.contains('history'))
+				openLink(event);
+		};
+
 		const now = new Date();
 		status.historyInfo.lastDate = now.toLocaleDateString();
 
