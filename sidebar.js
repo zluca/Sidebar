@@ -436,13 +436,14 @@ function prepareBlock(mode) {
 		controls.user.classList.add('controls');
 		block.insertBefore(controls.user, rootFolder);
 	}
-	if (controls.item.hasChildNodes()) {
-		controls.item.parentNode.removeChild(controls.item);
-		controls.item    = dce('div');
-		controls.item.id = 'controls-item';
-		controls.item.classList.add('controls');
-		block.appendChild(controls.item);
-	}
+	if (controls.item !== null)
+		if (controls.item.hasChildNodes()) {
+			controls.item.parentNode.removeChild(controls.item);
+			controls.item    = dce('div');
+			controls.item.id = 'controls-item';
+			controls.item.classList.add('controls');
+			block.appendChild(controls.item);
+		}
 	if (controls.button.hasChildNodes()) {
 		block.removeChild(controls.button);
 		controls.button    = dce('div');
