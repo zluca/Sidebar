@@ -3185,7 +3185,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		} :
 		_ => `chrome://favicon/${url}`;
 
-	const updateFav= {
+	const updateFav = {
 		truetrue   : _ => {
 			fav.fav = favIconUrl;
 			return favIconUrl;
@@ -3203,12 +3203,20 @@ function makeFav(id, url, favIconUrl, update = false) {
 		} ,
 	};
 
+	const domainsId = ['tabsDomainsId', 'bookmarksDomainsId', 'historyDomainsId', 'rssDomainsId', 'pocketDomainsId'];
+	const domains   = ['tabsDomains', 'bookmarksDomains', 'historyDomains', 'rssDomains', 'pocketDomains'];
+
 	let fav       = getById('favs', id);
 	const favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
 	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket'], i = targets.length - 1; i >= 0; i--) {
 		if (data[`${targets[i]}Domains`].indexOf(id) !== -1)
 			data[`${targets[i]}Domains`].fav = favIcon;
 		if (update === false) continue;
+		for (let i = domainsId.length - 1; i >= 0; i--) {
+			const index = data[domainsId[i]].indexOf(fav.id);
+			if (index !== -1)
+				data[domains[i]][index].fav = favIcon;
+		}
 		if (options.leftBar.mode.value === targets[i])
 			send('leftBar', 'info', 'updateDomain', fav);
 		if (options.rightBar.mode.value === targets[i])
