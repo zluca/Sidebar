@@ -425,6 +425,11 @@ function initSidebar(response) {
 
 function prepareBlock(mode) {
 
+	controls.item.parentNode.removeChild(controls.item);
+	controls.item    = dce('div');
+	controls.item.id = 'controls-item';
+	controls.item.classList.add('controls');
+	block.appendChild(controls.item);
 	if (rootFolder.lastChild.hasChildNodes()) {
 		rootFolder.removeChild(rootFolder.lastChild);
 		rootFolder.appendChild(dce('div'));
@@ -436,12 +441,6 @@ function prepareBlock(mode) {
 		controls.user.classList.add('controls');
 		block.insertBefore(controls.user, rootFolder);
 	}
-	if (controls.item !== null)
-		controls.item.parentNode.removeChild(controls.item);
-	controls.item    = dce('div');
-	controls.item.id = 'controls-item';
-	controls.item.classList.add('controls');
-	block.appendChild(controls.item);
 	if (controls.button.hasChildNodes()) {
 		block.removeChild(controls.button);
 		controls.button    = dce('div');
