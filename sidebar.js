@@ -1941,7 +1941,7 @@ const buttonsEvents = {
 			send('background', 'dialog', 'bookmarkTab', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		move: event => {
-			moveItem('tabs', controls.tabs.item.parentNode);
+			moveItem('tabs', controls.item.parentNode);
 		},
 		reload: event => {
 			send('background', 'tabs', 'reload', {'id': parseInt(controls.item.parentNode.dataset.id)});
@@ -2025,7 +2025,7 @@ const buttonsEvents = {
 			send('background', 'downloads', 'reload', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
 		cancel: event => {
-			send('background', 'downloads', 'cancel', {'id': parseInt(controls.item.parentNode.dataset.id), 'url': controls.downloads.item.parentNode.title});
+			send('background', 'downloads', 'cancel', {'id': parseInt(controls.item.parentNode.dataset.id), 'url': controls.item.parentNode.title});
 		},
 		delete: event => {
 			send('background', 'dialog', 'downloadDelete', {'id': parseInt(controls.item.parentNode.dataset.id), 'title': controls.item.parentNode.firstChild.textContent});
