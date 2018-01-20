@@ -2220,7 +2220,7 @@ const initService = {
 		}
 		else {
 			i18n.downloads           = null;
-			updateItem.downloads       = null;
+			updateItem.downloads     = null;
 			messageHandler.downloads = null;
 			data.downloads           = [];
 			data.downloadsId         = [];
@@ -2786,7 +2786,7 @@ const initService = {
 					if (response.hasOwnProperty('username'))
 						setOption('pocket', 'username', response.username);
 					setOption('pocket', 'auth', true);
-					send('sidebar', 'pocket', 'logout', {'method': 'remove', 'username': options.pocket.username.value});
+					send('sidebar', 'pocket', 'login', {'username': options.pocket.username.value});
 					pocketRequest('get');
 				},
 				request : response => {
@@ -2810,8 +2810,10 @@ const initService = {
 							if (parseInt(response.status) === 1)
 								onReady[type](response);
 						}
-						else if (type === 'auth' || type === 'request')
+						else if (type === 'auth' || type === 'request') {
 							onReady[type](response);
+							makeTimeStamp('pocket');
+						}
 					}
 					send('sidebar', 'pocket', 'update', 'remove');
 				}
@@ -2933,7 +2935,7 @@ const initService = {
 			setOption('pocket', 'username', '');
 			status.init.pocket   = true;
 			if (update === true)
-				send('sidebar', 'pocket', 'logout', {'method': 'add', 'folders': data.pocketFolders});
+				send('sidebar', 'pocket', 'logout', {'folders': data.pocketFolders});
 		};
 
 		const detectType = pocket => {

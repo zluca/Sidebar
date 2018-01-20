@@ -1273,19 +1273,18 @@ const initBlock = {
 				setBlockClass('pocket', info.view);
 				setView('pocket', info.view, info.items, info.folders);
 			},
+			login        : info => {
+				options.pocket.auth = true;
+				block.classList.remove('logout');
+				i18n.pocket.usernameText             = info.username;
+				i18n.pocket.username                 = info.username;
+				controls.user.firstChild.textContent = info.username;
+				controls.user.firstChild.title       = info.username;
+			},
 			logout       : info => {
-				block.classList[info.method]('logout');
-				if (info.method === 'add') {
-					rootFolder.removeChild(rootFolder.lastChild);
-					rootFolder.appendChild(dce('div'));
-					clearData('pocket');
-				}
-				else {
-					i18n.pocket.usernameText             = info.username;
-					i18n.pocket.username                 = info.username;
-					controls.user.firstChild.textContent = info.username;
-					controls.user.firstChild.title       = info.username;
-				}
+				options.pocket.auth = false;
+				block.classList.add('logout');
+				clearData('pocket');
 			},
 			fav          : info => {
 				const pocket = getById('pocket', info);
@@ -1363,7 +1362,8 @@ const initBlock = {
 						folder = getFolderById('pocket', items[i][options.misc.pocketMode]);
 					}
 				}
-				insert[position](pocket);
+				if (folder !== false)
+					insert[position](pocket);
 			}
 		};
 
