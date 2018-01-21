@@ -470,9 +470,6 @@ function prepareBlock(mode) {
 		messageHandler[options.sidebar.mode] = {};
 	}
 	searchActive(false);
-
-	window.scrollTo(0, options.scroll[options.sidebar.mode]);
-	window.addEventListener('scroll', onscroll, {'passive': true});
 }
 
 const initBlock = {
@@ -714,6 +711,7 @@ const initBlock = {
 		makeButton('tree', 'tabs', 'bottom');
 
 		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode);
+		setTimeout(setScroll, 100);
 	},
 
 	bookmarks : info => {
@@ -833,6 +831,7 @@ const initBlock = {
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders('bookmarks', info.bookmarksFolders);
 		insertItems(info.bookmarks, 'last');
+		setTimeout(setScroll, 100);
 	},
 
 	history : info => {
@@ -930,6 +929,7 @@ const initBlock = {
 		insertItems(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
+		setTimeout(setScroll, 100);
 	},
 
 	downloads : info => {
@@ -1039,6 +1039,7 @@ const initBlock = {
 
 		for (let i = 0, l = info.downloads.length; i < l; i++)
 			insertDownload(info.downloads[i]);
+		setTimeout(setScroll, 100);
 	},
 
 	rss : info => {
@@ -1178,10 +1179,6 @@ const initBlock = {
 				item.dataset.date  = items[i].date;
 				item.href          = items[i].link;
 				item.dataset.title = `${items[i].title}\n\n${items[i].description}`;
-				// item.addEventListener('mouseover', _ => {
-				// 	item.title = `${items[i].title}\n\n${items[i].description}`;
-				// },
-				// {'passive': true, 'once': true});
 				if (items[i].readed)
 					item.classList.add('item', 'rss-item', `domain-${items[i].domain}`);
 				else {
@@ -1215,6 +1212,7 @@ const initBlock = {
 			}
 		};
 		setView('rss', options.misc.rssMode, info.rss, info.rssFolders);
+		setTimeout(setScroll, 100);
 	},
 
 	pocket : info => {
@@ -1387,6 +1385,7 @@ const initBlock = {
 		makeButton('reload', 'pocket', 'bottom');
 
 		setView('pocket', options.misc.pocketMode, info.pocket, info.pocketFolders);
+		setTimeout(setScroll, 100);
 	}
 };
 
@@ -1444,6 +1443,11 @@ function onscroll(event) {
 		if (Math.abs(window.scrollY - options.scroll[options.sidebar.mode]) > 10)
 			send('background', 'options', 'handler', {'section': 'scroll', 'option': options.sidebar.mode, 'value': window.scrollY});
 	}
+}
+
+function setScroll() {
+	window.scrollTo(0, options.scroll[options.sidebar.mode]);
+	window.addEventListener('scroll', onscroll, {'passive': true});
 }
 
 function setRssUnreaded(count) {
