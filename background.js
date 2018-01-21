@@ -2485,7 +2485,8 @@ const initService = {
 
 		const injectRss = (xml, feed) => {
 			let newItems = [];
-			for (let items = xml.querySelectorAll('item, entry'), i = items.length - 1; i >= 0; i--) {
+			for (let items = xml.querySelectorAll('item, entry'),
+				i = items.length - 1 < options.misc.maxSavedRssPerFeed.value ? items.length - 1 : options.misc.maxSavedRssPerFeed.value; i >= 0; i--) {
 				const item = {
 					'readed'     : false,
 					'title'      : '',
@@ -2519,10 +2520,6 @@ const initService = {
 				if (feed.itemsId.indexOf(item.id) === -1)
 					newItems.push(createById('rss', item, 'date'));
 			}
-			const l = feed.itemsId.length - options.misc.maxSavedRssPerFeed.value;
-			if (l > 0)
-				for (let i = 0; i < l; i++)
-					deleteRssItem(feed.itemsId[0]);
 			if (newItems.length > 0) {
 				newItems.sort((a, b) => a.date - b.date);
 				for (let i = 0, l = newItems.length, r = data.rssId.length - 1; i < l; i++)
