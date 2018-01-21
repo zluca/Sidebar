@@ -2295,6 +2295,7 @@ const initService = {
 					updateRssFeed(message.data.id);
 				},
 				updateAll    : (message, sender, sendResponse) => {
+					status.info.rssUpdated = 0;
 					brauzer.alarms.clearAll();
 					for (let i = data.rssFoldersId.length - 1; i >= 0; i--)
 						updateRssFeed(data.rssFoldersId[i]);
