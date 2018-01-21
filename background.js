@@ -2390,8 +2390,13 @@ const initService = {
 						const parser     = new DOMParser();
 						const xmlDoc     = parser.parseFromString(xhttp.responseText, 'text/xml');
 						const head       = xmlDoc.querySelector('channel, feed');
+						if (head === null) {
+							brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
+							${url}`});
+							return setUpdated(-1);
+						}
 						let rssTitle     = '';
-						if (title)
+						if (typeof title === 'string' && title !== '')
 							rssTitle = title;
 						else {
 							rssTitle = head.querySelector('title');
