@@ -1604,13 +1604,16 @@ const initService = {
 						const result = [];
 						const l      = bookmarkItems.length < options.misc.limitBookmarks.value ?
 							bookmarkItems.length : options.misc.limitBookmarks.value;
-						for (let i = 0; i < l; i++)
-							result.push({
-								id       : bookmarkItems[i].id,
-								url      : bookmarkItems[i].url,
-								title    : bookmarkItems[i].title,
-								domain   : makeDomain('bookmarks', bookmarkItems[i].url).id
-							});
+						for (let i = 0; i < l; i++) {
+							if (bookmarkItems[i].hasOwnProperty('url'))
+								if (bookmarkItems[i].url !== '')
+									result.push({
+										id       : bookmarkItems[i].id,
+										url      : bookmarkItems[i].url,
+										title    : bookmarkItems[i].title,
+										domain   : makeDomain('bookmarks', bookmarkItems[i].url).id
+									});
+						}
 						sendResponse(result);
 					};
 					execMethod(brauzer.bookmarks.search, onFulfilled, {'query': message.data.request});
