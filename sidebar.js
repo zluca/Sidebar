@@ -425,7 +425,8 @@ function initSidebar(response) {
 
 function prepareBlock(mode) {
 
-	controls.item.parentNode.removeChild(controls.item);
+	if (controls.item.parentNode !== null)
+		controls.item.parentNode.removeChild(controls.item);
 	controls.item    = dce('div');
 	controls.item.id = 'controls-item';
 	controls.item.classList.add('controls');
