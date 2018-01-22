@@ -558,11 +558,6 @@ const options = {
 			value   : false,
 			type    : 'boolean',
 			targets : []
-		},
-		lastUpdate : {
-			value   : 0,
-			type    : 'integer',
-			targets : []
 		}
 	}
 };
@@ -2693,7 +2688,7 @@ const initService = {
 					'access_token' : options.pocket.accessToken.value,
 					'detailType'   : 'complete',
 					'state'        : 'all',
-					'since'        : options.pocket.lastUpdate.value
+					'since'        : 0
 				},
 				check    : {
 					'consumer_key' : config.pocketConsumerKey,
@@ -2744,7 +2739,6 @@ const initService = {
 				},
 				get    : response => {
 					parsePockets(response);
-					setOption('pocket', 'lastUpdate', Date.now());
 				},
 				check  : response => {
 					if (response.hasOwnProperty('list')) {
@@ -2939,7 +2933,6 @@ const initService = {
 			data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other', 'archives'];
 			saveNow('pocket');
 			saveNow('pocketFolders');
-			setOption('pocket', 'lastUpdate', 0);
 			setOption('pocket', 'auth', false);
 			setOption('pocket', 'username', '');
 			status.init.pocket   = true;
