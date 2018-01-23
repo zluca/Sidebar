@@ -343,14 +343,27 @@ function tryToInit() {
 			}
 		}
 		else if (options.sidebar.method === 'iframe') {
-			if (firefox) {
-				doc.addEventListener('mouseleave', event => {
-					send('background', 'sidebar', 'sideDetection', {'sender': 'content', 'action': 'leave', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-				}, {'passive': true});
-				doc.addEventListener('mouseover', event => {
-					send('background', 'sidebar', 'sideDetection',{'sender': 'content', 'action': 'over', 'side': (event.x > doc.offsetWidth) ? 'rightBar' : 'leftBar'});
-				}, {'passive': true});
-			}
+			if (firefox)
+				if (status.side === 'rightBar') {
+					doc.addEventListener('mouseleave', event => {
+						if (event.x > doc.offsetWidth)
+							send('background', 'sidebar', 'sideDetection', {'sender': 'content', 'action': 'leave', 'side': 'rightBar'});
+					});
+					doc.addEventListener('mouseover', event => {
+						if (event.x > doc.offsetWidth)
+							send('background', 'sidebar', 'sideDetection',{'sender': 'content', 'action': 'over', 'side': 'rightBar'});
+					});
+				}
+				else {
+					doc.addEventListener('mouseleave', event => {
+						if (event.x < doc.offsetWidth)
+							send('background', 'sidebar', 'sideDetection', {'sender': 'content', 'action': 'leave', 'side': 'leftBar'});
+					});
+					doc.addEventListener('mouseover', event => {
+						if (event.x < doc.offsetWidth)
+							send('background', 'sidebar', 'sideDetection',{'sender': 'content', 'action': 'over', 'side': 'leftBar'});
+					});
+				}
 		}
 
 		initSidebar(response);
