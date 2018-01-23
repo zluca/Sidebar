@@ -2047,12 +2047,6 @@ const initService = {
 					brauzer.downloads.removeFile(message.data.id);
 					down.exists = false;
 					send('sidebar', 'downloads', 'exists', {'id': message.data.id, 'method': 'add'});
-				},
-				open   : (message, sender, sendResponse) => {
-					brauzer.downloads.open(message.data.id);
-				},
-				show   : (message, sender, sendResponse) => {
-					brauzer.downloads.show(message.data.id);
 				}
 			};
 

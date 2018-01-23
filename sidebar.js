@@ -1026,9 +1026,9 @@ const initBlock = {
 			if (target !== null)
 				if (target.classList.contains('complete')) {
 					if (event.pageX - target.offsetLeft < options.theme.fontSize)
-						send('background', 'downloads', 'show' , {'id': parseInt(target.dataset.id)});
+						brauzer.downloads.show(parseInt(target.dataset.id));
 					else
-						send('background', 'downloads', 'open' , {'id': parseInt(target.dataset.id)});
+						brauzer.downloads.open(parseInt(target.dataset.id));
 				}
 		};
 
