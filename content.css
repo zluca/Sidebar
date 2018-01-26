@@ -1,11 +1,3 @@
-:root {
-	box-sizing:         border-box!important;
-	min-height:         100vh!important;
-	max-width:          100vw!important;
-	--sbp-border-color: #eee;
-	--sbp-border-color-active: #ccc;
-}
-
 .sbp-sidebar {
 	contain:   strict!important;
 	border:    unset!important;
