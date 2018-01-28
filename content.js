@@ -77,7 +77,7 @@ makeIframe('rightBar');
 let initTimer = -1;
 init();
 
-document.onreadystatechange = checkDocumentReady;
+document.addEventListener('readystatechange', checkDocumentReady);
 checkDocumentReady();
 
 const messageHandler = {
@@ -204,19 +204,20 @@ function init() {
 		options.theme.borderColor       = response.borderColor;
 		options.theme.borderColorActive = response.borderColorActive;
 		options.misc.expandOnClick      = response.expandOnClick;
-		if (status.docReady === true)
+		if (status.docReady === true) {
 			injectElements();
-		window.onresize = _ => {
-			if (options.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
-			if (options.rightBar.method === 'iframe') setSideBarWidth('rightBar');
-		};
+			document.addEventListener('resize', event => {
+				if (options.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
+				if (options.rightBar.method === 'iframe') setSideBarWidth('rightBar');
+			});
+		}
 	});
 }
 
 function checkDocumentReady() {
 	if (document.readyState === 'interactive' || document.readyState === 'complete') {
-		document.onreadystatechange = null;
-		status.docReady             = true;
+		document.removeEventListener('readystatechange', checkDocumentReady);
+		status.docReady = true;
 		injectElements();
 	}
 }
