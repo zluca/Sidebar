@@ -57,6 +57,13 @@
 	"options_ui": {
 		"page"          : "options.html#services",
 		"browser_style" : true
+	},
+	"commands": {
+		"_execute_sidebar_action": {
+			"suggested_key": {
+				"default": "F8"
+			}
+		}
 	}
 }
 
