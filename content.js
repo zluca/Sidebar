@@ -206,7 +206,7 @@ function init() {
 		options.misc.expandOnClick      = response.expandOnClick;
 		if (status.docReady === true) {
 			injectElements();
-			document.addEventListener('resize', event => {
+			window.addEventListener('resize', event => {
 				if (options.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
 				if (options.rightBar.method === 'iframe') setSideBarWidth('rightBar');
 			});
