@@ -54,30 +54,12 @@ const status   = {
 };
 
 const data     = {
-	tabs                : [],
-	tabsId              : [],
-	tabsFolders         : [],
-	tabsFoldersId       : [],
-	bookmarks           : [],
-	bookmarksId         : [],
-	bookmarksFolders    : [],
-	bookmarksFoldersId  : [],
-	history             : [],
-	historyId           : [],
-	historyFolders      : [],
-	historyFoldersId    : [],
-	downloads           : [],
-	downloadsId         : [],
-	rss                 : [],
-	rssId               : [],
-	rssFolders          : [],
-	rssFoldersId        : [],
-	pocket              : [],
-	pocketId            : [],
-	pocketFolders       : [],
-	pocketFoldersId     : [],
-	domains             : [],
-	domainsId           : []
+	item      : [],
+	itemId    : [],
+	folders   : [],
+	foldersId : [],
+	domains   : [],
+	domainsId : []
 };
 
 const options  = {
@@ -316,12 +298,12 @@ const messageHandler = {
 			setDownloadStatus[info]();
 		}
 	},
-	tabs      : {},
-	bookmarks : {},
-	history   : {},
-	downloads : {},
-	rss       : {},
-	pocket    : {}
+	tabs      : null,
+	bookmarks : null,
+	history   : null,
+	downloads : null,
+	rss       : null,
+	pocket    : null
 };
 
 function tryToInit() {
@@ -470,7 +452,7 @@ function prepareBlock(mode) {
 		block.appendChild(controls.bottom);
 	}
 
-	clearData(options.sidebar.mode);
+	clearData();
 
 	clearTimeout(status.scrollTimer);
 	window.removeEventListener('scroll', onscroll);
@@ -480,8 +462,8 @@ function prepareBlock(mode) {
 
 	document.body.classList = mode;
 	if (options.sidebar.mode !== mode) {
-		options.sidebar.mode    = mode;
-		messageHandler[options.sidebar.mode] = {};
+		messageHandler[options.sidebar.mode] = null;
+		options.sidebar.mode                 = mode;
 	}
 	searchActive(false);
 }
@@ -491,7 +473,7 @@ const initBlock = {
 	tabs : info => {
 
 		const moveTab       = info => {
-			const tab = getById('tabs', info.id);
+			const tab = getById(info.id);
 			if (tab === false) return;
 			if (options.misc.tabsMode === 'plain') {
 				if (info.newIndex < info.oldIndex)
@@ -517,19 +499,19 @@ const initBlock = {
 		};
 
 		const checkForTree  = (tabs, folders, view) => {
-			setBlockClass('tabs', view);
+			setBlockClass(view);
 			if (view !== 'tree')
-				setView('tabs', view, tabs, folders);
+				setView(view, tabs, folders);
 			else {
 				let fakeFolders = [];
 				for (let i = 0, l = tabs.length; i < l; i++)
 					fakeFolders.push(fakeFolder(tabs[i]));
-				setView('tabs', 'tree', tabs, fakeFolders);
+				setView('tree', tabs, fakeFolders);
 			}
 		};
 
 		prepareBlock('tabs');
-		setBlockClass('tabs');
+		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
 		i18n.tabs             = info.i18n;
 		status.activeTabId    = info.activeTabId;
@@ -538,7 +520,7 @@ const initBlock = {
 		messageHandler.tabs   = {
 			created    : info => {
 				if (options.misc.tabsMode === 'tree')
-					insertFolders('tabs', [fakeFolder(info.tab)], true);
+					insertFolders([fakeFolder(info.tab)], true);
 				insertItems([info.tab]);
 			},
 			active     : info => {
@@ -548,19 +530,19 @@ const initBlock = {
 					if (options.misc.tabsMode === 'domain')
 						status.activeTab.parentNode.parentNode.firstChild.classList.remove('active');
 				}
-				status.activeTab = getById('tabs', info);
+				status.activeTab = getById(info);
 				if (status.activeTab === false) return;
 				status.activeTab.classList.add('active');
 				if (options.misc.tabsMode === 'domain')
 					status.activeTab.parentNode.parentNode.firstChild.classList.add('active');
 			},
 			title      : info => {
-				const tab = getById('tabs', info.id);
+				const tab = getById(info.id);
 				if (tab !== false)
 					tab.textContent = info.title;
 			},
 			status     : info => {
-				const tab = getById('tabs', info.id);
+				const tab = getById(info.id);
 				if (tab !== false)
 					tab.classList[info.loading]('loading');
 			},
@@ -568,31 +550,31 @@ const initBlock = {
 				if (options.misc.tabsMode !== 'tree')
 					insertItems([info.tab]);
 				else {
-					const tab = getById('tabs', info.tab.id);
+					const tab = getById(info.tab.id);
 					if (tab !== false)
 						tab.href = info.tab.url;
 				}
 			},
 			folderChanged : info => {
 				if (options.misc.tabsMode === 'domain') {
-					const tab = getById('tabs', info.tab.id);
+					const tab = getById(info.tab.id);
 					if (tab !== false)
-						insertFolders('tabs', [info.folder]);
+						insertFolders([info.folder]);
 					insertItems([info.tab]);
 				}
 			},
 			removed      : info => {
 				const removing = {
 					plain  : tab => {
-						removeById('tabs', info.id);
+						removeById(info.id);
 					},
 					domain : tab => {
 						const pid    = tab.parentNode.parentNode.firstChild.dataset.id;
-						const folder = getFolderById('tabs', pid);
-						removeById('tabs', info.id);
+						const folder = getFolderById(pid);
+						removeById(info.id);
 						if (folder === false) return;
 						if (!folder.lastChild.hasChildNodes())
-							removeFolderById('tabs', pid);
+							removeFolderById(pid);
 						else
 							folder.firstChild.classList.remove('active');
 					},
@@ -602,10 +584,10 @@ const initBlock = {
 							if (folder.children[i].classList.contains('folder'))
 								folder.parentNode.insertBefore(folder.children[i], folder);
 						folder.parentNode.removeChild(folder);
-						removeById('tabs', info.id);
+						removeById(info.id);
 					}
 				};
-				const tab = getById('tabs', info.id);
+				const tab = getById(info.id);
 				if (status.activeTabId === info.id) {
 					status.activeTabId = -1;
 					status.activeTab   = false;
@@ -622,21 +604,21 @@ const initBlock = {
 					moveFolder('tabs', info);
 			},
 			pinned       : info => {
-				const tab = getById('tabs', info.id);
+				const tab = getById(info.id);
 				if (tab !== false)
 					tab.classList.add('pinned');
 			},
 			unpinned       : info => {
-				const tab = getById('tabs', info.id);
+				const tab = getById(info.id);
 				if (tab !== false)
 					tab.classList.remove('pinned');
 			},
 			newFolder    : info => {
 				if (options.misc.tabsMode === 'domain')
-					insertFolders('tabs', [info]);
+					insertFolders([info]);
 			},
 			domainCount  : info => {
-				const folder = getFolderById('tabs', info.id);
+				const folder = getFolderById(info.id);
 				if (info.view === 'hidden') {
 					folder.classList.remove('domain-view');
 					folder.classList.add('hidden-view');
@@ -647,9 +629,9 @@ const initBlock = {
 				}
 			},
 			folderRemoved: info => {
-				const folder = getFolderById('tabs', info);
+				const folder = getFolderById(info);
 				if (folder !== false)
-					removeFolderById('tabs', info);
+					removeFolderById(info);
 			},
 			view         : info => {
 				checkForTree(info.items, info.folders, info.view);
@@ -669,7 +651,7 @@ const initBlock = {
 				domain : i => {
 					if (pid !== tabs[i].domain) {
 						pid    = tabs[i].domain;
-						folder = getFolderById('tabs', pid);
+						folder = getFolderById(pid);
 					}
 					if (folder === false) return;
 					folder.lastChild.appendChild(tab);
@@ -677,7 +659,7 @@ const initBlock = {
 						folder.firstChild.classList.add('active');
 				},
 				tree  : i => {
-					folder = getFolderById('tabs', tabs[i].id);
+					folder = getFolderById(tabs[i].id);
 					if (folder.lastChild.hasChildNodes())
 						folder.lastChild.insertBefore(tab, folder.lastChild.firstChild);
 					else
@@ -686,9 +668,9 @@ const initBlock = {
 			};
 
 			for (let i = 0, l = tabs.length; i < l; i++) {
-				tab = getById('tabs', tabs[i].id);
+				tab = getById(tabs[i].id);
 				if (tab === false)
-					tab = createById('tabs', tabs[i].id);
+					tab = createById(tabs[i].id);
 				tab.textContent = tabs[i].title;
 				tab.title       = tabs[i].url;
 				tab.href        = tabs[i].url;
@@ -748,7 +730,7 @@ const initBlock = {
 		};
 
 		const changeBook      = (id, info) => {
-			const bookmark = getById('bookmarks', id);
+			const bookmark = getById(id);
 			if (info.hasOwnProperty('url'))
 				bookmark.title = info.url;
 			if (info.hasOwnProperty('title'))
@@ -756,23 +738,23 @@ const initBlock = {
 		};
 
 		prepareBlock('bookmarks');
-		setBlockClass('bookmarks');
+		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
 		i18n.bookmarks           = info.i18n;
 		status.timeStamp.mode    = info.timeStamp;
 
 		messageHandler.bookmarks = {
 			removed         : info => {
-				removeById('bookmarks', info.id);
+				removeById(info.id);
 			},
 			folderRemoved   : info => {
-				removeFolderById('bookmarks', info.id);
+				removeFolderById(info.id);
 			},
 			changedBookmark : info => {
 				changeBook(info.id, info.info);
 			},
 			changedFolder   : info => {
-				const folde = getFolderById('bookmarks', info.id);
+				const folde = getFolderById(info.id);
 				if (folder !== false)
 					folder.firstChild.textContent = info.title;
 			},
@@ -780,15 +762,15 @@ const initBlock = {
 				insertItems([info.item]);
 			},
 			createdFolder   : info => {
-				insertFolders('bookmarks', [info.item]);
+				insertFolders([info.item]);
 			},
 			moved           : info => {
 				if (status.moving === true)
 					doc.addEventListener('mouseup', finishMoving, {'once': true});
 				else if (info.isFolder === false)
-					moveBook(getById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.newIndex);
+					moveBook(getById(info.id) , getFolderById(info.pid), info.newIndex);
 				else if (info.isFolder === true)
-					moveBook(getFolderById('bookmarks', info.id) , getFolderById('bookmarks', info.pid), info.newIndex);
+					moveBook(getFolderById(info.id) , getFolderById(info.pid), info.newIndex);
 			}
 		};
 
@@ -811,7 +793,7 @@ const initBlock = {
 						item => {
 							if (item.pid !== pid) {
 								pid    = item.pid;
-								folder = getFolderById('bookmarks', pid);
+								folder = getFolderById(pid);
 								if (folder === false)
 									folder = rootFolder;
 								count  = folder.lastChild.children.length - 1;
@@ -822,7 +804,7 @@ const initBlock = {
 
 			for (let i = 0, l = items.length; i < l; i++) {
 				checkPid(items[i]);
-				const bookmark       = createById('bookmarks', items[i].id, true);
+				const bookmark       = createById(items[i].id, true);
 				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
 				bookmark.title       = items[i].url;
 				bookmark.href        = items[i].url;
@@ -843,7 +825,7 @@ const initBlock = {
 		makeSearch('bookmarks');
 
 		if (options.misc.bookmarksMode === 'tree')
-			insertFolders('bookmarks', info.bookmarksFolders);
+			insertFolders(info.bookmarksFolders);
 		insertItems(info.bookmarks, 'last');
 		setTimeout(setScroll, 100);
 	},
@@ -869,12 +851,12 @@ const initBlock = {
 				}
 			};
 			for (let i = 0, l = items.length; i < l; i++) {
-				let hist = getById('history', items[i].id);
+				let hist = getById(items[i].id);
 				if (hist === false)
-					hist = createById('history', items[i].id);
+					hist = createById(items[i].id);
 				if (items[i].pid !== pid) {
 					pid    = items[i].pid;
-					folder = getFolderById('history', pid);
+					folder = getFolderById(pid);
 				}
 				hist.classList.add('history', 'item', `domain-${items[i].domain}`);
 				hist.title = items[i].url;
@@ -886,24 +868,24 @@ const initBlock = {
 
 		const removeHistoryItems = ids => {
 			for (let i = ids.length - 1; i >= 0; i--)
-				removeById('history', ids[i]);
+				removeById(ids[i]);
 		};
 
 		const historyTotalWipe   = _ => {
 			for (let i = data.historyId.length - 1; i >= 0; i--)
-				removeById('history', data.historyId[i]);
+				removeById(data.historyId[i]);
 			getMoreButton.classList.add('hidden');
 		};
 
 		prepareBlock('history');
-		setBlockClass('history');
+		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
 		i18n.history             = info.i18n;
 		status.timeStamp.mode    = info.timeStamp;
 
 		messageHandler.history   = {
 			new     : info =>  {
-				insertFolders('history', [info.folder]);
+				insertFolders([info.folder]);
 				insertItems([info.item], 'first');
 				if (info.historyEnd === true)
 					getMoreButton.classList.add('hidden');
@@ -915,13 +897,13 @@ const initBlock = {
 				historyTotalWipe();
 			},
 			gotMore : info =>  {
-				insertFolders('history', info.historyFolders);
+				insertFolders(info.historyFolders);
 				insertItems(info.history, 'last');
 				if (info.historyEnd === true)
 					getMoreButton.classList.add('hidden');
 			},
 			title   : info =>  {
-				const item = getById('history', info.id);
+				const item = getById(info.id);
 				if (item !== false)
 					item.textContent = info.title;
 			}
@@ -939,7 +921,7 @@ const initBlock = {
 
 		makeSearch('history');
 
-		insertFolders('history', info.historyFolders);
+		insertFolders(info.historyFolders);
 		insertItems(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
@@ -949,7 +931,7 @@ const initBlock = {
 	downloads : info => {
 
 		const insertDownload = item => {
-			const down           = createById('downloads', item.id);
+			const down           = createById(item.id);
 			down.title           = item.url;
 			const filename       = dce('p');
 			filename.textContent = item.filename;
@@ -981,7 +963,7 @@ const initBlock = {
 		};
 
 		prepareBlock('downloads');
-		setBlockClass('downloads');
+		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
 		i18n.downloads           = info.i18n;
 		status.timeStamp.mode    = info.timeStamp;
@@ -991,15 +973,15 @@ const initBlock = {
 				insertDownload(info.item);
 			},
 			erased     : info => {
-				removeById('downloads', info.id);
+				removeById(info.id);
 			},
 			exists     : info => {
-				const download = getById('downloads', info.id);
+				const download = getById(info.id);
 				if (download === false) return;
 				download.classList[info.method]('deleted');
 			},
 			startPause : info => {
-				const download = getById('downloads', info.id);
+				const download = getById(info.id);
 				if (download === false) return;
 				if (info.paused === true) {
 					if (info.canResume === true)
@@ -1011,20 +993,20 @@ const initBlock = {
 					download.classList.remove('paused');
 			},
 			state     : info => {
-				const download = getById('downloads', info.id);
+				const download = getById(info.id);
 				if (download === false) return;
 				download.classList.remove('complete', 'interrupted', 'in_progress');
 				download.classList.add(info.state);
 			},
 			progress  : info => {
-				const download = getById('downloads', info.item.id);
+				const download = getById(info.item.id);
 				if (download === false) return;
 				download.firstChild.nextElementSibling.firstChild.firstChild.style.width = info.item.progressPercent;
 				download.firstChild.nextElementSibling.firstChild.nextElementSibling.textContent = `${info.item.progressNumbers}  |  ${info.item.speed}`;
 				download.firstChild.nextElementSibling.firstChild.nextElementSibling.nextElementSibling.textContent = info.item.fileSize;
 			},
 			filename  : info => {
-				const download = getById('downloads', info.id);
+				const download = getById(info.id);
 				if (download === false) return;
 				download.firstChild.textContent = info.filename;
 			}
@@ -1062,7 +1044,7 @@ const initBlock = {
 			if (rssMode !== undefined)
 				options.misc.rssMode = rssMode;
 			options.misc.rssHideReaded = readedMode;
-			setBlockClass('rss', options.misc.rssMode, readedMode === true ? 'hide-readed' : 'show-readed');
+			setBlockClass(options.misc.rssMode, readedMode === true ? 'hide-readed' : 'show-readed');
 		};
 
 		prepareBlock('rss');
@@ -1073,7 +1055,7 @@ const initBlock = {
 
 		messageHandler.rss    = {
 			createdFeed      : info =>  {
-				insertFolders('rss', [info.feed]);
+				insertFolders([info.feed]);
 			},
 			newItems         : info =>  {
 				if (options.misc.rssMode === 'plain')
@@ -1082,14 +1064,14 @@ const initBlock = {
 					insertItems(info.items, 'first');
 			},
 			rssReaded        : info =>  {
-				const rssItem = getById('rss', info.id);
+				const rssItem = getById(info.id);
 				if (rssItem === false) return;
 				rssItem.classList.remove('unreaded');
 				if (info.feedReaded === true)
 					rssItem.parentNode.classList.remove('unreaded');
 			},
 			rssReadedAll     : info =>  {
-				const feed = getFolderById('rss', info.id);
+				const feed = getFolderById(info.id);
 				if (feed === false) return;
 				feed.classList.remove('unreaded');
 				for (let items = feed.children, i = items.length - 1; i >= 0; i--)
@@ -1103,32 +1085,32 @@ const initBlock = {
 			},
 			view             : info =>  {
 				setReadedMode(options.misc.rssHideReaded, info.view);
-				setView('rss', info.view, info.items, info.folders);
+				setView(info.view, info.items, info.folders);
 			},
 			rssHideReaded    : info =>  {
-				const feed = getFolderById('rss', info.id);
+				const feed = getFolderById(info.id);
 				if (feed !== false)
 					feed.classList.add('hide-readed');
 			},
 			rssShowReaded    : info =>  {
-				const feed = getFolderById('rss', info.id);
+				const feed = getFolderById(info.id);
 				if (feed !== false)
 					feed.classList.remove('hide-readed');
 			},
 			rssFeedChanged   : info =>  {
-				const feed = getFolderById('rss', info.id);
+				const feed = getFolderById(info.id);
 				if (feed === false) return;
 				feed.firstChild.firstChild.textContent = info.title;
 				feed.firstChild.title                  = info.description;
 			},
 			rssFeedDeleted   : info =>  {
-				removeFolderById('rss', info.id);
+				removeFolderById(info.id);
 			},
 			rssItemDeleted   : info => {
-				removeById('rss', info.id);
+				removeById(info.id);
 			},
 			update           : info => {
-				const feed = getFolderById('rss', info.id);
+				const feed = getFolderById(info.id);
 				if (feed !== false)
 					feed.firstChild.classList[info.method]('loading');
 			},
@@ -1180,14 +1162,14 @@ const initBlock = {
 			const pidCheck = newPid => {
 				if (pid !== newPid) {
 					pid    = newPid;
-					folder = getFolderById('rss', pid);
+					folder = getFolderById(pid);
 				}
 			};
 
 			let pid = 0;
 			let folder = rootFolder;
 			for (let i = 0, l = items.length; i < l; i++) {
-				const item         = createById('rss', items[i].id);
+				const item         = createById(items[i].id);
 				item.textContent   = items[i].title;
 				item.dataset.link  = items[i].link;
 				item.dataset.date  = items[i].date;
@@ -1225,7 +1207,7 @@ const initBlock = {
 				send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 			}
 		};
-		setView('rss', options.misc.rssMode, info.rss, info.rssFolders);
+		setView(options.misc.rssMode, info.rss, info.rssFolders);
 		setTimeout(setScroll, 100);
 	},
 
@@ -1241,7 +1223,7 @@ const initBlock = {
 		};
 
 		prepareBlock('pocket');
-		setBlockClass('pocket', options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
+		setBlockClass(options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
 		setDomainStyle.rewrite(info.domains);
 		i18n.pocket           = info.i18n;
 		status.timeStamp.mode = info.timeStamp;
@@ -1251,20 +1233,20 @@ const initBlock = {
 				insertItems(info, 'first');
 			},
 			newFolder    : info => {
-				insertFolders('pocket', [info]);
+				insertFolders([info]);
 			},
 			updated      : info => {
-				const pocket = getById('pocket', info.id);
+				const pocket = getById(info.id);
 				if (pocket !== false)
 					updateItem(pocket, info);
 			},
 			deleted      : info => {
-				const pocket = getById('pocket', info);
+				const pocket = getById(info);
 				if (pocket !== false)
-					removeById('pocket', info);
+					removeById(info);
 			},
 			domainCount  : info => {
-				const folder = getFolderById('pocket', info.id);
+				const folder = getFolderById(info.id);
 				if (folder === false) return;
 				if (info.view === 'hidden') {
 					folder.classList.remove('domain-view');
@@ -1276,13 +1258,13 @@ const initBlock = {
 				}
 			},
 			folderRemoved: info => {
-				const folder = getFolderById('pocket', info);
+				const folder = getFolderById(info);
 				if (folder !== false)
-					removeFolderById('pocket', info);
+					removeFolderById(info);
 			},
 			view         : info => {
-				setBlockClass('pocket', info.view);
-				setView('pocket', info.view, info.items, info.folders);
+				setBlockClass(info.view);
+				setView(info.view, info.items, info.folders);
 			},
 			login        : info => {
 				options.pocket.auth = true;
@@ -1298,36 +1280,36 @@ const initBlock = {
 				clearData('pocket');
 			},
 			fav          : info => {
-				const pocket = getById('pocket', info);
+				const pocket = getById(info);
 				if (pocket !== false)
 					pocket.classList.add('favorite');
 			},
 			unfav        : info => {
-				const pocket = getById('pocket', info);
+				const pocket = getById(info);
 				if (pocket !== false)
 					pocket.classList.remove('favorite');
 			},
 			archive      : info => {
-				const pocket = getById('pocket', info);
+				const pocket = getById(info);
 				if (pocket === false) return;
 				pocket.classList.add('type-archives');
 				if (options.misc.pocketMode === 'type') {
-					const archive = getFolderById('pocket', 'archives');
+					const archive = getFolderById('archives');
 					if (archive !== false)
 						archive.lastChild.appendChild(pocket);
 				}
 			},
 			unarchive   : info => {
-				const pocket = getById('pocket', info.id);
+				const pocket = getById(info.id);
 				if (pocket === false) return;
 				pocket.classList.remove('type-archives');
 				if (options.misc.pocketMode === 'type') {
-					const folder = getFolderById('pocket', info.pid);
+					const folder = getFolderById(info.pid);
 					if (folder !== false)
 						folder.lastChild.appendChild(pocket);
 				}
 				else if (options.misc.pocketMode === 'domain') {
-					const folder = getFolderById('pocket', info.domain);
+					const folder = getFolderById(info.domain);
 					if (folder !== false)
 						folder.lastChild.appendChild(pocket);
 				}
@@ -1365,12 +1347,12 @@ const initBlock = {
 			for (let i = 0, l = items.length; i < l; i++) {
 				if (items[i].status > 0 && options.misc.pocketMode !== 'type')
 					continue;
-				const pocket = createById('pocket', items[i].id);
+				const pocket = createById(items[i].id);
 				updateItem(pocket, items[i]);
 				if (options.misc.pocketMode !== 'plain') {
 					if (items[i][options.misc.pocketMode] !== pid) {
 						pid    = items[i][options.misc.pocketMode];
-						folder = getFolderById('pocket', items[i][options.misc.pocketMode]);
+						folder = getFolderById(items[i][options.misc.pocketMode]);
 					}
 				}
 				if (folder !== false)
@@ -1398,7 +1380,7 @@ const initBlock = {
 		makeButton('domain', 'pocket', 'bottom');
 		makeButton('reload', 'pocket', 'bottom');
 
-		setView('pocket', options.misc.pocketMode, info.pocket, info.pocketFolders);
+		setView(options.misc.pocketMode, info.pocket, info.pocketFolders);
 		setTimeout(setScroll, 100);
 	}
 };
@@ -1485,7 +1467,8 @@ const setDownloadStatus = {
 };
 
 function setStyle(item) {
-	const style       = createById('domains', item.id);
+	const style       = dce('style');
+	style.id          = item.id;
 	style.textContent = `.domain-${item.id}{background-image: url(${item.fav})}`;
 	document.head.appendChild(style);
 }
@@ -1524,47 +1507,47 @@ const setDomainStyle = {
 	},
 	update  : items => {
 		for (let i = items.length - 1; i >= 0; i--) {
-			const style = getById('domains', items[i].id);
-			if (style !== false)
-				style.textContent = `.domain-${items[i].id}{background-image: url(${items[i].fav})}`;
+			const index = data.domainsId.indexOf(items[i].id);
+			if (index !== -1)
+				data.domains[index].textContent = `.domain-${items[i].id}{background-image: url(${items[i].fav})}`;
 			else
 				setStyle(items[i]);
 		}
 	}
 };
 
-function setBlockClass(mode, view, extraClass = '') {
+function setBlockClass(view, extraClass = '') {
 	if (view !== undefined)
-		options.misc[`${mode}Mode`] = view;
-	block.classList = `hidden ${mode} ${view !== undefined ? options.misc[`${mode}Mode`] : ''} ${extraClass}`;
+		options.misc[`${options.sidebar.mode}Mode`] = view;
+	block.classList = `hidden ${options.sidebar.mode} ${view !== undefined ? view : ''} ${extraClass}`;
 	setTimeout(_ => {block.classList.remove('hidden');}, 100);
 }
 
-function setView(mode, view, items, folders) {
+function setView(view, items, folders) {
 	if (rootFolder.lastChild.hasChildNodes()) {
 		rootFolder.removeChild(rootFolder.lastChild);
 		rootFolder.appendChild(dce('div'));
 	}
-	clearData(mode);
+	clearData();
 	if (view !== 'plain')
-		insertFolders(mode, folders, view === 'tree');
+		insertFolders(folders, view === 'tree');
 	insertItems(items, 'first');
 }
 
-function insertFolders(mode, items, fake = false) {
+function insertFolders(items, fake = false) {
 	let folders = [];
 	for (let i = 0, l = items.length; i < l; i++) {
-		if (getFolderById(mode, items[i].id) !== false)
+		if (getFolderById(items[i].id) !== false)
 			continue;
-		const index = data[`${mode}Folders`].push(dce('ul')) - 1;
-		data[`${mode}FoldersId`].push(items[i].id);
+		const index = data.folders.push(dce('ul')) - 1;
+		data.foldersId.push(items[i].id);
 		folders.push({'index': index, 'pid': items[i].pid});
 		let classList = 'folder';
 		classList += ` ${items[i].view}-view`;
 		classList += items[i].folded === true ? ' folded' : '';
-		data[`${mode}Folders`][index].classList  = classList;
-		data[`${mode}Folders`][index].id         = `${mode}-folder-${items[i].id}`;
-		data[`${mode}Folders`][index].dataset.id = items[i].id;
+		data.folders[index].classList  = classList;
+		data.folders[index].id         = `${options.sidebar.mode}-folder-${items[i].id}`;
+		data.folders[index].dataset.id = items[i].id;
 		if (fake === false) {
 			const title       = dce('div');
 			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
@@ -1572,73 +1555,66 @@ function insertFolders(mode, items, fake = false) {
 			title.dataset.id  = items[i].id;
 			title.classList.add('folder-name', `domain-${items[i].domain}`, items[i].status);
 			title.appendChild(text);
-			data[`${mode}Folders`][index].appendChild(title);
+			data.folders[index].appendChild(title);
 		}
 		const content = dce('div');
 		content.classList.add('folder-content');
-		data[`${mode}Folders`][index].appendChild(content);
+		data.folders[index].appendChild(content);
 	}
 	for (let i = 0, l = folders.length; i < l; i++) {
-		if (folders[i].pid === 0)
-			rootFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
-		else {
-			const parentFolder = getFolderById(mode, folders[i].pid);
-			if (parentFolder !== false)
-				parentFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
-			else
-				rootFolder.lastChild.appendChild(data[`${mode}Folders`][folders[i].index]);
-		}
+		const parentFolder = getFolderById(folders[i].pid) || rootFolder;
+		parentFolder.lastChild.appendChild(data.folders[folders[i].index]);
 	}
 }
 
-function createById(mode, id, search = false) {
-	let item        = getById(mode, id);
-	if (item !== false)
-		return item;
-	item            = dce(element[mode]);
-	item.id         = (search === true) ? `search-${mode}-${id}` : `${mode}-${id}`;
-	item.dataset.id = id;
-	data[mode].push(item);
-	data[`${mode}Id`].push(id);
-	return item;
-}
-
-function getById(mode, id) {
-	const index = data[`${mode}Id`].indexOf(id);
-	return index !== -1 ? data[mode][index] : false;
-}
-
-function removeById(mode, id) {
-	const index = data[`${mode}Id`].indexOf(id);
-	if (index === -1) return;
-	data[mode][index].parentNode.removeChild(data[mode][index]);
-	data[mode].splice(index, 1);
-	data[`${mode}Id`].splice(index, 1);
-}
-
-function getFolderById(mode, id) {
+function getFolderById(id) {
 	if (id === 0)
 		return rootFolder;
-	const index = data[`${mode}FoldersId`].indexOf(id);
+	const index = data.foldersId.indexOf(id);
 	if (index !== -1)
-		return data[`${mode}Folders`][index];
+		return data.folders[index];
 	else
 		return false;
 }
 
-function removeFolderById(mode, id) {
-	const index = data[`${mode}FoldersId`].indexOf(id);
+function removeFolderById(id) {
+	const index = data.foldersId.indexOf(id);
 	if (index === -1) return;
-	data[`${mode}Folders`][index].parentNode.removeChild(data[`${mode}Folders`][index]);
-	data[`${mode}Folders`].splice(index, 1);
-	data[`${mode}FoldersId`].splice(index, 1);
+	data.folders[index].parentNode.removeChild(data.folders[index]);
+	data.folders.splice(index, 1);
+	data.foldersId.splice(index, 1);
 }
 
-function clearData(mode) {
-	data[mode]               = [];
-	data[`${mode}Id`]        = [];
-	data[`${mode}Folders`]   = [];
-	data[`${mode}FoldersId`] = [];
+function createById(id, search = false) {
+	let item        = getById(id);
+	if (item !== false)
+		return item;
+	item            = dce(element[options.sidebar.mode]);
+	item.id         = (search === true) ? `search-${options.sidebar.mode}-${id}` : `${options.sidebar.mode}-${id}`;
+	item.dataset.id = id;
+	data.item.push(item);
+	data.itemId.push(id);
+	return item;
+}
+
+function getById(id) {
+	const index = data.itemId.indexOf(id);
+	return index !== -1 ? data.item[index] : false;
+}
+
+function removeById(id) {
+	const index = data.itemId.indexOf(id);
+	if (index === -1) return;
+	data.item[index].parentNode.removeChild(data.item[index]);
+	data.item.splice(index, 1);
+	data.itemId.splice(index, 1);
+}
+
+function clearData() {
+	data.item      = [];
+	data.itemId    = [];
+	data.folders   = [];
+	data.foldersId = [];
 }
 
 function send(target, subject, action, data = {}, callback = _ => {}) {
