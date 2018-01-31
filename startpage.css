@@ -98,6 +98,16 @@ body {
 		color: var(--font-color);
 		text-shadow: 0 0 .1rem var(--background-color);
 	}
+		section>a {
+			display: block;
+			height: 100%;
+			width: 100%;
+			text-decoration: none;
+			color: inherit;
+		}
+		section>a:hover {
+			color: inherit;
+		}
 		#edit-button {
 			background-position: .5rem 1.9rem;
 			background-origin: content-box;

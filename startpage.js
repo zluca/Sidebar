@@ -223,15 +223,21 @@ function init(response) {
 			sites[index]               = document.createElement('section');
 			sites[index].id            = `site-${index}`;
 			sites[index].dataset.index = index;
+			sites[index].appendChild(document.createElement('a'));
 			setSiteProperties(sites[index], newSite);
 			siteContainer.appendChild(sites[index]);
 		};
 
 		const setSiteProperties = (target, site) => {
-			target.classList             = site.class;
-			target.textContent           = site.text;
-			target.title                 = site.url || response.i18n.addNewSiteTitle;
-			target.style.backgroundColor = site.color;
+			target.classList              = site.class;
+			target.firstChild.textContent = site.text;
+			if (site.url === '')
+				target.title           = response.i18n.addNewSiteTitle;
+			else {
+				target.firstChild.href = site.url;
+				target.title           = site.url;
+			}
+			target.style.backgroundColor  = site.color;
 			target.classList.add(`lines-${site.text.split('\n').length}`);
 		};
 
