@@ -1,7 +1,7 @@
 {
 	"manifest_version"   : 2,
 	"name"               : "__MSG_extName__",
-	"version"            : "0.4.15",
+	"version"            : "0.5.0",
 	"description"        : "__MSG_extDescription__",
 	"author"             : "zluka",
 	"developer"          : {
@@ -57,13 +57,13 @@
 	"options_ui": {
 		"page"          : "options.html#services",
 		"browser_style" : true
-	},
-	"commands": {
-		"_execute_sidebar_action": {
-			"suggested_key": {
-				"default": "F8"
-			}
-		}
+	// },
+	// "commands": {
+	// 	"_execute_sidebar_action": {
+	// 		"suggested_key": {
+	// 			"default": "F8"
+	// 		}
+	// 	}
 	}
 }
 
