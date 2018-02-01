@@ -229,7 +229,7 @@ const messageHandler = {
 			}
 		},
 		hover       : info => {
-			doc.classList[info]('hover');
+			setFixed(info);
 		},
 		side        : info => {
 			if (options.sidebar.method === 'native')
@@ -1325,7 +1325,7 @@ function setWide(mode) {
 
 function setFixed(mode) {
 	options.sidebar.fixed = mode;
-	if (mode) {
+	if (mode === true) {
 		doc.classList.remove('unfixed');
 		doc.classList.add('fixed');
 	}

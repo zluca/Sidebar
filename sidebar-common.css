@@ -30,8 +30,7 @@ body {
 	height: 100vh;
 	font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, “Roboto”, “Oxygen”, “Ubuntu”, “Cantarell”, “Fira Sans”, “Droid Sans”, “Helvetica Neue”, sans-serif;
 }
-.fixed body,
-.hover body {
+.fixed body {
 	height: auto;
 	overflow-y: scroll;
 }
@@ -104,8 +103,7 @@ nav {
 		width: auto;
 		max-width: 100%;
 	}
-	.fixed nav>.controls,
-	.hover nav>.controls  {
+	.fixed nav>.controls  {
 		flex-flow: row;
 	}
 
@@ -113,15 +111,13 @@ nav {
 		display: inline-flex;
 	}
 
-	.fixed .controls,
-	.hover .controls {
+	.fixed .controls {
 		display: inline-flex;
 	}
 
 	#controls-user {
 		display: none;
 	}
-	.hover .pocket #controls-user,
 	.fixed .pocket #controls-user {
 		display: flex;
 		margin-bottom: .5rem;
@@ -151,7 +147,6 @@ nav {
 		border-top-style: solid;
 		padding: .4rem .2rem;
 	}
-	.hover #controls-bottom,
 	.fixed #controls-bottom {
 		display: flex;
 	}
@@ -211,7 +206,6 @@ nav {
 		.leftBar nav>.controls>.button {
 			margin-left: .1rem;
 		}
-		.leftBar.hover nav>.controls>.button,
 		.leftBar.fixed nav>.controls>.button,
 		.leftBar #controls-bottom>.button {
 			margin-left: .4rem;
@@ -223,11 +217,10 @@ nav {
 		.unfixed #controls-sidebar>.button {
 			display: none;
 		}
-		.hover #controls-sidebar>.button {
+		.fixed #controls-sidebar>.button {
 			display: inline-block;
 		}
 
-		.hover #controls-button>.button,
 		.fixed #controls-button>.button {
 			margin-right: .5rem;
 			margin-left: .5rem;
@@ -341,7 +334,6 @@ nav {
 				background-color: var(--background-color-active);
 			}
 
-.hover .tabs.tree>#root-folder>.folder,
 .fixed .tabs.tree>#root-folder>.folder {
 	border-left: none;
 }
@@ -354,7 +346,6 @@ nav {
 	.hidden-view.folder.folded>.folder-content {
 		display: block;
 	}
-	.hover .folder-content,
 	.fixed .folder-content {
 		margin-left: .8rem;
 		border-left: .1rem dotted var(--border-color-active);
@@ -425,8 +416,7 @@ nav {
 		.rightBar .item {
 			background-position-x: .1rem;
 		}
-		.leftBar.fixed .item,
-		.leftBar.hover .item {
+		.leftBar.fixed .item {
 			background-position-x: 0;
 		}
 
@@ -479,22 +469,18 @@ nav {
 			.folded .folder-name::before {
 				transform: rotate(-90deg);
 			}
-		.hover .folder.normal-view>.item,
 		.fixed .folder.normal-view>.item,
-		.hover .folder.type-view>.item,
 		.fixed .folder.type-view>.item {
 			padding-left: 1.6rem;
 			margin-left: .8rem;
 			border-left: .1rem dotted var(--border-color-active);
 			background-position: .4rem 0rem;
 		}
-		.hover .folder.domain-view .item,
 		.fixed .folder.domain-view .item {
 			padding-left: .6rem;
 			margin-left: 0;
 			background-image: none;
 		}
-		.hover .tree>#tabs-folder-0>.folder>.folder-content>.item,
 		.fixed .tree>#tabs-folder-0>.folder>.folder-content>.item {
 			border-left: none;
 		}

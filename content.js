@@ -274,7 +274,7 @@ function makeIframe(side) {
 }
 
 function setHover(side, hover) {
-	send('background', 'set', 'hover', {side: side, hover: hover ? 'add' : 'remove', needResponse: true}, _ => {
+	send('background', 'set', 'hover', {side: side, hover: hover, needResponse: true}, _ => {
 		status[side].hover = hover;
 		setSideBarWidth(side);
 	});
