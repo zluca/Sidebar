@@ -81,57 +81,20 @@ tryToInit();
 let onClick     = _ => {};
 let insertItems = _ => {};
 
-document.title = options.sidebar.method;
+document.title      = options.sidebar.method;
 doc.classList.add(status.side);
 
-const blockStyle = dce('link');
-blockStyle.type  = 'text/css';
-blockStyle.rel   = 'stylesheet';
-document.head.appendChild(blockStyle);
+const blockStyle    = dcea('link', document.head, [['type', 'text/css'], ['rel', 'stylesheet']]);
+const tempContainer = dce('div');
 
-const controls = {
-	main     : dce('nav'),
-	sidebar  : dce('div'),
-	iframe   : null,
+const controls      = {};
+controls.main       = dcea('nav', document.body, []);
+controls.sidebar    = dcea('div', controls.main, [['classList', 'controls'], ['id', 'controls-sidebar']]);
+controls.iframe     = null;
 
-	item     : dce('div'),
-	button   : dce('div'),
-	bottom   : dce('div'),
-	user     : dce('div')
-};
-
-controls.sidebar.classList.add('controls');
-controls.bottom.classList.add('controls');
-controls.item.classList.add('controls');
-controls.button.classList.add('controls');
-controls.user.classList.add('controls');
-controls.sidebar.id = 'controls-sidebar';
-controls.bottom.id  = 'controls-bottom';
-controls.item.id    = 'controls-item';
-controls.button.id  = 'controls-button';
-controls.user.id    = 'controls-user';
-controls.main.appendChild(controls.sidebar);
-
-const block         = dce('main');
-const searchResults = dce('div');
-searchResults.id    = 'search-results';
-searchResults.appendChild(dce('div'));
-searchResults.firstChild.dataset.id = 'search-results';
-searchResults.appendChild(dce('div'));
-const rootFolder    = dce('div');
-rootFolder.id       = 'root-folder';
-rootFolder.appendChild(dce('div'));
-rootFolder.firstChild.dataset.id = 0;
-rootFolder.appendChild(dce('div'));
-block.appendChild(controls.user);
-block.appendChild(rootFolder);
-block.appendChild(searchResults);
-block.appendChild(controls.button);
-block.appendChild(controls.bottom);
-block.appendChild(controls.item);
-
-document.body.appendChild(controls.main);
-document.body.appendChild(block);
+const block         = dcea('main', document.body, []);
+let rootFolder      = null;
+let searchResults   = null;
 
 block.addEventListener('mouseover', event => {
 	const target = event.target;
@@ -384,11 +347,8 @@ function initSidebar(response) {
 	for (let service in response.options.services)
 		if (button[service] === null) {
 			button[service] = makeButton(service, 'header', 'sidebar', !response.options.services[service]);
-			if (service === 'rss') {
-				const unreaded  = dce('div');
-				unreaded.id     = 'rss-unreaded';
-				button.rss.appendChild(unreaded);
-			}
+			if (service === 'rss')
+				dcea('div', button.rss, [['id', 'rss-unreaded']]);
 		}
 		else
 			button[service].classList[response.options.services[service] === true ? 'remove' : 'add']('hidden');
@@ -400,14 +360,11 @@ function initSidebar(response) {
 		doc.classList.remove('fixed');
 		window.onresize = _ => {setFontSize();};
 		if (controls.iframe === null) {
-			controls.iframe       = dce('div');
-			controls.iframe.id    = 'controls-iframe';
-			controls.iframe.classList.add('controls');
+			controls.iframe = dcea('div', controls.main, [['id', 'controls-iframe'], ['classList', 'controls']]);
 			makeButton('pin', 'header', 'iframe');
 			makeButton('unpin', 'header', 'iframe');
 			makeButton('wide', 'header', 'iframe');
 			makeButton('narrow', 'header', 'iframe');
-			controls.main.appendChild(controls.iframe);
 		}
 		setWide(options.sidebar.wide);
 		setFixed(options.sidebar.fixed);
@@ -420,37 +377,21 @@ function initSidebar(response) {
 
 function prepareBlock(mode) {
 
-	if (controls.item.parentNode !== null)
-		controls.item.parentNode.removeChild(controls.item);
-	controls.item    = dce('div');
-	controls.item.id = 'controls-item';
-	controls.item.classList.add('controls');
-	block.appendChild(controls.item);
-	if (rootFolder.lastChild.hasChildNodes()) {
-		rootFolder.removeChild(rootFolder.lastChild);
-		rootFolder.appendChild(dce('div'));
-	}
-	if (controls.user.hasChildNodes()) {
-		block.removeChild(controls.user);
-		controls.user      = dce('div');
-		controls.user.id   = 'controls-user';
-		controls.user.classList.add('controls');
-		block.insertBefore(controls.user, rootFolder);
-	}
-	if (controls.button.hasChildNodes()) {
-		block.removeChild(controls.button);
-		controls.button    = dce('div');
-		controls.button.id = 'controls-button';
-		controls.button.classList.add('controls');
-		block.appendChild(controls.button);
-	}
-	if (controls.bottom.hasChildNodes()) {
-		block.removeChild(controls.bottom);
-		controls.bottom    = dce('div');
-		controls.bottom.id = 'controls-bottom';
-		controls.bottom.classList.add('controls');
-		block.appendChild(controls.bottom);
-	}
+	while(block.hasChildNodes())
+		block.removeChild(block.firstChild);
+
+	controls.user    = dcea('div', block, [['classList', 'controls'], ['id', 'controls-user']]);
+	rootFolder       = dcea('div', block, [['id', 'root-folder']]);
+	dcea('div', rootFolder, []).dataset.id = '0';
+	dcea('div', rootFolder, []);
+
+	searchResults    = dcea('div', block, [['id', 'search-results']]);
+	dcea('div', searchResults, []).dataset.id = 'search-results';
+	dcea('div', searchResults, []);
+
+	controls.item    = dcea('div', block, [['classList', 'controls'], ['id', 'controls-item']]);
+	controls.button  = dcea('div', block, [['classList', 'controls'], ['id', 'controls-button']]);
+	controls.bottom  = dcea('div', block, [['classList', 'controls'], ['id', 'controls-bottom']]);
 
 	clearData();
 
@@ -933,32 +874,17 @@ const initBlock = {
 		const insertDownload = item => {
 			const down           = createById(item.id);
 			down.title           = item.url;
-			const filename       = dce('p');
-			filename.textContent = item.filename;
+			const filename       = dcea('p', down, [['textContent', item.filename]]);
 			let classList        = `download item ${item.state}`;
 			classList            += item.exists === true ? '' : ' deleted';
 			if (item.paused === true)
 				classList += item.canResume === true ? ' paused' : ' canceled';
 			down.classList       = classList;
-			const status         = dce('div');
-			status.classList.add('status');
-			status.title         = '';
-			const progress       = dce('div');
-			progress.classList.add('progress-bar');
-			const bar            = dce('span');
-			progress.appendChild(bar);
-			bar.style.width      = item.progressPercent;
-			const recived        = dce('div');
-			recived.classList.add('recived');
-			recived.textContent  = item.progressNumbers;
-			const fileSize       = dce('div');
-			fileSize.classList.add('file-size');
-			fileSize.textContent = item.fileSize;
-			status.appendChild(progress);
-			status.appendChild(recived);
-			status.appendChild(fileSize);
-			down.appendChild(filename);
-			down.appendChild(status);
+			const status         = dcea('div', down, [['title', ''], ['classList', 'status']]);
+			const progress       = dcea('div', status, [['classList', 'progress-bar']]);
+			dcea('span', progress, []).style.width = item.progressPercent;
+			dcea('div', status, [['classList', 'recived'], ['textContent', item.progressNumbers]]);
+			dcea('div', status, [['classList', 'file-size'], ['textContent', item.fileSize]]);
 			rootFolder.lastChild.insertBefore(down, rootFolder.lastChild.lastChild);
 		};
 
@@ -1467,10 +1393,7 @@ const setDownloadStatus = {
 };
 
 function setStyle(item) {
-	const style       = dce('style');
-	style.id          = item.id;
-	style.textContent = `.domain-${item.id}{background-image: url(${item.fav})}`;
-	document.head.appendChild(style);
+	dcea('style', document.head, [['id', item.id], ['textContent', `.domain-${item.id}{background-image: url(${item.fav})}`]]);
 }
 
 const setImageStyle = {
@@ -1549,17 +1472,15 @@ function insertFolders(items, fake = false) {
 		data.folders[index].id         = `${options.sidebar.mode}-folder-${items[i].id}`;
 		data.folders[index].dataset.id = items[i].id;
 		if (fake === false) {
-			const title       = dce('div');
-			const text        = document.createTextNode(items[i].title || String.fromCharCode(0x00a0));
-			title.title       = items[i].description || items[i].title;
-			title.dataset.id  = items[i].id;
-			title.classList.add('folder-name', `domain-${items[i].domain}`, items[i].status);
-			title.appendChild(text);
-			data.folders[index].appendChild(title);
+			dcea('div', data.folders[index],
+				[
+					['title', items[i].description || items[i].title],
+				 	['classList', `folder-name domain-${items[i].domain} ${items[i].status}`],
+				 	['textContent', items[i].title || String.fromCharCode(0x00a0)]
+				]
+			).dataset.id = items[i].id;
 		}
-		const content = dce('div');
-		content.classList.add('folder-content');
-		data.folders[index].appendChild(content);
+		dcea('div', data.folders[index], [['classList', 'folder-content']]);
 	}
 	for (let i = 0, l = folders.length; i < l; i++) {
 		const parentFolder = getFolderById(folders[i].pid) || rootFolder;
@@ -1838,20 +1759,15 @@ function searchActive(isIt) {
 }
 
 function makeButton(type, mode, sub, hidden = false) {
-	const button     = dce('span');
-	button.id        = `${mode}-${type}`;
-	button.title     = i18n[mode][type];
+	const button     = dcea('span', controls[sub], [['id', `${mode}-${type}`], ['title', i18n[mode][type]]]);
 	if (i18n[mode].hasOwnProperty(`${type}Text`)) {
 		button.classList   = `text-button ${hidden === true ? ' hidden' : ''}`;
 		button.textContent = i18n[mode][`${type}Text`];
 	}
 	else {
 		button.classList = `button ${hidden === true ? ' hidden' : ''}`;
-		const icon       = dce('span');
-		icon.style.setProperty(mask, `url('icons/${type}.svg')`);
-		button.appendChild(icon);
+		dcea('span', button, []).style.setProperty(mask, `url('icons/${type}.svg')`);
 	}
-	controls[sub].appendChild(button);
 	button.addEventListener('click', event => {
 		event.stopPropagation();
 		event.preventDefault();
@@ -1862,15 +1778,8 @@ function makeButton(type, mode, sub, hidden = false) {
 
 function makeSearch(mode) {
 	status.lastSearch   = '';
-	const search        = dce('input');
-	search.id           = 'search';
-	search.classList.add('search');
-	search.type         = 'text';
-	search.placeholder  = i18n[mode].searchPlaceholder;
-	controls.bottom.appendChild(search);
-	const searchIcon    = dce('span');
-	searchIcon.classList.add('search-icon');
-	controls.bottom.appendChild(searchIcon);
+	const search = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
+	dcea('span', search, [['classList', 'search-icon']]);
 
 	search.addEventListener('keyup', event => {
 		const value = search.value;
@@ -2136,8 +2045,17 @@ const buttonsEvents = {
 	}
 };
 
-function dce(element) {
-	return document.createElement(element);
+function dce(nodeName) {
+	return document.createElement(nodeName);
 }
+
+function dcea(nodeName, parent, attrs) {
+	const element = document.createElement(nodeName);
+	for (let i = attrs.length - 1; i >= 0; i--)
+		element[attrs[i][0]] = attrs[i][1];
+	parent.appendChild(element);
+	return element;
+}
+
 
 })();
