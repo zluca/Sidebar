@@ -21,7 +21,6 @@ mkdir ./temp/icons
 mkdir ./builds
 cp -r ./_locales ./temp/
 cp *.html ./temp/
-cp *.json ./temp/
 cp ./icons/*.gif ./temp/icons/
 cp ./icons/*.png ./temp/icons/
 cp LICENSE ./temp/
@@ -58,6 +57,21 @@ do
 done
 
 cd ../temp
+touch manifest.json
+cat ../manifest.json | sed 's/\/\/\ //g' >> manifest.json
 web-ext build
-cp ./web-ext-artifacts/*.zip ../builds
-rm -rf ../temp
+cd web-ext-artifacts
+extName=$(ls -N *.zip)
+cp -f ./"$extName" ../../builds/firefox-"$extName"
+
+cd ../
+rm manifest.json
+rm -rf ./web-ext-artifacts
+touch manifest.json
+cat ../manifest.json | sed 's/.*\/\/\ .*//g' >> manifest.json
+web-ext build
+cd web-ext-artifacts
+extName=$(ls -N *.zip)
+cp -f ./"$extName" ../../builds/chromium-"$extName"
+
+rm -rf ../../temp
