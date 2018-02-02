@@ -92,36 +92,10 @@ controls.main       = dcea('nav', document.body, []);
 controls.sidebar    = dcea('div', controls.main, [['classList', 'controls'], ['id', 'controls-sidebar']]);
 controls.iframe     = null;
 
-const block         = dcea('main', document.body, []);
+let block           = null;
+let oldBlock        = null;
 let rootFolder      = null;
 let searchResults   = null;
-
-block.addEventListener('mouseover', event => {
-	const target = event.target;
-	if (target.classList.contains('item')) {
-		target.appendChild(controls.item);
-		if (options.sidebar.mode === 'rss')
-			target.title = target.dataset.title;
-	}
-	else if (target.classList.contains('folder-name'))
-		target.appendChild(controls.item);
-	else if (target.parentNode.classList.contains('item'))
-		target.parentNode.appendChild(controls.item);
-}, {'passive': true});
-
-block.addEventListener('click', event => {
-	if (event.button !== 0) return;
-	event.stopPropagation();
-	event.preventDefault();
-	if (event.target.classList.contains('folder-name')) {
-		const folded = status.moving === true ? false : !event.target.parentNode.classList.contains('folded');
-		send('background', 'set', 'fold', {'mode': options.sidebar.mode, 'id': event.target.parentNode.dataset.id, 'folded': folded, 'method': folded ? 'add' : 'remove'});
-	}
-	else if (status.moving === true)
-		return;
-	else
-		onClick(event);
-});
 
 const button   = {
 	tabs        : null,
@@ -377,8 +351,8 @@ function initSidebar(response) {
 
 function prepareBlock(mode) {
 
-	while(block.hasChildNodes())
-		block.removeChild(block.firstChild);
+	oldBlock = block;
+	block    = dcea('div', document.body, []);
 
 	controls.user    = dcea('div', block, [['classList', 'controls'], ['id', 'controls-user']]);
 	rootFolder       = dcea('div', block, [['id', 'root-folder']]);
@@ -401,12 +375,47 @@ function prepareBlock(mode) {
 	status.scrolling   = false;
 	blockStyle.href    = `sidebar-${mode}.css`;
 
-	document.body.classList = mode;
 	if (options.sidebar.mode !== mode) {
 		messageHandler[options.sidebar.mode] = null;
 		options.sidebar.mode                 = mode;
 	}
 	searchActive(false);
+
+}
+
+function finishBlock() {
+	document.body.classList = options.sidebar.mode;
+	if (oldBlock !== null)
+		document.body.removeChild(oldBlock);
+
+	block.addEventListener('mouseover', event => {
+		const target = event.target;
+		if (target.classList.contains('item')) {
+			target.appendChild(controls.item);
+			if (options.sidebar.mode === 'rss')
+				target.title = target.dataset.title;
+		}
+		else if (target.classList.contains('folder-name'))
+			target.appendChild(controls.item);
+		else if (target.parentNode.classList.contains('item'))
+			target.parentNode.appendChild(controls.item);
+	}, {'passive': true});
+
+	block.addEventListener('click', event => {
+		if (event.button !== 0) return;
+		event.stopPropagation();
+		event.preventDefault();
+		if (event.target.classList.contains('folder-name')) {
+			const folded = status.moving === true ? false : !event.target.parentNode.classList.contains('folded');
+			send('background', 'set', 'fold', {'mode': options.sidebar.mode, 'id': event.target.parentNode.dataset.id, 'folded': folded, 'method': folded ? 'add' : 'remove'});
+		}
+		else if (status.moving === true)
+			return;
+		else
+			onClick(event);
+	});
+
+	setTimeout(setScroll, 100);
 }
 
 const initBlock = {
@@ -648,7 +657,7 @@ const initBlock = {
 		makeButton('tree', 'tabs', 'bottom');
 
 		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode);
-		setTimeout(setScroll, 100);
+		finishBlock();
 	},
 
 	bookmarks : info => {
@@ -768,7 +777,7 @@ const initBlock = {
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders(info.bookmarksFolders);
 		insertItems(info.bookmarks, 'last');
-		setTimeout(setScroll, 100);
+		finishBlock();
 	},
 
 	history : info => {
@@ -866,7 +875,7 @@ const initBlock = {
 		insertItems(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
-		setTimeout(setScroll, 100);
+		finishBlock();
 	},
 
 	downloads : info => {
@@ -961,7 +970,7 @@ const initBlock = {
 
 		for (let i = 0, l = info.downloads.length; i < l; i++)
 			insertDownload(info.downloads[i]);
-		setTimeout(setScroll, 100);
+		finishBlock();
 	},
 
 	rss : info => {
@@ -1134,7 +1143,7 @@ const initBlock = {
 			}
 		};
 		setView(options.misc.rssMode, info.rss, info.rssFolders);
-		setTimeout(setScroll, 100);
+		finishBlock();
 	},
 
 	pocket : info => {
@@ -1307,7 +1316,7 @@ const initBlock = {
 		makeButton('reload', 'pocket', 'bottom');
 
 		setView(options.misc.pocketMode, info.pocket, info.pocketFolders);
-		setTimeout(setScroll, 100);
+		finishBlock();
 	}
 };
 
