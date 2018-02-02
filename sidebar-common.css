@@ -291,11 +291,14 @@ nav {
 				padding: 0;
 			}
 
-		.unfixed.narrow #header-narrow,
-		.unfixed.wide #header-wide,
-		.unfixed #header-pin,
+		.hover.fixed.narrow #header-narrow,
+		.hover.fixed.wide #header-wide,
+		.hover.fixed #header-pin,
 		.fixed #header-unpin {
 			display: inline-block;
+		}
+		.fixed.hover #header-unpin {
+			display: none;
 		}
 
 		.unfixed .tabs #header-tabs,

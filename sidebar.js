@@ -203,7 +203,12 @@ const messageHandler = {
 			}
 		},
 		hover       : info => {
-			setFixed(info);
+			if (info === true) {
+				if (options.sidebar.fixed === false)
+					setFixed(true, true);
+			}
+			else
+				setFixed(options.sidebar.fixed);
 		},
 		side        : info => {
 			if (options.sidebar.method === 'native')
@@ -1332,8 +1337,13 @@ function setWide(mode) {
 	}
 }
 
-function setFixed(mode) {
-	options.sidebar.fixed = mode;
+function setFixed(mode, hover) {
+	if (typeof hover !== 'undefined')
+		doc.classList[hover === true ? 'add' : 'remove']('hover');
+	else {
+		options.sidebar.fixed = mode;
+		doc.classList.remove('hover');
+	}
 	if (mode === true) {
 		doc.classList.remove('unfixed');
 		doc.classList.add('fixed');
