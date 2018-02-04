@@ -13,7 +13,14 @@ const config = {
 	pocketRedirectPage : 'https://github.com/zluca/Sidebar/',
 	sidebarIcon        : 'icons/sidebar-icon-64.png',
 	rssIcon            : 'icons/rss.svg',
-	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034'
+	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034',
+	searchTypes        : {
+		normal    : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'],
+		dev       : ['wikipedia', 'mdn', 'stackoverflow'],
+		social    : [],
+		buy       : ['amazon', 'aliexpress', 'ebay'],
+		translate : ['googleTranslate', 'yandexTranslate']
+	}
 };
 
 const i18n = {
@@ -102,7 +109,9 @@ const status = {
 		history   : 0,
 		downloads : 0,
 		rss       : 0,
-		pocket    : 0
+		pocket    : 0,
+		search    : 0,
+		spSearch  : 0
 	}
 };
 
@@ -139,6 +148,20 @@ const data = {
 	pocketFoldersId    : [],
 	pocketDomains      : [],
 	pocketDomainsId    : [],
+	searchQuery        : '',
+	search             : [],
+	searchId           : [],
+	searchFolders      : [],
+	searchFoldersId    : [],
+	searchDomains      : [],
+	searchDomainsId    : [],
+	spSearchQuery      : '',
+	spSearch           : [],
+	spSearchId         : [],
+	spSearchFolders    : [],
+	spSearchFoldersId  : [],
+	spSearchDomains    : [],
+	spSearchDomainsId  : [],
 	favs               : [],
 	favsId             : [],
 	speadDial          : [],
@@ -252,6 +275,12 @@ const options = {
 			handler : 'service'
 		},
 		pocket    : {
+			value   : true,
+			type    : 'boolean',
+			targets : [],
+			handler : 'service'
+		},
+		search    : {
 			value   : true,
 			type    : 'boolean',
 			targets : [],
@@ -559,6 +588,99 @@ const options = {
 			type    : 'boolean',
 			targets : []
 		}
+	},
+	search: {
+		hidden    : {},
+		type       : {
+			value   : 'normal',
+			type    : 'select',
+			values  : ['normal', 'dev', 'social', 'buy', 'translate'],
+			targets : ['sidebar']
+		},
+		duckduckgo : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		google     : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		yandex     : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		bing       : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		yahoo      : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		wikipedia  : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		mdn        : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		stackoverflow : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		amazon     : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		ebay       : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		aliexpress : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		googleTranslate: {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		yandexTranslate: {
+			value   : true,
+			type    : 'boolean',
+			targets : ['sidebar']
+		},
+		translateFrom  : {
+			value   : 'en',
+			type    : 'text',
+			targets : ['sidebar']
+		},
+		translateTo    : {
+			value   : 'en',
+			type    : 'text',
+			targets : ['sidebar']
+		}
+	},
+	spSearch: {
+		hidden    : {},
+		type       : {
+			value   : 'normal',
+			type    : 'select',
+			values  : ['normal', 'dev', 'social', 'buy', 'translate'],
+			targets : ['sidebar']
+		}
 	}
 };
 
@@ -576,71 +698,13 @@ const sidebarAction =
 			null;
 
 const modeData = {
-	tabs       : _ => {
-		return {
-			mode             : 'tabs',
-			timeStamp        : status.timeStamp.tabs,
-			i18n             : i18n.tabs,
-			tabs             : data.tabs,
-			tabsFolders      : data.tabsFolders,
-			domains          : data.tabsDomains,
-			activeTabId      : status.activeTabId
-		};
-	},
-	bookmarks  : _ => {
-		return {
-			mode             : 'bookmarks',
-			timeStamp        : status.timeStamp.bookmarks,
-			i18n             : i18n.bookmarks,
-			bookmarks        : data.bookmarks,
-			bookmarksFolders : data.bookmarksFolders,
-			domains          : data.bookmarksDomains,
-			activeTabId      : status.activeTabId
-		};
-	},
-	history    : _ => {
-		return {
-			mode             : 'history',
-			timeStamp        : status.timeStamp.history,
-			i18n             : i18n.history,
-			history          : data.history,
-			historyEnd       : status.historyEnd,
-			historyFolders   : data.historyFolders,
-			domains          : data.historyDomains
-		};
-	},
-	downloads  : _ => {
-		return {
-			mode             : 'downloads',
-			timeStamp        : status.timeStamp.downloads,
-			i18n             : i18n.downloads,
-			downloads        : data.downloads,
-			domains          : []
-		};
-	},
-	rss        : _ => {
-		return {
-			mode             : 'rss',
-			timeStamp        : status.timeStamp.rss,
-			i18n             : i18n.rss,
-			rss              : data.rss,
-			rssFolders       : data.rssFolders,
-			domains          : data.rssDomains,
-			updated          : status.info.rssUpdated
-		};
-	},
-	pocket    : _ => {
-		return {
-			mode             : 'pocket',
-			timeStamp        : status.timeStamp.pocket,
-			username         : optionsShort.pocket.username,
-			auth             : optionsShort.pocket.auth,
-			i18n             : i18n.pocket,
-			pocket           : data.pocket,
-			pocketFolders    : data.pocketFolders,
-			domains          : data.pocketDomains,
-		};
-	}
+	tabs      : null,
+	bookmarks : null,
+	history   : null,
+	downloads : null,
+	rss       : null,
+	pocket    : null,
+	search    : null
 };
 
 const optionsHandler = {
@@ -1071,6 +1135,8 @@ const updateItem = {
 	downloads  : null,
 	rss        : null,
 	pocket     : null,
+	search     : null,
+	spSearch   : null,
 	domains    : (newItem, item) => {
 		newItem.fav   = item.fav;
 		newItem.title = item.title;
@@ -1087,6 +1153,8 @@ updateItem.bookmarksDomains = updateItem.domains;
 updateItem.historyDomains   = updateItem.domains;
 updateItem.rssDomains       = updateItem.domains;
 updateItem.pocketDomains    = updateItem.domains;
+updateItem.searchDomains    = updateItem.domains;
+updateItem.spSearchDomains  = updateItem.domains;
 
 const updateFolder = {
 	tabs       : null,
@@ -1392,6 +1460,18 @@ const initService = {
 				tree       : getI18n('tabsTreeModeButton')
 			};
 
+			modeData.tabs = _ => {
+				return {
+					mode             : 'tabs',
+					timeStamp        : status.timeStamp.tabs,
+					i18n             : i18n.tabs,
+					tabs             : data.tabs,
+					tabsFolders      : data.tabsFolders,
+					domains          : data.tabsDomains,
+					activeTabId      : status.activeTabId
+				};
+			};
+
 			brauzer.tabs.onCreated.addListener(createTab);
 			brauzer.tabs.onActivated.addListener(onActivated);
 			brauzer.tabs.onUpdated.addListener(onUpdated);
@@ -1631,6 +1711,18 @@ const initService = {
 				searchPlaceholder  : getI18n('bkSearchPlaceholder')
 			};
 
+			modeData.bookmarks = _ => {
+				return {
+					mode             : 'bookmarks',
+					timeStamp        : status.timeStamp.bookmarks,
+					i18n             : i18n.bookmarks,
+					bookmarks        : data.bookmarks,
+					bookmarksFolders : data.bookmarksFolders,
+					domains          : data.bookmarksDomains,
+					activeTabId      : status.activeTabId
+				};
+			};
+
 			brauzer.bookmarks.onCreated.addListener(onCreated);
 			brauzer.bookmarks.onChanged.addListener(onChanged);
 			brauzer.bookmarks.onMoved.addListener(onMoved);
@@ -1838,6 +1930,7 @@ const initService = {
 			updateItem.bookmarks     = null;
 			updateFolder.bookmarks   = null;
 			messageHandler.bookmarks = null;
+			modeData.bookmarks       = null;
 			data.bookmarks           = [];
 			data.bookmarksId         = [];
 			data.bookmarksFolders    = [];
@@ -1867,6 +1960,18 @@ const initService = {
 				getMoreText        : getI18n('hsGetMoreText'),
 				getMore            : getI18n('hsGetMoreTitle'),
 				searchPlaceholder  : getI18n('hsSearchPlaceholder')
+			};
+
+			modeData.history = _ => {
+				return {
+					mode             : 'history',
+					timeStamp        : status.timeStamp.history,
+					i18n             : i18n.history,
+					history          : data.history,
+					historyEnd       : status.historyEnd,
+					historyFolders   : data.historyFolders,
+					domains          : data.historyDomains
+				};
 			};
 
 			brauzer.history.onVisited.addListener(onVisited);
@@ -2008,6 +2113,7 @@ const initService = {
 			updateItem.history     = null;
 			updateFolder.history   = null;
 			messageHandler.history = null;
+			modeData.history       = null;
 			data.history           = [];
 			data.historyId         = [];
 			data.historyFolders    = [];
@@ -2056,6 +2162,16 @@ const initService = {
 				reload : getI18n('dlControlsReload'),
 				stop   : getI18n('dlControlsCancel'),
 				delete : getI18n('dlControlsDelete')
+			};
+
+			modeData.downloads  = _ => {
+				return {
+					mode             : 'downloads',
+					timeStamp        : status.timeStamp.downloads,
+					i18n             : i18n.downloads,
+					downloads        : data.downloads,
+					domains          : []
+				};
 			};
 
 			brauzer.downloads.onCreated.addListener(onCreated);
@@ -2220,6 +2336,7 @@ const initService = {
 			i18n.downloads           = null;
 			updateItem.downloads     = null;
 			messageHandler.downloads = null;
+			modeData.downloads       = null;
 			data.downloads           = [];
 			data.downloadsId         = [];
 			brauzer.downloads.onCreated.removeListener(onCreated);
@@ -2339,6 +2456,18 @@ const initService = {
 				reloadAll          : getI18n('rssReloadAll'),
 				plain              : getI18n('rssPlainModeButton'),
 				domain             : getI18n('rssDomainModeButton')
+			};
+
+			modeData.rss     = _ => {
+				return {
+					mode             : 'rss',
+					timeStamp        : status.timeStamp.rss,
+					i18n             : i18n.rss,
+					rss              : data.rss,
+					rssFolders       : data.rssFolders,
+					domains          : data.rssDomains,
+					updated          : status.info.rssUpdated
+				};
 			};
 
 			status.init.rss = true;
@@ -2647,6 +2776,7 @@ const initService = {
 			i18n.rss            = null;
 			messageHandler.rss  = null;
 			updateItem.rss      = null;
+			modeData.rss        = null;
 			data.rss            = [];
 			data.rssId          = [];
 			data.rssFolders     = [];
@@ -3050,6 +3180,19 @@ const initService = {
 				}
 			};
 
+			modeData.pocket    = _ => {
+				return {
+					mode             : 'pocket',
+					timeStamp        : status.timeStamp.pocket,
+					username         : optionsShort.pocket.username,
+					auth             : optionsShort.pocket.auth,
+					i18n             : i18n.pocket,
+					pocket           : data.pocket,
+					pocketFolders    : data.pocketFolders,
+					domains          : data.pocketDomains,
+				};
+			};
+
 			if (options.pocket.auth.value === true)
 				execMethod(brauzer.storage.local.get, getPocket, ['pocket', 'pocketId', 'pocketFolders', 'pocketFoldersId']);
 			else
@@ -3060,11 +3203,292 @@ const initService = {
 			updateItem.pocket     = null;
 			updateFolder.pocket   = null;
 			messageHandler.pocket = null;
+			modeData.pocket       = null;
 			data.pocket           = [];
 			data.pocketId         = [];
 			data.pocketFolders    = [];
 			data.pocketFoldersId  = [];
 			status.init.pocket    = false;
+		}
+	},
+
+	search    : (start, mode = 'search') => {
+
+		const target = mode === 'search' ? 'sidebar' : 'startpage';
+
+		const search = (type, query) => {
+
+			const links   = {
+				duckduckgo : query => `https://duckduckgo.com/html/?q=${query}`,
+				google     : query => `https://www.google.com/search?&q=${query}`,
+				yandex     : query => `https://yandex.com/search/?text=${query}`,
+				bing       : query => `https://www.bing.com/search?q=${query}`,
+				yahoo      : query => `https://search.yahoo.com/search?p=${query}`
+			};
+
+			const resultsSelectors = {
+				duckduckgo : '.links_main',
+				google     : 'div.g',
+				yandex     : '.serp-item',
+				bing       : '.b_algo',
+				yahoo      : '.dd.algo'
+			};
+
+			const makeItem = {
+				duckduckgo : result => {
+					const item        = {};
+					const link        = result.querySelector('.result__title>a');
+					if (link === null)
+						return false;
+					item.title        = link.innerHTML;
+					item.url          = link.href;
+					const body        = link.parentNode.nextElementSibling;
+					if (body === null)
+						return item;
+					item.description  = body.textContent;
+					return item;
+				},
+				google     : result => {
+					const item        = {};
+					const link        = result.querySelector('h3>a');
+					if (link === null)
+						return false;
+					item.title        = link.innerHTML;
+					item.url          = link.href;
+					const body        = link.parentNode.nextElementSibling;
+					if (body !== null) {
+						const desc        = body.querySelector('.st');
+						if (desc !== null)
+							item.description  = desc.textContent;
+					}
+					return item;
+				},
+				yandex     : result => {
+					const item        = {};
+					const link        = result.querySelector('h2>a');
+					if (link === null)
+						return false;
+					link.removeChild(link.firstChild);
+					item.title        = link.innerHTML;
+					item.url          = link.href;
+					const body        = link.parentNode.lastChild;
+					if (body !== null)
+						item.description  = body.textContent;
+					return item;
+				},
+				bing       : result => {
+					const item        = {};
+					const link        = result.querySelector('h2>a');
+					if (link === null)
+						return false;
+					item.title        = link.innerHTML;
+					item.url          = link.href;
+					const body        = link.parentNode.lastChild;
+					if (body !== null)
+						item.description  = body.textContent;
+					return item;
+				},
+				yahoo      : result => {
+					const item        = {};
+					const title       = result.querySelector('h3>a');
+					if (title === null)
+						return false;
+					item.title        = title.innerHTML;
+					const link        = result.querySelector('h3+div>span');
+					if (link === null)
+						return false;
+					item.url          = `https://${link.textContent}`;
+					const body        = title.parentNode.parentNode.lastChild;
+					if (body !== null)
+						item.description  = body.textContent;
+					return item;
+				}
+			};
+
+			const cleanse = html => {
+
+				const cutElement = (start, finish) => {
+					index2 = body.indexOf(start, index1);
+					if (index2 !== -1) {
+						temp  += body.substring(index1, index2);
+						index1 = body.indexOf(finish, index2);
+						if (index1 !== -1) {
+							index1 += finish.length;
+							return cutElement(start, finish);
+						}
+						index1 = index2;
+						console.log(type);
+						console.log('fail');
+						console.log(start);
+					}
+					temp += body.substring(index1, body.length);
+					index1  = 0;
+					body    = temp;
+					temp    = '';
+				};
+
+				let index1   = 0;
+				let index2   = 0;
+				let temp     = '';
+				let body     = html;
+				cutElement('<head>', '/head>');
+				cutElement('<script', '/script>');
+				cutElement('<img', '>');
+				cutElement('<iframe', '/iframe>');
+				return body;
+			};
+
+			const xhttp   = new XMLHttpRequest();
+			xhttp.open('GET', links[type](query), true);
+			xhttp.send();
+			send(target, 'update', {'method': 'add', 'target': type});
+			xhttp.onreadystatechange = _ => {
+				if (xhttp.readyState === 4) {
+					if (xhttp.status === 200) {
+						// console.log(type);
+						if (type === 'bing')
+							console.log(xhttp.responseText);
+						const doc     = document.createElement('html');
+						const html = cleanse(xhttp.responseText);
+						doc.innerHTML = html;
+						let items = [];
+						const results = doc.querySelectorAll(resultsSelectors[type]);
+						for (let i = 0, l = results.length; i < l; i++) {
+							const item = makeItem[type](results[i]);
+							if (item === false)
+								return;
+							item.id   = `${type}-${i}`;
+							item.type = type;
+							items.push(createById('search', item, 'last'));
+						}
+						if (items.length > 0)
+							send(target, 'search', 'newItems', items);
+					}
+					makeTimeStamp('search');
+					send(target, 'search', 'update', {'method': 'remove', 'target': type});
+				}
+			};
+		};
+
+		const resetSearch = {
+			normal    : _ => {
+				data[`${mode}Query`]     = '';
+				data[mode]               = [];
+				data[`${mode}Id`]        = [];
+				data[`${mode}Folders`]   = [
+					{
+						id      : 'duckduckgo',
+						pid     : 0,
+						title   : 'DuckDuckGo',
+						domain  : 'duckduckgo',
+						view    : 'type',
+						folded  : false,
+						itemsId : []
+					},
+					{
+						id      : 'google',
+						pid     : 0,
+						title   : 'Google',
+						domain  : 'google',
+						view    : 'type',
+						folded  : false,
+						itemsId : []
+					},
+					{
+						id      : 'yandex',
+						pid     : 0,
+						title   : 'Yandex',
+						domain  : 'yandex',
+						view    : 'type',
+						folded  : false,
+						itemsId : []
+					},
+					{
+						id      : 'bing',
+						pid     : 0,
+						title   : 'Bing',
+						domain  : 'bing',
+						view    : 'type',
+						folded  : false,
+						itemsId : []
+					},
+					{
+						id      : 'yahoo',
+						pid     : 0,
+						title   : 'Yahoo',
+						domain  : 'yahoo',
+						view    : 'type',
+						folded  : false,
+						itemsId : []
+					}
+				];
+				data[`${mode}FoldersId`] = ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'];
+			},
+			dev       : _ => {},
+			social    : _ => {},
+			buy       : _ => {},
+			translate : _ => {}
+		};
+
+		if (start === true) {
+
+			updateItem[mode]     = (newItem, item) => {
+				const domain        = makeDomain(mode, item.url);
+				newItem.description = item.description;
+				newItem.title       = item.title;
+				newItem.url         = item.url;
+				newItem.domain      = domain.id;
+				newItem.type        = item.type;
+				updateFolder[mode](item);
+				return newItem;
+			};
+
+			updateFolder[mode]   = item => {
+				let folder = getFolderById(mode, item.type);
+				if (folder !== false)
+					folder.itemsId.push(item.id);
+			};
+
+			i18n.search          = {};
+
+			messageHandler[mode] = {
+				query   : (message, sender, sendResponse) => {
+					resetSearch[options[mode].type.value]();
+					data[`${mode}Query`] = message.data;
+					for (let i = config.searchTypes[options[mode].type.value].length - 1; i >= 0; i--)
+						search(config.searchTypes[options[mode].type.value][i], data[`${mode}Query`], 'sidebar');
+				},
+				move   : (message, sender, sendResponse) => {
+					const oldIndex = data.searchFoldersId.indexOf(message.data.id);
+					if (oldIndex === -1) return;
+					moveFromTo('searchFolders', oldIndex, message.data.newIndex);
+					send('sidebar', 'search', 'moved', {'id': message.data.id, 'newIndex': message.data.newIndex, 'oldIndex': oldIndex, 'isFolder': true});
+				}
+			};
+
+			modeData[mode]       = _ => {
+				return {
+					mode             : 'search',
+					timeStamp        : status.timeStamp[mode],
+					i18n             : i18n.search,
+					query            : data[`${mode}Query`],
+					search           : data[mode],
+					searchFolders    : data[`${mode}Folders`],
+					domains          : data.searchDomains
+				};
+			};
+
+			resetSearch[options[mode].type.value]();
+			status.init.search    = true;
+		}
+		else {
+			messageHandler[mode]  = null;
+			updateItem[mode]      = null;
+			i18n.search           = null;
+			modeData[mode]        = null;
+			resetSearch[options[mode].type.value]();
+			status.init.search    = false;
+			//
 		}
 	}
 };
@@ -3093,7 +3517,8 @@ function sideBarData(side) {
 				'history'   : optionsShort.services.history,
 				'downloads' : optionsShort.services.downloads,
 				'rss'       : optionsShort.services.rss,
-				'pocket'    : optionsShort.services.pocket
+				'pocket'    : optionsShort.services.pocket,
+				'search'    : optionsShort.services.search
 			}
 		},
 		'data'     : modeData[options[side].mode.value](),
@@ -3127,7 +3552,7 @@ function send(target, subject, action, dataToSend) {
 			disabled : _ => {}
 		};
 
-		if (/tabs|bookmarks|history|downloads|rss|pocket/.test(subject)) {
+		if (/tabs|bookmarks|history|downloads|rss|pocket|search/.test(subject)) {
 			if (subject !== options[target].mode.value)
 				return;
 			if (status.init.hasOwnProperty(subject))

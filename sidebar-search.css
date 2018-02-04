@@ -1,0 +1,43 @@
+.domain-duckduckgo {
+	background-image: url("icons/duckduckgo.svg");
+}
+.folder-name #search-move {
+	display: inline-block;
+}
+
+.domain-google {
+	background-image: url("icons/google.svg");
+}
+.domain-yandex {
+	background-image: url("icons/yandex.svg");
+}
+.domain-bing {
+	background-image: url("icons/bing.svg");
+}
+.domain-yahoo {
+	background-image: url("icons/yahoo.svg");
+}
+.domain-wikipedia {
+	background-image: url("icons/wikipedia.svg");
+}
+.domain-mdn {
+	background-image: url("icons/mdn.svg");
+}
+.domain-stackoverflow {
+	background-image: url("icons/stackoverflow.svg");
+}
+.domain-amazon {
+	background-image: url("icons/amazon.svg");
+}
+.domain-ebay {
+	background-image: url("icons/ebay.svg");
+}
+.domain-aliexpress {
+	background-image: url("icons/aliexpress.svg");
+}
+.domain-googletranslate {
+	background-image: url("icons/google-translate.svg");
+}
+.domain-yandextranslate {
+	background-image: url("icons/yandex-translate.svg");
+}

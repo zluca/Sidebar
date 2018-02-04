@@ -306,7 +306,8 @@ nav {
 		.unfixed .history #header-history,
 		.unfixed .downloads #header-downloads,
 		.unfixed .rss #header-rss,
-		.unfixed .pocket #header-pocket {
+		.unfixed .pocket #header-pocket,
+		.unfixed .search #header-search {
 			display: inline-block;
 		}
 
@@ -316,6 +317,7 @@ nav {
 			.downloads #header-downloads::before,
 			.rss #header-rss::before,
 			.pocket #header-pocket::before,
+			.search #header-search::before,
 			.plain #tabs-plain::before,
 			.domain #tabs-domain::before,
 			.tree #tabs-tree::before,
@@ -498,7 +500,7 @@ nav {
 .search-active #controls-button {
 	display: none;
 }
-	.search {
+	.search-input {
 		height: 1.6rem;
 		width: 100%;
 		text-indent: 2rem;
@@ -509,32 +511,32 @@ nav {
 		margin-left: .2rem;
 		color: var(--font-color-active);
 	}
-	.search::placeholder {
+	.search-input::placeholder {
 		color: var(--font-color-inactive);
 	}
-		.search-icon {
-			display: inline-block;
-			width: 1.4rem;
-			height: 1.4rem;
-			position: absolute;
-			left: .6rem;
-			top: .6rem;
-			background-color: var(--font-color-inactive);
-			-webkit-mask-repeat: no-repeat;
-			-webkit-mask-size: 100% 100%;
-			-webkit-mask-position: center;
-			-webkit-mask-mode: alpha;
-			-webkit-mask-image: url(icons/search.svg);
-			mask-repeat: no-repeat;
-			mask-size: 100% 100%;
-			mask-position: center;
-			mask-mode: alpha;
-			mask-image: url(icons/search.svg);
-		}
+	.search-icon {
+		display: inline-block;
+		width: 1.4rem;
+		height: 1.4rem;
+		position: absolute;
+		left: .6rem;
+		top: .6rem;
+		background-color: var(--font-color-inactive);
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-size: 100% 100%;
+		-webkit-mask-position: center;
+		-webkit-mask-mode: alpha;
+		-webkit-mask-image: url(icons/search.svg);
+		mask-repeat: no-repeat;
+		mask-size: 100% 100%;
+		mask-position: center;
+		mask-mode: alpha;
+		mask-image: url(icons/search.svg);
+	}
 
-		.search:focus+.search-icon {
-			background-color: var(--font-color-active);
-		}
+	.search-input:focus+.search-icon {
+		background-color: var(--font-color-active);
+	}
 
 .domain-default {
 	background-image: url(icons/default.svg);

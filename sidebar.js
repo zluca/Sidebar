@@ -13,6 +13,7 @@ const element  = {
 	downloads : 'li',
 	rss       : 'a',
 	pocket    : 'a',
+	search    : 'a',
 	domains   : 'style'
 };
 
@@ -103,7 +104,8 @@ const button   = {
 	history     : null,
 	downloads   : null,
 	rss         : null,
-	pocket      : null
+	pocket      : null,
+	search      : null
 };
 
 const messageHandler = {
@@ -181,7 +183,7 @@ const messageHandler = {
 	set       : {
 		fold         : info => {
 			if (info.mode !== options.sidebar.mode) return;
-			const folder = getFolderById(info.mode, info.id);
+			const folder = getFolderById(info.id);
 			if (folder !== false)
 				folder.classList[info.method]('folded');
 		},
@@ -295,6 +297,7 @@ function tryToInit() {
 }
 
 function initSidebar(response) {
+	// console.log(response);
 	const onMessage = (message, sender, sendResponse) => {
 		// console.log(message);
 		if (message.hasOwnProperty('target'))
@@ -385,7 +388,6 @@ function prepareBlock(mode) {
 		options.sidebar.mode                 = mode;
 	}
 	searchActive(false);
-
 }
 
 function finishBlock() {
@@ -425,7 +427,7 @@ function finishBlock() {
 
 const initBlock = {
 
-	tabs : info => {
+	tabs      : info => {
 
 		const moveTab       = info => {
 			const tab = getById(info.id);
@@ -785,7 +787,7 @@ const initBlock = {
 		finishBlock();
 	},
 
-	history : info => {
+	history   : info => {
 
 		insertItems    = (items, method) => {
 			let pid = -1;
@@ -978,7 +980,7 @@ const initBlock = {
 		finishBlock();
 	},
 
-	rss : info => {
+	rss       : info => {
 
 		const setReadedMode = (readedMode, rssMode) => {
 			if (rssMode !== undefined)
@@ -1151,7 +1153,7 @@ const initBlock = {
 		finishBlock();
 	},
 
-	pocket : info => {
+	pocket    : info => {
 
 		const updateItem      = (pocket, info) => {
 			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
@@ -1321,6 +1323,74 @@ const initBlock = {
 		makeButton('reload', 'pocket', 'bottom');
 
 		setView(options.misc.pocketMode, info.pocket, info.pocketFolders);
+		finishBlock();
+	},
+
+	search    : info => {
+		console.log(info);
+
+		const updateItem      = (item, info) => {
+			item.href        = info.url;
+			item.dataset.url = info.url;
+			item.innerHTML   = info.title;
+			item.classList   = `search item domain-${info.domain} type-${info.type}`;
+			item.title       = `${info.description}\n\n${info.url}`;
+		};
+
+		prepareBlock('search');
+		setBlockClass();
+		setDomainStyle.rewrite(info.domains);
+		i18n.search           = info.i18n;
+		status.timeStamp.mode = info.timeStamp;
+
+		makeButton('move', 'search', 'item');
+
+		messageHandler.search = {
+			update: info => {
+				const folder = getFolderById(info.target);
+				if (folder !== false)
+					folder.classList[info.method]('loading');
+				// console.log(info);
+			},
+			newItems: info => {
+				insertItems(info);
+			}
+		};
+
+		onClick               = event => {
+			if (event.target.classList.contains('item'))
+				openLink(event);
+		};
+
+		insertItems           = (items, position = 'last') => {
+			let pid    = 0;
+			let folder = rootFolder;
+			for (let i = 0, l = items.length; i < l; i++) {
+				const item = createById(items[i].id);
+				updateItem(item, items[i]);
+				if (items[i].type !== pid) {
+					pid    = items[i].type;
+					folder = getFolderById(items[i].type);
+				}
+				if (folder !== false)
+					folder.lastChild.appendChild(item);
+			}
+		};
+
+		status.lastSearch   = '';
+		const search = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', 'do later'], ['value', info.query]]);
+		dcea('span', controls.bottom, [['classList', 'search-icon']]);
+		search.addEventListener('keydown', event => {
+			if (event.key === 'Enter') {
+				const value = search.value;
+				if (value.length > 3)
+					send('background', 'search', 'query', value);
+			}
+		}, {'passive': true});
+
+		insertFolders(info.searchFolders);
+		insertItems(info.search);
+
 		finishBlock();
 	}
 };
@@ -1725,6 +1795,10 @@ function moveItem(mode, eventTarget) {
 		pocket : _ => {
 			block.addEventListener('mouseover', moveItemOverFolder);
 			doc.addEventListener('mousedown', getIndex);
+		},
+		search : _ => {
+			block.addEventListener('mouseover', moveItemOverFolder);
+			doc.addEventListener('mousedown', getIndex);
 		}
 	};
 
@@ -1797,8 +1871,8 @@ function makeButton(type, mode, sub, hidden = false) {
 
 function makeSearch(mode) {
 	status.lastSearch   = '';
-	const search = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
-	dcea('span', search, [['classList', 'search-icon']]);
+	const search = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
+	dcea('span', controls.bottom, [['classList', 'search-icon']]);
 
 	search.addEventListener('keyup', event => {
 		const value = search.value;
@@ -1843,6 +1917,10 @@ const buttonsEvents = {
 		pocket : event => {
 			if (options.sidebar.mode !== 'pocket')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'pocket'});
+		},
+		search : event => {
+			if (options.sidebar.mode !== 'search')
+				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'search'});
 		},
 		pin: event => {
 			send('background', 'options', 'handler', {'section': status.side, 'option': 'fixed', 'value': true});
@@ -2061,6 +2139,11 @@ const buttonsEvents = {
 			else
 				send('background', 'pocket', 'folderDelete', controls.item.parentNode.dataset.id);
 		}
+	},
+	search    : {
+		move: event => {
+			moveItem('search', controls.item.parentNode);
+		},
 	}
 };
 
@@ -2075,6 +2158,5 @@ function dcea(nodeName, parent, attrs) {
 	parent.appendChild(element);
 	return element;
 }
-
 
 })();
