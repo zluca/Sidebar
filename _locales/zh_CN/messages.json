@@ -620,7 +620,7 @@
 		"message"       : "添加新站点",
 		"description"   : ""
 	},
-	"startpageSearchPlaceholder" : {
+	"startpageGeneralPlaceholder" : {
 		"message"       : "搜索",
 		"description"   : ""
 	},
@@ -636,59 +636,76 @@
 		"message"       : "开始",
 		"description"   : ""
 	},
-	"startpageDuckDuckGoLabel" : {
-		"message"       : "DuckDuckGo",
+
+	"searchTypeGeneral" : {
+		"message"       : "General",
 		"description"   : ""
 	},
-	"startpageGoogleLabel" : {
-		"message"       : "Google",
+	"searchTypeDev" : {
+		"message"       : "Development",
 		"description"   : ""
 	},
-	"startpageYandexLabel" : {
-		"message"       : "Yandex",
+	"searchTypeBuy" : {
+		"message"       : "Shop",
 		"description"   : ""
 	},
-	"startpageBingLabel" : {
-		"message"       : "Bing",
-		"description"   : ""
-	},
-	"startpageYahooLabel" : {
-		"message"       : "Yahoo",
-		"description"   : ""
-	},
-	"startpageWikipediaLabel" : {
-		"message"       : "Wikipedia",
-		"description"   : ""
-	},
-	"startpageMdnLabel" : {
-		"message"       : "MDN",
-		"description"   : ""
-	},
-	"startpageStackoverflowLabel" : {
-		"message"       : "stackOverflow",
-		"description"   : ""
-	},
-	"startpageAmazonLabel" : {
-		"message"       : "Amazon",
-		"description"   : ""
-	},
-	"startpageEbayLabel" : {
-		"message"       : "Ebay",
-		"description"   : ""
-	},
-	"startpageAliexpressLabel" : {
-		"message"       : "AliExpress",
-		"description"   : ""
-	},
-	"startpageGoogleTranslateLabel" : {
-		"message"       : "Google 翻译",
-		"description"   : ""
-	},
-	"startpageYandexTranslateLabel" : {
-		"message"       : "Yandex 翻译",
+	"searchTypeTranslate" : {
+		"message"       : "Translate",
 		"description"   : ""
 	},
 
+	"searchEngineDuckDuckGo" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"searchEngineGoogle" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"searchEngineYandex" : {
+		"message"       : "Yandex",
+		"description"   : ""
+	},
+	"searchEngineBing" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"searchEngineYahoo" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"searchEngineWikipedia" : {
+		"message"       : "Wikipedia",
+		"description"   : ""
+	},
+	"searchEngineMdn" : {
+		"message"       : "MDN",
+		"description"   : ""
+	},
+	"searchEngineStackoverflow" : {
+		"message"       : "stackOverflow",
+		"description"   : ""
+	},
+	"searchEngineAmazon" : {
+		"message"       : "Amazon",
+		"description"   : ""
+	},
+	"searchEngineEbay" : {
+		"message"       : "Ebay",
+		"description"   : ""
+	},
+	"searchEngineAliexpress" : {
+		"message"       : "AliExpress",
+		"description"   : ""
+	},
+	"searchEngineGoogleTranslate" : {
+		"message"       : "Google 翻译",
+		"description"   : ""
+	},
+	"searchEngineYandexTranslate" : {
+		"message"       : "Yandex 翻译",
+		"description"   : ""
+	},
 
 	"dialogConfirmationTitle" : {
 		"message"       : "需要确认",
@@ -958,6 +975,11 @@
 				"content": "$1"
 			}
 		}
+	},
+
+	"dialogSearchSelectHeader" : {
+		"message"       : "Select search engines",
+		"description"   : ""
 	},
 
 	"domainsDefault" : {

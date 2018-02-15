@@ -1,10 +1,10 @@
-.domain-duckduckgo {
-	background-image: url("icons/duckduckgo.svg");
-}
 .folder-name #search-move {
 	display: inline-block;
 }
 
+.domain-duckduckgo {
+	background-image: url("icons/duckduckgo.svg");
+}
 .domain-google {
 	background-image: url("icons/google.svg");
 }

@@ -15,7 +15,7 @@ const config = {
 	rssIcon            : 'icons/rss.svg',
 	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034',
 	searchTypes        : {
-		normal    : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'],
+		general   : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'],
 		dev       : ['wikipedia', 'mdn', 'stackoverflow'],
 		social    : [],
 		buy       : ['amazon', 'aliexpress', 'ebay'],
@@ -461,6 +461,13 @@ const options = {
 			targets : [],
 			handler : 'empty'
 		},
+		mode           : {
+			value   : 'sites',
+			values  : ['sites', 'search'],
+			type    : 'select',
+			targets : ['startpage'],
+			hidden  : true
+		},
 		rows           : {
 			value   : 3,
 			type    : 'integer',
@@ -569,6 +576,11 @@ const options = {
 			value   : 0,
 			targets : [],
 			handler : 'scroll'
+		},
+		search    : {
+			value   : 0,
+			targets : [],
+			handler : 'scroll'
 		}
 	},
 	pocket: {
@@ -592,96 +604,227 @@ const options = {
 	search: {
 		hidden    : {},
 		type       : {
-			value   : 'normal',
+			value   : 'general',
 			type    : 'select',
-			values  : ['normal', 'dev', 'social', 'buy', 'translate'],
+			values  : ['general', 'dev', 'social', 'buy', 'translate'],
 			targets : ['sidebar']
 		},
 		duckduckgo : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		google     : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		yandex     : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		bing       : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		yahoo      : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		wikipedia  : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'dev',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		mdn        : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'dev',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		stackoverflow : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'dev',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		amazon     : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'buy',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		ebay       : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'buy',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		aliexpress : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'buy',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		googleTranslate: {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'translate',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		yandexTranslate: {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			mode    : 'translate',
+			targets : [],
+			handler : 'searchEngine'
 		},
 		translateFrom  : {
 			value   : 'en',
 			type    : 'text',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'searchEngine'
 		},
 		translateTo    : {
 			value   : 'en',
 			type    : 'text',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'searchEngine'
 		}
 	},
 	spSearch: {
 		hidden    : {},
 		type       : {
-			value   : 'normal',
+			value   : 'general',
 			type    : 'select',
-			values  : ['normal', 'dev', 'social', 'buy', 'translate'],
-			targets : ['sidebar']
+			values  : ['general', 'dev', 'social', 'buy', 'translate'],
+			targets : ['startpage']
+		},
+		duckduckgo : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		google     : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		yandex     : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		bing       : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		yahoo      : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		wikipedia  : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'dev',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		mdn        : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'dev',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		stackoverflow : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'dev',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		amazon     : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'buy',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		ebay       : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'buy',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		aliexpress : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'buy',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		googleTranslate: {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'translate',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		yandexTranslate: {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'translate',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		translateFrom  : {
+			value   : 'en',
+			type    : 'text',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		translateTo    : {
+			value   : 'en',
+			type    : 'text',
+			targets : [],
+			handler : 'searchEngine'
 		}
-	}
+	},
 };
 
 const optionsShort = {};
@@ -735,11 +878,11 @@ const optionsHandler = {
 		};
 		oldValueHandler[options[section].method.value]();
 		newValueHandler[newValue]();
-		setOption(section, 'method', newValue);
+		setOption(section, 'method', newValue, false);
 		setIcon();
 	},
 	mode    : (section, option, newValue) => {
-		setOption(section, 'mode', newValue);
+		setOption(section, 'mode', newValue, false);
 		send(section, 'options', 'mode', {value: newValue, data: modeData[newValue]()});
 	},
 	service : (section, option, newValue) => {
@@ -751,7 +894,7 @@ const optionsHandler = {
 			const firstEnabledService = side => {
 				for (let services = ['tabs', 'bookmarks', 'history', 'downloads', 'rss'], i = services.length - 1; i >= 0; i--) {
 					if (options.services[services[i]].value === true && services[i] !== option) {
-						setOption(side, 'mode', services[i]);
+						setOption(side, 'mode', services[i], false);
 						send(side, 'options', 'mode', {value: services[i], data: modeData[services[i]]()});
 						break;
 					}
@@ -810,6 +953,16 @@ const optionsHandler = {
 	},
 	rssReadedMode    : (section, option, newValue) => {
 		send('sidebar', 'rss', 'readedMode', newValue);
+	},
+	searchEngine     : (section, option, newValue) => {
+		const target = section === 'search' ? 'sidebar' : 'startpage';
+		const folder = getFolderById(section, option);
+		if (folder === false) return;
+		folder.hidden = options[section][option].value;
+		if (options[section][option].value === false)
+			send(target, 'search', 'showFolder', {'id': option});
+		else
+			send(target, 'search', 'hideFolder', {'id': option});
 	}
 };
 
@@ -862,16 +1015,9 @@ const messageHandler = {
 			else sendResponse(undefined);
 		},
 		startpage : (message, sender, sendResponse) => {
-			if (status.init.startpage === true) {
+			if (status.init.startpage === true)
 				if (options.services.startpage.value === true)
-					sendResponse({
-						'sites'     : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
-						'startpage' : optionsShort.startpage,
-						'theme'     : optionsShort.theme,
-						'i18n'      : i18n.startpage,
-					});
-				else sendResponse({'startpage': {'empty': true}});
-			}
+					sendResponse(startpageData());
 		},
 		options : (message, sender, sendResponse) => {
 			sendResponse(options);
@@ -892,9 +1038,7 @@ const messageHandler = {
 			const value    = message.data.value;
 			if (options[section][option].hasOwnProperty('handler'))
 				optionsHandler[options[section][option].handler](section, option, value);
-			setOption(section, option, value);
-			for (let i = options[section][option].targets.length - 1; i >= 0; i--)
-				send(options[section][option].targets[i], 'options', option, {'section': section, 'option': option, value: value});
+			setOption(section, option, value, true);
 		},
 	},
 
@@ -1030,6 +1174,14 @@ const messageHandler = {
 			const folder = getFolderById('pocket', message.data);
 			if (folder !== false)
 				createDialogWindow(message.action, {'id': folder.id, 'title': folder.title});
+		},
+		searchSelect: (message, sender, sendResponse) => {},
+		spSearchSelect: (message, sender, sendResponse) => {
+			createDialogWindow('searchSelect', {
+				'target'      : 'spSearch',
+				'options'     : optionsShort.spSearch,
+				'searchTypes' : config.searchTypes
+			});
 		}
 	},
 
@@ -1201,7 +1353,7 @@ const initService = {
 				let port;
 				brauzer.runtime.onConnect.addListener(p => {
 					if (opera) {
-						setOption('leftBar', 'method', 'native');
+						setOption('leftBar', 'method', 'native', false);
 						optionsHandler.method('leftBar', 'method', 'native');
 					}
 					port = p;
@@ -1231,7 +1383,7 @@ const initService = {
 										leftBar  : 'rightBar',
 										rightBar : 'leftBar'
 									};
-									setOption('status', 'nativeSbPosition', side);
+									setOption('status', 'nativeSbPosition', side, false);
 									optionsHandler.method(side, 'method', 'native');
 									optionsHandler.mode(side, 'mode', options[oppositeSide[side]].mode.value);
 									if (options[oppositeSide[side]].method.value === 'native')
@@ -1287,11 +1439,8 @@ const initService = {
 		};
 
 		if (start === true) {
+			setOption('startpage', 'mode', 'sites');
 			messageHandler.startpage = {
-				search : (message, sender, sendResponse) => {
-					setOption('startpage', 'searchEngine', message.data.engine);
-					send('startpage', 'search', 'engine', optionsShort.startpage.searchEngine);
-				},
 				change : (message, sender, sendResponse) => {
 					const site = data.speadDial[message.data.index];
 					if (site !== undefined) {
@@ -1320,34 +1469,35 @@ const initService = {
 				}
 			};
 			i18n.startpage = {
-				pageTitle                   : getI18n('startpagePageTitle'),
-				addNewSiteTitle             : getI18n('startpageAddNewSiteTitle'),
-				editButtonTitle             : getI18n('startpageEditButtonTitle'),
-				searchPlaceholder           : getI18n('startpageSearchPlaceholder'),
-				translatePlaceholder        : getI18n('startpageTranslatePlaceholder'),
-				buyPlaceholder              : getI18n('startpageBuyPlaceholder'),
-				searchButtonTitle           : getI18n('startpageSearchButtonTitle'),
-				searchEngineDuckDuckGo      : getI18n('startpageDuckDuckGoLabel'),
-				searchEngineGoogle          : getI18n('startpageGoogleLabel'),
-				searchEngineYandex          : getI18n('startpageYandexLabel'),
-				searchEngineBing            : getI18n('startpageBingLabel'),
-				searchEngineYahoo           : getI18n('startpageYahooLabel'),
-				searchEngineWikipedia       : getI18n('startpageWikipediaLabel'),
-				searchEngineMdn             : getI18n('startpageMdnLabel'),
-				searchEngineStackoverflow   : getI18n('startpageStackoverflowLabel'),
-				searchEngineAmazon          : getI18n('startpageAmazonLabel'),
-				searchEngineEbay            : getI18n('startpageEbayLabel'),
-				searchEngineAliexpress      : getI18n('startpageAliexpressLabel'),
-				searchEngineGoogleTranslate : getI18n('startpageGoogleTranslateLabel'),
-				searchEngineYandexTranslate : getI18n('startpageYandexTranslateLabel')
+				pageTitle          : getI18n('startpagePageTitle'),
+				addNewSiteTitle    : getI18n('startpageAddNewSiteTitle'),
+				editButtonTitle    : getI18n('startpageEditButtonTitle'),
+				searchPlaceholder  : getI18n('startpageSearchPlaceholder'),
+				generalPlaceholder : getI18n('startpageGeneralPlaceholder'),
+				devPlaceholder     : getI18n('startpageGeneralPlaceholder'),
+				buyPlaceholder     : getI18n('startpageBuyPlaceholder'),
+				searchButtonTitle  : getI18n('startpageSearchButtonTitle'),
+				typegeneral        : getI18n('searchTypeGeneral'),
+				typedev            : getI18n('searchTypeDev'),
+				typebuy            : getI18n('searchTypeBuy'),
+				typetranslate      : getI18n('searchTypeTranslate'),
+				duckduckgo         : getI18n('searchEngineDuckDuckGo'),
+				google             : getI18n('searchEngineGoogle'),
+				yandex             : getI18n('searchEngineYandex'),
+				bing               : getI18n('searchEngineBing'),
+				yahoo              : getI18n('searchEngineYahoo'),
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
 			if (status.init.tabs === true)
 				for (let i = data.tabs.length - 1; i >= 0; i--)
 					if (data.tabs[i].url === config.defaultStartPage)
 						brauzer.tabs.update(data.tabs[i].id, {'url': config.extensionStartPage});
+			if (options.startpage.searchEnabled.value === true)
+				initService.search(true, 'spSearch');
 		}
 		else {
+			if (status.init.spSearch === true)
+				initService.search(false, 'spSearch');
 			i18n.startpage = {};
 			messageHandler.startpage = {};
 			data.speadDial = [];
@@ -1358,6 +1508,7 @@ const initService = {
 					else
 						brauzer.tabs.update(data.tabs[i].id, {'url': config.defaultStartPage});
 				}
+			status.init.startpage = false;
 		}
 	},
 
@@ -1770,20 +1921,20 @@ const initService = {
 
 		const getRecent     = bookmarks => {
 			if (bookmarks.length < options.misc.limitBookmarks.value) {
-				setOption('misc', 'bookmarksMode', 'tree');
+				setOption('misc', 'bookmarksMode', 'tree', false);
 				execMethod(brauzer.bookmarks.getTree, parseTree);
 				if (options.warnings.tooManyBookmarks.value === false) {
 					brauzer.notifications.create('switch-to-tree', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkSwitchToTreeText});
-					setOption('warnings', 'tooManyBookmarks', true);
+					setOption('warnings', 'tooManyBookmarks', true, false);
 				}
 			}
 			else {
-				setOption('misc', 'bookmarksMode', 'plain');
+				setOption('misc', 'bookmarksMode', 'plain', false);
 				for (let i = 0, l = bookmarks.length; i < l; i++)
 					createById('bookmarks', bookmarks[i], 'last');
 				if (options.warnings.tooManyBookmarks.value === true) {
 					brauzer.notifications.create('too-many-bookmarks', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkTooManyBookmarksText});
-					setOption('warnings', 'tooManyBookmarks', false);
+					setOption('warnings', 'tooManyBookmarks', false, false);
 				}
 				return initBookmarks();
 			}
@@ -2912,10 +3063,11 @@ const initService = {
 				},
 				auth    : response => {
 					if (!response.hasOwnProperty('access_token')) return;
-					setOption('pocket', 'accessToken', response.access_token);
+					setOption('pocket', 'accessToken', response.access_token, false);
 					if (response.hasOwnProperty('username'))
-						setOption('pocket', 'username', response.username);
-					setOption('pocket', 'auth', true);
+						setOption('pocket', 'username', response.username, false);
+					setOption('pocket', 'auth', true, false);
+					// 
 					send('sidebar', 'pocket', 'login', {'username': options.pocket.username.value});
 					pocketRequest('get');
 				},
@@ -2962,7 +3114,7 @@ const initService = {
 			if (options.pocket.auth.value === false)
 				return;
 			if (options.pocket.accessToken.value === '') {
-				setOption('pocket', 'auth', false);
+				setOption('pocket', 'auth', false, false);
 				return;
 			}
 			pocketRequest('get');
@@ -3060,9 +3212,10 @@ const initService = {
 			data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other', 'archives'];
 			saveNow('pocket');
 			saveNow('pocketFolders');
-			setOption('pocket', 'auth', false);
-			setOption('pocket', 'username', '');
+			setOption('pocket', 'auth', false, false);
+			setOption('pocket', 'username', '', false);
 			status.init.pocket   = true;
+			// 
 			if (update === true)
 				send('sidebar', 'pocket', 'logout', {'folders': data.pocketFolders});
 		};
@@ -3218,6 +3371,22 @@ const initService = {
 
 		const search = (type, query) => {
 
+			// const searchPath = {
+			// 	duckduckgo      : `https://duckduckgo.com/?q=`,
+			// 	google          : `https://www.google.com/?gfe_rd=cr&gws_rd=ssl#q=`,
+			// 	yandex          : `https://yandex.com/search/?text=`,
+			// 	bing            : `https://www.bing.com/search?q=`,
+			// 	yahoo           : `https://search.yahoo.com/search?p=`,
+			// 	wikipedia       : `https://${options.startpage.wikiSearchLang}.wikipedia.org/w/index.php?search=`,
+			// 	mdn             : `https://developer.mozilla.org/en/search?q=`,
+			// 	stackoverflow   : `https://stackoverflow.com/search?q=`,
+			// 	amazon          : `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=`,
+			// 	ebay            : `https://www.ebay.com/sch/i.html?_nkw=`,
+			// 	aliexpress      : `https://www.aliexpress.com/wholesale?SearchText=`,
+			// 	googletranslate : `https://translate.google.com/#${options.startpage.translateFrom}/${options.startpage.translateTo}/`,
+			// 	yandextranslate : `https://translate.yandex.com/?lang=${options.startpage.translateFrom}-${options.startpage.translateTo}&text=`
+			// };
+
 			const links   = {
 				duckduckgo : query => `https://duckduckgo.com/html/?q=${query}`,
 				google     : query => `https://www.google.com/search?&q=${query}`,
@@ -3234,7 +3403,7 @@ const initService = {
 				yahoo      : '.dd.algo'
 			};
 
-			const makeItem = {
+			const makeItem    = {
 				duckduckgo : result => {
 					const item        = {};
 					const link        = result.querySelector('.result__title>a');
@@ -3246,6 +3415,7 @@ const initService = {
 					if (body === null)
 						return item;
 					item.description  = body.textContent;
+					item.pid          = 'duckduckgo';
 					return item;
 				},
 				google     : result => {
@@ -3261,6 +3431,7 @@ const initService = {
 						if (desc !== null)
 							item.description  = desc.textContent;
 					}
+					item.pid          = 'google';
 					return item;
 				},
 				yandex     : result => {
@@ -3274,6 +3445,7 @@ const initService = {
 					const body        = link.parentNode.lastChild;
 					if (body !== null)
 						item.description  = body.textContent;
+					item.pid          = 'yandex';
 					return item;
 				},
 				bing       : result => {
@@ -3286,6 +3458,7 @@ const initService = {
 					const body        = link.parentNode.lastChild;
 					if (body !== null)
 						item.description  = body.textContent;
+					item.pid          = 'bing';
 					return item;
 				},
 				yahoo      : result => {
@@ -3301,11 +3474,12 @@ const initService = {
 					const body        = title.parentNode.parentNode.lastChild;
 					if (body !== null)
 						item.description  = body.textContent;
+					item.pid          = 'yahoo';
 					return item;
 				}
 			};
 
-			const cleanse = html => {
+			const cleanse     = html => {
 
 				const cutElement = (start, finish) => {
 					index2 = body.indexOf(start, index1);
@@ -3317,9 +3491,6 @@ const initService = {
 							return cutElement(start, finish);
 						}
 						index1 = index2;
-						console.log(type);
-						console.log('fail');
-						console.log(start);
 					}
 					temp += body.substring(index1, body.length);
 					index1  = 0;
@@ -3338,31 +3509,32 @@ const initService = {
 				return body;
 			};
 
-			const xhttp   = new XMLHttpRequest();
-			xhttp.open('GET', links[type](query), true);
+			const xhttp       = new XMLHttpRequest();
+			const searchLink  = links[type](query);
+			const folder      = getFolderById(mode, type);
+			if (folder === false) return;
+			folder.searchLink = searchLink;
+			xhttp.open('GET', searchLink, true);
 			xhttp.send();
-			send(target, 'update', {'method': 'add', 'target': type});
+			send(target, 'search', 'update', {'method': 'add', 'target': type});
 			xhttp.onreadystatechange = _ => {
 				if (xhttp.readyState === 4) {
 					if (xhttp.status === 200) {
-						// console.log(type);
-						if (type === 'bing')
-							console.log(xhttp.responseText);
 						const doc     = document.createElement('html');
-						const html = cleanse(xhttp.responseText);
+						const html    = cleanse(xhttp.responseText);
 						doc.innerHTML = html;
 						let items = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
 						for (let i = 0, l = results.length; i < l; i++) {
 							const item = makeItem[type](results[i]);
 							if (item === false)
-								return;
+								continue;
 							item.id   = `${type}-${i}`;
 							item.type = type;
-							items.push(createById('search', item, 'last'));
+							items.push(createById(mode, item, 'last'));
 						}
 						if (items.length > 0)
-							send(target, 'search', 'newItems', items);
+							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type});
 					}
 					makeTimeStamp('search');
 					send(target, 'search', 'update', {'method': 'remove', 'target': type});
@@ -3370,64 +3542,20 @@ const initService = {
 			};
 		};
 
-		const resetSearch = {
-			normal    : _ => {
-				data[`${mode}Query`]     = '';
-				data[mode]               = [];
-				data[`${mode}Id`]        = [];
-				data[`${mode}Folders`]   = [
-					{
-						id      : 'duckduckgo',
-						pid     : 0,
-						title   : 'DuckDuckGo',
-						domain  : 'duckduckgo',
-						view    : 'type',
-						folded  : false,
-						itemsId : []
-					},
-					{
-						id      : 'google',
-						pid     : 0,
-						title   : 'Google',
-						domain  : 'google',
-						view    : 'type',
-						folded  : false,
-						itemsId : []
-					},
-					{
-						id      : 'yandex',
-						pid     : 0,
-						title   : 'Yandex',
-						domain  : 'yandex',
-						view    : 'type',
-						folded  : false,
-						itemsId : []
-					},
-					{
-						id      : 'bing',
-						pid     : 0,
-						title   : 'Bing',
-						domain  : 'bing',
-						view    : 'type',
-						folded  : false,
-						itemsId : []
-					},
-					{
-						id      : 'yahoo',
-						pid     : 0,
-						title   : 'Yahoo',
-						domain  : 'yahoo',
-						view    : 'type',
-						folded  : false,
-						itemsId : []
-					}
-				];
-				data[`${mode}FoldersId`] = ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'];
-			},
-			dev       : _ => {},
-			social    : _ => {},
-			buy       : _ => {},
-			translate : _ => {}
+		const resetSearch = type => {
+			data[`${mode}Query`]     = '';
+			data[mode]               = [];
+			data[`${mode}Id`]        = [];
+			data[`${mode}Folders`]   = [];
+			data[`${mode}FoldersId`] = [];
+			for (let i = 0, l = config.searchTypes[type].length; i < l; i++)
+				updateFolder[mode]({'type': type, 'pid': config.searchTypes[type][i]});
+		};
+
+		const clearSearch = type => {
+			data[`${mode}Query`]     = '';
+			data[mode]               = [];
+			data[`${mode}Id`]        = [];
 		};
 
 		if (start === true) {
@@ -3443,20 +3571,52 @@ const initService = {
 				return newItem;
 			};
 
-			updateFolder[mode]   = item => {
-				let folder = getFolderById(mode, item.type);
+			updateFolder[mode]      = item => {
+				let folder = getFolderById(mode, item.pid);
 				if (folder !== false)
 					folder.itemsId.push(item.id);
+				else {
+					folder            = createFolderById(mode, item.pid, 'last');
+					folder.pid        = 0;
+					folder.title      = '';
+					folder.domain     = item.pid;
+					folder.view       = 'type';
+					folder.mode       = item.type;
+					folder.hidden     = !options[mode][folder.id].value;
+					folder.searchLink = '';
+					folder.itemsId    = [];
+				}
 			};
 
-			i18n.search          = {};
+			i18n.search             = {
+				typegeneral     : getI18n('searchTypeGeneral'),
+				typedev         : getI18n('searchTypeDev'),
+				typebuy         : getI18n('searchTypeBuy'),
+				typetranslate   : getI18n('searchTypeTranslate'),
+				duckduckgo      : getI18n('searchEngineDuckDuckGo'),
+				google          : getI18n('searchEngineGoogle'),
+				yandex          : getI18n('searchEngineYandex'),
+				bing            : getI18n('searchEngineBing'),
+				yahoo           : getI18n('searchEngineYahoo'),
+			};
 
-			messageHandler[mode] = {
+			messageHandler[mode]    = {
 				query   : (message, sender, sendResponse) => {
-					resetSearch[options[mode].type.value]();
+					if (mode === 'spSearch')
+						if (options.startpage.mode.value === 'sites')
+							setOption('startpage', 'mode', 'search', true);
+					clearSearch(options[mode].type.value);
 					data[`${mode}Query`] = message.data;
 					for (let i = config.searchTypes[options[mode].type.value].length - 1; i >= 0; i--)
-						search(config.searchTypes[options[mode].type.value][i], data[`${mode}Query`], 'sidebar');
+						if (options[mode][config.searchTypes[options[mode].type.value][i]].value === true)
+							search(config.searchTypes[options[mode].type.value][i], data[`${mode}Query`], 'sidebar');
+				},
+				changeQuery : (message, sender, sendResponse) => {
+					data[`${mode}Query`] = message.data;
+					send(target, 'search', 'changeQuery', message.data);
+					if (mode === 'spSearch')
+						if (message.data === '')
+							setOption('startpage', 'mode', 'sites', true);
 				},
 				move   : (message, sender, sendResponse) => {
 					const oldIndex = data.searchFoldersId.indexOf(message.data.id);
@@ -3466,7 +3626,7 @@ const initService = {
 				}
 			};
 
-			modeData[mode]       = _ => {
+			modeData[mode]          = _ => {
 				return {
 					mode             : 'search',
 					timeStamp        : status.timeStamp[mode],
@@ -3478,16 +3638,16 @@ const initService = {
 				};
 			};
 
-			resetSearch[options[mode].type.value]();
-			status.init.search    = true;
+			resetSearch(options[mode].type.value);
+			status.init[mode]     = true;
 		}
 		else {
 			messageHandler[mode]  = null;
 			updateItem[mode]      = null;
 			i18n.search           = null;
 			modeData[mode]        = null;
-			resetSearch[options[mode].type.value]();
-			status.init.search    = false;
+			resetSearch(options[mode].type.value);
+			status.init[mode]     = false;
 			//
 		}
 	}
@@ -3529,6 +3689,25 @@ function sideBarData(side) {
 					 },
 		'timeStamp': status.timeStamp
 	};
+}
+
+function startpageData() {
+	if (options.services.startpage.value === true)
+		return {
+			'sites'         : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
+			'search'        : data.spSearch,
+			'searchFolders' : data.spSearchFolders,
+			'searchQuery'   : data.spSearchQuery,
+			'domains'       : data.spSearchDomains,
+			'options' : {
+				'startpage'   : optionsShort.startpage,
+				'search'      : optionsShort.spSearch,
+				'theme'       : optionsShort.theme,
+			},
+			'i18n'          : i18n.startpage,
+		};
+	else
+		return {'options' : {'startpage': {'empty': true}}};
 }
 
 function send(target, subject, action, dataToSend) {
@@ -3629,12 +3808,12 @@ function makeFav(id, url, favIconUrl, update = false) {
 		} ,
 	};
 
-	const domainsId = ['tabsDomainsId', 'bookmarksDomainsId', 'historyDomainsId', 'rssDomainsId', 'pocketDomainsId'];
-	const domains   = ['tabsDomains', 'bookmarksDomains', 'historyDomains', 'rssDomains', 'pocketDomains'];
+	const domainsId = ['tabsDomainsId', 'bookmarksDomainsId', 'historyDomainsId', 'rssDomainsId', 'pocketDomainsId', 'searchDomainsId', 'spSearchDomainsId'];
+	const domains   = ['tabsDomains', 'bookmarksDomains', 'historyDomains', 'rssDomains', 'pocketDomains', 'searchDomains', 'spSearchDomains'];
 
 	let fav       = getById('favs', id);
 	const favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
-	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket'], i = targets.length - 1; i >= 0; i--) {
+	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket', 'search', 'spSearch'], i = targets.length - 1; i >= 0; i--) {
 		if (data[`${targets[i]}Domains`].indexOf(id) !== -1)
 			data[`${targets[i]}Domains`].fav = favIcon;
 		if (update === false) continue;
@@ -3647,6 +3826,9 @@ function makeFav(id, url, favIconUrl, update = false) {
 			send('leftBar', 'info', 'updateDomain', fav);
 		if (options.rightBar.mode.value === targets[i])
 			send('rightBar', 'info', 'updateDomain', fav);
+		if (options.startpage.mode.value === 'search')
+			if (targets[i] === 'spSearch')
+				send('startpage', 'info', 'updateDomain', fav);
 	}
 	saveLater('favs');
 	return favIcon;
@@ -3742,7 +3924,7 @@ function createSidebarWindow(side) {
 					status[side].windowId = -1;
 					status[side].tabId = -1;
 					if (options[side].method.value === 'window') {
-						setOption(side, 'method', 'disabled');
+						setOption(side, 'method', 'disabled', false);
 						setIcon();
 					}
 				}
@@ -4003,11 +4185,14 @@ function makeSite(index, site) {
 		};
 }
 
-function setOption(section, option, newValue) {
+function setOption(section, option, newValue, warn = false) {
 	makeTimeStamp('options');
 	options[section][option].value = newValue;
 	optionsShort[section][option]  = newValue;
 	saveNow('options');
+	if (warn === true)
+		for (let i = options[section][option].targets.length - 1; i >= 0; i--)
+			send(options[section][option].targets[i], 'options', option, {'section': section, 'option': option, value: newValue});
 }
 
 function makeTimeStamp(mode, info = false) {

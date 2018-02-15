@@ -1327,7 +1327,6 @@ const initBlock = {
 	},
 
 	search    : info => {
-		console.log(info);
 
 		const updateItem      = (item, info) => {
 			item.href        = info.url;
@@ -1350,7 +1349,6 @@ const initBlock = {
 				const folder = getFolderById(info.target);
 				if (folder !== false)
 					folder.classList[info.method]('loading');
-				// console.log(info);
 			},
 			newItems: info => {
 				insertItems(info);

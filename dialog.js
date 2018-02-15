@@ -573,6 +573,78 @@ function makeDialogWindow(data, warnings, colors) {
 			});
 			addButton('cancel');
 		},
+
+		searchSelect : _ => {
+
+			let active  = null;
+			let options = {};
+			for (let option in data.options)
+				options[option] = data.options[option];
+			const addModeRow = type => {
+				const label         = document.createElement('label');
+				label.textContent   = getI18n(`searchType${type}`);
+				label.classList.add('search-engines');
+				label.dataset.id    = type;
+				const searchEngines = document.createElement('div');
+				searchEngines.classList.add('search-engines');
+				if (type === options.type) {
+					active = label;
+					searchEngines.classList.add('active');
+					label.classList.add('active');
+				}
+				for (let i = 0, l = data.searchTypes[type].length; i < l; i++) {
+					const engineName    = data.searchTypes[type][i];
+					const engine        = document.createElement('span');
+					engine.classList    = `domain-${engineName} engine ${options[engineName] === true ? ' selected' : ''}`;
+					engine.dataset.id   = data.searchTypes[type][i];
+					engine.title        = getI18n(`searchEngine${engineName}`);
+					searchEngines.appendChild(engine);
+				}
+				main.appendChild(label);
+				main.appendChild(searchEngines);
+			};
+
+			const style = document.createElement('link');
+			style.type  = 'text/css';
+			style.rel   = 'stylesheet';
+			style.href  = 'sidebar-search.css';
+			document.head.appendChild(style);
+
+			setHeader();
+			for (let type in data.searchTypes)
+				addModeRow(type);
+			addButton('save', _ => {
+				for (let option in options)
+					if (options[option] !== data.options[option])
+						send('background', 'options', 'handler', {'section': data.target, 'option': option, 'value': options[option]});
+						// optionsChanged = true;
+						// break;
+					// }
+				// if (optionsChanged === true) {
+				// 	send('background', 'set', 'search', {
+				// 		'target'  : data.target,
+				// 		'options' : options
+				// 	});
+				// }
+				removeDialogWindow();
+			});
+			addButton('cancel');
+
+			main.addEventListener('click', event => {
+				if (event.target.nodeName === 'SPAN') {
+					event.target.classList.toggle('selected');
+					options[event.target.dataset.id] = !options[event.target.dataset.id];
+				}
+				else if (event.target.nodeName === 'LABEL') {
+					active.classList.remove('active');
+					active.nextElementSibling.classList.remove('active');
+					event.target.classList.add('active');
+					event.target.nextElementSibling.classList.add('active');
+					options.type = event.target.dataset.id;
+					active       = event.target;
+				}
+			});
+		}
 	};
 
 	fillWindow[type]();

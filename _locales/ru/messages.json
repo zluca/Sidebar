@@ -616,7 +616,7 @@
 		"message"       : "Добавить новый сайт",
 		"description"   : ""
 	},
-	"startpageSearchPlaceholder" : {
+	"startpageGeneralPlaceholder" : {
 		"message"       : "Искать",
 		"description"   : "text shown in input search field"
 	},
@@ -632,59 +632,76 @@
 		"message"       : "Начать",
 		"description"   : ""
 	},
-	"startpageDuckDuckGoLabel" : {
-		"message"       : "DuckDuckGo",
+
+	"searchTypeGeneral" : {
+		"message"       : "Поиск в вебе",
 		"description"   : ""
 	},
-	"startpageGoogleLabel" : {
-		"message"       : "Google",
+	"searchTypeDev" : {
+		"message"       : "Разработка",
 		"description"   : ""
 	},
-	"startpageYandexLabel" : {
-		"message"       : "Яндекс",
+	"searchTypeBuy" : {
+		"message"       : "Магазины",
 		"description"   : ""
 	},
-	"startpageBingLabel" : {
-		"message"       : "Bing",
-		"description"   : ""
-	},
-	"startpageYahooLabel" : {
-		"message"       : "Yahoo",
-		"description"   : ""
-	},
-	"startpageWikipediaLabel" : {
-		"message"       : "Википедия",
-		"description"   : ""
-	},
-	"startpageMdnLabel" : {
-		"message"       : "MDN",
-		"description"   : ""
-	},
-	"startpageStackoverflowLabel" : {
-		"message"       : "stackOverflow",
-		"description"   : ""
-	},
-	"startpageAmazonLabel" : {
-		"message"       : "Amazon",
-		"description"   : ""
-	},
-	"startpageEbayLabel" : {
-		"message"       : "Ebay",
-		"description"   : ""
-	},
-	"startpageAliexpressLabel" : {
-		"message"       : "AliExpress",
-		"description"   : ""
-	},
-	"startpageGoogleTranslateLabel" : {
-		"message"       : "Гугл переводить",
-		"description"   : ""
-	},
-	"startpageYandexTranslateLabel" : {
-		"message"       : "Яндекс перевод",
+	"searchTypeTranslate" : {
+		"message"       : "Перевод",
 		"description"   : ""
 	},
 
+	"searchEngineDuckDuckGo" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"searchEngineGoogle" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"searchEngineYandex" : {
+		"message"       : "Яндекс",
+		"description"   : ""
+	},
+	"searchEngineBing" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"searchEngineYahoo" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"searchEngineWikipedia" : {
+		"message"       : "Википедия",
+		"description"   : ""
+	},
+	"searchEngineMdn" : {
+		"message"       : "MDN",
+		"description"   : ""
+	},
+	"searchEngineStackoverflow" : {
+		"message"       : "stackOverflow",
+		"description"   : ""
+	},
+	"searchEngineAmazon" : {
+		"message"       : "Amazon",
+		"description"   : ""
+	},
+	"searchEngineEbay" : {
+		"message"       : "Ebay",
+		"description"   : ""
+	},
+	"searchEngineAliexpress" : {
+		"message"       : "AliExpress",
+		"description"   : ""
+	},
+	"searchEngineGoogleTranslate" : {
+		"message"       : "Гугл переводить",
+		"description"   : ""
+	},
+	"searchEngineYandexTranslate" : {
+		"message"       : "Яндекс перевод",
+		"description"   : ""
+	},
 
 	"dialogConfirmationTitle" : {
 		"message"       : "Требуется подтверждение",
@@ -954,6 +971,11 @@
 				"content": "$1"
 			}
 		}
+	},
+
+	"dialogSearchSelectHeader" : {
+		"message"       : "Выбор поисковых движков",
+		"description"   : ""
 	},
 
 	"domainsDefault" : {
