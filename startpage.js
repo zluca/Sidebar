@@ -312,7 +312,7 @@ function insertSearchFolder(item) {
 	data.searchFoldersId.push(item.id);
 	data.searchFolders.push(dcea('ul', searchResults, ['classList', `search-folder ${item.hidden ? 'hidden' : ''}`]));
 	const length = data.searchHeaders.push(dcea('h2', searchNav, ['classList', item.hidden ? 'hidden' : '']));
-	dceam('a', data.searchHeaders[length - 1], [['href', item.searchLink || ''], ['classList', `domain-${item.id}`], ['textContent', i18n[item.id]]]);
+	dceam('a', data.searchHeaders[length - 1], [['href', item.searchLink || ''], ['classList', `domain-${item.id}`], ['textContent', item.title]]);
 }
 
 const messageHandler = {
@@ -503,12 +503,9 @@ const setDomainsStyles = {
 function setSearchType(type) {
 	if (type !== undefined)
 		options.search.type = type;
-	searchOptions.title     = i18n[`type${options.search.type}`];
-	searchField.placeholder = i18n[`${options.search.type}Placeholder`];
-	if (firefox)
-		searchOptions.firstChild.style.maskImage       = `url(icons/${options.search.type}.svg)`;
-	else
-		searchOptions.firstChild.style.webkitMaskImage = `url(icons/${options.search.type}.svg)`;
+	searchOptions.title                = i18n[`type${options.search.type}`];
+	searchField.placeholder            = i18n[`${options.search.type}Placeholder`];
+	searchOptions.firstChild.classList = options.search.type;
 }
 
 function setSiteProperties(target, site) {

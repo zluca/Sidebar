@@ -1175,7 +1175,13 @@ const messageHandler = {
 			if (folder !== false)
 				createDialogWindow(message.action, {'id': folder.id, 'title': folder.title});
 		},
-		searchSelect: (message, sender, sendResponse) => {},
+		searchSelect: (message, sender, sendResponse) => {
+			createDialogWindow('searchSelect', {
+				'target'      : 'search',
+				'options'     : optionsShort.search,
+				'searchTypes' : config.searchTypes
+			});
+		},
 		spSearchSelect: (message, sender, sendResponse) => {
 			createDialogWindow('searchSelect', {
 				'target'      : 'spSearch',
@@ -3578,7 +3584,7 @@ const initService = {
 				else {
 					folder            = createFolderById(mode, item.pid, 'last');
 					folder.pid        = 0;
-					folder.title      = '';
+					folder.title      = i18n.search[folder.id];
 					folder.domain     = item.pid;
 					folder.view       = 'type';
 					folder.mode       = item.type;
@@ -3589,15 +3595,19 @@ const initService = {
 			};
 
 			i18n.search             = {
-				typegeneral     : getI18n('searchTypeGeneral'),
-				typedev         : getI18n('searchTypeDev'),
-				typebuy         : getI18n('searchTypeBuy'),
-				typetranslate   : getI18n('searchTypeTranslate'),
-				duckduckgo      : getI18n('searchEngineDuckDuckGo'),
-				google          : getI18n('searchEngineGoogle'),
-				yandex          : getI18n('searchEngineYandex'),
-				bing            : getI18n('searchEngineBing'),
-				yahoo           : getI18n('searchEngineYahoo'),
+				typegeneral          : getI18n('searchTypeGeneral'),
+				typedev              : getI18n('searchTypeDev'),
+				typebuy              : getI18n('searchTypeBuy'),
+				typetranslate        : getI18n('searchTypeTranslate'),
+				duckduckgo           : getI18n('searchEngineDuckDuckGo'),
+				google               : getI18n('searchEngineGoogle'),
+				yandex               : getI18n('searchEngineYandex'),
+				bing                 : getI18n('searchEngineBing'),
+				yahoo                : getI18n('searchEngineYahoo'),
+				generalPlaceholder   : getI18n('startpageGeneralPlaceholder'),
+				devPlaceholder       : getI18n('startpageGeneralPlaceholder'),
+				buyPlaceholder       : getI18n('startpageBuyPlaceholder'),
+				translagePlaceholder : getI18n('startpageTranslatePlaceholder'),
 			};
 
 			messageHandler[mode]    = {
@@ -3670,6 +3680,7 @@ function sideBarData(side) {
 			'theme'    : optionsShort.theme,
 			'misc'     : optionsShort.misc,
 			'pocket'   : optionsShort.pocket,
+			'search'   : optionsShort.search,
 			'scroll'   : optionsShort.scroll,
 			'services' : {
 				'tabs'      : optionsShort.services.tabs,

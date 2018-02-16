@@ -41,3 +41,20 @@
 .domain-yandextranslate {
 	background-image: url("icons/yandex-translate.svg");
 }
+
+.general {
+	-webkit-mask-image: url(icons/general.svg);
+	mask-image: url(icons/general.svg);
+}
+.dev {
+	-webkit-mask-image: url(icons/dev.svg);
+	mask-image: url(icons/dev.svg);
+}
+.buy {
+	-webkit-mask-image: url(icons/buy.svg);
+	mask-image: url(icons/buy.svg);
+}
+.translate {
+	-webkit-mask-image: url(icons/translate.svg);
+	mask-image: url(icons/translate.svg);
+}

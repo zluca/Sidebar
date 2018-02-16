@@ -316,6 +316,7 @@ function initSidebar(response) {
 	options.warnings    = response.options.warnings;
 	options.sidebar     = response.options.sidebar;
 	options.pocket      = response.options.pocket;
+	options.search      = response.options.search;
 	options.scroll      = response.options.scroll;
 	i18n.header         = response.i18n.header;
 	status.info         = response.info;
@@ -1345,13 +1346,32 @@ const initBlock = {
 		makeButton('move', 'search', 'item');
 
 		messageHandler.search = {
-			update: info => {
+			update     : info => {
 				const folder = getFolderById(info.target);
 				if (folder !== false)
 					folder.classList[info.method]('loading');
 			},
-			newItems: info => {
-				insertItems(info);
+			newItems   : info => {
+				const folder = getFolderById(info.target);
+				if (folder === false) return;
+				while (folder.lastChild.hasChildNodes())
+					folder.lastChild.removeChild(folder.lastChild.firstChild);
+				insertItems(info.items);
+			},
+			changeQuery  : info => {
+				search.value = info;
+			},
+			showFolder : info => {
+				const folder = getFolderById(info.id);
+				if (folder === false) return;
+				folder.classList.remove('hidden');
+				folder.classList.remove('hidden');
+			},
+			hideFolder : info => {
+				const folder = getFolderById(info.id);
+				if (folder === false) return;
+				folder.classList.add('hidden');
+				folder.classList.add('hidden');
 			}
 		};
 
@@ -1375,14 +1395,28 @@ const initBlock = {
 			}
 		};
 
-		status.lastSearch   = '';
-		const search = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', 'do later'], ['value', info.query]]);
-		dcea('span', controls.bottom, [['classList', 'search-icon']]);
+		status.lastSearch = '';
+		const search      = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n.search[`${options.search.type}Placeholder`]], ['value', info.query]]);
+		const searchIcon  = dcea('span', controls.bottom, [['classList', `search-icon ${options.search.type}`]]);
+
+		searchIcon.addEventListener('click', event => {
+			send('background', 'dialog', 'searchSelect', '');
+		}, {'passive': true});
+
 		search.addEventListener('keydown', event => {
 			if (event.key === 'Enter') {
 				const value = search.value;
 				if (value.length > 3)
 					send('background', 'search', 'query', value);
+			}
+			else {
+				setTimeout(_ => {
+					const subject = search.value;
+					if (subject !== status.lastSearch) {
+						status.lastSearch = subject;
+						send('background', 'search', 'changeQuery', subject);
+					}
+				}, 10);
 			}
 		}, {'passive': true});
 
@@ -1555,6 +1589,7 @@ function insertFolders(items, fake = false) {
 		let classList = 'folder';
 		classList += ` ${items[i].view}-view`;
 		classList += items[i].folded === true ? ' folded' : '';
+		classList += items[i].hidden === true ? ' hidden' : '';
 		data.folders[index].classList  = classList;
 		data.folders[index].id         = `${options.sidebar.mode}-folder-${items[i].id}`;
 		data.folders[index].dataset.id = items[i].id;

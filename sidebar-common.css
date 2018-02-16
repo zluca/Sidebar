@@ -515,9 +515,10 @@ nav {
 	}
 	.search-icon {
 		display: inline-block;
-		width: 1.4rem;
-		height: 1.4rem;
+		width: 1.2rem;
+		height: 1.2rem;
 		position: absolute;
+		z-index: 99;
 		left: .6rem;
 		top: .6rem;
 		background-color: var(--font-color-inactive);
@@ -533,7 +534,7 @@ nav {
 		mask-image: url(icons/search.svg);
 	}
 
-	.search-input:focus+.search-icon {
+	.search .search-icon:hover {
 		background-color: var(--font-color-active);
 	}
 
