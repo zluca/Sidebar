@@ -60,7 +60,7 @@ function init(response) {
 	const siteStyle          = dce('style', document.head);
 	const search             = dcea('header', document.body, ['id', 'search']);
 	searchOptions            = dcea('span', search, ['id', 'search-options']);
-	dce('span', searchOptions);
+	dcea('span', searchOptions, ['classList', 'search-icon']);
 	searchField              = dceam('input', search, [['id', 'search-field'], ['value', response.searchQuery]]);
 	const letsSearch         = dceam('span', search, [['id', 'lets-search'], ['title', i18n.searchButtonTitle]]);
 	dce('span', letsSearch);
@@ -259,15 +259,16 @@ function init(response) {
 	searchResults.addEventListener('mouseover', event => {
 		if (hoveredItem === event.target)
 			return;
-		if (event.target.parentNode.nodeName === 'UL') {
-			hoveredItem = event.target;
-			siteStyle.textContent =
-				`a.${event.target.dataset.domain}-domain{
-					border-color:var(--border-color-active);
-					background-color: var(--background-color-active);
-					color: var(--font-color-active);
-				}`;
-		}
+		if (options.search.type === 'general')
+			if (event.target.parentNode.nodeName === 'UL') {
+				hoveredItem = event.target;
+				siteStyle.textContent =
+					`a.${event.target.dataset.domain}-domain{
+						border-color:var(--border-color-active);
+						background-color: var(--background-color-active);
+						color: var(--font-color-active);
+					}`;
+			}
 	}, {'passive': true});
 
 	searchResults.addEventListener('mouseleave', event => {
@@ -291,6 +292,14 @@ function insertFinisher() {
 function insertSearchItems(info, clean) {
 	let folder = null;
 	let pid    = -1;
+	const makeItem = {
+		general : item => dceamd('a', folder,
+			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
+			[['url', item.url], ['domain', item.domain]]),
+		buy     : item => dceamd('a', folder,
+			[['innerHTML', `<b>${item.price}</b><p>${item.title}</p>`], ['href', item.url], ['title', `${item.price}\n\n${item.title}`], ['classList', `${item.domain}-domain search item`]],
+			[['url', item.url], ['domain', item.domain]]).style.backgroundImage = `url(${item.img}`
+	};
 	for (let i = 0, l = info.length; i < l; i++) {
 		if (pid !== info[i].type) {
 			const index = data.searchFoldersId.indexOf(info[i].type);
@@ -301,17 +310,15 @@ function insertSearchItems(info, clean) {
 				while (folder.hasChildNodes())
 					folder.removeChild(folder.firstChild);
 		}
-		const item = dceamd('a', folder,
-			[['innerHTML', info[i].title], ['href', info[i].url], ['title', info[i].description], ['classList', `${info[i].domain}-domain`]],
-			[['url', info[i].url], ['domain', info[i].domain]]
-		);
+
+		makeItem[options.search.type](info[i]);
 	}
 }
 
 function insertSearchFolder(item) {
 	data.searchFoldersId.push(item.id);
-	data.searchFolders.push(dcea('ul', searchResults, ['classList', `search-folder ${item.hidden ? 'hidden' : ''}`]));
-	const length = data.searchHeaders.push(dcea('h2', searchNav, ['classList', item.hidden ? 'hidden' : '']));
+	data.searchFolders.push(dcea('ul', searchResults, ['classList', `search-folder mode-${item.mode} ${item.hidden === true ? 'hidden' : ''}`]));
+	const length = data.searchHeaders.push(dcea('h2', searchNav, ['classList', `mode-${item.mode} ${item.hidden === true ? 'hidden' : ''}`]));
 	dceam('a', data.searchHeaders[length - 1], [['href', item.searchLink || ''], ['classList', `domain-${item.id}`], ['textContent', item.title]]);
 }
 
@@ -503,9 +510,9 @@ const setDomainsStyles = {
 function setSearchType(type) {
 	if (type !== undefined)
 		options.search.type = type;
-	searchOptions.title                = i18n[`type${options.search.type}`];
-	searchField.placeholder            = i18n[`${options.search.type}Placeholder`];
-	searchOptions.firstChild.classList = options.search.type;
+	searchOptions.title       = i18n[`type${options.search.type}`];
+	searchField.placeholder   = i18n[`${options.search.type}Placeholder`];
+	document.body.classList   = options.search.type;
 }
 
 function setSiteProperties(target, site) {

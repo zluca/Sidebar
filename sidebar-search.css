@@ -42,19 +42,40 @@
 	background-image: url("icons/yandex-translate.svg");
 }
 
-.general {
+.general .search-icon {
 	-webkit-mask-image: url(icons/general.svg);
 	mask-image: url(icons/general.svg);
 }
-.dev {
+.dev .search-icon {
 	-webkit-mask-image: url(icons/dev.svg);
 	mask-image: url(icons/dev.svg);
 }
-.buy {
+.buy .search-icon {
 	-webkit-mask-image: url(icons/buy.svg);
 	mask-image: url(icons/buy.svg);
 }
-.translate {
+.translate .search-icon {
 	-webkit-mask-image: url(icons/translate.svg);
 	mask-image: url(icons/translate.svg);
+}
+
+.folder,
+.search-folder,
+h2 {
+	display: none;
+}
+.general .folder.mode-general,
+.buy .folder.mode-buy {
+	display: block;
+}
+body.general .mode-general,
+body.buy .mode-buy {
+	display: table-cell;
+}
+
+.buy .search.item {
+	height: 2rem;
+	background-size: 2rem 2rem;
+	padding-left: 3rem;
+	word-wrap: break-word;
 }

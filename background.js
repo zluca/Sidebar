@@ -963,7 +963,10 @@ const optionsHandler = {
 			send(target, 'search', 'showFolder', {'id': option});
 		else
 			send(target, 'search', 'hideFolder', {'id': option});
-	}
+	},
+	// searchType      : (section, option, newValue) => {
+	// 	const target = section === 'search' ? 'sidebar' : 'startpage';
+	// }
 };
 
 const messageHandler = {
@@ -3398,7 +3401,10 @@ const initService = {
 				google     : query => `https://www.google.com/search?&q=${query}`,
 				yandex     : query => `https://yandex.com/search/?text=${query}`,
 				bing       : query => `https://www.bing.com/search?q=${query}`,
-				yahoo      : query => `https://search.yahoo.com/search?p=${query}`
+				yahoo      : query => `https://search.yahoo.com/search?p=${query}`,
+				amazon     : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}`,
+				ebay       : query => `https://www.ebay.com/sch/i.html?_nkw=${query}`,
+				aliexpress : query => `https://www.aliexpress.com/wholesale?SearchText=${query}`,
 			};
 
 			const resultsSelectors = {
@@ -3406,7 +3412,10 @@ const initService = {
 				google     : 'div.g',
 				yandex     : '.serp-item',
 				bing       : '.b_algo',
-				yahoo      : '.dd.algo'
+				yahoo      : '.dd.algo',
+				amazon     : '.s-item-container',
+				ebay       : 'li.lvresult',
+				aliexpress : 'li.list-item'
 			};
 
 			const makeItem    = {
@@ -3482,6 +3491,65 @@ const initService = {
 						item.description  = body.textContent;
 					item.pid          = 'yahoo';
 					return item;
+				},
+				amazon    : result => {
+					const item        = {};
+					const title       = result.querySelector('.s-item-container a>h2');
+					if (title === null)
+						return false;
+					item.title        = title.textContent;
+					item.url          = title.parentNode.href;
+					const img         = result.querySelector('a>img');
+					if (img !== null)
+						item.img = img.dataset.src;
+					let price         = result.querySelector('span.sx-price');
+					if (price !== null) {
+						item.price  = price.firstChild.textContent;
+						item.price += price.firstChild.nextElementSibling.textContent;
+						item.price += price.lastChild.textContent;
+					}
+					else {
+						price = result.querySelector('span.a-size-base.a-color-base');
+						if (price === null)
+							return false;
+						item.price = price.textContent;
+					}
+					item.pid          = 'amazon';
+					return item;
+				},
+				ebay    : result => {
+					const item        = {};
+					const title       = result.querySelector('h3.lvtitle>a');
+					if (title === null)
+						return false;
+					item.title        = title.textContent;
+					item.url          = title.href;
+					const img         = result.querySelector('a>img');
+					if (img !== null)
+						item.img = img.dataset.src;
+					const price       = result.querySelector('span.prRange, li.lvprice');
+					if (price === null)
+						return false;
+					item.price        = price.textContent;
+					item.pid          = 'ebay';
+					return item;
+				},
+				aliexpress : result => {
+					const item        = {};
+					const title       = result.querySelector('.info>h3>a');
+					if (title === null)
+						return false;
+					item.title        = title.textContent;
+					item.url          = `https:${title.href}`;
+					const img         = result.querySelector('.pic>a>img');
+					if (img !== null)
+						item.img = `https:${img.dataset.src}`;
+					const price       = result.querySelector('.price>.value');
+					if (price === null)
+						return false;
+					item.price        = price.textContent;
+					item.pid          = 'aliexpress';
+					return item;
 				}
 			};
 
@@ -3509,9 +3577,16 @@ const initService = {
 				let temp     = '';
 				let body     = html;
 				cutElement('<head>', '/head>');
+				cutElement('<link', '>');
 				cutElement('<script', '/script>');
-				cutElement('<img', '>');
+				cutElement('<style', '/style>');
+				cutElement('style="', '"');
+				cutElement('style=\'', '\'');
+				cutElement('<!--', '-->');
 				cutElement('<iframe', '/iframe>');
+				cutElement('onload="', '"');
+				cutElement('onchange="', '"');
+				cutElement('onclick="', '"');
 				return body;
 			};
 
@@ -3527,7 +3602,7 @@ const initService = {
 				if (xhttp.readyState === 4) {
 					if (xhttp.status === 200) {
 						const doc     = document.createElement('html');
-						const html    = cleanse(xhttp.responseText);
+						const html    = cleanse(xhttp.responseText).replace(/src=/ig, 'data-src=').replace(/image-src=/ig, 'data-src=').replace(/srcset=/ig, 'data-srcset=');
 						doc.innerHTML = html;
 						let items = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
@@ -3548,14 +3623,15 @@ const initService = {
 			};
 		};
 
-		const resetSearch = type => {
+		const resetSearch = _ => {
 			data[`${mode}Query`]     = '';
 			data[mode]               = [];
 			data[`${mode}Id`]        = [];
 			data[`${mode}Folders`]   = [];
 			data[`${mode}FoldersId`] = [];
-			for (let i = 0, l = config.searchTypes[type].length; i < l; i++)
-				updateFolder[mode]({'type': type, 'pid': config.searchTypes[type][i]});
+			for (let type in config.searchTypes)
+				for (let i = 0, l = config.searchTypes[type].length; i < l; i++)
+					updateFolder[mode]({'type': type, 'pid': config.searchTypes[type][i]});
 		};
 
 		const clearSearch = type => {
@@ -3571,6 +3647,8 @@ const initService = {
 				newItem.description = item.description;
 				newItem.title       = item.title;
 				newItem.url         = item.url;
+				newItem.price       = item.price || 0;
+				newItem.img         = item.img || '';
 				newItem.domain      = domain.id;
 				newItem.type        = item.type;
 				updateFolder[mode](item);
@@ -3604,6 +3682,9 @@ const initService = {
 				yandex               : getI18n('searchEngineYandex'),
 				bing                 : getI18n('searchEngineBing'),
 				yahoo                : getI18n('searchEngineYahoo'),
+				amazon               : getI18n('searchEngineAmazon'),
+				ebay                 : getI18n('searchEngineEbay'),
+				aliexpress           : getI18n('searchEngineAliexpress'),
 				generalPlaceholder   : getI18n('startpageGeneralPlaceholder'),
 				devPlaceholder       : getI18n('startpageGeneralPlaceholder'),
 				buyPlaceholder       : getI18n('startpageBuyPlaceholder'),

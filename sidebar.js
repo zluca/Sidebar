@@ -178,6 +178,9 @@ const messageHandler = {
 		},
 		pocketMode         : info => {
 			options.misc.pocketMode = info;
+		},
+		type               : info => {
+			setBlockClass(undefined, info.value);
 		}
 	},
 	set       : {
@@ -1330,15 +1333,26 @@ const initBlock = {
 	search    : info => {
 
 		const updateItem      = (item, info) => {
+			const types = {
+				general : _ => {
+					item.innerHTML   = info.title;
+					item.title       = `${info.description}\n\n${info.url}`;
+				},
+				buy     : _ => {
+					item.innerHTML   = `<b>${info.price}</b><p>${info.title}</p>`;
+					item.title       = `${info.price}\n\n${info.title}`;
+					item.style.backgroundImage = `url(${info.img})`;
+				}
+			};
+
 			item.href        = info.url;
 			item.dataset.url = info.url;
-			item.innerHTML   = info.title;
 			item.classList   = `search item domain-${info.domain} type-${info.type}`;
-			item.title       = `${info.description}\n\n${info.url}`;
+			types[options.search.type]();
 		};
 
 		prepareBlock('search');
-		setBlockClass();
+		setBlockClass(undefined, options.search.type);
 		setDomainStyle.rewrite(info.domains);
 		i18n.search           = info.i18n;
 		status.timeStamp.mode = info.timeStamp;
@@ -1358,7 +1372,7 @@ const initBlock = {
 					folder.lastChild.removeChild(folder.lastChild.firstChild);
 				insertItems(info.items);
 			},
-			changeQuery  : info => {
+			changeQuery: info => {
 				search.value = info;
 			},
 			showFolder : info => {
@@ -1372,7 +1386,8 @@ const initBlock = {
 				if (folder === false) return;
 				folder.classList.add('hidden');
 				folder.classList.add('hidden');
-			}
+			},
+			type       : info => {}
 		};
 
 		onClick               = event => {
@@ -1590,6 +1605,7 @@ function insertFolders(items, fake = false) {
 		classList += ` ${items[i].view}-view`;
 		classList += items[i].folded === true ? ' folded' : '';
 		classList += items[i].hidden === true ? ' hidden' : '';
+		classList += items[i].hasOwnProperty('mode') === true ? ` mode-${items[i].mode}` : '';
 		data.folders[index].classList  = classList;
 		data.folders[index].id         = `${options.sidebar.mode}-folder-${items[i].id}`;
 		data.folders[index].dataset.id = items[i].id;
