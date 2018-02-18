@@ -1338,6 +1338,14 @@ const initBlock = {
 					item.innerHTML   = info.title;
 					item.title       = `${info.description}\n\n${info.url}`;
 				},
+				dev : _ => {
+					item.innerHTML   = info.title;
+					item.title       = `${info.description}\n\n${info.url}`;
+				},
+				video : _ => {
+					item.innerHTML   = info.title;
+					item.title       = `${info.description}\n\n${info.url}`;
+				},
 				buy     : _ => {
 					item.innerHTML   = `<b>${info.price}</b><p>${info.title}</p>`;
 					item.title       = `${info.price}\n\n${info.title}`;

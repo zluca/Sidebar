@@ -17,6 +17,15 @@
 .domain-yahoo {
 	background-image: url("icons/yahoo.svg");
 }
+.domain-youtube {
+	background-image: url("icons/youtube.svg");
+}
+.domain-dailymotion {
+	background-image: url("icons/dailymotion.svg");
+}
+.domain-vimeo {
+	background-image: url("icons/vimeo.svg");
+}
 .domain-wikipedia {
 	background-image: url("icons/wikipedia.svg");
 }
@@ -46,6 +55,10 @@
 	-webkit-mask-image: url(icons/general.svg);
 	mask-image: url(icons/general.svg);
 }
+.video .search-icon {
+	-webkit-mask-image: url(icons/video.svg);
+	mask-image: url(icons/video.svg);
+}
 .dev .search-icon {
 	-webkit-mask-image: url(icons/dev.svg);
 	mask-image: url(icons/dev.svg);
@@ -65,10 +78,14 @@ h2 {
 	display: none;
 }
 .general .folder.mode-general,
+.video .folder.mode-video,
+.dev .folder.mode-dev,
 .buy .folder.mode-buy {
 	display: block;
 }
 body.general .mode-general,
+body.video .mode-video,
+body.dev .mode-dev,
 body.buy .mode-buy {
 	display: table-cell;
 }
@@ -78,4 +95,8 @@ body.buy .mode-buy {
 	background-size: 2rem 2rem;
 	padding-left: 3rem;
 	word-wrap: break-word;
+}
+.video .search.item {
+	padding-left: .6rem;
+	background-image: none;
 }

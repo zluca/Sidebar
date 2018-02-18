@@ -296,6 +296,12 @@ function insertSearchItems(info, clean) {
 		general : item => dceamd('a', folder,
 			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
 			[['url', item.url], ['domain', item.domain]]),
+		dev     : item => dceamd('a', folder,
+			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
+			[['url', item.url], ['domain', item.domain]]),
+		video   : item => dceamd('a', folder,
+			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
+			[['url', item.url], ['domain', item.domain]]),
 		buy     : item => dceamd('a', folder,
 			[['innerHTML', `<b>${item.price}</b><p>${item.title}</p>`], ['href', item.url], ['title', `${item.price}\n\n${item.title}`], ['classList', `${item.domain}-domain search item`]],
 			[['url', item.url], ['domain', item.domain]]).style.backgroundImage = `url(${item.img}`

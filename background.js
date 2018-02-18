@@ -16,8 +16,8 @@ const config = {
 	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034',
 	searchTypes        : {
 		general   : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'],
+		video     : ['youtube', 'dailymotion', 'vimeo'],
 		dev       : ['wikipedia', 'mdn', 'stackoverflow'],
-		social    : [],
 		buy       : ['amazon', 'aliexpress', 'ebay'],
 		translate : ['googleTranslate', 'yandexTranslate']
 	}
@@ -644,6 +644,27 @@ const options = {
 			targets : [],
 			handler : 'searchEngine'
 		},
+		youtube   : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'video',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		dailymotion: {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'video',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		vimeo      : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'video',
+			targets : [],
+			handler : 'searchEngine'
+		},
 		wikipedia  : {
 			value   : true,
 			type    : 'boolean',
@@ -753,6 +774,27 @@ const options = {
 			value   : true,
 			type    : 'boolean',
 			mode    : 'general',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		youtube   : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'video',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		dailymotion: {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'video',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		vimeo      : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'video',
 			targets : [],
 			handler : 'searchEngine'
 		},
@@ -1478,23 +1520,31 @@ const initService = {
 				}
 			};
 			i18n.startpage = {
-				pageTitle          : getI18n('startpagePageTitle'),
-				addNewSiteTitle    : getI18n('startpageAddNewSiteTitle'),
-				editButtonTitle    : getI18n('startpageEditButtonTitle'),
-				searchPlaceholder  : getI18n('startpageSearchPlaceholder'),
-				generalPlaceholder : getI18n('startpageGeneralPlaceholder'),
-				devPlaceholder     : getI18n('startpageGeneralPlaceholder'),
-				buyPlaceholder     : getI18n('startpageBuyPlaceholder'),
-				searchButtonTitle  : getI18n('startpageSearchButtonTitle'),
-				typegeneral        : getI18n('searchTypeGeneral'),
-				typedev            : getI18n('searchTypeDev'),
-				typebuy            : getI18n('searchTypeBuy'),
-				typetranslate      : getI18n('searchTypeTranslate'),
-				duckduckgo         : getI18n('searchEngineDuckDuckGo'),
-				google             : getI18n('searchEngineGoogle'),
-				yandex             : getI18n('searchEngineYandex'),
-				bing               : getI18n('searchEngineBing'),
-				yahoo              : getI18n('searchEngineYahoo'),
+				pageTitle            : getI18n('startpagePageTitle'),
+				addNewSiteTitle      : getI18n('startpageAddNewSiteTitle'),
+				editButtonTitle      : getI18n('startpageEditButtonTitle'),
+				generalPlaceholder   : getI18n('searchGeneralPlaceholder'),
+				videoPlaceholder     : getI18n('searchVideoPlaceholder'),
+				musicPlaceholder     : getI18n('searchMusicPlaceholder'),
+				devPlaceholder       : getI18n('searchGeneralPlaceholder'),
+				buyPlaceholder       : getI18n('searchBuyPlaceholder'),
+				translatePlaceholder : getI18n('searchTranslatePlaceholder'),
+				searchButtonTitle    : getI18n('startpageSearchButtonTitle'),
+				typegeneral          : getI18n('searchTypeGeneral'),
+				typedev              : getI18n('searchTypeDev'),
+				typebuy              : getI18n('searchTypeBuy'),
+				typetranslate        : getI18n('searchTypeTranslate'),
+				duckduckgo           : getI18n('searchEngineDuckDuckGo'),
+				google               : getI18n('searchEngineGoogle'),
+				yandex               : getI18n('searchEngineYandex'),
+				bing                 : getI18n('searchEngineBing'),
+				yahoo                : getI18n('searchEngineYahoo'),
+				youtube              : getI18n('searchEngineYoutube'),
+				dailymotion          : getI18n('searchEngineDailymotion'),
+				vimeo                : getI18n('searchEngineVimeo'),
+				wikipedia            : getI18n('searchEngineWikipedia'),
+				mdn                  : getI18n('searchEngineMdn'),
+				stackoverflow        : getI18n('searchEngineStackoverflow'),
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
 			if (status.init.tabs === true)
@@ -3397,25 +3447,34 @@ const initService = {
 			// };
 
 			const links   = {
-				duckduckgo : query => `https://duckduckgo.com/html/?q=${query}`,
-				google     : query => `https://www.google.com/search?&q=${query}`,
-				yandex     : query => `https://yandex.com/search/?text=${query}`,
-				bing       : query => `https://www.bing.com/search?q=${query}`,
-				yahoo      : query => `https://search.yahoo.com/search?p=${query}`,
-				amazon     : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}`,
-				ebay       : query => `https://www.ebay.com/sch/i.html?_nkw=${query}`,
-				aliexpress : query => `https://www.aliexpress.com/wholesale?SearchText=${query}`,
+				duckduckgo    : query => `https://duckduckgo.com/html/?q=${query}`,
+				google        : query => `https://www.google.com/search?&q=${query}`,
+				yandex        : query => `https://yandex.com/search/?text=${query}`,
+				bing          : query => `https://www.bing.com/search?q=${query}`,
+				yahoo         : query => `https://search.yahoo.com/search?p=${query}`,
+				youtube       : query => `https://www.google.com/search?&q=${query} site:www.youtube.com`,
+				dailymotion   : query => `https://duckduckgo.com/html/?q=${query} site:dailymotion.com`,
+				vimeo         : query => `https://yandex.com/search/?text=${query} site:vimeo.com`,
+				wikipedia     : query => `https://${options.startpage.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1`,
+				mdn           : query => `https://developer.mozilla.org/en/search?q=${query}`,
+				stackoverflow : query => `https://stackoverflow.com/search?q=${query}`,
+				amazon        : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}`,
+				ebay          : query => `https://www.ebay.com/sch/i.html?_nkw=${query}`,
+				aliexpress    : query => `https://www.aliexpress.com/wholesale?SearchText=${query}`,
 			};
 
 			const resultsSelectors = {
-				duckduckgo : '.links_main',
-				google     : 'div.g',
-				yandex     : '.serp-item',
-				bing       : '.b_algo',
-				yahoo      : '.dd.algo',
-				amazon     : '.s-item-container',
-				ebay       : 'li.lvresult',
-				aliexpress : 'li.list-item'
+				duckduckgo    : '.links_main',
+				google        : 'div.g',
+				yandex        : '.serp-item',
+				bing          : '.b_algo',
+				yahoo         : '.dd.algo',
+				wikipedia     : '.searchresults li',
+				mdn           : 'li',
+				stackoverflow : '.search-result',
+				amazon        : '.s-item-container',
+				ebay          : 'li.lvresult',
+				aliexpress    : 'li.list-item'
 			};
 
 			const makeItem    = {
@@ -3492,7 +3551,46 @@ const initService = {
 					item.pid          = 'yahoo';
 					return item;
 				},
-				amazon    : result => {
+				wikipedia  : result => {
+					const item        = {};
+					const title       = result.querySelector('div>a');
+					if (title === null)
+						return false;
+					item.title        = title.textContent;
+					item.url          = `https://${options.startpage.wikiSearchLang.value}.wikipedia.org${title.getAttribute('href')}`;
+					const body        = title.parentNode.nextElementSibling;
+					if (body !== null)
+						item.description  = body.textContent;
+					item.pid          = 'wikipedia';
+					return item;
+				},
+				mdn        : result => {
+					const item        = {};
+					const title       = result.querySelector('h4>a');
+					if (title === null)
+						return false;
+					item.title        = title.textContent;
+					item.url          = title.href;
+					const body        = title.parentNode.nextElementSibling;
+					if (body !== null)
+						item.description  = body.textContent;
+					item.pid          = 'mdn';
+					return item;
+				},
+				stackoverflow: result => {
+					const item        = {};
+					const title       = result.querySelector('.result-link>span>a');
+					if (title === null)
+						return false;
+					item.title        = title.textContent;
+					item.url          = `https://stackoverflow.com/${title.getAttribute('href')}`;
+					const body        = title.parentNode.parentNode.nextElementSibling;
+					if (body !== null)
+						item.description = body.textContent;
+					item.pid          = 'stackoverflow';
+					return item;
+				},
+				amazon     : result => {
 					const item        = {};
 					const title       = result.querySelector('.s-item-container a>h2');
 					if (title === null)
@@ -3517,7 +3615,7 @@ const initService = {
 					item.pid          = 'amazon';
 					return item;
 				},
-				ebay    : result => {
+				ebay       : result => {
 					const item        = {};
 					const title       = result.querySelector('h3.lvtitle>a');
 					if (title === null)
@@ -3552,6 +3650,13 @@ const initService = {
 					return item;
 				}
 			};
+
+			resultsSelectors.youtube     = resultsSelectors.google;
+			resultsSelectors.dailymotion = resultsSelectors.duckduckgo;
+			resultsSelectors.vimeo       = resultsSelectors.yandex;
+			makeItem.youtube             = makeItem.google;
+			makeItem.dailymotion         = makeItem.duckduckgo;
+			makeItem.vimeo               = makeItem.yandex;
 
 			const cleanse     = html => {
 
@@ -3606,6 +3711,7 @@ const initService = {
 						doc.innerHTML = html;
 						let items = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
+						console.log(results);
 						for (let i = 0, l = results.length; i < l; i++) {
 							const item = makeItem[type](results[i]);
 							if (item === false)
@@ -3664,7 +3770,7 @@ const initService = {
 					folder.pid        = 0;
 					folder.title      = i18n.search[folder.id];
 					folder.domain     = item.pid;
-					folder.view       = 'type';
+					folder.view       = item.type === 'general' ? 'type' : 'domain';
 					folder.mode       = item.type;
 					folder.hidden     = !options[mode][folder.id].value;
 					folder.searchLink = '';
@@ -3682,13 +3788,21 @@ const initService = {
 				yandex               : getI18n('searchEngineYandex'),
 				bing                 : getI18n('searchEngineBing'),
 				yahoo                : getI18n('searchEngineYahoo'),
+				youtube              : getI18n('searchEngineYoutube'),
+				dailymotion          : getI18n('searchEngineDailymotion'),
+				vimeo                : getI18n('searchEngineVimeo'),
+				wikipedia            : getI18n('searchEngineWikipedia'),
+				mdn                  : getI18n('searchEngineMdn'),
+				stackoverflow        : getI18n('searchEngineStackoverflow'),
 				amazon               : getI18n('searchEngineAmazon'),
 				ebay                 : getI18n('searchEngineEbay'),
 				aliexpress           : getI18n('searchEngineAliexpress'),
-				generalPlaceholder   : getI18n('startpageGeneralPlaceholder'),
-				devPlaceholder       : getI18n('startpageGeneralPlaceholder'),
-				buyPlaceholder       : getI18n('startpageBuyPlaceholder'),
-				translagePlaceholder : getI18n('startpageTranslatePlaceholder'),
+				generalPlaceholder   : getI18n('searchGeneralPlaceholder'),
+				videoPlaceholder     : getI18n('searchVideoPlaceholder'),
+				musicPlaceholder     : getI18n('searchMusicPlaceholder'),
+				devPlaceholder       : getI18n('searchGeneralPlaceholder'),
+				buyPlaceholder       : getI18n('searchBuyPlaceholder'),
+				translatePlaceholder : getI18n('searchTranslatePlaceholder'),
 			};
 
 			messageHandler[mode]    = {

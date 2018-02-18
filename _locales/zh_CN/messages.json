@@ -620,25 +620,33 @@
 		"message"       : "添加新站点",
 		"description"   : ""
 	},
-	"startpageGeneralPlaceholder" : {
-		"message"       : "搜索",
-		"description"   : ""
-	},
-	"startpageTranslatePlaceholder" : {
-		"message"       : "翻译",
-		"description"   : ""
-	},
-	"startpageBuyPlaceholder" : {
-		"message"       : "购买",
-		"description"   : ""
-	},
 	"startpageSearchButtonTitle" : {
 		"message"       : "开始",
 		"description"   : ""
 	},
 
+	"searchGeneralPlaceholder" : {
+		"message"       : "搜索",
+		"description"   : ""
+	},
+	"searchVideoPlaceholder" : {
+		"message"       : "Search video",
+		"description"   : ""
+	},
+	"searchTranslatePlaceholder" : {
+		"message"       : "翻译",
+		"description"   : ""
+	},
+	"searchBuyPlaceholder" : {
+		"message"       : "购买",
+		"description"   : ""
+	},
 	"searchTypeGeneral" : {
 		"message"       : "General",
+		"description"   : ""
+	},
+	"searchTypeVideo" : {
+		"message"       : "Video",
 		"description"   : ""
 	},
 	"searchTypeDev" : {
@@ -672,6 +680,18 @@
 	},
 	"searchEngineYahoo" : {
 		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"searchEngineYoutube" : {
+		"message"       : "Youtube",
+		"description"   : ""
+	},
+	"searchEngineDailymotion" : {
+		"message"       : "Dailymotion",
+		"description"   : ""
+	},
+	"searchEngineVimeo" : {
+		"message"       : "Vimeo",
 		"description"   : ""
 	},
 	"searchEngineWikipedia" : {

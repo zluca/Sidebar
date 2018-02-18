@@ -616,25 +616,33 @@
 		"message"       : "Добавить новый сайт",
 		"description"   : ""
 	},
-	"startpageGeneralPlaceholder" : {
-		"message"       : "Искать",
-		"description"   : "text shown in input search field"
-	},
-	"startpageTranslatePlaceholder" : {
-		"message"       : "Перевести",
-		"description"   : ""
-	},
-	"startpageBuyPlaceholder" : {
-		"message"       : "Купить",
-		"description"   : ""
-	},
 	"startpageSearchButtonTitle" : {
 		"message"       : "Начать",
 		"description"   : ""
 	},
 
+	"searchGeneralPlaceholder" : {
+		"message"       : "Искать",
+		"description"   : ""
+	},
+	"searchVideoPlaceholder" : {
+		"message"       : "Искать видео",
+		"description"   : ""
+	},
+	"searchTranslatePlaceholder" : {
+		"message"       : "Перевести",
+		"description"   : ""
+	},
+	"searchBuyPlaceholder" : {
+		"message"       : "Купить",
+		"description"   : ""
+	},
 	"searchTypeGeneral" : {
 		"message"       : "Поиск в вебе",
+		"description"   : ""
+	},
+	"searchTypeVideo" : {
+		"message"       : "Видео",
 		"description"   : ""
 	},
 	"searchTypeDev" : {
@@ -668,6 +676,18 @@
 	},
 	"searchEngineYahoo" : {
 		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"searchEngineYoutube" : {
+		"message"       : "Youtube",
+		"description"   : ""
+	},
+	"searchEngineDailymotion" : {
+		"message"       : "Dailymotion",
+		"description"   : ""
+	},
+	"searchEngineVimeo" : {
+		"message"       : "Vimeo",
 		"description"   : ""
 	},
 	"searchEngineWikipedia" : {

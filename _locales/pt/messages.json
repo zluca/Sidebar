@@ -620,25 +620,33 @@
 		"message"       : "Adicionar nova página",
 		"description"   : ""
 	},
-	"startpageGeneralPlaceholder" : {
-		"message"       : "Procurar",
-		"description"   : ""
-	},
-	"startpageTranslatePlaceholder" : {
-		"message"       : "Traduzir",
-		"description"   : ""
-	},
-	"startpageBuyPlaceholder" : {
-		"message"       : "Comprar",
-		"description"   : ""
-	},
 	"startpageSearchButtonTitle" : {
 		"message"       : "Pesquisar",
 		"description"   : ""
 	},
 
+	"searchGeneralPlaceholder" : {
+		"message"       : "Procurar",
+		"description"   : ""
+	},
+	"searchVideoPlaceholder" : {
+		"message"       : "Search video",
+		"description"   : ""
+	},
+	"searchTranslatePlaceholder" : {
+		"message"       : "Traduzir",
+		"description"   : ""
+	},
+	"searchBuyPlaceholder" : {
+		"message"       : "Comprar",
+		"description"   : ""
+	},
 	"searchTypeGeneral" : {
 		"message"       : "General",
+		"description"   : ""
+	},
+	"searchTypeVideo" : {
+		"message"       : "Video",
 		"description"   : ""
 	},
 	"searchTypeDev" : {
@@ -672,6 +680,18 @@
 	},
 	"searchEngineYahoo" : {
 		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"searchEngineYoutube" : {
+		"message"       : "Youtube",
+		"description"   : ""
+	},
+	"searchEngineDailymotion" : {
+		"message"       : "Dailymotion",
+		"description"   : ""
+	},
+	"searchEngineVimeo" : {
+		"message"       : "Vimeo",
 		"description"   : ""
 	},
 	"searchEngineWikipedia" : {
