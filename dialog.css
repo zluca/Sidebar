@@ -103,7 +103,11 @@ body {
 		label.search-engines {
 			cursor: pointer;
 			text-align: left;
-			padding: .73rem 1rem;
+			white-space: nowrap;
+			padding: .73rem 1rem .73rem 2.8rem;
+			background-repeat: no-repeat;
+			background-size: 2rem 2rem;
+			background-position: 0 .3rem;
 		}
 		label.search-engines.active {
 			background-color: var(--background-color-active);

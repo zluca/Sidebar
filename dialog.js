@@ -585,6 +585,7 @@ function makeDialogWindow(data, warnings, colors) {
 				label.textContent   = getI18n(`searchType${type}`);
 				label.classList.add('search-engines');
 				label.dataset.id    = type;
+				label.style.backgroundImage = `url(icons/${type}.svg)`;
 				const searchEngines = document.createElement('div');
 				searchEngines.classList.add('search-engines');
 				if (type === options.type) {
@@ -617,15 +618,6 @@ function makeDialogWindow(data, warnings, colors) {
 				for (let option in options)
 					if (options[option] !== data.options[option])
 						send('background', 'options', 'handler', {'section': data.target, 'option': option, 'value': options[option]});
-						// optionsChanged = true;
-						// break;
-					// }
-				// if (optionsChanged === true) {
-				// 	send('background', 'set', 'search', {
-				// 		'target'  : data.target,
-				// 		'options' : options
-				// 	});
-				// }
 				removeDialogWindow();
 			});
 			addButton('cancel');
