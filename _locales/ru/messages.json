@@ -714,6 +714,10 @@
 		"message"       : "AliExpress",
 		"description"   : ""
 	},
+	"searchEngineYandexMarket" : {
+		"message"       : "Яндекс Маркет",
+		"description"   : ""
+	},
 	"searchEngineGoogleTranslate" : {
 		"message"       : "Гугл переводить",
 		"description"   : ""

@@ -718,6 +718,10 @@
 		"message"       : "AliExpress",
 		"description"   : ""
 	},
+	"searchEngineYandexMarket" : {
+		"message"       : "Yandex Market",
+		"description"   : ""
+	},
 	"searchEngineGoogleTranslate" : {
 		"message"       : "Google 翻譯",
 		"description"   : ""

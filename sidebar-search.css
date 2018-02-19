@@ -44,6 +44,9 @@
 .domain-aliexpress {
 	background-image: url("icons/aliexpress.svg");
 }
+.domain-yandexmarket {
+	background-image: url("icons/yandex.svg");
+}
 .domain-googletranslate {
 	background-image: url("icons/google-translate.svg");
 }
@@ -90,7 +93,7 @@ body.buy .mode-buy {
 	display: table-cell;
 }
 
-.buy .search.item {
+.fixed .buy .search.item {
 	height: 2rem;
 	background-size: 2rem 2rem;
 	padding-left: 3rem;

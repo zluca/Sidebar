@@ -18,7 +18,7 @@ const config = {
 		general   : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'],
 		video     : ['youtube', 'dailymotion', 'vimeo'],
 		dev       : ['wikipedia', 'mdn', 'stackoverflow'],
-		buy       : ['amazon', 'aliexpress', 'ebay'],
+		buy       : ['amazon', 'aliexpress', 'ebay', 'yandexMarket'],
 		translate : ['googleTranslate', 'yandexTranslate']
 	}
 };
@@ -59,7 +59,8 @@ const i18n = {
 	history     : {},
 	downloads   : {},
 	rss         : {},
-	pocket      : {}
+	pocket      : {},
+	search      : {}
 };
 
 const status = {
@@ -707,6 +708,13 @@ const options = {
 			targets : [],
 			handler : 'searchEngine'
 		},
+		yandexMarket : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'buy',
+			targets : [],
+			handler : 'searchEngine'
+		},
 		googleTranslate: {
 			value   : true,
 			type    : 'boolean',
@@ -834,6 +842,13 @@ const options = {
 			handler : 'searchEngine'
 		},
 		aliexpress : {
+			value   : true,
+			type    : 'boolean',
+			mode    : 'buy',
+			targets : [],
+			handler : 'searchEngine'
+		},
+		yandexMarket : {
 			value   : true,
 			type    : 'boolean',
 			mode    : 'buy',
@@ -1522,29 +1537,7 @@ const initService = {
 			i18n.startpage = {
 				pageTitle            : getI18n('startpagePageTitle'),
 				addNewSiteTitle      : getI18n('startpageAddNewSiteTitle'),
-				editButtonTitle      : getI18n('startpageEditButtonTitle'),
-				generalPlaceholder   : getI18n('searchGeneralPlaceholder'),
-				videoPlaceholder     : getI18n('searchVideoPlaceholder'),
-				musicPlaceholder     : getI18n('searchMusicPlaceholder'),
-				devPlaceholder       : getI18n('searchGeneralPlaceholder'),
-				buyPlaceholder       : getI18n('searchBuyPlaceholder'),
-				translatePlaceholder : getI18n('searchTranslatePlaceholder'),
-				searchButtonTitle    : getI18n('startpageSearchButtonTitle'),
-				typegeneral          : getI18n('searchTypeGeneral'),
-				typedev              : getI18n('searchTypeDev'),
-				typebuy              : getI18n('searchTypeBuy'),
-				typetranslate        : getI18n('searchTypeTranslate'),
-				duckduckgo           : getI18n('searchEngineDuckDuckGo'),
-				google               : getI18n('searchEngineGoogle'),
-				yandex               : getI18n('searchEngineYandex'),
-				bing                 : getI18n('searchEngineBing'),
-				yahoo                : getI18n('searchEngineYahoo'),
-				youtube              : getI18n('searchEngineYoutube'),
-				dailymotion          : getI18n('searchEngineDailymotion'),
-				vimeo                : getI18n('searchEngineVimeo'),
-				wikipedia            : getI18n('searchEngineWikipedia'),
-				mdn                  : getI18n('searchEngineMdn'),
-				stackoverflow        : getI18n('searchEngineStackoverflow'),
+				editButtonTitle      : getI18n('startpageEditButtonTitle')
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
 			if (status.init.tabs === true)
@@ -3430,51 +3423,41 @@ const initService = {
 
 		const search = (type, query) => {
 
-			// const searchPath = {
-			// 	duckduckgo      : `https://duckduckgo.com/?q=`,
-			// 	google          : `https://www.google.com/?gfe_rd=cr&gws_rd=ssl#q=`,
-			// 	yandex          : `https://yandex.com/search/?text=`,
-			// 	bing            : `https://www.bing.com/search?q=`,
-			// 	yahoo           : `https://search.yahoo.com/search?p=`,
-			// 	wikipedia       : `https://${options.startpage.wikiSearchLang}.wikipedia.org/w/index.php?search=`,
-			// 	mdn             : `https://developer.mozilla.org/en/search?q=`,
-			// 	stackoverflow   : `https://stackoverflow.com/search?q=`,
-			// 	amazon          : `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=`,
-			// 	ebay            : `https://www.ebay.com/sch/i.html?_nkw=`,
-			// 	aliexpress      : `https://www.aliexpress.com/wholesale?SearchText=`,
-			// 	googletranslate : `https://translate.google.com/#${options.startpage.translateFrom}/${options.startpage.translateTo}/`,
-			// 	yandextranslate : `https://translate.yandex.com/?lang=${options.startpage.translateFrom}-${options.startpage.translateTo}&text=`
-			// };
-
 			const links   = {
-				duckduckgo    : query => `https://duckduckgo.com/html/?q=${query}`,
-				google        : query => `https://www.google.com/search?&q=${query}`,
-				yandex        : query => `https://yandex.com/search/?text=${query}`,
-				bing          : query => `https://www.bing.com/search?q=${query}`,
-				yahoo         : query => `https://search.yahoo.com/search?p=${query}`,
-				youtube       : query => `https://www.google.com/search?&q=${query} site:www.youtube.com`,
-				dailymotion   : query => `https://duckduckgo.com/html/?q=${query} site:dailymotion.com`,
-				vimeo         : query => `https://yandex.com/search/?text=${query} site:vimeo.com`,
-				wikipedia     : query => `https://${options.startpage.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1`,
-				mdn           : query => `https://developer.mozilla.org/en/search?q=${query}`,
-				stackoverflow : query => `https://stackoverflow.com/search?q=${query}`,
-				amazon        : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}`,
-				ebay          : query => `https://www.ebay.com/sch/i.html?_nkw=${query}`,
-				aliexpress    : query => `https://www.aliexpress.com/wholesale?SearchText=${query}`,
+				duckduckgo      : query => `https://duckduckgo.com/html/?q=${query}`,
+				google          : query => `https://www.google.com/search?&q=${query}`,
+				yandex          : query => `https://yandex.com/search/?text=${query}`,
+				bing            : query => `https://www.bing.com/search?q=${query}`,
+				yahoo           : query => `https://search.yahoo.com/search?p=${query}`,
+				youtube         : query => `https://www.google.com/search?&q=${query} site:www.youtube.com`,
+				dailymotion     : query => `https://duckduckgo.com/html/?q=${query} site:dailymotion.com`,
+				vimeo           : query => `https://yandex.com/search/?text=${query} site:vimeo.com`,
+				wikipedia       : query => `https://${options.startpage.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1`,
+				mdn             : query => `https://developer.mozilla.org/en/search?q=${query}`,
+				stackoverflow   : query => `https://stackoverflow.com/search?q=${query}`,
+				amazon          : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}`,
+				ebay            : query => `https://www.ebay.com/sch/i.html?_nkw=${query}`,
+				aliexpress      : query => `https://www.aliexpress.com/wholesale?SearchText=${query}`,
+				yandexMarket    : query => `https://market.yandex.by/search?text=${query}`,
+				googleTranslate : query => `https://translate.google.com/#${options.startpage.translateFrom}/${options.startpage.translateTo}/`,
+				yandexTranslate : query => `https://translate.yandex.com/?lang=${options.startpage.translateFrom}-${options.startpage.translateTo}&text=`
 			};
 
 			const resultsSelectors = {
-				duckduckgo    : '.links_main',
-				google        : 'div.g',
-				yandex        : '.serp-item',
-				bing          : '.b_algo',
-				yahoo         : '.dd.algo',
-				wikipedia     : '.searchresults li',
-				mdn           : 'li',
-				stackoverflow : '.search-result',
-				amazon        : '.s-item-container',
-				ebay          : 'li.lvresult',
-				aliexpress    : 'li.list-item'
+				duckduckgo      : '.links_main',
+				google          : 'div.g',
+				yandex          : '.serp-item',
+				bing            : '.b_algo',
+				yahoo           : '.dd.algo',
+				wikipedia       : '.searchresults li',
+				mdn             : 'li',
+				stackoverflow   : '.search-result',
+				amazon          : '.s-item-container',
+				ebay            : 'li.lvresult',
+				aliexpress      : 'li.list-item',
+				yandexMarket    : 'div.n-snippet-card2',
+				googleTranslate : '',
+				yandexTranslate : ''
 			};
 
 			const makeItem    = {
@@ -3630,6 +3613,23 @@ const initService = {
 						return false;
 					item.price        = price.textContent;
 					item.pid          = 'ebay';
+					return item;
+				},
+				yandexMarket : result => {
+					const item        = {};
+					const title       = result.querySelector('.n-snippet-card2__part_type_center .n-snippet-card2__title');
+					if (title === null)
+						return false;
+					item.title        = title.textContent;
+					item.url          = `https://yandex.market.com/${title.firstChild.getAttribute('href')}`;
+					const img         = result.querySelector('.n-snippet-card2__part_type_left img');
+					if (img !== null)
+						item.img = `http:${img.dataset.src}`;
+					const price       = result.querySelector('.n-snippet-card2__part_type_right .n-snippet-card2__main-price');
+					if (price === null)
+						return false;
+					item.price        = price.textContent;
+					item.pid          = 'yandexMarket';
 					return item;
 				},
 				aliexpress : result => {
@@ -3797,9 +3797,9 @@ const initService = {
 				amazon               : getI18n('searchEngineAmazon'),
 				ebay                 : getI18n('searchEngineEbay'),
 				aliexpress           : getI18n('searchEngineAliexpress'),
+				yandexMarket         : getI18n('searchEngineYandexMarket'),
 				generalPlaceholder   : getI18n('searchGeneralPlaceholder'),
 				videoPlaceholder     : getI18n('searchVideoPlaceholder'),
-				musicPlaceholder     : getI18n('searchMusicPlaceholder'),
 				devPlaceholder       : getI18n('searchGeneralPlaceholder'),
 				buyPlaceholder       : getI18n('searchBuyPlaceholder'),
 				translatePlaceholder : getI18n('searchTranslatePlaceholder'),
@@ -3910,7 +3910,7 @@ function startpageData() {
 				'search'      : optionsShort.spSearch,
 				'theme'       : optionsShort.theme,
 			},
-			'i18n'          : i18n.startpage,
+			'i18n'          : Object.assign(i18n.startpage, i18n.search)
 		};
 	else
 		return {'options' : {'startpage': {'empty': true}}};
