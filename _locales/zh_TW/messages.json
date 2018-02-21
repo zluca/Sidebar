@@ -504,14 +504,6 @@
 		"message"       : "維基百科搜尋語言",
 		"description"   : ""
 	},
-	"optStartPageTranslateFromLabel" : {
-		"message"       : "翻譯從",
-		"description"   : ""
-	},
-	"optStartPageTranslateToLabel" : {
-		"message"       : "翻譯為",
-		"description"   : ""
-	},
 	"optStartpageImageLabel" : {
 		"message"       : "首頁背景圖片",
 		"description"   : ""
@@ -633,10 +625,6 @@
 		"message"       : "Search video",
 		"description"   : ""
 	},
-	"searchTranslatePlaceholder" : {
-		"message"       : "翻譯",
-		"description"   : ""
-	},
 	"searchBuyPlaceholder" : {
 		"message"       : "購買",
 		"description"   : ""
@@ -655,10 +643,6 @@
 	},
 	"searchTypeBuy" : {
 		"message"       : "Shop",
-		"description"   : ""
-	},
-	"searchTypeTranslate" : {
-		"message"       : "Translate",
 		"description"   : ""
 	},
 
@@ -720,14 +704,6 @@
 	},
 	"searchEngineYandexMarket" : {
 		"message"       : "Yandex Market",
-		"description"   : ""
-	},
-	"searchEngineGoogleTranslate" : {
-		"message"       : "Google 翻譯",
-		"description"   : ""
-	},
-	"searchEngineYandexTranslate" : {
-		"message"       : "Yandex 翻譯",
 		"description"   : ""
 	},
 

@@ -500,14 +500,6 @@
 		"message"       : "Язык поиска в Википедии",
 		"description"   : ""
 	},
-	"optStartPageTranslateFromLabel" : {
-		"message"       : "Переводить с",
-		"description"   : ""
-	},
-	"optStartPageTranslateToLabel" : {
-		"message"       : "Переводить на",
-		"description"   : ""
-	},
 	"optStartpageImageLabel" : {
 		"message"       : "Фоновая картинка стартовой страницы",
 		"description"   : ""
@@ -629,10 +621,6 @@
 		"message"       : "Искать видео",
 		"description"   : ""
 	},
-	"searchTranslatePlaceholder" : {
-		"message"       : "Перевести",
-		"description"   : ""
-	},
 	"searchBuyPlaceholder" : {
 		"message"       : "Купить",
 		"description"   : ""
@@ -651,10 +639,6 @@
 	},
 	"searchTypeBuy" : {
 		"message"       : "Магазины",
-		"description"   : ""
-	},
-	"searchTypeTranslate" : {
-		"message"       : "Перевод",
 		"description"   : ""
 	},
 
@@ -716,14 +700,6 @@
 	},
 	"searchEngineYandexMarket" : {
 		"message"       : "Яндекс Маркет",
-		"description"   : ""
-	},
-	"searchEngineGoogleTranslate" : {
-		"message"       : "Гугл переводить",
-		"description"   : ""
-	},
-	"searchEngineYandexTranslate" : {
-		"message"       : "Яндекс перевод",
 		"description"   : ""
 	},
 

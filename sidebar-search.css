@@ -47,12 +47,6 @@
 .domain-yandexmarket {
 	background-image: url("icons/yandex.svg");
 }
-.domain-googletranslate {
-	background-image: url("icons/google-translate.svg");
-}
-.domain-yandextranslate {
-	background-image: url("icons/yandex-translate.svg");
-}
 
 .general .search-icon {
 	-webkit-mask-image: url(icons/general.svg);
@@ -69,10 +63,6 @@
 .buy .search-icon {
 	-webkit-mask-image: url(icons/buy.svg);
 	mask-image: url(icons/buy.svg);
-}
-.translate .search-icon {
-	-webkit-mask-image: url(icons/translate.svg);
-	mask-image: url(icons/translate.svg);
 }
 
 .folder,

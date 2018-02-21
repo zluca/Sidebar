@@ -392,12 +392,6 @@ const messageHandler = {
 		// wikiSearchLang        : info => {
 		// 	options.startpage.wikiSearchLang = info.value;
 		// },
-		// translateFrom         : info => {
-		// 	options.startpage.translateFrom = info.value;
-		// },
-		// translateTo           : info => {
-		// 	options.startpage.translateTo = info.value;
-		// },
 		mode                  : info => {
 			setMode(info.value);
 		},

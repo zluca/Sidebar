@@ -504,14 +504,6 @@
 		"message"       : "Wikipedia search language",
 		"description"   : ""
 	},
-	"optStartPageTranslateFromLabel" : {
-		"message"       : "Translate from",
-		"description"   : ""
-	},
-	"optStartPageTranslateToLabel" : {
-		"message"       : "Translate to",
-		"description"   : ""
-	},
 	"optStartpageImageLabel" : {
 		"message"       : "Startpage background image",
 		"description"   : ""
@@ -633,10 +625,6 @@
 		"message"       : "Search video",
 		"description"   : ""
 	},
-	"searchTranslatePlaceholder" : {
-		"message"       : "Translate",
-		"description"   : ""
-	},
 	"searchBuyPlaceholder" : {
 		"message"       : "Buy",
 		"description"   : ""
@@ -655,10 +643,6 @@
 	},
 	"searchTypeBuy" : {
 		"message"       : "Shop",
-		"description"   : ""
-	},
-	"searchTypeTranslate" : {
-		"message"       : "Translate",
 		"description"   : ""
 	},
 
@@ -720,14 +704,6 @@
 	},
 	"searchEngineYandexMarket" : {
 		"message"       : "Yandex Market",
-		"description"   : ""
-	},
-	"searchEngineGoogleTranslate" : {
-		"message"       : "Google Translate",
-		"description"   : ""
-	},
-	"searchEngineYandexTranslate" : {
-		"message"       : "Yandex Translate",
 		"description"   : ""
 	},
 

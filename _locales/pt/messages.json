@@ -504,14 +504,6 @@
 		"message"       : "Idioma de pesquisa na Wikipedia",
 		"description"   : ""
 	},
-	"optStartPageTranslateFromLabel" : {
-		"message"       : "Traduzir de",
-		"description"   : ""
-	},
-	"optStartPageTranslateToLabel" : {
-		"message"       : "Traduzir para",
-		"description"   : ""
-	},
 	"optStartpageImageLabel" : {
 		"message"       : "Imagem de fundo da página inicial",
 		"description"   : ""
@@ -633,10 +625,6 @@
 		"message"       : "Search video",
 		"description"   : ""
 	},
-	"searchTranslatePlaceholder" : {
-		"message"       : "Traduzir",
-		"description"   : ""
-	},
 	"searchBuyPlaceholder" : {
 		"message"       : "Comprar",
 		"description"   : ""
@@ -655,10 +643,6 @@
 	},
 	"searchTypeBuy" : {
 		"message"       : "Shop",
-		"description"   : ""
-	},
-	"searchTypeTranslate" : {
-		"message"       : "Translate",
 		"description"   : ""
 	},
 
@@ -720,14 +704,6 @@
 	},
 	"searchEngineYandexMarket" : {
 		"message"       : "Yandex Market",
-		"description"   : ""
-	},
-	"searchEngineGoogleTranslate" : {
-		"message"       : "Google Translate",
-		"description"   : ""
-	},
-	"searchEngineYandexTranslate" : {
-		"message"       : "Yandex Translate",
 		"description"   : ""
 	},
 

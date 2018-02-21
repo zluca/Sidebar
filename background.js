@@ -18,8 +18,7 @@ const config = {
 		general   : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'],
 		video     : ['youtube', 'dailymotion', 'vimeo'],
 		dev       : ['wikipedia', 'mdn', 'stackoverflow'],
-		buy       : ['amazon', 'aliexpress', 'ebay', 'yandexMarket'],
-		translate : ['googleTranslate', 'yandexTranslate']
+		buy       : ['amazon', 'aliexpress', 'ebay', 'yandexMarket']
 	}
 };
 
@@ -510,20 +509,10 @@ const options = {
 			value   : 'duckduckgo',
 			type    : 'select',
 			hidden  : true,
-			values  : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo', 'wikipedia', 'mdn', 'stackoverflow', 'amazon', 'ebay', 'aliexpress', 'googleTranslate', 'yandexTranslate'],
+			values  : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo', 'wikipedia', 'mdn', 'stackoverflow', 'amazon', 'ebay', 'aliexpress'],
 			targets : ['startpage']
 		},
 		wikiSearchLang : {
-			value   : 'en',
-			type    : 'text',
-			targets : ['startpage']
-		},
-		translateFrom  : {
-			value   : 'en',
-			type    : 'text',
-			targets : ['startpage']
-		},
-		translateTo    : {
 			value   : 'en',
 			type    : 'text',
 			targets : ['startpage']
@@ -607,7 +596,7 @@ const options = {
 		type       : {
 			value   : 'general',
 			type    : 'select',
-			values  : ['general', 'dev', 'social', 'buy', 'translate'],
+			values  : ['general', 'dev', 'social', 'buy'],
 			targets : ['sidebar']
 		},
 		duckduckgo : {
@@ -714,32 +703,6 @@ const options = {
 			mode    : 'buy',
 			targets : [],
 			handler : 'searchEngine'
-		},
-		googleTranslate: {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'translate',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		yandexTranslate: {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'translate',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		translateFrom  : {
-			value   : 'en',
-			type    : 'text',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		translateTo    : {
-			value   : 'en',
-			type    : 'text',
-			targets : [],
-			handler : 'searchEngine'
 		}
 	},
 	spSearch: {
@@ -747,7 +710,7 @@ const options = {
 		type       : {
 			value   : 'general',
 			type    : 'select',
-			values  : ['general', 'dev', 'social', 'buy', 'translate'],
+			values  : ['general', 'dev', 'social', 'buy'],
 			targets : ['startpage']
 		},
 		duckduckgo : {
@@ -852,32 +815,6 @@ const options = {
 			value   : true,
 			type    : 'boolean',
 			mode    : 'buy',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		googleTranslate: {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'translate',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		yandexTranslate: {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'translate',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		translateFrom  : {
-			value   : 'en',
-			type    : 'text',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		translateTo    : {
-			value   : 'en',
-			type    : 'text',
 			targets : [],
 			handler : 'searchEngine'
 		}
@@ -1300,8 +1237,6 @@ const initExtension = res => {
 			}
 		}
 
-		options.startpage.translateFrom.value  = brauzer.i18n.getUILanguage().split('-')[0];
-		options.startpage.wikiSearchLang.value = brauzer.i18n.getUILanguage().split('-')[0];
 		options.startpage.rows.value           = Math.ceil(window.screen.height / 400);
 		options.startpage.columns.value        = Math.ceil(window.screen.width  / 400);
 		options.theme.fontSize.value           = Math.ceil(window.screen.height / 60);
@@ -3438,9 +3373,7 @@ const initService = {
 				amazon          : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}`,
 				ebay            : query => `https://www.ebay.com/sch/i.html?_nkw=${query}`,
 				aliexpress      : query => `https://www.aliexpress.com/wholesale?SearchText=${query}`,
-				yandexMarket    : query => `https://market.yandex.by/search?text=${query}`,
-				googleTranslate : query => `https://translate.google.com/#${options.startpage.translateFrom}/${options.startpage.translateTo}/`,
-				yandexTranslate : query => `https://translate.yandex.com/?lang=${options.startpage.translateFrom}-${options.startpage.translateTo}&text=`
+				yandexMarket    : query => `https://market.yandex.by/search?text=${query}`
 			};
 
 			const resultsSelectors = {
@@ -3455,9 +3388,7 @@ const initService = {
 				amazon          : '.s-item-container',
 				ebay            : 'li.lvresult',
 				aliexpress      : 'li.list-item',
-				yandexMarket    : 'div.n-snippet-card2',
-				googleTranslate : '',
-				yandexTranslate : ''
+				yandexMarket    : 'div.n-snippet-card2'
 			};
 
 			const makeItem    = {
@@ -3782,7 +3713,6 @@ const initService = {
 				typegeneral          : getI18n('searchTypeGeneral'),
 				typedev              : getI18n('searchTypeDev'),
 				typebuy              : getI18n('searchTypeBuy'),
-				typetranslate        : getI18n('searchTypeTranslate'),
 				duckduckgo           : getI18n('searchEngineDuckDuckGo'),
 				google               : getI18n('searchEngineGoogle'),
 				yandex               : getI18n('searchEngineYandex'),
@@ -3801,8 +3731,7 @@ const initService = {
 				generalPlaceholder   : getI18n('searchGeneralPlaceholder'),
 				videoPlaceholder     : getI18n('searchVideoPlaceholder'),
 				devPlaceholder       : getI18n('searchGeneralPlaceholder'),
-				buyPlaceholder       : getI18n('searchBuyPlaceholder'),
-				translatePlaceholder : getI18n('searchTranslatePlaceholder'),
+				buyPlaceholder       : getI18n('searchBuyPlaceholder')
 			};
 
 			messageHandler[mode]    = {
@@ -3814,7 +3743,7 @@ const initService = {
 					data[`${mode}Query`] = message.data;
 					for (let i = config.searchTypes[options[mode].type.value].length - 1; i >= 0; i--)
 						if (options[mode][config.searchTypes[options[mode].type.value][i]].value === true)
-							search(config.searchTypes[options[mode].type.value][i], data[`${mode}Query`], 'sidebar');
+							search(config.searchTypes[options[mode].type.value][i], data[`${mode}Query`]);
 				},
 				changeQuery : (message, sender, sendResponse) => {
 					data[`${mode}Query`] = message.data;
