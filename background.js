@@ -3999,7 +3999,7 @@ function makeDomain(mode, url, fav) {
 	}
 	let domain = getById(`${mode}Domains`, id);
 	if (domain === false) {
-		domain = createById(`${mode}Domains`, {'id': id, 'fav': makeFav(id, url, fav), title: title}, 'last');
+		domain = createById(`${mode}Domains`, {'id': id, 'fav': makeFav(id, url, fav, mode === 'spSearch'), title: title}, 'last');
 		if (options.leftBar.mode.value === mode)
 			send('leftBar', 'info', 'newDomain', {'domain': domain});
 		if (options.rightBar.mode.value === mode)
