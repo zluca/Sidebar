@@ -517,13 +517,9 @@ const initBlock = {
 					tab.classList[info.loading]('loading');
 			},
 			urlChanged  : info => {
-				if (options.misc.tabsMode !== 'tree')
-					insertItems([info.tab]);
-				else {
-					const tab = getById(info.tab.id);
-					if (tab !== false)
-						tab.href = info.tab.url;
-				}
+				const tab = getById(info.tab.id);
+				if (tab !== false)
+					tab.href = info.tab.url;
 			},
 			folderChanged : info => {
 				if (options.misc.tabsMode === 'domain') {
