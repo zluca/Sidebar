@@ -201,6 +201,18 @@ const options = {
 			targets : [],
 			handler : 'mode'
 		},
+		left   : {
+			value   : 0,
+			type    : 'integer',
+			range   : [0, 16000],
+			targets : []
+		},
+		top   : {
+			value   : 0,
+			type    : 'integer',
+			range   : [0, 16000],
+			targets : []
+		},
 		hidden : {}
 	},
 	rightBar: {
@@ -234,6 +246,18 @@ const options = {
 			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss', 'pocket'],
 			targets : [],
 			handler : 'mode'
+		},
+		left   : {
+			value   : -1,
+			type    : 'integer',
+			range   : [-1, 16000],
+			targets : []
+		},
+		top   : {
+			value   : 0,
+			type    : 'integer',
+			range   : [0, 16000],
+			targets : []
 		},
 		hidden : {}
 	},
@@ -4045,10 +4069,13 @@ function tabIsProtected(tab) {
 function createSidebarWindow(side) {
 	brauzer.windows.getCurrent({}, win => {
 		const width  = Math.ceil(options[side].width.value * screen.width / 100);
+		if (side === 'rightBar')
+			if (options.rightBar.left.value === -1)
+				setOption('rightBar', 'left', screen.width - width);
 		const params = {
 			'url'        : `sidebar.html#${side}-window`,
-			'top'        : 0,
-			'left'       : side === 'rightBar' ? screen.width - width : 0,
+			'top'        : options[side].top.value,
+			'left'       : options[side].left.value,
 			'width'      : width,
 			'height'     : win.height,
 			'type'       : 'popup'
@@ -4057,10 +4084,18 @@ function createSidebarWindow(side) {
 		const onCreate = win => {
 			status[side].windowId = win.id;
 			status[side].tabId    = win.tabs[0].id;
+			brauzer.windows.onFocusChanged.addListener(id => {
+				const getCoordinates = win => {
+					setOption(side, 'left', win.left);
+					setOption(side, 'top', win.top);
+				};
+				if (id !== win.id) return;
+				execMethod(brauzer.windows.get, getCoordinates, win.id);
+			});
 			brauzer.windows.onRemoved.addListener(id => {
 				if (id === win.id) {
 					status[side].windowId = -1;
-					status[side].tabId = -1;
+					status[side].tabId    = -1;
 					if (options[side].method.value === 'window') {
 						setOption(side, 'method', 'disabled', false);
 						setIcon();

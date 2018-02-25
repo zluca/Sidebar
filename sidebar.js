@@ -76,6 +76,15 @@ const options  = {
 	warnings         : null,
 };
 
+if (options.sidebar.method === 'window') {
+	const setWindowPosition = _ => {
+		send('background', 'options', 'handler', {'section': status.side, 'option': 'left', 'value': window.screenX});
+		send('background', 'options', 'handler', {'section': status.side, 'option': 'top', 'value': window.screenY});
+	};
+	window.addEventListener('focus', setWindowPosition);
+	window.addEventListener('blur', setWindowPosition);
+}
+
 let initTimer  = -1;
 tryToInit();
 
