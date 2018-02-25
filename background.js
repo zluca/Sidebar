@@ -3923,12 +3923,10 @@ function urlFromUser(url) {
 
 function makeFav(id, url, favIconUrl, update = false) {
 
-	const favFromUrl = firefox ?
-		_ => {
-			const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><polygon fill="${colorFromUrl(url)}" points="0,0 0,64 64,64 64,0"/></svg>`;
-			return `data:image/svg+xml;base64,${btoa(svg)}`;
-		} :
-		_ => `chrome://favicon/${url}`;
+	const favFromUrl = _ => {
+		const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><polygon fill="${colorFromUrl(url)}" points="0,0 0,64 64,64 64,0"/></svg>`;
+		return `data:image/svg+xml;base64,${btoa(svg)}`;
+	};
 
 	const updateFav = {
 		truetrue   : _ => {
