@@ -3582,12 +3582,18 @@ const initService = {
 				}
 			};
 
+			const checkUrl    = (item, url) => {
+				if (url.test(item.url))
+					return item;
+				return false;
+			};
+
 			resultsSelectors.youtube     = resultsSelectors.google;
 			resultsSelectors.dailymotion = resultsSelectors.duckduckgo;
 			resultsSelectors.vimeo       = resultsSelectors.yandex;
-			makeItem.youtube             = makeItem.google;
-			makeItem.dailymotion         = makeItem.duckduckgo;
-			makeItem.vimeo               = makeItem.yandex;
+			makeItem.youtube             = result => checkUrl(makeItem.google(result), /https?:\/\/www.youtube/);
+			makeItem.dailymotion         = result => checkUrl(makeItem.duckduckgo(result), /https?:\/\/www.dailymotion/);
+			makeItem.vimeo               = result => checkUrl(makeItem.yandex(result), /https?:\/\/vimeo.com/);
 
 			const cleanse     = html => {
 
@@ -3642,13 +3648,12 @@ const initService = {
 						doc.innerHTML = html;
 						let items = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
-						console.log(results);
 						for (let i = 0, l = results.length; i < l; i++) {
 							const item = makeItem[type](results[i]);
 							if (item === false)
 								continue;
-							item.id   = `${type}-${i}`;
-							item.type = type;
+							item.id    = `${type}-${i}`;
+							item.type  = type;
 							items.push(createById(mode, item, 'last'));
 						}
 						if (items.length > 0)
