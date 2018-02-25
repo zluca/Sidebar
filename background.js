@@ -3701,7 +3701,7 @@ const initService = {
 					folder.pid        = 0;
 					folder.title      = i18n.search[folder.id];
 					folder.domain     = item.pid;
-					folder.view       = item.type === 'general' ? 'type' : 'domain';
+					folder.view       = item.type === 'general' ? 'normal' : 'domain';
 					folder.mode       = item.type;
 					folder.hidden     = !options[mode][folder.id].value;
 					folder.searchLink = '';
