@@ -276,6 +276,7 @@ function makeIframe(side) {
 function setHover(side, hover) {
 	send('background', 'set', 'hover', {side: side, hover: hover, needResponse: true}, _ => {
 		status[side].hover = hover;
+		sidebar[side].classList[hover ? 'remove' : 'add']('unhover');
 		setSideBarWidth(side);
 	});
 }
@@ -368,21 +369,25 @@ function setSideBarFixed(side, value) {
 		setListener('borderclick', false);
 		cleanTimer('leave');
 		cleanTimer('over');
-	}
-	else if (options.misc.expandOnClick === true) {
-		if (options[side].wide === false) {
-			setListener('mouseover', false);
-			setListener('mouseleave', true);
-			setListener('borderclick', true);
-			cleanTimer('leave');
-			cleanTimer('over');
-		}
+		sidebar[side].classList.remove('unfixed');
 	}
 	else {
-		setHover(side, false);
-		setListener('mouseover', true);
-		setListener('mouseleave', true);
-		setListener('borderclick', false);
+		sidebar[side].classList.add('unfixed');
+		if (options.misc.expandOnClick === true) {
+			if (options[side].wide === false) {
+				setListener('mouseover', false);
+				setListener('mouseleave', true);
+				setListener('borderclick', true);
+				cleanTimer('leave');
+				cleanTimer('over');
+			}
+		}
+		else {
+			setHover(side, false);
+			setListener('mouseover', true);
+			setListener('mouseleave', true);
+			setListener('borderclick', false);
+		}
 	}
 	setSideBarWidth(side);
 }
@@ -391,9 +396,9 @@ function setSideBarWideMode(side, value) {
 	if (value !== undefined)
 		options[side].wide = value;
 	if (options[side].wide === true)
-		sidebar[side].classList.add('wide');
+		sidebar[side].classList.remove('narrow');
 	else
-		sidebar[side].classList.remove('wide');
+		sidebar[side].classList.add('narrow');
 	setSideBarWidth(side);
 }
 
