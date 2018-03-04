@@ -88,11 +88,11 @@ const status = {
 		windowId      : -1,
 		tabId         : -1
 	},
-	activeTabId          : -1,
 	historyLastTime      : Date.now(),
 	historyEnd           : false,
 	sidebarWindowCreating: false,
 	activeWindow         : -1,
+	activeTabsIds        : {},
 	nativeActive         : false,
 	dialogData           : null,
 	dialogType           : '',
@@ -1116,10 +1116,10 @@ const messageHandler = {
 			createDialogWindow(message.action, message.data);
 		},
 		bookmarkNew : (message, sender, sendResponse) => {
-			const activeTab = getById('tabs', status.activeTabId);
+			const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 			if (activeTab === false) return;
 			const dataToSend = {
-				'id'      : status.activeTabId,
+				'id'      : status.activeTabsIds[status.activeWindow],
 				'url'     : activeTab.url,
 				'title'   : activeTab.title,
 				'folders' : data.bookmarksFolders
@@ -1151,7 +1151,7 @@ const messageHandler = {
 				createDialogWindow('bookmarkFolderEdit', {'id': message.data.id, 'title': folder.title});
 		},
 		rssNew : (message, sender, sendResponse) => {
-			const activeTab = getById('tabs', status.activeTabId);
+			const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 			if (activeTab !== false)
 				if (tabIsProtected(activeTab) === false)
 					return send('content', 'dialog', 'checkRss', '');
@@ -1179,7 +1179,7 @@ const messageHandler = {
 			sendToTab(sender.tab.id, 'content', 'dialog', 'remove');
 		},
 		pocketNew : (message, sender, sendResponse) => {
-			const activeTab = getById('tabs', status.activeTabId);
+			const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 			if (activeTab !== false)
 				createDialogWindow(message.action, {
 					'url'   : activeTab.url,
@@ -1531,7 +1531,7 @@ const initService = {
 					createNewTab(message.data.url, message.data.newWindow);
 				},
 				update : (message, sender, sendResponse) => {
-					brauzer.tabs.update(status.activeTabId, {'url': message.data.url});
+					brauzer.tabs.update(status.activeTabsIds[status.activeWindow], {'url': message.data.url});
 				},
 				setActive : (message, sender, sendResponse) => {
 					const tab = getById('tabs', message.data.id);
@@ -1630,7 +1630,7 @@ const initService = {
 					tabs             : data.tabs,
 					tabsFolders      : data.tabsFolders,
 					domains          : data.tabsDomains,
-					activeTabId      : status.activeTabId
+					activeTabId      : status.activeTabsIds[status.activeWindow]
 				};
 			};
 
@@ -1640,13 +1640,37 @@ const initService = {
 			brauzer.tabs.onRemoved.addListener(onRemoved);
 			brauzer.tabs.onMoved.addListener(onMoved);
 
+			brauzer.windows.onCreated.addListener(onWindowCreated);
+			brauzer.windows.onFocusChanged.addListener(onFocusChanged);
+			brauzer.windows.onRemoved.addListener(onWindowRemoved);
+
 			status.init.tabs = true;
+		};
+
+		const onWindowRemoved   = id => {
+			if (status.activeTabsIds.hasOwnProperty(id))
+				delete status.activeTabsIds[id];
+		};
+
+		const onWindowCreated   = win => {
+			if (win.type === 'normal')
+				status.activeWindow = win.id;
+		};
+
+		const onFocusChanged    = id => {
+			if (id === -1) return;
+			brauzer.windows.get(id, win => {
+				if (win.type !== 'normal') return;
+				status.activeWindow = id;
+				makeTimeStamp('tabs');
+				reInit(status.activeTabsIds[status.activeWindow]);
+			});
 		};
 
 		const reInit  = id => {
 			const tab = getById('tabs', id);
 			if (tab === false) return;
-			send('sidebar', 'tabs', 'active', status.activeTabId);
+			send('sidebar', 'tabs', 'active', status.activeTabsIds[status.activeWindow]);
 			if (options.leftBar.method.value === 'iframe') {
 				send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
 				send('content', 'reInit', 'leftBar', {
@@ -1687,7 +1711,7 @@ const initService = {
 		};
 
 		const onActivated       = tabInfo => {
-			status.activeTabId  = tabInfo.tabId;
+			status.activeTabsIds[status.activeWindow]  = tabInfo.tabId;
 			makeTimeStamp('tabs');
 			reInit(tabInfo.tabId);
 		};
@@ -1703,7 +1727,7 @@ const initService = {
 				send('sidebar', 'tabs', info.pinned === true ? 'pinned' : 'unpinned', {'id': id});
 			}
 			if (info.hasOwnProperty('url')) {
-				if (status.activeTabId === id)
+				if (status.activeTabsIds[status.activeWindow] === id)
 					reInit(id);
 				if (options.services.startpage.value === true)
 					if (checkStartPage(tab))
@@ -1776,7 +1800,7 @@ const initService = {
 				const url    = item.url === 'about:blank' ? item.title : item.url;
 				const domain = makeDomain('tabs', url, item.favIconUrl);
 				if (item.active === true)
-					status.activeTabId = item.id;
+					status.activeTabsIds[item.windowId] = item.id;
 				newItem.domain     = domain.id;
 				newItem.pinned     = item.pinned;
 				newItem.index      = item.index;
@@ -1880,8 +1904,7 @@ const initService = {
 					i18n             : i18n.bookmarks,
 					bookmarks        : data.bookmarks,
 					bookmarksFolders : data.bookmarksFolders,
-					domains          : data.bookmarksDomains,
-					activeTabId      : status.activeTabId
+					domains          : data.bookmarksDomains
 				};
 			};
 
@@ -3884,10 +3907,10 @@ function send(target, subject, action, dataToSend) {
 					brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': dataToSend});
 			},
 			iframe : _ => {
-				const tab = getById('tabs', status.activeTabId);
+				const tab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 				if (tab === false) return;
 				if (tab.activated === false) return;
-				sendToTab(status.activeTabId, target, subject, action, dataToSend);
+				sendToTab(status.activeTabsIds[status.activeWindow], target, subject, action, dataToSend);
 			},
 			window : _ => {
 				sendToWindow(target, subject, action, dataToSend);
@@ -3916,7 +3939,7 @@ function send(target, subject, action, dataToSend) {
 			brauzer.runtime.sendMessage({'target': 'startpage', 'subject': subject, 'action': action, 'data': dataToSend});
 		},
 		content   : _ => {
-			sendToTab(status.activeTabId, 'content', subject, action, dataToSend);
+			sendToTab(status.activeTabsIds[status.activeWindow], 'content', subject, action, dataToSend);
 		}
 	};
 
@@ -4037,11 +4060,11 @@ function makeDomain(mode, url, fav) {
 function createDialogWindow(type, dialogData) {
 	status.dialogData = dialogData;
 	status.dialogType = type;
-	const activeTab = getById('tabs', status.activeTabId);
+	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 	if (activeTab === false)
 		return;
 	if (tabIsProtected(activeTab) === false)
-		sendToTab(status.activeTabId, 'content', 'dialog', 'create', type);
+		sendToTab(status.activeTabsIds[status.activeWindow], 'content', 'dialog', 'create', type);
 	else
 		brauzer.tabs.create({'url': config.extensionStartPage, 'windowId': status.activeWindow});
 }
