@@ -11,6 +11,10 @@ const status  = {
 	siteSettingsChanged : false,
 	bigFontSize         : 0,
 	dragging            : false,
+	timeStamp           : {
+		startpage : 0,
+		search    : 0
+	}
 };
 
 const data    = {
@@ -55,13 +59,14 @@ function init(response) {
 	let hoveredItem          = null;
 	options                  = response.options;
 	i18n                     = response.i18n;
+	status.timeStamp         = response.timeStamp;
 	document.title           = i18n.pageTitle;
 
 	const siteStyle          = dce('style', document.head);
 	const search             = dcea('header', document.body, ['id', 'search']);
 	searchOptions            = dcea('span', search, ['id', 'search-options']);
 	dcea('span', searchOptions, ['classList', 'search-icon']);
-	searchField              = dceam('input', search, [['id', 'search-field'], ['value', response.searchQuery]]);
+	searchField              = dcea('input', search, ['id', 'search-field']);
 	const letsSearch         = dceam('span', search, [['id', 'lets-search'], ['title', i18n.searchButtonTitle]]);
 	dce('span', letsSearch);
 	siteContainer            = dcea('main', document.body, ['id', 'site-container']);
@@ -81,9 +86,7 @@ function init(response) {
 	setDomainsStyles.rewrite(response.domains);
 	setSearchType();
 
-	for (let i = 0, l = response.sites.length; i < l; i++)
-		insertSite(i, response.sites[i]);
-	insertFinisher();
+	initSites(response.sites);
 
 	setMode();
 
@@ -316,7 +319,6 @@ function insertSearchItems(info, clean) {
 				while (folder.hasChildNodes())
 					folder.removeChild(folder.firstChild);
 		}
-
 		makeItem[options.search.type](info[i]);
 	}
 }
@@ -330,7 +332,7 @@ function insertSearchFolder(item) {
 
 const messageHandler = {
 	options : {
-		searchType          : info => {
+		searchType            : info => {
 			setSearchType(info.value);
 		},
 		searchEnabled         : info => {
@@ -344,19 +346,19 @@ const messageHandler = {
 		backgroundColorActive : info => {
 			setColor({'backgroundColorActive': info.value});
 		},
-		fontColor          : info => {
+		fontColor             : info => {
 			setColor({'fontColor': info.value});
 		},
-		fontColorActive    : info => {
+		fontColorActive       : info => {
 			setColor({'fontColorActive': info.value});
 		},
-		fontColorInactive    : info => {
+		fontColorInactive     : info => {
 			setColor({'fontColorInactive': info.value});
 		},
-		borderColor        : info => {
+		borderColor           : info => {
 			setColor({'borderColor': info.value});
 		},
-		borderColorActive  : info => {
+		borderColorActive     : info => {
 			setColor({'borderColorActive': info.value});
 		},
 		rows                  : info => {
@@ -389,9 +391,6 @@ const messageHandler = {
 		imageStyle            : info => {
 			setImageStyle[info.value]();
 		},
-		// wikiSearchLang        : info => {
-		// 	options.startpage.wikiSearchLang = info.value;
-		// },
 		mode                  : info => {
 			setMode(info.value);
 		},
@@ -469,8 +468,44 @@ const messageHandler = {
 			data.searchFolders[index].classList.add('hidden');
 			data.searchHeaders[index].classList.add('hidden');
 		}
+	},
+	reInit  : {
+		page : info => {
+			for (let option in info.options.theme)
+				if (info.options.theme[option] !== options.theme[option])
+					if (messageHandler.options.hasOwnProperty(option))
+						messageHandler.options[option]({'value': info.options.theme[option]})
+			for (let option in info.options.startpage)
+				if (info.options.startpage[option] !== options.startpage[option])
+					if (messageHandler.options.hasOwnProperty(option))
+						messageHandler.options[option]({'value': info.options.startpage[option]})
+			for (let option in info.options.search)
+				if (info.options.search[option] !== options.search[option]) {
+					initSearch(info.searchFolders, info.searchQuery);
+					insertSearchItems(info.search, false);
+					break;
+				}
+			if (info.timeStamp.search !== status.timeStamp.search) {
+				initSearch(info.searchFolders, info.searchQuery);
+				insertSearchItems(info.search, false);
+				status.timeStamp.search = info.timeStamp.search;
+			}
+			if (info.timeStamp.startpage !== status.timeStamp.startpage) {
+				initSites(info.sites);
+				setMode();
+			}
+		}
 	}
 };
+
+function initSites(sites) {
+	while (siteContainer.hasChildNodes())
+		siteContainer.removeChild(siteContainer.firstChild);
+	data.sites = [];
+	for (let i = 0, l = sites.length; i < l; i++)
+		insertSite(i, sites[i]);
+	insertFinisher();
+}
 
 function initSearch(folders, query = '') {
 
@@ -478,6 +513,10 @@ function initSearch(folders, query = '') {
 		searchResults.removeChild(searchResults.firstChild);
 		searchNav.removeChild(searchNav.firstChild);
 	}
+	data.searchFoldersId = [];
+	data.searchFolders   = [];
+
+	searchField.value    = query;
 
 	for (let i = 0; i < folders.length; i++)
 		insertSearchFolder(folders[i]);

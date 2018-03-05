@@ -116,21 +116,31 @@ const messageHandler = {
 		}
 	},
 	reInit : {
-		sideBar      : (side, info) => {
-			if (info.options.method !== options[side].method)
-				if (info.options.method === 'iframe')
-					injectIframe(side, info.options.width);
-				else
-					deleteIframe(side);
-			if (info.options.fixed !== options[side].fixed)
-				setSideBarFixed(side, info.options.fixed);
-			if (info.options.wide !== options[side].wide)
-				setSideBarWideMode(side, info.options.wide);
-			if (info.options.width !== options[side].width)
-				setSideBarWidth(side, info.options.width);
+		sideBar      : (info) => {
+
+			const reInitSide = side => {
+				if (info[side].method !== options[side].method) {
+					if (info[side].method === 'iframe')
+						injectIframe(side, info[side].width);
+					else if (sidebar[side] !== null)
+						deleteIframe(side);
+				}
+				if (info[side].fixed !== options[side].fixed)
+					setSideBarFixed(side, info[side].fixed);
+				if (info[side].wide !== options[side].wide)
+					setSideBarWideMode(side, info[side].wide);
+				if (info[side].width !== options[side].width)
+					setSideBarWidth(side, info[side].width);
+			};
+			reInitSide('leftBar');
+			reInitSide('rightBar');
+
 			if (options.theme.fontSize !== info.theme.fontSize) {
 				options.theme.fontSize = info.theme.fontSize;
-				setSideBarWidth(side);
+				if (options.leftBar.method === 'iframe')
+					setSideBarWidth('leftBar');
+				if (options.rightBar.method === 'iframe')
+					setSideBarWidth('rightBar');
 			}
 			if (options.theme.borderColor !== info.theme.borderColor) {
 				options.theme.borderColor = info.theme.borderColor;
@@ -140,12 +150,6 @@ const messageHandler = {
 				options.theme.borderColorActive = info.theme.borderColorActive;
 				setColor();
 			}
-		},
-		leftBar      : info => {
-			messageHandler.reInit.sideBar('leftBar', info);
-		},
-		rightBar     : info => {
-			messageHandler.reInit.sideBar('rightBar', info);
 		}
 	},
 	dialog : {
@@ -223,6 +227,7 @@ function checkDocumentReady() {
 }
 
 function injectIframe(side, width) {
+	options[side].method = 'iframe';
 	setSideBarWideMode(side);
 	setSideBarFixed(side);
 	setSideBarWidth(side, width);
@@ -231,8 +236,11 @@ function injectIframe(side, width) {
 }
 
 function deleteIframe(side) {
+	options[side].method = 'disabled';
+	doc.style.setProperty(`margin-${side.replace('Bar', '')}`, '0', 'important');
+	setSideBarFixed(side, false);
 	document.body.removeChild(sidebar[side]);
-	setSideBarWidth(side, 0);
+	sidebar[side] = null;
 }
 
 function cleanOldStuff() {
@@ -410,9 +418,9 @@ function setColor() {
 function setSideBarWidth(side, value) {
 	const borderWidth = options.theme.fontSize / 8 / window.devicePixelRatio;
 	const iconWidth   = options.theme.fontSize * 1.7 / window.devicePixelRatio;
+	const trueSide    = side.replace('Bar', '');
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
-	sidebar[side].lastChild.style.setProperty(`margin-${side === 'leftBar' ? 'right' : 'left'}`, `${borderWidth}px`, 'important');
-	const trueSide = side.replace('Bar', '');
+	sidebar[side].lastChild.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
 	if (value !== undefined)
 		options[side].width = value;
 	if (options[side].fixed === true) {

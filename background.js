@@ -164,7 +164,7 @@ const data = {
 	spSearchDomainsId  : [],
 	favs               : [],
 	favsId             : [],
-	speadDial          : [],
+	startpage          : [],
 	foldedId           : []
 };
 
@@ -527,13 +527,6 @@ const options = {
 		searchEnabled  : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['startpage']
-		},
-		searchEngine   : {
-			value   : 'duckduckgo',
-			type    : 'select',
-			hidden  : true,
-			values  : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo', 'wikipedia', 'mdn', 'stackoverflow', 'amazon', 'ebay', 'aliexpress'],
 			targets : ['startpage']
 		},
 		wikiSearchLang : {
@@ -938,7 +931,7 @@ const optionsHandler = {
 		if (change < 0) {
 			const oldLength = options.startpage[option].value * options.startpage[oppositeDimension[option]].value;
 			const newLength = newValue * options.startpage[oppositeDimension[option]].value;
-			send('startpage', 'site', 'addSites', {'sites': data.speadDial.slice(oldLength, newLength)});
+			send('startpage', 'site', 'addSites', {'sites': data.startpage.slice(oldLength, newLength)});
 		}
 		else
 			send('startpage', 'site', 'remove', '');
@@ -1094,7 +1087,7 @@ const messageHandler = {
 			createDialogWindow(message.action, message.data);
 		},
 		siteChange : (message, sender, sendResponse) => {
-			const site = data.speadDial[message.data.index];
+			const site = data.startpage[message.data.index];
 			createDialogWindow(message.action, {
 				index : message.data.index,
 				url   : site.url,
@@ -1266,10 +1259,10 @@ const initExtension = res => {
 		options.theme.fontSize.value           = Math.ceil(window.screen.height / 60);
 		const top = topSites => {
 			for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
-				data.speadDial.push(makeSite(i, topSites[i]));
+				data.startpage.push(makeSite(i, topSites[i]));
 			saveNow('version');
 			saveNow('options');
-			saveNow('speadDial');
+			saveNow('startpage');
 			starter();
 		};
 		execMethod(brauzer.topSites.get, top);
@@ -1458,8 +1451,8 @@ const initService = {
 	startpage : start => {
 
 		const gettingStorage = res => {
-			if (Array.isArray(res.speadDial))
-				data.speadDial = res.speadDial;
+			if (Array.isArray(res.startpage))
+				data.startpage = res.startpage;
 			status.init.startpage = true;
 		};
 
@@ -1467,38 +1460,39 @@ const initService = {
 			setOption('startpage', 'mode', 'sites');
 			messageHandler.startpage = {
 				change : (message, sender, sendResponse) => {
-					const site = data.speadDial[message.data.index];
+					const site = data.startpage[message.data.index];
 					if (site !== undefined) {
 						site.text  = message.data.text;
 						site.url   = message.data.url;
 						site.color = message.data.color;
-						saveLater('speadDial');
+						saveLater('startpage');
 						send('startpage', 'site', 'changed', {index: message.data.index, site: site});
 					}
 				},
 				delete : (message, sender, sendResponse) => {
 					makeSite(message.data.index);
-					saveLater('speadDial');
-					send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
+					saveLater('startpage');
+					send('startpage', 'site', 'changed', {index: message.data.index, site: data.startpage[message.data.index]});
 				},
 				create : (message, sender, sendResponse) => {
 					makeSite(message.data.index, message.data);
-					saveLater('speadDial');
-					send('startpage', 'site', 'changed', {index: message.data.index, site: data.speadDial[message.data.index]});
+					saveLater('startpage');
+					send('startpage', 'site', 'changed', {index: message.data.index, site: data.startpage[message.data.index]});
 				},
 				move : (message, sender, sendResponse) => {
-					const movedSite = data.speadDial.splice(message.data.from, 1)[0];
-					data.speadDial.splice(message.data.to, 0, movedSite);
-					saveLater('speadDial');
+					const movedSite = data.startpage.splice(message.data.from, 1)[0];
+					data.startpage.splice(message.data.to, 0, movedSite);
+					saveLater('startpage');
 					send('startpage', 'site', 'moved', {from: message.data.from, to: message.data.to});
 				}
 			};
 			i18n.startpage = {
 				pageTitle            : getI18n('startpagePageTitle'),
 				addNewSiteTitle      : getI18n('startpageAddNewSiteTitle'),
-				editButtonTitle      : getI18n('startpageEditButtonTitle')
+				editButtonTitle      : getI18n('startpageEditButtonTitle'),
+				searchButtonTitle    : getI18n('startpageEditButtonTitle')
 			};
-			execMethod(brauzer.storage.local.get, gettingStorage, 'speadDial');
+			execMethod(brauzer.storage.local.get, gettingStorage, 'startpage');
 			if (status.init.tabs === true)
 				for (let i = data.tabs.length - 1; i >= 0; i--)
 					if (data.tabs[i].url === config.defaultStartPage)
@@ -1511,7 +1505,7 @@ const initService = {
 				initService.search(false, 'spSearch');
 			i18n.startpage = {};
 			messageHandler.startpage = {};
-			data.speadDial = [];
+			data.startpage = [];
 			for (let i = data.tabs.length - 1; i >= 0; i--)
 				if (data.tabs[i].url === config.extensionStartPage) {
 					if (firefox)
@@ -1671,28 +1665,19 @@ const initService = {
 			const tab = getById('tabs', id);
 			if (tab === false) return;
 			send('sidebar', 'tabs', 'active', status.activeTabsIds[status.activeWindow]);
-			if (options.leftBar.method.value === 'iframe') {
+			if (options.leftBar.method.value === 'iframe')
 				send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
-				send('content', 'reInit', 'leftBar', {
-					options: optionsShort.leftBar,
-					theme: {
-						borderColor       : options.theme.borderColor.value,
-						borderColorActive : options.theme.borderColorActive.value,
-						fontSize          : options.theme.fontSize.value
-					}
-				});
-			}
-			if (options.rightBar.method.value === 'iframe') {
+			if (options.rightBar.method.value === 'iframe')
 				send('rightBar', 'set', 'reInit', sideBarData('rightBar'));
-				send('content', 'reInit', 'rightBar', {
-					options: optionsShort.rightBar,
-					theme: {
-						borderColor       : options.theme.borderColor.value,
-						borderColorActive : options.theme.borderColorActive.value,
-						fontSize          : options.theme.fontSize.value
-					}
-				});
-			}
+			send('content', 'reInit', 'sideBar', {
+				leftBar  : optionsShort.leftBar,
+				rightBar : optionsShort.rightBar,
+				theme    : {
+					borderColor       : options.theme.borderColor.value,
+					borderColorActive : options.theme.borderColorActive.value,
+					fontSize          : options.theme.fontSize.value
+				}
+			});
 		};
 
 		const checkStartPage    = tab => tab.url === config.defaultStartPage ? true : false;
@@ -1711,9 +1696,14 @@ const initService = {
 		};
 
 		const onActivated       = tabInfo => {
+			const tab = getById('tabs', tabInfo.tabId);
+			if (tab === false) return;
 			status.activeTabsIds[status.activeWindow]  = tabInfo.tabId;
 			makeTimeStamp('tabs');
 			reInit(tabInfo.tabId);
+			if (options.services.startpage.value === true)
+				if (tab.url === config.extensionStartPage)
+					send('startpage', 'reInit', 'page', startpageData());
 		};
 
 		const onUpdated         = (id, info, tab) => {
@@ -3706,7 +3696,7 @@ const initService = {
 						if (items.length > 0)
 							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type});
 					}
-					makeTimeStamp('search');
+					makeTimeStamp(mode);
 					send(target, 'search', 'update', {'method': 'remove', 'target': type});
 				}
 			};
@@ -3881,7 +3871,7 @@ function sideBarData(side) {
 function startpageData() {
 	if (options.services.startpage.value === true)
 		return {
-			'sites'         : data.speadDial.slice(0, options.startpage.rows.value * options.startpage.columns.value),
+			'sites'         : data.startpage.slice(0, options.startpage.rows.value * options.startpage.columns.value),
 			'search'        : data.spSearch,
 			'searchFolders' : data.spSearchFolders,
 			'searchQuery'   : data.spSearchQuery,
@@ -3891,7 +3881,11 @@ function startpageData() {
 				'search'      : optionsShort.spSearch,
 				'theme'       : optionsShort.theme,
 			},
-			'i18n'          : Object.assign(i18n.startpage, i18n.search)
+			'i18n'          : Object.assign(i18n.startpage, i18n.search),
+			'timeStamp'     : {
+				'startpage'   : status.timeStamp.startpage,
+				'search'      : status.timeStamp.spSearch
+			}
 		};
 	else
 		return {'options' : {'startpage': {'empty': true}}};
@@ -3936,7 +3930,7 @@ function send(target, subject, action, dataToSend) {
 		leftBar   : _ => sendToSidebar('leftBar', subject, action, dataToSend),
 		rightBar  : _ => sendToSidebar('rightBar', subject, action, dataToSend),
 		startpage : _ => {
-			brauzer.runtime.sendMessage({'target': 'startpage', 'subject': subject, 'action': action, 'data': dataToSend});
+			sendToTab(status.activeTabsIds[status.activeWindow], 'startpage', subject, action, dataToSend);
 		},
 		content   : _ => {
 			sendToTab(status.activeTabsIds[status.activeWindow], 'content', subject, action, dataToSend);
@@ -4365,7 +4359,7 @@ function makeSite(index, site) {
 			text += `\n ${domen[i]}`;
 		if (l < 3)
 			text += '\n';
-		data.speadDial[index] = {
+		data.startpage[index] = {
 			color : site.hasOwnProperty('color') ? site.color : colorFromUrl(site.url),
 			url   : url,
 			text  : text,
@@ -4373,7 +4367,7 @@ function makeSite(index, site) {
 		};
 	}
 	else
-		data.speadDial[index] = {
+		data.startpage[index] = {
 			color : '',
 			url   : '',
 			text  : ' \n+\n ',
@@ -4405,7 +4399,7 @@ function saveNow(what, noStamp = false) {
 		rssFolders    : {'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId},
 		pocket        : {'pocket': data.pocket, 'pocketId': data.pocketId},
 		pocketFolders : {'pocketFolders': data.pocketFolders, 'pocketFoldersId': data.pocketFoldersId},
-		speadDial     : {'speadDial': data.speadDial},
+		startpage     : {'startpage': data.startpage},
 		version       : {'version': config.version},
 		foldedId      : {'foldedId': data.foldedId}
 	};
