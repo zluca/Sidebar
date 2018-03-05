@@ -101,17 +101,18 @@ const status = {
 	sendTimer            : {},
 	pocketCode           : '',
 	timeStamp            : {
-		options   : 0,
-		info      : 0,
-		startpage : 0,
-		tabs      : 0,
-		bookmarks : 0,
-		history   : 0,
-		downloads : 0,
-		rss       : 0,
-		pocket    : 0,
-		search    : 0,
-		spSearch  : 0
+		options          : 0,
+		info             : 0,
+		startpage        : 0,
+		startpageCurrent : 0,
+		tabs             : 0,
+		bookmarks        : 0,
+		history          : 0,
+		downloads        : 0,
+		rss              : 0,
+		pocket           : 0,
+		search           : 0,
+		spSearch         : 0
 	}
 };
 
@@ -165,6 +166,7 @@ const data = {
 	favs               : [],
 	favsId             : [],
 	startpage          : [],
+	startpageCurrent   : [],
 	foldedId           : []
 };
 
@@ -928,6 +930,7 @@ const optionsHandler = {
 			columns : 'rows'
 		};
 		const change = options.startpage[option].value - newValue;
+		makeTimeStamp('startpage');
 		if (change < 0) {
 			const oldLength = options.startpage[option].value * options.startpage[oppositeDimension[option]].value;
 			const newLength = newValue * options.startpage[oppositeDimension[option]].value;
@@ -1451,8 +1454,10 @@ const initService = {
 	startpage : start => {
 
 		const gettingStorage = res => {
-			if (Array.isArray(res.startpage))
-				data.startpage = res.startpage;
+			if (Array.isArray(res.startpage)) {
+				data.startpage        = res.startpage;
+				data.startpageCurrent = data.startpage.slice(0, options.startpage.rows.value * options.startpage.columns.value);
+			}
 			status.init.startpage = true;
 		};
 
@@ -1503,9 +1508,10 @@ const initService = {
 		else {
 			if (status.init.spSearch === true)
 				initService.search(false, 'spSearch');
-			i18n.startpage = {};
+			i18n.startpage           = {};
 			messageHandler.startpage = {};
-			data.startpage = [];
+			data.startpage           = [];
+			data.startpageCurrent    = [];
 			for (let i = data.tabs.length - 1; i >= 0; i--)
 				if (data.tabs[i].url === config.extensionStartPage) {
 					if (firefox)
@@ -3869,9 +3875,13 @@ function sideBarData(side) {
 }
 
 function startpageData() {
+	if (status.timeStamp.startpageCurrent !== status.timeStamp.startpage) {
+		status.timeStamp.startpageCurrent = status.timeStamp.startpage
+		data.startpageCurrent = data.startpage.slice(0, options.startpage.rows.value * options.startpage.columns.value);
+	}
 	if (options.services.startpage.value === true)
 		return {
-			'sites'         : data.startpage.slice(0, options.startpage.rows.value * options.startpage.columns.value),
+			'sites'         : data.startpageCurrent,
 			'search'        : data.spSearch,
 			'searchFolders' : data.spSearchFolders,
 			'searchQuery'   : data.spSearchQuery,
