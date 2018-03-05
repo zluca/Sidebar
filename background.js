@@ -104,7 +104,7 @@ const status = {
 		options          : 0,
 		info             : 0,
 		startpage        : 0,
-		startpageCurrent : 0,
+		startpageCurrent : -1,
 		tabs             : 0,
 		bookmarks        : 0,
 		history          : 0,
@@ -1454,10 +1454,8 @@ const initService = {
 	startpage : start => {
 
 		const gettingStorage = res => {
-			if (Array.isArray(res.startpage)) {
-				data.startpage        = res.startpage;
-				data.startpageCurrent = data.startpage.slice(0, options.startpage.rows.value * options.startpage.columns.value);
-			}
+			if (Array.isArray(res.startpage))
+				data.startpage = res.startpage;
 			status.init.startpage = true;
 		};
 
