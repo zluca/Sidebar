@@ -30,6 +30,7 @@ let i18n      = {};
 
 let options   = {};
 
+let search          = null;
 let siteContainer   = null;
 let searchContainer = null;
 let searchNav       = null;
@@ -63,7 +64,7 @@ function init(response) {
 	document.title           = i18n.pageTitle;
 
 	const siteStyle          = dce('style', document.head);
-	const search             = dcea('header', document.body, ['id', 'search']);
+	search                   = dcea('header', document.body, ['id', 'search']);
 	searchOptions            = dcea('span', search, ['id', 'search-options']);
 	dcea('span', searchOptions, ['classList', 'search-icon']);
 	searchField              = dcea('input', search, ['id', 'search-field']);
@@ -180,8 +181,8 @@ function init(response) {
 			status.dragging = true;
 			startPosition = parseInt(target.dataset.index);
 			placeholderPosition = startPosition;
-	        shiftX = targetRect.left - event.pageX;
-	        shiftY = targetRect.top  - event.pageY;
+			shiftX = targetRect.left - event.pageX;
+			shiftY = targetRect.top  - event.pageY;
 			target.style.left   = `${targetRect.left}px`;
 			target.style.top    = `${targetRect.top}px`;
 			target.style.width  = `${w}px`;
@@ -335,11 +336,6 @@ const messageHandler = {
 		searchType            : info => {
 			setSearchType(info.value);
 		},
-		searchEnabled         : info => {
-			options.startpage.searchEnabled = info.value;
-			initSearch();
-			setStyle();
-		},
 		backgroundColor       : info => {
 			setColor({'backgroundColor': info.value});
 		},
@@ -396,6 +392,13 @@ const messageHandler = {
 		},
 		type                  : info => {
 			setSearchType(info.value);
+		},
+		searchEnabled         : info => {
+			options.startpage.searchEnabled = info.value;
+			if (info.value === true)
+				initSearch(info.searchFolders, info.searchQuery);
+			else
+				initSearch();
 		}
 	},
 	info    : {
@@ -474,20 +477,20 @@ const messageHandler = {
 			for (let option in info.options.theme)
 				if (info.options.theme[option] !== options.theme[option])
 					if (messageHandler.options.hasOwnProperty(option))
-						messageHandler.options[option]({'value': info.options.theme[option]})
+						messageHandler.options[option]({'value': info.options.theme[option]});
 			for (let option in info.options.startpage)
 				if (info.options.startpage[option] !== options.startpage[option])
 					if (messageHandler.options.hasOwnProperty(option))
-						messageHandler.options[option]({'value': info.options.startpage[option]})
-			for (let option in info.options.search)
-				if (info.options.search[option] !== options.search[option]) {
-					initSearch(info.searchFolders, info.searchQuery);
-					insertSearchItems(info.search, false);
-					break;
-				}
+						messageHandler.options[option]({'value': info.options.startpage[option]});
+			if (options.startpage.searchEnabled === true)
+				for (let option in info.options.search)
+					if (info.options.search[option] !== options.search[option]) {
+						options.search = info.options.search;
+						initSearch(info.searchFolders, info.searchQuery);
+						break;
+					}
 			if (info.timeStamp.search !== status.timeStamp.search) {
 				initSearch(info.searchFolders, info.searchQuery);
-				insertSearchItems(info.search, false);
 				status.timeStamp.search = info.timeStamp.search;
 			}
 			if (info.timeStamp.startpage !== status.timeStamp.startpage) {
@@ -515,6 +518,11 @@ function initSearch(folders, query = '') {
 	}
 	data.searchFoldersId = [];
 	data.searchFolders   = [];
+
+	if (options.startpage.searchEnabled === false)
+		return search.style.display = 'none';
+	else
+		search.style.display = 'grid';
 
 	searchField.value    = query;
 
@@ -598,7 +606,6 @@ function setStyle() {
 	doc.style.setProperty('--bigFont1', `${sectionSize}px`);
 	doc.style.setProperty('--rows', options.startpage.rows);
 	doc.style.setProperty('--columns', options.startpage.columns);
-	doc.style.setProperty('--searchDisplay', options.startpage.searchEnabled ? "grid" : "none");
 }
 
 function setBackground(image) {

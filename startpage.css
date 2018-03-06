@@ -19,7 +19,6 @@
 	--bigFont4: calc(var(--bigFont1) / 4);
 	--bigFont5: calc(var(--bigFont1) / 5);
 	--bigFont6: calc(var(--bigFont1) / 6);
-	--searchDisplay: 'grid';
 	background-color: var(--background-color);
 	font-size: 10px;
 }
@@ -231,7 +230,7 @@ main {
 	}
 
 #search {
-	display: var(--searchDisplay);
+	display: none;
 	position: relative;
 	grid-template-columns: 1.9rem auto 1.9rem;
 	width: 50%;

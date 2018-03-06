@@ -102,9 +102,13 @@ const status = {
 	pocketCode           : '',
 	timeStamp            : {
 		options          : 0,
+		optionsCachedSt  : -1,
+		optionsCachedSb  : -1,
+		sidebarCached    : -1,
 		info             : 0,
+		infoCached       : -1,
 		startpage        : 0,
-		startpageCurrent : -1,
+		startpageCached  : -1,
 		tabs             : 0,
 		bookmarks        : 0,
 		history          : 0,
@@ -112,7 +116,8 @@ const status = {
 		rss              : 0,
 		pocket           : 0,
 		search           : 0,
-		spSearch         : 0
+		spSearch         : 0,
+		spSearchCached   : -1
 	}
 };
 
@@ -167,7 +172,25 @@ const data = {
 	favsId             : [],
 	startpage          : [],
 	startpageCurrent   : [],
-	foldedId           : []
+	foldedId           : [],
+	sidebarData        : {
+			'side'     : '',
+			'options'  : null,
+			'data'     : null,
+			'info'     : null,
+			'i18n'     : null,
+			'timeStamp': null
+		},
+	startpageData      : {
+		'sites'         : null,
+		'search'        : null,
+		'searchFolders' : null,
+		'searchQuery'   : null,
+		'domains'       : null,
+		'options'       : null,
+		'i18n'          : null,
+		'timeStamp'     : null
+	}
 };
 
 const options = {
@@ -529,7 +552,8 @@ const options = {
 		searchEnabled  : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['startpage']
+			targets : [],
+			handler : 'searchEnabled'
 		},
 		wikiSearchLang : {
 			value   : 'en',
@@ -978,9 +1002,9 @@ const optionsHandler = {
 		else
 			send(target, 'search', 'hideFolder', {'id': option});
 	},
-	// searchType      : (section, option, newValue) => {
-	// 	const target = section === 'search' ? 'sidebar' : 'startpage';
-	// }
+	searchEnabled    : (section, option, newValue) => {
+		send('startpage', 'options', 'searchEnabled', {'value': newValue, 'searchFolders': data.searchFolders, 'searchQuery': data.searchQuery});
+	}
 };
 
 const messageHandler = {
@@ -3841,10 +3865,20 @@ function initWindow() {
 }
 
 function sideBarData(side) {
-
-	return {
-		'side'     : side,
-		'options'  : {
+	if (status.timeStamp.sidebarCached !== status.timeStamp[side]) {
+		status.timeStamp.sidebarCached = status.timeStamp[side];
+		data.sidebarData.data          = modeData[options[side].mode.value]();
+		data.sidebarData.timeStamp     = status.timeStamp;
+	}
+	if (status.timeStamp.infoCached !== status.timeStamp.info) {
+		status.timeStamp.infoCached = status.timeStamp.info;
+		data.sidebarData.info       = status.info;
+		data.sidebarData.timeStamp  = status.timeStamp;
+	}
+	if (status.timeStamp.optionsCachedSb !== status.timeStamp.options) {
+		status.timeStamp.optionsCachedSb = status.timeStamp.options;
+		data.sidebarData.side            = side;
+		data.sidebarData.options         = {
 			'sidebar'  : optionsShort[side],
 			'warnings' : optionsShort.warnings,
 			'theme'    : optionsShort.theme,
@@ -3861,40 +3895,44 @@ function sideBarData(side) {
 				'pocket'    : optionsShort.services.pocket,
 				'search'    : optionsShort.services.search
 			}
-		},
-		'data'     : modeData[options[side].mode.value](),
-		'info'     : status.info,
-		'i18n'     : {
-						'header' : i18n.header,
-						'mode'   : i18n[options[side].mode.value]
-					 },
-		'timeStamp': status.timeStamp
-	};
+		};
+		data.sidebarData.i18n            = {
+			'header' : i18n.header,
+			'mode'   : i18n[options[side].mode.value]
+		};
+		data.sidebarData.data            = modeData[options[side].mode.value]();
+		data.sidebarData.timeStamp       = status.timeStamp;
+	}
+	return data.sidebarData;
 }
 
 function startpageData() {
-	if (status.timeStamp.startpageCurrent !== status.timeStamp.startpage) {
-		status.timeStamp.startpageCurrent = status.timeStamp.startpage
-		data.startpageCurrent = data.startpage.slice(0, options.startpage.rows.value * options.startpage.columns.value);
-	}
-	if (options.services.startpage.value === true)
-		return {
-			'sites'         : data.startpageCurrent,
-			'search'        : data.spSearch,
-			'searchFolders' : data.spSearchFolders,
-			'searchQuery'   : data.spSearchQuery,
-			'domains'       : data.spSearchDomains,
-			'options' : {
+	if (options.services.startpage.value === true) {
+		if (status.timeStamp.startpageCached !== status.timeStamp.startpage) {
+			status.timeStamp.startpageCached = status.timeStamp.startpage;
+			data.startpageData.sites         = data.startpage.slice(0, options.startpage.rows.value * options.startpage.columns.value);
+			data.startpageData.timeStamp     = status.timeStamp;
+		}
+		if (status.timeStamp.optionsCachedSt !== status.timeStamp.options) {
+			status.timeStamp.optionsCachedSt = status.timeStamp.options;
+			data.startpageData.domains       = data.spSearchDomains;
+			data.startpageData.options       = {
 				'startpage'   : optionsShort.startpage,
 				'search'      : optionsShort.spSearch,
 				'theme'       : optionsShort.theme,
-			},
-			'i18n'          : Object.assign(i18n.startpage, i18n.search),
-			'timeStamp'     : {
-				'startpage'   : status.timeStamp.startpage,
-				'search'      : status.timeStamp.spSearch
-			}
-		};
+			};
+			data.startpageData.i18n          = Object.assign(i18n.startpage, i18n.search);
+			data.startpageData.timeStamp     = status.timeStamp;
+		}
+		if (status.timeStamp.spSearchCached !== status.timeStamp.spSearch) {
+			status.timeStamp.spSearchCached  = status.timeStamp.spSearch;
+			data.startpageData.search        = data.spSearch;
+			data.startpageData.searchFolders = data.spSearchFolders;
+			data.startpageData.searchQuery   = data.spSearchQuery;
+			data.startpageData.timeStamp     = status.timeStamp;
+		}
+		return data.startpageData;
+	}
 	else
 		return {'options' : {'startpage': {'empty': true}}};
 }
