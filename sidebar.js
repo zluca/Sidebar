@@ -304,6 +304,13 @@ function tryToInit() {
 				}
 		}
 
+		if (firefox) {
+			doc.addEventListener('mousedown', event => {
+				if (event.which === 3)
+					send('background', 'set', 'rightClick', '');
+			}, {'passive': true});
+		}
+
 		initSidebar(response);
 	});
 }

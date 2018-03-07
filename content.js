@@ -63,18 +63,19 @@ const status  = {
 
 cleanOldStuff();
 
-const mask    = document.createElement('div');
-mask.id       = 'mask';
-const sidebar = {
+const mask     = document.createElement('div');
+mask.id        = 'mask';
+const sidebar  = {
 	leftBar   : null,
 	rightBar  : null
 };
-let dialog    = null;
+let dialog     = null;
+let rightClick = false;
 
 makeIframe('leftBar');
 makeIframe('rightBar');
 
-let initTimer = -1;
+let initTimer  = -1;
 init();
 
 document.addEventListener('readystatechange', checkDocumentReady);
@@ -176,6 +177,11 @@ const messageHandler = {
 			else if (/\?xml/.test(doc.outerHTML.substring(0, 1000)))
 				rssUrl   = document.location.href;
 			send('background', 'dialog', 'rssUrlConfirmed', {'url': rssUrl, 'title': rssTitle});
+		}
+	},
+	set    : {
+		rightClick : info => {
+			rightClick = true;
 		}
 	}
 };
@@ -302,6 +308,7 @@ function setSideBarFixed(side, value) {
 	};
 
 	const mouseOver = event => {
+		rightClick = false;
 		if (event !== undefined)
 			event.stopPropagation();
 		if (status[side].over === true)
@@ -322,6 +329,8 @@ function setSideBarFixed(side, value) {
 	};
 
 	const mouseLeave = event => {
+		if (rightClick)
+			return;
 		if (event !== undefined)
 			event.stopPropagation();
 		if (status[side].over === false || status[side].resize === true)

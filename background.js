@@ -1106,6 +1106,9 @@ const messageHandler = {
 		hover : (message, sender, sendResponse) => {
 			send(message.data.side, 'set', 'hover', message.data.hover);
 			sendResponse('done');
+		},
+		rightClick : (message, sender, sendResponse) => {
+			send('content', 'set', 'rightClick', '');
 		}
 	},
 
