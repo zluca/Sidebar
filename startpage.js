@@ -267,7 +267,7 @@ function init(response) {
 			if (event.target.parentNode.nodeName === 'UL') {
 				hoveredItem = event.target;
 				siteStyle.textContent =
-					`a.${event.target.dataset.domain}-domain{
+					`.search-folder>a.${event.target.dataset.domain}-domain{
 						border-color:var(--border-color-active);
 						background-color: var(--background-color-active);
 						color: var(--font-color-active);
