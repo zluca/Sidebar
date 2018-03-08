@@ -246,9 +246,11 @@ function init(response) {
 			send('background', 'spSearch', 'changeQuery', subject);
 	}, {'passive': true});
 
-	searchField.addEventListener('keydown', event => {
+	searchField.addEventListener('keyup', event => {
 		if (event.key === 'Enter')
 			letsSearch.click();
+		else if (searchField.value === '')
+			send('background', 'spSearch', 'changeQuery', '');
 		else {
 			setTimeout(_ => {
 				const subject = searchField.value;
