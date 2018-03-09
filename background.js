@@ -14,6 +14,7 @@ const config = {
 	sidebarIcon        : 'icons/sidebar-icon-64.png',
 	rssIcon            : 'icons/rss.svg',
 	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034',
+	searchLength       : 30,
 	searchTypes        : {
 		general   : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'],
 		video     : ['youtube', 'dailymotion', 'vimeo'],
@@ -3424,24 +3425,26 @@ const initService = {
 
 		const target = mode === 'search' ? 'sidebar' : 'startpage';
 
-		const search = (type, query) => {
+		const search = (type, query, page = 0) => {
+
+			console.log(`search; ${type} - ${query} - ${page}`);
 
 			const links   = {
 				duckduckgo      : query => `https://duckduckgo.com/html/?q=${query}`,
-				google          : query => `https://www.google.com/search?&q=${query}`,
-				yandex          : query => `https://yandex.com/search/?text=${query}`,
-				bing            : query => `https://www.bing.com/search?q=${query}`,
-				yahoo           : query => `https://search.yahoo.com/search?p=${query}`,
-				youtube         : query => `https://www.google.com/search?&q=${query} site:www.youtube.com`,
+				google          : query => `https://www.google.com/search?&q=${query}&start=${page * 10}`,
+				yandex          : query => `https://yandex.com/search/?text=${query}&p=${page}`,
+				bing            : query => `https://www.bing.com/search?q=${query}&first=${1 + page * 10}`,
+				yahoo           : query => `https://search.yahoo.com/search?p=${query}&b=${1 + page * 10}`,
+				youtube         : query => `https://www.google.com/search?&q=${query}&start=${page * 10} site:www.youtube.com`,
 				dailymotion     : query => `https://duckduckgo.com/html/?q=${query} site:dailymotion.com`,
-				vimeo           : query => `https://yandex.com/search/?text=${query} site:vimeo.com`,
-				wikipedia       : query => `https://${options.startpage.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1`,
-				mdn             : query => `https://developer.mozilla.org/en/search?q=${query}`,
-				stackoverflow   : query => `https://stackoverflow.com/search?q=${query}`,
-				amazon          : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}`,
-				ebay            : query => `https://www.ebay.com/sch/i.html?_nkw=${query}`,
-				aliexpress      : query => `https://www.aliexpress.com/wholesale?SearchText=${query}`,
-				yandexMarket    : query => `https://market.yandex.by/search?text=${query}`
+				vimeo           : query => `https://yandex.com/search/?text=${query}&p=${page} site:vimeo.com`,
+				wikipedia       : query => `https://${options.startpage.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1&limit=50`,
+				mdn             : query => `https://developer.mozilla.org/en/search?q=${query}&page=${1 + page}`,
+				stackoverflow   : query => `https://stackoverflow.com/search?q=${query}&page=${1 + page}`,
+				amazon          : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}&page=${1 + page}`,
+				ebay            : query => `https://www.ebay.com/sch/i.html?_nkw=${query}&_pgn=${1 + page}`,
+				aliexpress      : query => `https://www.aliexpress.com/wholesale?SearchText=${query}&page=${1 + page}`,
+				yandexMarket    : query => `https://market.yandex.com/search?text=${query}&page=${1 + page}`
 			};
 
 			const resultsSelectors = {
@@ -3725,7 +3728,12 @@ const initService = {
 							items.push(createById(mode, item, 'last'));
 						}
 						if (items.length > 0)
-							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type});
+							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type, 'clean': page === 0});
+						if (page < 5)
+							if (items.length * (1 + page) < config.searchLength)
+								if (type !== 'duckduckgo')
+									if (type !== 'wikipedia')
+										search(type, query, 1 + page);
 					}
 					makeTimeStamp(mode);
 					send(target, 'search', 'update', {'method': 'remove', 'target': type});

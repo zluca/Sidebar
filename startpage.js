@@ -456,7 +456,7 @@ const messageHandler = {
 				setMode('search');
 			const index = data.searchFoldersId.indexOf(info.target);
 			if (index === -1) return;
-			insertSearchItems(info.items, true);
+			insertSearchItems(info.items, info.clean);
 		},
 		changeQuery  : info => {
 			searchField.value = info;
