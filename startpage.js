@@ -296,9 +296,10 @@ function insertFinisher() {
 }
 
 function insertSearchItems(info, clean) {
-	let folder = null;
-	let pid    = -1;
-	const makeItem = {
+	let folder         = null;
+	let pid            = -1;
+	let alreadyCleaned = [];
+	const makeItem     = {
 		general : item => dceamd('a', folder,
 			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
 			[['url', item.url], ['domain', item.domain]]),
@@ -312,6 +313,7 @@ function insertSearchItems(info, clean) {
 			[['innerHTML', `<b>${item.price}</b><p>${item.title}</p>`], ['href', item.url], ['title', `${item.price}\n\n${item.title}`], ['classList', `${item.domain}-domain search item`]],
 			[['url', item.url], ['domain', item.domain]]).style.backgroundImage = `url(${item.img}`
 	};
+
 	for (let i = 0, l = info.length; i < l; i++) {
 		if (pid !== info[i].type) {
 			const index = data.searchFoldersId.indexOf(info[i].type);
@@ -319,8 +321,11 @@ function insertSearchItems(info, clean) {
 			pid         = data.searchFoldersId[index];
 			folder      = data.searchFolders[index];
 			if (clean === true)
-				while (folder.hasChildNodes())
-					folder.removeChild(folder.firstChild);
+				if (alreadyCleaned.indexOf(pid) === -1) {
+					alreadyCleaned.push(pid);
+					while (folder.hasChildNodes())
+						folder.removeChild(folder.firstChild);
+				}
 		}
 		makeItem[options.search.type](info[i]);
 	}
@@ -521,12 +526,12 @@ function initSearch(folders, query = '') {
 	data.searchFoldersId = [];
 	data.searchFolders   = [];
 
+	searchField.value    = query;
+
 	if (options.startpage.searchEnabled === false)
 		return search.style.display = 'none';
 	else
 		search.style.display = 'grid';
-
-	searchField.value    = query;
 
 	for (let i = 0; i < folders.length; i++)
 		insertSearchFolder(folders[i]);

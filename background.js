@@ -3427,8 +3427,6 @@ const initService = {
 
 		const search = (type, query, page = 0) => {
 
-			console.log(`search; ${type} - ${query} - ${page}`);
-
 			const links   = {
 				duckduckgo      : query => `https://duckduckgo.com/html/?q=${query}`,
 				google          : query => `https://www.google.com/search?&q=${query}&start=${page * 10}`,
@@ -3719,17 +3717,21 @@ const initService = {
 						doc.innerHTML = html;
 						let items = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
+						const folder = getFolderById(mode, type);
 						for (let i = 0, l = results.length; i < l; i++) {
+							const realId = `${page}${i}`;
 							const item = makeItem[type](results[i]);
+							if (folder.itemsId.length >= config.searchLength)
+								break;
 							if (item === false)
 								continue;
-							item.id    = `${type}-${i}`;
+							item.id    = `${type}-${realId}`;
 							item.type  = type;
 							items.push(createById(mode, item, 'last'));
 						}
 						if (items.length > 0)
 							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type, 'clean': page === 0});
-						if (page < 5)
+						if (page < 4)
 							if (items.length * (1 + page) < config.searchLength)
 								if (type !== 'duckduckgo')
 									if (type !== 'wikipedia')
@@ -3756,6 +3758,8 @@ const initService = {
 			data[`${mode}Query`]     = '';
 			data[mode]               = [];
 			data[`${mode}Id`]        = [];
+			for(let i = data[`${mode}Folders`].length - 1; i >= 0; i--)
+				data[`${mode}Folders`][i].itemsId = [];
 		};
 
 		if (start === true) {
@@ -3828,6 +3832,7 @@ const initService = {
 				},
 				changeQuery : (message, sender, sendResponse) => {
 					data[`${mode}Query`] = message.data;
+					makeTimeStamp(mode);
 					send(target, 'search', 'changeQuery', message.data);
 					if (mode === 'spSearch')
 						if (message.data === '')
