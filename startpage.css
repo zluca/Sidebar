@@ -26,8 +26,9 @@ body {
 	background-clip: border-box;
 	padding: var(--padding);
 	width: auto;
-	height: 100vh;
-	overflow: hidden;
+	min-height: 100vh;
+	overflow-x: hidden;
+	overflow-y: scroll;
 	box-sizing: border-box;
 	margin: 0;
 	display: grid;
