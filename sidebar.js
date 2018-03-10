@@ -510,6 +510,7 @@ const initBlock = {
 				status.activeTab = getById(info);
 				if (status.activeTab === false) return;
 				status.activeTab.classList.add('active');
+				status.activeTab.classList.remove('tab-unreaded');
 				if (options.misc.tabsMode === 'domain')
 					status.activeTab.parentNode.parentNode.firstChild.classList.add('active');
 			},
@@ -654,6 +655,7 @@ const initBlock = {
 				}
 				classList += tabs[i].pinned    ? ' pinned'    : '';
 				classList += tabs[i].discarded ? ' discarded' : '';
+				classList += tabs[i].readed    ? '' : ' tab-unreaded';
 				tab.classList = classList;
 				postProcess[options.misc.tabsMode](i);
 			}

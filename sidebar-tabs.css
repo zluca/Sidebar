@@ -35,6 +35,10 @@
 	display: none;
 }
 
+.item.tab-unreaded {
+	font-style: italic;
+}
+
 .plain .item.pinned #tabs-unpin,
 .plain .item #tabs-move,
 .domain .item #tabs-move,

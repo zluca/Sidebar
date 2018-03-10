@@ -1731,6 +1731,7 @@ const initService = {
 			const tab = getById('tabs', tabInfo.tabId);
 			if (tab === false) return;
 			status.activeTabsIds[status.activeWindow]  = tabInfo.tabId;
+			tab.readed = true;
 			makeTimeStamp('tabs');
 			reInit(tabInfo.tabId);
 			if (options.services.startpage.value === true)
@@ -1824,6 +1825,7 @@ const initService = {
 				if (item.active === true)
 					status.activeTabsIds[item.windowId] = item.id;
 				newItem.domain     = domain.id;
+				newItem.readed     = status.init.tabs ? item.active ? true : false : true;
 				newItem.pinned     = item.pinned;
 				newItem.index      = item.index;
 				newItem.status     = item.status;
