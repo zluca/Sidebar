@@ -175,12 +175,12 @@ const data = {
 	startpageCurrent   : [],
 	foldedId           : [],
 	sidebarData        : {
-			'side'     : '',
-			'options'  : null,
-			'data'     : null,
-			'info'     : null,
-			'i18n'     : null,
-			'timeStamp': null
+		'side'     : '',
+		'options'  : null,
+		'data'     : null,
+		'info'     : null,
+		'i18n'     : null,
+		'timeStamp': null
 		},
 	startpageData      : {
 		'sites'         : null,
@@ -651,28 +651,28 @@ const options = {
 			handler : 'searchEngine'
 		},
 		google     : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'general',
 			targets : [],
 			handler : 'searchEngine'
 		},
 		yandex     : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'general',
 			targets : [],
 			handler : 'searchEngine'
 		},
 		bing       : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'general',
 			targets : [],
 			handler : 'searchEngine'
 		},
 		yahoo      : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'general',
 			targets : [],
@@ -686,14 +686,14 @@ const options = {
 			handler : 'searchEngine'
 		},
 		dailymotion: {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'video',
 			targets : [],
 			handler : 'searchEngine'
 		},
 		vimeo      : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'video',
 			targets : [],
@@ -707,14 +707,14 @@ const options = {
 			handler : 'searchEngine'
 		},
 		mdn        : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'dev',
 			targets : [],
 			handler : 'searchEngine'
 		},
 		stackoverflow : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'dev',
 			targets : [],
@@ -728,21 +728,21 @@ const options = {
 			handler : 'searchEngine'
 		},
 		ebay       : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'buy',
 			targets : [],
 			handler : 'searchEngine'
 		},
 		aliexpress : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'buy',
 			targets : [],
 			handler : 'searchEngine'
 		},
 		yandexMarket : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'buy',
 			targets : [],
@@ -3435,9 +3435,9 @@ const initService = {
 				yandex          : query => `https://yandex.com/search/?text=${query}&p=${page}`,
 				bing            : query => `https://www.bing.com/search?q=${query}&first=${1 + page * 10}`,
 				yahoo           : query => `https://search.yahoo.com/search?p=${query}&b=${1 + page * 10}`,
-				youtube         : query => `https://www.google.com/search?&q=${query}&start=${page * 10} site:www.youtube.com`,
+				youtube         : query => `https://www.google.com/search?&q=${query} site:www.youtube.com&start=${page * 10}`,
 				dailymotion     : query => `https://duckduckgo.com/html/?q=${query} site:dailymotion.com`,
-				vimeo           : query => `https://yandex.com/search/?text=${query}&p=${page} site:vimeo.com`,
+				vimeo           : query => `https://yandex.com/search/?text=${query} site:vimeo.com&p=${page}`,
 				wikipedia       : query => `https://${options.startpage.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1&limit=50`,
 				mdn             : query => `https://developer.mozilla.org/en/search?q=${query}&page=${1 + page}`,
 				stackoverflow   : query => `https://stackoverflow.com/search?q=${query}&page=${1 + page}`,
@@ -3703,6 +3703,15 @@ const initService = {
 				return body;
 			};
 
+			const captcha     = searchLink => [{
+				id          : `${type}-captcha`,
+				type        : type,
+				pid         : type,
+				url         : searchLink,
+				title       : i18n.search.captchaTitle,
+				description : i18n.search.captchaDescription,
+			}];
+
 			const xhttp       = new XMLHttpRequest();
 			const searchLink  = links[type](query);
 			const folder      = getFolderById(mode, type);
@@ -3717,9 +3726,9 @@ const initService = {
 						const doc     = document.createElement('html');
 						const html    = cleanse(xhttp.responseText).replace(/src=/ig, 'data-src=').replace(/image-src=/ig, 'data-src=').replace(/srcset=/ig, 'data-srcset=');
 						doc.innerHTML = html;
-						let items = [];
+						let items     = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
-						const folder = getFolderById(mode, type);
+						const folder  = getFolderById(mode, type);
 						for (let i = 0, l = results.length; i < l; i++) {
 							const realId = `${page}${i}`;
 							const item = makeItem[type](results[i]);
@@ -3733,6 +3742,9 @@ const initService = {
 						}
 						if (items.length > 0)
 							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type, 'clean': page === 0});
+						else if (page === 0)
+							// items;
+							return send(target, 'search', 'newItems', {'items': captcha(searchLink), 'searchLink': searchLink, 'target': type, 'clean': true});
 						if (page < 4)
 							if (items.length * (1 + page) < config.searchLength)
 								if (type !== 'duckduckgo')
@@ -3818,11 +3830,14 @@ const initService = {
 				generalPlaceholder   : getI18n('searchGeneralPlaceholder'),
 				videoPlaceholder     : getI18n('searchVideoPlaceholder'),
 				devPlaceholder       : getI18n('searchGeneralPlaceholder'),
-				buyPlaceholder       : getI18n('searchBuyPlaceholder')
+				buyPlaceholder       : getI18n('searchBuyPlaceholder'),
+				captchaTitle         : getI18n('searchCaptchaTitle'),
+				captchaDescription   : getI18n('searchCaptchaDescription')
 			};
 
 			messageHandler[mode]    = {
 				query   : (message, sender, sendResponse) => {
+					makeTimeStamp(mode);
 					if (mode === 'spSearch')
 						if (options.startpage.mode.value === 'sites')
 							setOption('startpage', 'mode', 'search', true);
@@ -3833,8 +3848,8 @@ const initService = {
 							search(config.searchTypes[options[mode].type.value][i], data[`${mode}Query`]);
 				},
 				changeQuery : (message, sender, sendResponse) => {
-					data[`${mode}Query`] = message.data;
 					makeTimeStamp(mode);
+					data[`${mode}Query`] = message.data;
 					send(target, 'search', 'changeQuery', message.data);
 					if (mode === 'spSearch')
 						if (message.data === '')

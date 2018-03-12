@@ -13,7 +13,7 @@ const status  = {
 	dragging            : false,
 	timeStamp           : {
 		startpage : 0,
-		search    : 0
+		spSearch  : 0
 	}
 };
 
@@ -55,7 +55,7 @@ function tryToInit() {
 
 function init(response) {
 
-	// console.log(response);
+	console.log(response);
 	let lastSearch           = '';
 	let hoveredItem          = null;
 	options                  = response.options;
@@ -78,16 +78,15 @@ function init(response) {
 	dce('span', editButton);
 	const placeholder        = dcea('section', document.body, ['id', 'placeholder']);
 
+	initSites(response.sites);
 	initSearch(response.searchFolders, response.searchQuery);
-	insertSearchItems(response.search, true);
+	if (options.startpage.mode === 'search')
+		insertSearchItems(response.search, true);
 	setStyle();
 	setColor(options.theme);
 	setBackground();
 	setImageStyle[options.startpage.imageStyle]();
 	setDomainsStyles.rewrite(response.domains);
-	setSearchType();
-
-	initSites(response.sites);
 
 	setMode();
 
@@ -301,7 +300,7 @@ function insertSearchItems(info, clean) {
 	let alreadyCleaned = [];
 	const makeItem     = {
 		general : item => dceamd('a', folder,
-			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
+			[['innerHTML', item.title], ['href', item.url], ['title', `${item.description}\n\n${item.url}`], ['classList', `${item.domain}-domain search item`]],
 			[['url', item.url], ['domain', item.domain]]),
 		dev     : item => dceamd('a', folder,
 			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
@@ -340,9 +339,6 @@ function insertSearchFolder(item) {
 
 const messageHandler = {
 	options : {
-		searchType            : info => {
-			setSearchType(info.value);
-		},
 		backgroundColor       : info => {
 			setColor({'backgroundColor': info.value});
 		},
@@ -451,22 +447,22 @@ const messageHandler = {
 		}
 	},
 	search  : {
-		update     : info => {
+		update      : info => {
 			const index = data.searchFoldersId.indexOf(info.target);
 			if (index === -1) return;
 			data.searchFolders[index].classList[info.method]('loading');
 		},
 		newItems    : info => {
-			if (options.startpage.mode !== 'search')
-				setMode('search');
 			const index = data.searchFoldersId.indexOf(info.target);
 			if (index === -1) return;
 			insertSearchItems(info.items, info.clean);
+			if (info.clean)
+				data.searchHeaders[index].firstChild.href = info.searchLink;
 		},
 		changeQuery  : info => {
 			searchField.value = info;
 		},
-		showFolder    : info => {
+		showFolder   : info => {
 			const index = data.searchFoldersId.indexOf(info.id);
 			if (index === -1) return;
 			data.searchFolders[index].classList.remove('hidden');
@@ -496,13 +492,15 @@ const messageHandler = {
 						initSearch(info.searchFolders, info.searchQuery);
 						break;
 					}
-			if (info.timeStamp.search !== status.timeStamp.search) {
+			if (info.timeStamp.spSearch !== status.timeStamp.spSearch) {
 				initSearch(info.searchFolders, info.searchQuery);
-				status.timeStamp.search = info.timeStamp.search;
+				if (options.startpage.mode === 'search')
+					insertSearchItems(info.search, true);
+				status.timeStamp.spSearch = info.timeStamp.spSearch;
 			}
 			if (info.timeStamp.startpage !== status.timeStamp.startpage) {
 				initSites(info.sites);
-				setMode();
+				status.timeStamp.startpage = info.timeStamp.startpage;
 			}
 		}
 	}
@@ -526,7 +524,7 @@ function initSearch(folders, query = '') {
 	data.searchFoldersId = [];
 	data.searchFolders   = [];
 
-	searchField.value    = query;
+	searchField.value    = options.startpage.mode === 'search' ? query : '';
 
 	if (options.startpage.searchEnabled === false)
 		return search.style.display = 'none';
@@ -535,6 +533,7 @@ function initSearch(folders, query = '') {
 
 	for (let i = 0; i < folders.length; i++)
 		insertSearchFolder(folders[i]);
+	setSearchType();
 }
 
 function setDomainStyle(item) {
@@ -624,7 +623,7 @@ function setBackground(image) {
 function setMode(value) {
 	if (value !== undefined)
 		options.startpage.mode = value;
-	doc.classList = options.startpage.mode;
+	doc.classList     = options.startpage.mode;
 }
 
 const setImageStyle = {

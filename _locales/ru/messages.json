@@ -702,6 +702,14 @@
 		"message"       : "Яндекс Маркет",
 		"description"   : ""
 	},
+	"searchCaptchaTitle" : {
+		"message"       : "Капча!",
+		"description"   : ""
+	},
+	"searchCaptchaDescription" : {
+		"message"       : "Пожалуйста, пройдите по ссылке для прохождения капчи",
+		"description"   : ""
+	},
 
 	"dialogConfirmationTitle" : {
 		"message"       : "Требуется подтверждение",

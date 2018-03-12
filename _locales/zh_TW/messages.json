@@ -706,6 +706,14 @@
 		"message"       : "Yandex Market",
 		"description"   : ""
 	},
+	"searchCaptchaTitle" : {
+		"message"       : "Captcha detected",
+		"description"   : ""
+	},
+	"searchCaptchaDescription" : {
+		"message"       : "Please follow the link to pass captcha manually",
+		"description"   : ""
+	},
 
 	"dialogConfirmationTitle" : {
 		"message"       : "需要確認",
