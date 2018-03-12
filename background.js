@@ -3002,6 +3002,7 @@ const initService = {
 			const links  = {
 				add       : 'https://getpocket.com/v3/add',
 				get       : 'https://getpocket.com/v3/get',
+				sync      : 'https://getpocket.com/v3/get',
 				check     : 'https://getpocket.com/v3/get',
 				fav       : 'https://getpocket.com/v3/send',
 				unfav     : 'https://getpocket.com/v3/send',
@@ -3020,6 +3021,13 @@ const initService = {
 					'title'        : info.title,
 				},
 				get      : {
+					'consumer_key' : config.pocketConsumerKey,
+					'access_token' : options.pocket.accessToken.value,
+					'detailType'   : 'complete',
+					'state'        : 'all',
+					'since'        : 0
+				},
+				sync     : {
 					'consumer_key' : config.pocketConsumerKey,
 					'access_token' : options.pocket.accessToken.value,
 					'detailType'   : 'complete',
@@ -3074,6 +3082,10 @@ const initService = {
 						pocketRequest('check', response.item.item_id);
 				},
 				get    : response => {
+					parsePockets(response);
+				},
+				sync   : response => {
+					resetPocket(true);
 					parsePockets(response);
 				},
 				check  : response => {
@@ -3217,7 +3229,7 @@ const initService = {
 			status.init.pocket     = true;
 		};
 
-		const resetPocket = update => {
+		const resetPocket = (warn = false) => {
 			data.pocket          = [];
 			data.pocketId        = [];
 			data.pocketFolders   = [
@@ -3270,12 +3282,15 @@ const initService = {
 			data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other', 'archives'];
 			saveNow('pocket');
 			saveNow('pocketFolders');
+			if (warn)
+				send('sidebar', 'pocket', 'reset', {'folders': data.pocketFolders});
+		};
+
+		const logout     = _ => {
+			resetPocket();
 			setOption('pocket', 'auth', false, false);
 			setOption('pocket', 'username', '', false);
-			status.init.pocket   = true;
-			// 
-			if (update === true)
-				send('sidebar', 'pocket', 'logout', {'folders': data.pocketFolders});
+			send('sidebar', 'pocket', 'logout', {'folders': data.pocketFolders});
 		};
 
 		const detectType = pocket => {
@@ -3348,7 +3363,7 @@ const initService = {
 					pocketRequest('request');
 				},
 				logout    : (message, sender, sendResponse) => {
-					resetPocket(true);
+					logout();
 				},
 				add       : (message, sender, sendResponse) => {
 					pocketRequest('add', message.data);
@@ -3381,7 +3396,7 @@ const initService = {
 							pocketRequest('delete', domain.itemsId[i]);
 				},
 				reloadAll : (message, sender, sendResponse) => {
-					pocketRequest('get');
+					pocketRequest('sync');
 				},
 				move      : (message, sender, sendResponse) => {
 					const oldIndex = data.pocketFoldersId.indexOf(message.data.id);
@@ -3406,8 +3421,10 @@ const initService = {
 
 			if (options.pocket.auth.value === true)
 				execMethod(brauzer.storage.local.get, getPocket, ['pocket', 'pocketId', 'pocketFolders', 'pocketFoldersId']);
-			else
-				resetPocket(false);
+			else {
+				resetPocket();
+				status.init.pocket = true;
+			}
 		}
 		else {
 			i18n.pocket           = {};

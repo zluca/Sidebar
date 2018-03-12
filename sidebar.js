@@ -1237,7 +1237,10 @@ const initBlock = {
 			logout       : info => {
 				options.pocket.auth = false;
 				block.classList.add('logout');
-				clearData('pocket');
+				clearData();
+			},
+			reset        : info => {
+				setView(options.misc.pocketMode, [], info.folders);
 			},
 			fav          : info => {
 				const pocket = getById(info);
