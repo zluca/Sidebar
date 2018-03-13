@@ -11,6 +11,7 @@ const status  = {
 	siteSettingsChanged : false,
 	bigFontSize         : 0,
 	dragging            : false,
+	activeFolders       : 0,
 	timeStamp           : {
 		startpage : 0,
 		spSearch  : 0
@@ -55,7 +56,7 @@ function tryToInit() {
 
 function init(response) {
 
-	console.log(response);
+	// console.log(response);
 	let lastSearch           = '';
 	let hoveredItem          = null;
 	options                  = response.options;
@@ -330,13 +331,6 @@ function insertSearchItems(info, clean) {
 	}
 }
 
-function insertSearchFolder(item) {
-	data.searchFoldersId.push(item.id);
-	data.searchFolders.push(dcea('ul', searchResults, ['classList', `search-folder mode-${item.mode} ${item.hidden === true ? 'hidden' : ''}`]));
-	const length = data.searchHeaders.push(dcea('h2', searchNav, ['classList', `mode-${item.mode} ${item.hidden === true ? 'hidden' : ''}`]));
-	dceam('a', data.searchHeaders[length - 1], [['href', item.searchLink || ''], ['classList', `domain-${item.id}`], ['textContent', item.title]]);
-}
-
 const messageHandler = {
 	options : {
 		backgroundColor       : info => {
@@ -467,12 +461,16 @@ const messageHandler = {
 			if (index === -1) return;
 			data.searchFolders[index].classList.remove('hidden');
 			data.searchHeaders[index].classList.remove('hidden');
+			status.activeFolders++;
+			setSearchWidth();
 		},
 		hideFolder : info => {
 			const index = data.searchFoldersId.indexOf(info.id);
 			if (index === -1) return;
 			data.searchFolders[index].classList.add('hidden');
 			data.searchHeaders[index].classList.add('hidden');
+			status.activeFolders--;
+			setSearchWidth();
 		}
 	},
 	reInit  : {
@@ -490,6 +488,7 @@ const messageHandler = {
 					if (info.options.search[option] !== options.search[option]) {
 						options.search = info.options.search;
 						initSearch(info.searchFolders, info.searchQuery);
+						insertSearchItems(info.search, true);
 						break;
 					}
 			if (info.timeStamp.spSearch !== status.timeStamp.spSearch) {
@@ -521,9 +520,11 @@ function initSearch(folders, query = '') {
 		searchResults.removeChild(searchResults.firstChild);
 		searchNav.removeChild(searchNav.firstChild);
 	}
+
 	data.searchFoldersId = [];
 	data.searchFolders   = [];
-
+	data.searchHeaders   = [];
+	status.activeFolders = 0;
 	searchField.value    = options.startpage.mode === 'search' ? query : '';
 
 	if (options.startpage.searchEnabled === false)
@@ -531,8 +532,15 @@ function initSearch(folders, query = '') {
 	else
 		search.style.display = 'grid';
 
-	for (let i = 0; i < folders.length; i++)
-		insertSearchFolder(folders[i]);
+	for (let i = 0, l = folders.length; i < l; i++) {
+		data.searchFoldersId.push(folders[i].id);
+		data.searchFolders.push(dcea('ul', searchResults, ['classList', `search-folder mode-${folders[i].mode} ${folders[i].hidden ? 'hidden' : ''}`]));
+		data.searchHeaders.push(dcea('h2', searchNav, ['classList', `mode-${folders[i].mode} ${folders[i].hidden ? 'hidden' : ''}`]));
+		dceam('a', data.searchHeaders[i], [['href', folders[i].searchLink || ''], ['classList', `domain-${folders[i].id}`], ['textContent', folders[i].title]]);
+		if (!folders[i].hidden && folders[i].mode === options.search.type)
+			status.activeFolders++;
+	}
+	setSearchWidth();
 	setSearchType();
 }
 
@@ -566,6 +574,20 @@ function setSearchType(type) {
 	searchOptions.title       = i18n[`type${options.search.type}`];
 	searchField.placeholder   = i18n[`${options.search.type}Placeholder`];
 	document.body.classList   = options.search.type;
+}
+
+function setSearchWidth() {
+	switch (status.activeFolders) {
+		case 1:
+			searchContainer.style.maxWidth = '33%';
+			break;
+		case 2:
+			searchContainer.style.maxWidth = '66%';
+			break;
+		default:
+			searchContainer.style.maxWidth = '100%';
+			break;
+		}
 }
 
 function setSiteProperties(target, site) {

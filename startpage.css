@@ -61,6 +61,7 @@ main {
 	height: auto;
 	margin-bottom: var(--marginV);
 	width: 100%;
+	margin: 0 auto;
 }
 	#search-results {
 		display: table-row;
