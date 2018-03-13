@@ -136,6 +136,9 @@ const messageHandler = {
 			reInitSide('leftBar');
 			reInitSide('rightBar');
 
+			if (dialog !== null)
+				document.body.removeChild(dialog);
+
 			if (options.theme.fontSize !== info.theme.fontSize) {
 				options.theme.fontSize = info.theme.fontSize;
 				if (options.leftBar.method === 'iframe')
