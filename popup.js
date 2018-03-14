@@ -13,9 +13,15 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 		rightBar : response.rightBar.value
 	};
 
+	const extensionUrl = firefox ? 'https://addons.mozilla.org/en-US/firefox/addon/sidebar_plus/' : 'https://chrome.google.com/webstore/detail/sidebar%20/dnafkfkoknddnkdajibiigkopoelnhei?hl=en';
+
 	const getI18n = (message, subs) => {
 		return brauzer.i18n.getMessage(message, subs);
 	};
+
+	const send = (target, subject, action, data = {}) => {
+		brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': data});
+	}
 
 	const createInputRow = (form, side, method) => {
 		const input          = document.createElement('input');
@@ -54,18 +60,32 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 	};
 
 	const buttonEvents = {
+		share     : event => {
+			p.classList.toggle('share');
+		},
 		options   : event => {
-			event.stopPropagation();
 			brauzer.runtime.openOptionsPage();
 		},
 		home      : event => {
-			brauzer.runtime.sendMessage({'target': 'background', 'subject': 'tabs', 'action': 'new', 'data': {'url': 'https://github.com/zluca/Sidebar'}});
+			send('background', 'tabs', 'new', {'url': 'https://github.com/zluca/Sidebar'});
 		},
 		translate : event => {
-			brauzer.runtime.sendMessage({'target': 'background', 'subject': 'tabs', 'action': 'new', 'data': {'url': 'https://github.com/zluca/Sidebar/blob/master/CONTRIBUTING.md'}});
+			send('background', 'tabs', 'new', {'url': 'https://github.com/zluca/Sidebar/blob/master/CONTRIBUTING.md'});
 		},
 		rate      : event => {
-			brauzer.runtime.sendMessage({'target': 'background', 'subject': 'tabs', 'action': 'new', 'data': {'url': firefox ? 'https://addons.mozilla.org/en-US/firefox/addon/sidebar_plus/' : 'https://chrome.google.com/webstore/detail/sidebar%20/dnafkfkoknddnkdajibiigkopoelnhei?hl=en'}});
+			send('background', 'tabs', 'new', {'url': extensionUrl});
+		},
+		facebook  : event => {
+			send('background', 'tabs', 'new', {'url': `https://www.facebook.com/sharer/sharer.php?u=${extensionUrl}`, 'newWindow': false});
+		},
+		vkontakte : event => {
+			send('background', 'tabs', 'new', {'url': `http://vk.com/share.php?url=${extensionUrl}&title=${getI18n('extDescription')}`, 'newWindow': false});
+		},
+		twitter   : event => {
+			send('background', 'tabs', 'new', {'url': `https://twitter.com/share?url=${extensionUrl}&text=${getI18n('extDescription')}`, 'newWindow': false});
+		},
+		googlePlus: event => {
+			send('background', 'tabs', 'new', {'url': ` https://plus.google.com/share?url=${extensionUrl}`, 'newWindow': false});
 		}
 	};
 
@@ -74,18 +94,23 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 		button.id     = name;
 		button.title  = getI18n(`popupButton${name}Title`);
 		button.addEventListener('click', buttonEvents[name]);
-		return button;
+		p.appendChild(button);
 	};
 
 	const container = document.createElement('main');
+	const p         = document.createElement('p');
 	container.id    = 'container';
 	createForm('leftBar');
 	createForm('rightBar');
-	const p         = document.createElement('p');
-	p.appendChild(createButton('rate'));
-	p.appendChild(createButton('translate'));
-	p.appendChild(createButton('home'));
-	p.appendChild(createButton('options'));
+	createButton('rate');
+	createButton('translate');
+	createButton('home');
+	createButton('options');
+	createButton('facebook');
+	createButton('vkontakte');
+	createButton('twitter');
+	createButton('googlePlus');
+	createButton('share');
 	container.appendChild(p);
 	document.body.appendChild(container);
 

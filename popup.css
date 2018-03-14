@@ -44,28 +44,59 @@ main {
 			user-select: none;
 			moz-user-select: none;
 		}
-	main>p>span {
-		display: inline-block;
-		width: 1.8rem;
-		height: 1.8rem;
-		padding: 0;
-		margin: 0 .8rem 0 0;
-		border: none;
-		background-size: 100% 100%;
-		background-repeat: no-repeat;
-		cursor: pointer;
-		user-select: none;
-		moz-user-select: none;
-	}
-	#options {
-		background-image: url(/icons/options.svg);
-	}
-	#home {
-		background-image: url(/icons/home.svg);
-	}
-	#rate {
-		background-image: url(/icons/fav.svg);
-	}
-	#translate {
-		background-image: url(/icons/helpTranslate.svg);
-	}
+			main>p>span {
+				display: inline-block;
+				width: 1.8rem;
+				height: 1.8rem;
+				padding: 0;
+				margin: 0 .8rem 0 0;
+				border: none;
+				background-size: 100% 100%;
+				background-repeat: no-repeat;
+				cursor: pointer;
+				user-select: none;
+				moz-user-select: none;
+			}
+			#share {
+				background-image: url(/icons/share.svg);
+			}
+			#options {
+				background-image: url(/icons/options.svg);
+			}
+			#home {
+				background-image: url(/icons/home.svg);
+			}
+			#rate {
+				background-image: url(/icons/fav.svg);
+			}
+			#translate {
+				background-image: url(/icons/helpTranslate.svg);
+			}
+			#facebook {
+				display: none;
+				background-image: url(/icons/facebook.svg);
+			}
+			#vkontakte {
+				display: none;
+				background-image: url(/icons/vkontakte.svg);
+			}
+			#twitter {
+				display: none;
+				background-image: url(/icons/twitter.svg);
+			}
+			#googlePlus {
+				display: none;
+				background-image: url(/icons/googlePlus.svg);
+			}
+			.share>#options,
+			.share>#translate,
+			.share>#home,
+			.share>#rate {
+				display: none;
+			}
+			.share>#facebook,
+			.share>#vkontakte,
+			.share>#twitter,
+			.share>#googlePlus {
+				display: inline-block;
+			}

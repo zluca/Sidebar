@@ -566,6 +566,26 @@
 		"message"       : "Настройки",
 		"description"   : ""
 	},
+	"popupButtonShareTitle" : {
+		"message"       : "Поделиться",
+		"description"   : ""
+	},
+	"popupButtonFacebookTitle" : {
+		"message"       : "Facebook",
+		"description"   : ""
+	},
+	"popupButtonVkontakteTitle" : {
+		"message"       : "Вконтакте",
+		"description"   : ""
+	},
+	"popupButtonTwitterTitle" : {
+		"message"       : "Twitter",
+		"description"   : ""
+	},
+	"popupButtonGooglePlusTitle" : {
+		"message"       : "Google+",
+		"description"   : ""
+	},
 
 	"notificationRssErrorTitle" : {
 		"message"       : "Ошибка RSS",

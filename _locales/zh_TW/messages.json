@@ -570,6 +570,26 @@
 		"message"       : "選項",
 		"description"   : ""
 	},
+	"popupButtonShareTitle" : {
+		"message"       : "Share",
+		"description"   : ""
+	},
+	"popupButtonFacebookTitle" : {
+		"message"       : "Facebook",
+		"description"   : ""
+	},
+	"popupButtonVkontakteTitle" : {
+		"message"       : "Vkontakte",
+		"description"   : ""
+	},
+	"popupButtonTwitterTitle" : {
+		"message"       : "Twitter",
+		"description"   : ""
+	},
+	"popupButtonGooglePlusTitle" : {
+		"message"       : "Google+",
+		"description"   : ""
+	},
 
 	"notificationRssErrorTitle" : {
 		"message"       : "RSS 錯誤",
