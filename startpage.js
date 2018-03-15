@@ -252,13 +252,11 @@ function init(response) {
 		else if (searchField.value === '')
 			send('background', 'spSearch', 'changeQuery', '');
 		else {
-			setTimeout(_ => {
-				const subject = searchField.value;
-				if (subject !== lastSearch) {
-					lastSearch = subject;
-					send('background', 'spSearch', 'changeQuery', subject);
-				}
-			}, 10);
+			const subject = searchField.value;
+			if (subject !== lastSearch) {
+				lastSearch = subject;
+				send('background', 'spSearch', 'changeQuery', subject);
+			}
 		}
 	}, {'passive': true});
 

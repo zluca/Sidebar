@@ -3867,7 +3867,6 @@ const initService = {
 				changeQuery : (message, sender, sendResponse) => {
 					makeTimeStamp(mode);
 					data[`${mode}Query`] = message.data;
-					send(target, 'search', 'changeQuery', message.data);
 					if (mode === 'spSearch')
 						if (message.data === '')
 							setOption('startpage', 'mode', 'sites', true);
