@@ -44,30 +44,6 @@
 		"message"       : "Desafixar esta vista",
 		"description"   : ""
 	},
-	"sbControlsTabsTitle" : {
-		"message"       : "Separadores",
-		"description"   : ""
-	},
-	"sbControlsBookmarksTitle" : {
-		"message"       : "Marcadores",
-		"description"   : ""
-	},
-	"sbControlsHistoryTitle" : {
-		"message"       : "Histórico",
-		"description"   : ""
-	},
-	"sbControlsDownloadsTitle" : {
-		"message"       : "Downloads",
-		"description"   : ""
-	},
-	"sbControlsRssTitle" : {
-		"message"       : "RSS",
-		"description"   : ""
-	},
-	"sbControlsPocketTitle" : {
-		"message"       : "Pocket",
-		"description"   : ""
-	},
 
 	"tabsNew" : {
 		"message"       : "Criar novo separador",
@@ -346,6 +322,10 @@
 	},
 	"optServicesPocketLabel" : {
 		"message"       : "Pocket",
+		"description"   : ""
+	},
+	"optServicesSearchLabel" : {
+		"message"       : "Search",
 		"description"   : ""
 	},
 

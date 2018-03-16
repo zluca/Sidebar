@@ -44,30 +44,6 @@
 		"message"       : "取消釘選此檢視",
 		"description"   : ""
 	},
-	"sbControlsTabsTitle" : {
-		"message"       : "分頁",
-		"description"   : ""
-	},
-	"sbControlsBookmarksTitle" : {
-		"message"       : "書籤",
-		"description"   : ""
-	},
-	"sbControlsHistoryTitle" : {
-		"message"       : "歷史",
-		"description"   : ""
-	},
-	"sbControlsDownloadsTitle" : {
-		"message"       : "下載",
-		"description"   : ""
-	},
-	"sbControlsRssTitle" : {
-		"message"       : "RSS",
-		"description"   : ""
-	},
-	"sbControlsPocketTitle" : {
-		"message"       : "Pocket",
-		"description"   : ""
-	},
 
 	"tabsNew" : {
 		"message"       : "建立新分頁",
@@ -346,6 +322,10 @@
 	},
 	"optServicesPocketLabel" : {
 		"message"       : "Pocket",
+		"description"   : ""
+	},
+	"optServicesSearchLabel" : {
+		"message"       : "Search",
 		"description"   : ""
 	},
 

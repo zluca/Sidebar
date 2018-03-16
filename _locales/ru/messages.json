@@ -44,30 +44,6 @@
 		"message"       : "Открепить панель",
 		"description"   : ""
 	},
-	"sbControlsTabsTitle" : {
-		"message"       : "Вкладки",
-		"description"   : ""
-	},
-	"sbControlsBookmarksTitle" : {
-		"message"       : "Закладки",
-		"description"   : ""
-	},
-	"sbControlsHistoryTitle" : {
-		"message"       : "История",
-		"description"   : ""
-	},
-	"sbControlsDownloadsTitle" : {
-		"message"       : "Закачки",
-		"description"   : ""
-	},
-	"sbControlsRssTitle" : {
-		"message"       : "RSS",
-		"description"   : ""
-	},
-	"sbControlsPocketTitle" : {
-		"message"       : "Pocket",
-		"description"   : ""
-	},
 
 	"tabsNew" : {
 		"message"       : "Новая вкладка",
@@ -342,6 +318,10 @@
 	},
 	"optServicesPocketLabel" : {
 		"message"       : "Pocket",
+		"description"   : ""
+	},
+	"optServicesSearchLabel" : {
+		"message"       : "Поиск",
 		"description"   : ""
 	},
 

@@ -44,30 +44,6 @@
 		"message"       : "Unpin this view",
 		"description"   : ""
 	},
-	"sbControlsTabsTitle" : {
-		"message"       : "Tabs",
-		"description"   : ""
-	},
-	"sbControlsBookmarksTitle" : {
-		"message"       : "Bookmarks",
-		"description"   : ""
-	},
-	"sbControlsHistoryTitle" : {
-		"message"       : "History",
-		"description"   : ""
-	},
-	"sbControlsDownloadsTitle" : {
-		"message"       : "Downloads",
-		"description"   : ""
-	},
-	"sbControlsRssTitle" : {
-		"message"       : "RSS",
-		"description"   : ""
-	},
-	"sbControlsPocketTitle" : {
-		"message"       : "Pocket",
-		"description"   : ""
-	},
 
 	"tabsNew" : {
 		"message"       : "Create new tab",
@@ -346,6 +322,10 @@
 	},
 	"optServicesPocketLabel" : {
 		"message"       : "Pocket",
+		"description"   : ""
+	},
+	"optServicesSearchLabel" : {
+		"message"       : "Search",
 		"description"   : ""
 	},
 

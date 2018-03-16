@@ -44,30 +44,6 @@
 		"message"       : "取消固定此视图",
 		"description"   : ""
 	},
-	"sbControlsTabsTitle" : {
-		"message"       : "标签页",
-		"description"   : ""
-	},
-	"sbControlsBookmarksTitle" : {
-		"message"       : "书签",
-		"description"   : ""
-	},
-	"sbControlsHistoryTitle" : {
-		"message"       : "历史记录",
-		"description"   : ""
-	},
-	"sbControlsDownloadsTitle" : {
-		"message"       : "下载",
-		"description"   : ""
-	},
-	"sbControlsRssTitle" : {
-		"message"       : "RSS",
-		"description"   : ""
-	},
-	"sbControlsPocketTitle" : {
-		"message"       : "Pocket",
-		"description"   : ""
-	},
 
 	"tabsNew" : {
 		"message"       : "创建新标签页",
@@ -346,6 +322,10 @@
 	},
 	"optServicesPocketLabel" : {
 		"message"       : "Pocket",
+		"description"   : ""
+	},
+	"optServicesSearchLabel" : {
+		"message"       : "Search",
 		"description"   : ""
 	},
 
