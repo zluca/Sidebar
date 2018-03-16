@@ -1345,7 +1345,7 @@ const updateItem = {
 	},
 	favs      : (newItem, item) => {
 		newItem.fav = item.fav;
-		return newItem.fav;
+		return newItem;
 	}
 };
 
@@ -4064,37 +4064,22 @@ function makeFav(id, url, favIconUrl, update = false) {
 		return `data:image/svg+xml;base64,${btoa(svg)}`;
 	};
 
-	const updateFav = {
-		truetrue   : _ => {
-			fav.fav = favIconUrl;
-			return favIconUrl;
-		},
-		truefalse  : _ => {
-			fav = createById('favs', {id: id, fav: favIconUrl}, 'last');
-			return favIconUrl;
-		} ,
-		falsetrue  : _ => {
-			return fav.fav;
-		} ,
-		falsefalse : _ => {
-			fav = createById('favs', {id: id, fav: favFromUrl()}, 'last');
-			return fav;
-		} ,
-	};
-
 	const domainsId = ['tabsDomainsId', 'bookmarksDomainsId', 'historyDomainsId', 'rssDomainsId', 'pocketDomainsId', 'searchDomainsId', 'spSearchDomainsId'];
 	const domains   = ['tabsDomains', 'bookmarksDomains', 'historyDomains', 'rssDomains', 'pocketDomains', 'searchDomains', 'spSearchDomains'];
 
-	let fav       = getById('favs', id);
-	const favIcon = updateFav[`${typeof favIconUrl === 'string' && favIconUrl !== ''}${fav !== false}`]();
+	let fav         = getById('favs', id);
+	if (fav === false)
+		fav = createById('favs', {id: id, fav: (typeof favIconUrl === 'string' && favIconUrl !== '') ? favIconUrl : favFromUrl()}, 'last');
+	else if (typeof favIconUrl === 'string' && favIconUrl !== '')
+		fav.fav = favIconUrl;
 	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket', 'search', 'spSearch'], i = targets.length - 1; i >= 0; i--) {
 		if (data[`${targets[i]}Domains`].indexOf(id) !== -1)
-			data[`${targets[i]}Domains`].fav = favIcon;
+			data[`${targets[i]}Domains`].fav = fav;
 		if (update === false) continue;
 		for (let i = domainsId.length - 1; i >= 0; i--) {
 			const index = data[domainsId[i]].indexOf(fav.id);
 			if (index !== -1)
-				data[domains[i]][index].fav = favIcon;
+				data[domains[i]][index].fav = fav;
 		}
 		if (options.leftBar.mode.value === targets[i])
 			send('leftBar', 'info', 'updateDomain', fav);
@@ -4105,7 +4090,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 				send('startpage', 'info', 'updateDomain', fav);
 	}
 	saveLater('favs');
-	return favIcon;
+	return fav.fav;
 }
 
 function makeDomain(mode, url, fav) {
@@ -4140,6 +4125,8 @@ function makeDomain(mode, url, fav) {
 			send('leftBar', 'info', 'newDomain', {'domain': domain});
 		if (options.rightBar.mode.value === mode)
 			send('rightBar', 'info', 'newDomain', {'domain': domain});
+		if (options.startpage.mode.value === 'search')
+			send('startpage', 'info', 'newDomain', {'domain': domain});
 	}
 	else if (fav !== undefined)
 		makeFav(id, url, fav, true);
