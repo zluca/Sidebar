@@ -402,6 +402,10 @@
 		"message"       : "Раскрывать свёрнутый ифрейм по клику, вместо наведения курсора",
 		"description"   : ""
 	},
+	"optMiscWikiSearchLangLabel" : {
+		"message"       : "Язык поиска в Википедии",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Предупреждения",
@@ -474,10 +478,6 @@
 	},
 	"optStartPageSearchEnabledLabel" : {
 		"message"       : "Включить поиск",
-		"description"   : ""
-	},
-	"optStartPagewikiSearchLangLabel" : {
-		"message"       : "Язык поиска в Википедии",
 		"description"   : ""
 	},
 	"optStartpageImageLabel" : {

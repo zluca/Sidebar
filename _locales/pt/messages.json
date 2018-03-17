@@ -406,6 +406,10 @@
 		"message"       : "Expandir Barra Lateral ao clicar em vez de tocar (para barra lateral em modo iframe e fina)",
 		"description"   : ""
 	},
+	"optMiscWikiSearchLangLabel" : {
+		"message"       : "Idioma de pesquisa na Wikipedia",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Avisos",
@@ -478,10 +482,6 @@
 	},
 	"optStartPageSearchEnabledLabel" : {
 		"message"       : "Ativar pesquisa",
-		"description"   : ""
-	},
-	"optStartPagewikiSearchLangLabel" : {
-		"message"       : "Idioma de pesquisa na Wikipedia",
 		"description"   : ""
 	},
 	"optStartpageImageLabel" : {

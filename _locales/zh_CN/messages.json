@@ -406,6 +406,10 @@
 		"message"       : "Expand thin iframe sidebar on click istead of hover",
 		"description"   : ""
 	},
+	"optMiscWikiSearchLangLabel" : {
+		"message"       : "维基百科搜索语言",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "警告",
@@ -478,10 +482,6 @@
 	},
 	"optStartPageSearchEnabledLabel" : {
 		"message"       : "启用搜索",
-		"description"   : ""
-	},
-	"optStartPagewikiSearchLangLabel" : {
-		"message"       : "维基百科搜索语言",
 		"description"   : ""
 	},
 	"optStartpageImageLabel" : {

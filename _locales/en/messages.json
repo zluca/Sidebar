@@ -406,6 +406,10 @@
 		"message"       : "Expand thin iframe sidebar on click istead of hover",
 		"description"   : ""
 	},
+	"optMiscWikiSearchLangLabel" : {
+		"message"       : "Wikipedia search language",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Warnings",
@@ -478,10 +482,6 @@
 	},
 	"optStartPageSearchEnabledLabel" : {
 		"message"       : "Enable search",
-		"description"   : ""
-	},
-	"optStartPagewikiSearchLangLabel" : {
-		"message"       : "Wikipedia search language",
 		"description"   : ""
 	},
 	"optStartpageImageLabel" : {

@@ -406,6 +406,10 @@
 		"message"       : "點選而非懸浮展開窄 iframe 側邊欄",
 		"description"   : ""
 	},
+	"optMiscWikiSearchLangLabel" : {
+		"message"       : "維基百科搜尋語言",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "警告",
@@ -478,10 +482,6 @@
 	},
 	"optStartPageSearchEnabledLabel" : {
 		"message"       : "啟用搜尋",
-		"description"   : ""
-	},
-	"optStartPagewikiSearchLangLabel" : {
-		"message"       : "維基百科搜尋語言",
 		"description"   : ""
 	},
 	"optStartpageImageLabel" : {

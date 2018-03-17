@@ -473,6 +473,11 @@ const options = {
 			type    : 'boolean',
 			targets : ['content']
 		},
+		wikiSearchLang : {
+			value   : 'en',
+			type    : 'text',
+			targets : []
+		},
 		tabsMode           : {
 			value   : 'domain',
 			type    : 'select',
@@ -556,11 +561,6 @@ const options = {
 			type    : 'boolean',
 			targets : [],
 			handler : 'searchEnabled'
-		},
-		wikiSearchLang : {
-			value   : 'en',
-			type    : 'text',
-			targets : ['startpage']
 		},
 		image : {
 			value   : '',
@@ -3456,7 +3456,7 @@ const initService = {
 				youtube         : query => `https://www.google.com/search?&q=${query} site:www.youtube.com&start=${page * 10}`,
 				dailymotion     : query => `https://duckduckgo.com/html/?q=${query} site:dailymotion.com`,
 				vimeo           : query => `https://yandex.com/search/?text=${query} site:vimeo.com&p=${page}`,
-				wikipedia       : query => `https://${options.startpage.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1&limit=50`,
+				wikipedia       : query => `https://${options.misc.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1&limit=50`,
 				mdn             : query => `https://developer.mozilla.org/en/search?q=${query}&page=${1 + page}`,
 				stackoverflow   : query => `https://stackoverflow.com/search?q=${query}&page=${1 + page}`,
 				amazon          : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}&page=${1 + page}`,
@@ -3560,7 +3560,7 @@ const initService = {
 					if (title === null)
 						return false;
 					item.title        = title.textContent;
-					item.url          = `https://${options.startpage.wikiSearchLang.value}.wikipedia.org${title.getAttribute('href')}`;
+					item.url          = `https://${options.misc.wikiSearchLang.value}.wikipedia.org${title.getAttribute('href')}`;
 					const body        = title.parentNode.nextElementSibling;
 					if (body !== null)
 						item.description  = body.textContent;
