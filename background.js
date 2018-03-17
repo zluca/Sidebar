@@ -3502,7 +3502,9 @@ const initService = {
 					if (link === null)
 						return false;
 					item.title        = link.innerHTML;
-					item.url          = link.href;
+					item.url          = link.getAttribute('href');
+					if (item.url.match('://') === null)
+						return false;
 					const body        = link.parentNode.nextElementSibling;
 					if (body === null)
 						return item;
@@ -3516,7 +3518,9 @@ const initService = {
 					if (link === null)
 						return false;
 					item.title        = link.innerHTML;
-					item.url          = link.href;
+					item.url          = link.getAttribute('href');
+					if (item.url.match('://') === null)
+						return false;
 					const body        = link.parentNode.nextElementSibling;
 					if (body !== null) {
 						const desc        = body.querySelector('.st');
@@ -3533,7 +3537,9 @@ const initService = {
 						return false;
 					link.removeChild(link.firstChild);
 					item.title        = link.innerHTML;
-					item.url          = link.href;
+					item.url          = link.getAttribute('href');
+					if (item.url.match('://') === null)
+						return false;
 					const body        = link.parentNode.lastChild;
 					if (body !== null)
 						item.description  = body.textContent;
@@ -3546,7 +3552,9 @@ const initService = {
 					if (link === null)
 						return false;
 					item.title        = link.innerHTML;
-					item.url          = link.href;
+					item.url          = link.getAttribute('href');
+					if (item.url.match('://') === null)
+						return false;
 					const body        = link.parentNode.lastChild;
 					if (body !== null)
 						item.description  = body.textContent;
