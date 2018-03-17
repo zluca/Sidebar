@@ -89,7 +89,8 @@ body.buy .mode-buy {
 	padding-left: 3rem;
 	word-wrap: break-word;
 }
-.video .search.item {
+.video .search.item,
+.dev .search.item {
 	padding-left: .6rem;
 	background-image: none;
 }
