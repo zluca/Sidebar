@@ -3480,6 +3480,21 @@ const initService = {
 				yandexMarket    : 'div.n-snippet-card2'
 			};
 
+			const noResultsSelectors = {
+				duckduckgo      : '.no-results',
+				google          : '.med.card-section',
+				yandex          : '.misspell__message',
+				bing            : '#b_results',
+				yahoo           : '.dd.zrp',
+				wikipedia       : '.searchresults',
+				mdn             : '#search-results-close-container',
+				stackoverflow   : '.empty-seach-results',
+				amazon          : '#noResultsTitle',
+				ebay            : '.srp-search-tips',
+				aliexpress      : '.ui-notice',
+				yandexMarket    : '.n-noresult__title'
+			};
+
 			const makeItem    = {
 				duckduckgo : result => {
 					const item        = {};
@@ -3677,12 +3692,15 @@ const initService = {
 				return false;
 			};
 
-			resultsSelectors.youtube     = resultsSelectors.google;
-			resultsSelectors.dailymotion = resultsSelectors.duckduckgo;
-			resultsSelectors.vimeo       = resultsSelectors.yandex;
-			makeItem.youtube             = result => checkUrl(makeItem.google(result), /https?:\/\/www.youtube/);
-			makeItem.dailymotion         = result => checkUrl(makeItem.duckduckgo(result), /https?:\/\/www.dailymotion/);
-			makeItem.vimeo               = result => checkUrl(makeItem.yandex(result), /https?:\/\/vimeo.com/);
+			resultsSelectors.youtube       = resultsSelectors.google;
+			resultsSelectors.dailymotion   = resultsSelectors.duckduckgo;
+			resultsSelectors.vimeo         = resultsSelectors.yandex;
+			noResultsSelectors.youtube     = noResultsSelectors.google;
+			noResultsSelectors.dailymotion = noResultsSelectors.duckduckgo;
+			noResultsSelectors.vimeo       = noResultsSelectors.yandex;
+			makeItem.youtube               = result => checkUrl(makeItem.google(result), /https?:\/\/www.youtube/);
+			makeItem.dailymotion           = result => checkUrl(makeItem.duckduckgo(result), /https?:\/\/www.dailymotion/);
+			makeItem.vimeo                 = result => checkUrl(makeItem.yandex(result), /https?:\/\/vimeo.com/);
 
 			const cleanse     = html => {
 
@@ -3721,14 +3739,17 @@ const initService = {
 				return body;
 			};
 
-			const captcha     = searchLink => [{
-				id          : `${type}-captcha`,
-				type        : type,
-				pid         : type,
-				url         : searchLink,
-				title       : i18n.search.captchaTitle,
-				description : i18n.search.captchaDescription,
-			}];
+			const noResults   = (searchLink, subType) => {
+				const item = {
+					id          : `${type}-${subType}`,
+					type        : type,
+					pid         : type,
+					url         : searchLink,
+					title       : i18n.search[`${subType}Title`],
+					description : i18n.search[`${subType}Description`]
+				};
+				return [createById(mode, item, 'last')];
+			};
 
 			const xhttp       = new XMLHttpRequest();
 			const searchLink  = links[type](query);
@@ -3761,8 +3782,7 @@ const initService = {
 						if (items.length > 0)
 							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type, 'clean': page === 0});
 						else if (page === 0)
-							// items;
-							return send(target, 'search', 'newItems', {'items': captcha(searchLink), 'searchLink': searchLink, 'target': type, 'clean': true});
+							return send(target, 'search', 'newItems', {'items': noResults(searchLink, doc.querySelector(noResultsSelectors[type]) === null ? 'captcha' : 'noResults'), 'searchLink': searchLink, 'target': type, 'clean': true});
 						if (page < 4)
 							if (items.length * (1 + page) < config.searchLength)
 								if (type !== 'duckduckgo')
