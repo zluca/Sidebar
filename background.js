@@ -3664,7 +3664,7 @@ const initService = {
 					if (title === null)
 						return false;
 					item.title        = title.textContent;
-					item.url          = `https://yandex.market.com/${title.firstChild.getAttribute('href')}`;
+					item.url          = `https://market.yandex.com${title.firstChild.getAttribute('href')}`;
 					const img         = result.querySelector('.n-snippet-card2__part_type_left img');
 					if (img !== null)
 						item.img = `http:${img.dataset.src}`;
