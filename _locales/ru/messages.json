@@ -710,6 +710,14 @@
 		"message"       : "Пожалуйста, пройдите по ссылке для прохождения капчи",
 		"description"   : ""
 	},
+	"searchNoResultsTitle" : {
+		"message"       : "Поиски тщетны",
+		"description"   : ""
+	},
+	"searchNoResultsDescription" : {
+		"message"       : "Ничего не найдено",
+		"description"   : ""
+	},
 
 	"dialogConfirmationTitle" : {
 		"message"       : "Требуется подтверждение",

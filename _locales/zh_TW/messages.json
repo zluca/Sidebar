@@ -714,6 +714,14 @@
 		"message"       : "Please follow the link to pass captcha manually",
 		"description"   : ""
 	},
+	"searchNoResultsTitle" : {
+		"message"       : "No results",
+		"description"   : ""
+	},
+	"searchNoResultsDescription" : {
+		"message"       : "Nothing found",
+		"description"   : ""
+	},
 
 	"dialogConfirmationTitle" : {
 		"message"       : "需要確認",

@@ -3878,7 +3878,9 @@ const initService = {
 				devPlaceholder       : getI18n('searchGeneralPlaceholder'),
 				buyPlaceholder       : getI18n('searchBuyPlaceholder'),
 				captchaTitle         : getI18n('searchCaptchaTitle'),
-				captchaDescription   : getI18n('searchCaptchaDescription')
+				captchaDescription   : getI18n('searchCaptchaDescription'),
+				noResultsTitle       : getI18n('searchNoResultsTitle'),
+				noResultsDescription : getI18n('searchNoResultsDescription')
 			};
 
 			messageHandler[mode]    = {
