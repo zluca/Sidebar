@@ -3674,12 +3674,12 @@ const initService = {
 				},
 				aliexpress : result => {
 					const item        = {};
-					const title       = result.querySelector('.info>h3>a');
+					const title       = result.querySelector('.info>h3>a,.detail>h3>a');
 					if (title === null)
 						return false;
 					item.title        = title.textContent;
 					item.url          = `https:${title.href}`;
-					const img         = result.querySelector('.pic>a>img');
+					const img         = result.querySelector('.pic>a>img,.img>a>img');
 					if (img !== null)
 						item.img = `https:${img.dataset.src}`;
 					const price       = result.querySelector('.price>.value');
