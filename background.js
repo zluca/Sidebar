@@ -1687,6 +1687,7 @@ const initService = {
 		const onFocusChanged    = id => {
 			if (id === -1) return;
 			brauzer.windows.get(id, win => {
+				if (win === undefined) return;
 				if (win.type !== 'normal') return;
 				status.activeWindow = id;
 				makeTimeStamp('tabs');
