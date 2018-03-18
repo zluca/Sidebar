@@ -1393,8 +1393,9 @@ const initBlock = {
 			newItems   : info => {
 				const folder = getFolderById(info.target);
 				if (folder === false) return;
-				while (folder.lastChild.hasChildNodes())
-					folder.lastChild.removeChild(folder.lastChild.firstChild);
+				if (info.clean)
+					while (folder.lastChild.hasChildNodes())
+						folder.lastChild.removeChild(folder.lastChild.firstChild);
 				insertItems(info.items);
 			},
 			changeQuery: info => {
