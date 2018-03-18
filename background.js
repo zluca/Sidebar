@@ -1483,8 +1483,12 @@ const initService = {
 	startpage : start => {
 
 		const gettingStorage = res => {
-			if (Array.isArray(res.startpage))
-				data.startpage = res.startpage;
+				if (res.hasOwnProperty('startpage'))
+					data.startpage = res.startpage;
+				else {
+					data.startpage = res.speadDial;
+					saveNow('startpage');
+				}
 			status.init.startpage = true;
 		};
 
@@ -1524,7 +1528,7 @@ const initService = {
 				editButtonTitle      : getI18n('startpageEditButtonTitle'),
 				searchButtonTitle    : getI18n('startpageEditButtonTitle')
 			};
-			execMethod(brauzer.storage.local.get, gettingStorage, 'startpage');
+			execMethod(brauzer.storage.local.get, gettingStorage, ['startpage', 'speadDial']);
 			if (status.init.tabs === true)
 				for (let i = data.tabs.length - 1; i >= 0; i--)
 					if (data.tabs[i].url === config.defaultStartPage)
