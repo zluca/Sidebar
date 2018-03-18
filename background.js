@@ -4104,7 +4104,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		for (let i = domainsId.length - 1; i >= 0; i--) {
 			const index = data[domainsId[i]].indexOf(fav.id);
 			if (index !== -1)
-				data[domains[i]][index].fav = fav;
+				data[domains[i]][index].fav = fav.fav;
 		}
 		if (options.leftBar.mode.value === targets[i])
 			send('leftBar', 'info', 'updateDomain', fav);
