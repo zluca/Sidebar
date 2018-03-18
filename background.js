@@ -3646,7 +3646,7 @@ const initService = {
 					const price       = result.querySelector('span.prRange, li.lvprice');
 					if (price === null)
 						return false;
-					item.price        = price.textContent;
+					item.price        = price.textContent.trim();
 					item.pid          = 'ebay';
 					return item;
 				},
