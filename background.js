@@ -3626,18 +3626,10 @@ const initService = {
 					const img         = result.querySelector('a>img');
 					if (img !== null)
 						item.img = img.dataset.src;
-					let price         = result.querySelector('span.sx-price');
-					if (price !== null) {
-						item.price  = price.firstChild.textContent;
-						item.price += price.firstChild.nextElementSibling.textContent;
-						item.price += price.lastChild.textContent;
-					}
-					else {
-						price = result.querySelector('span.a-size-base.a-color-base');
-						if (price === null)
-							return false;
-						item.price = price.textContent;
-					}
+					let price = result.querySelector('.a-row+.a-row .a-size-base.a-color-base');
+					if (price === null)
+						return false;
+					item.price = price.textContent;
 					item.pid          = 'amazon';
 					return item;
 				},
