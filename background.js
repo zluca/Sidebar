@@ -3787,15 +3787,16 @@ const initService = {
 							item.type  = type;
 							items.push(createById(mode, item, 'last'));
 						}
-						if (items.length > 0)
+						if (items.length > 0) {
 							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type, 'clean': page === 0});
+							if (page < 4)
+								if (items.length * (1 + page) < config.searchLength)
+									if (type !== 'duckduckgo')
+										if (type !== 'wikipedia')
+											search(type, query, 1 + page);
+						}
 						else if (page === 0)
-							return send(target, 'search', 'newItems', {'items': noResults(searchLink, doc.querySelector(noResultsSelectors[type]) === null ? 'captcha' : 'noResults'), 'searchLink': searchLink, 'target': type, 'clean': true});
-						if (page < 4)
-							if (items.length * (1 + page) < config.searchLength)
-								if (type !== 'duckduckgo')
-									if (type !== 'wikipedia')
-										search(type, query, 1 + page);
+							send(target, 'search', 'newItems', {'items': noResults(searchLink, doc.querySelector(noResultsSelectors[type]) === null ? 'captcha' : 'noResults'), 'searchLink': searchLink, 'target': type, 'clean': true});
 					}
 					makeTimeStamp(mode);
 					send(target, 'search', 'update', {'method': 'remove', 'target': type});
