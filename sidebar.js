@@ -847,8 +847,8 @@ const initBlock = {
 		};
 
 		const historyTotalWipe   = _ => {
-			for (let i = data.historyId.length - 1; i >= 0; i--)
-				removeById(data.historyId[i]);
+			for (let i = data.itemId.length - 1; i >= 0; i--)
+				removeById(data.itemId[i]);
 			getMoreButton.classList.add('hidden');
 		};
 
@@ -1038,10 +1038,10 @@ const initBlock = {
 					items[i].classList.remove('unreaded');
 			},
 			rssReadedAllFeeds : info => {
-				for (let i = data.rss.length - 1; i >= 0; i--)
-					data.rss[i].classList.remove('unreaded');
-				for (let i = data.rssFolders.length - 1; i >= 0; i--)
-					data.rssFolders[i].classList.remove('unreaded');
+				for (let i = data.item.length - 1; i >= 0; i--)
+					data.item[i].classList.remove('unreaded');
+				for (let i = data.folders.length - 1; i >= 0; i--)
+					data.folders[i].classList.remove('unreaded');
 			},
 			view             : info =>  {
 				setReadedMode(options.misc.rssHideReaded, info.view);
@@ -1112,7 +1112,7 @@ const initBlock = {
 						folder.lastChild.appendChild(item);
 				},
 				plaindate   : (item, info) => {
-					if (data.rss.length < 2)
+					if (data.item.length < 2)
 						folder.lastChild.appendChild(item);
 					else
 						folder.lastChild.insertBefore(item, folder.lastChild.children[info.index]);
