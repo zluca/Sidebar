@@ -94,7 +94,7 @@
 		"description"   : ""
 	},
 	"bkBookmarkFolderNew" : {
-		"message"       : "Create new folder",
+		"message"       : "建立新資料夾",
 		"description"   : ""
 	},
 	"bkEditBookmark" : {
@@ -325,7 +325,7 @@
 		"description"   : ""
 	},
 	"optServicesSearchLabel" : {
-		"message"       : "Search",
+		"message"       : "搜尋",
 		"description"   : ""
 	},
 
@@ -622,7 +622,7 @@
 		"description"   : ""
 	},
 	"searchVideoPlaceholder" : {
-		"message"       : "Search video",
+		"message"       : "搜尋影片",
 		"description"   : ""
 	},
 	"searchBuyPlaceholder" : {
@@ -630,19 +630,19 @@
 		"description"   : ""
 	},
 	"searchTypeGeneral" : {
-		"message"       : "General",
+		"message"       : "一般",
 		"description"   : ""
 	},
 	"searchTypeVideo" : {
-		"message"       : "Video",
+		"message"       : "影片",
 		"description"   : ""
 	},
 	"searchTypeDev" : {
-		"message"       : "Development",
+		"message"       : "開發",
 		"description"   : ""
 	},
 	"searchTypeBuy" : {
-		"message"       : "Shop",
+		"message"       : "商店",
 		"description"   : ""
 	},
 
@@ -707,19 +707,19 @@
 		"description"   : ""
 	},
 	"searchCaptchaTitle" : {
-		"message"       : "Captcha detected",
+		"message"       : "偵測到 Captcha",
 		"description"   : ""
 	},
 	"searchCaptchaDescription" : {
-		"message"       : "Please follow the link to pass captcha manually",
+		"message"       : "請遵循下列連結以手動通過 captcha",
 		"description"   : ""
 	},
 	"searchNoResultsTitle" : {
-		"message"       : "No results",
+		"message"       : "沒有結果",
 		"description"   : ""
 	},
 	"searchNoResultsDescription" : {
-		"message"       : "Nothing found",
+		"message"       : "找不到東西",
 		"description"   : ""
 	},
 
@@ -934,7 +934,7 @@
 		"description"   : ""
 	},
 	"dialogBookmarkFolderNewHeader" : {
-		"message"       : "New bookmark",
+		"message"       : "新書籤",
 		"description"   : ""
 	},
 	"dialogBookmarkEditHeader" : {
@@ -994,7 +994,7 @@
 	},
 
 	"dialogSearchSelectHeader" : {
-		"message"       : "Select search engines",
+		"message"       : "選擇搜尋引擎",
 		"description"   : ""
 	},
 
