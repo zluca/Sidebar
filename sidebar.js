@@ -487,6 +487,8 @@ const initBlock = {
 			}
 		};
 
+		const makeTitle     = (title, url) => `${title}\n\n${url}`;
+
 		prepareBlock('tabs');
 		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
@@ -516,8 +518,10 @@ const initBlock = {
 			},
 			title      : info => {
 				const tab = getById(info.id);
-				if (tab !== false)
+				if (tab !== false) {
 					tab.textContent = info.title;
+					tab.title       = makeTitle(info.title, info.url);
+				}
 			},
 			status     : info => {
 				const tab = getById(info.id);
@@ -525,9 +529,11 @@ const initBlock = {
 					tab.classList[info.loading]('loading');
 			},
 			urlChanged  : info => {
-				const tab = getById(info.tab.id);
-				if (tab !== false)
-					tab.href = info.tab.url;
+				const tab = getById(info.id);
+				if (tab !== false) {
+					tab.href  = info.url;
+					tab.title = makeTitle(info.title, info.url);
+				}
 			},
 			folderChanged : info => {
 				if (options.misc.tabsMode === 'domain') {
@@ -646,7 +652,7 @@ const initBlock = {
 				if (tab === false)
 					tab = createById(tabs[i].id);
 				tab.textContent = tabs[i].title;
-				tab.title       = tabs[i].url;
+				tab.title       = makeTitle(tabs[i].title, tabs[i].url);
 				tab.href        = tabs[i].url;
 				let classList   = `tab item domain-${tabs[i].domain} ${tabs[i].status}`;
 				if (tabs[i].id === status.activeTabId) {

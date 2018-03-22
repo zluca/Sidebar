@@ -1772,11 +1772,11 @@ const initService = {
 					send('sidebar', 'tabs', 'folderChanged', {'tab': oldTab, 'folder': newFolder});
 				}
 				else
-					send('sidebar', 'tabs', 'urlChanged', {'tab': oldTab});
+					send('sidebar', 'tabs', 'urlChanged', {'id': oldTab.id, 'title': oldTab.title, 'url': oldTab.url});
 			}
 			if (info.hasOwnProperty('title')) {
 				oldTab.title = info.title;
-				send('sidebar', 'tabs', 'title', {'id': id, 'title': info.title});
+				send('sidebar', 'tabs', 'title', {'id': id, 'title': info.title, 'url': oldTab.url});
 				if (options.services.history.value === true) {
 					const item = getById('tabs', id);
 					if (item === false) return;
