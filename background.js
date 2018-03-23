@@ -52,7 +52,7 @@ const i18n = {
 		downloads : getI18n('optServicesDownloadsLabel'),
 		rss       : getI18n('optServicesRssLabel'),
 		pocket    : getI18n('optServicesPocketLabel'),
-		pocket    : getI18n('optServicesSearchLabel')
+		search    : getI18n('optServicesSearchLabel')
 	},
 	startpage   : {},
 	tabs        : {},
