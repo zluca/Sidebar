@@ -3678,7 +3678,7 @@ const initService = {
 					if (title === null)
 						return false;
 					item.title        = title.textContent;
-					item.url          = `https:${title.href}`;
+					item.url          = `https:${title.getAttribute('href')}`;
 					const img         = result.querySelector('.pic>a>img,.img>a>img');
 					if (img !== null)
 						item.img = `https:${img.dataset.src}`;
