@@ -1783,7 +1783,7 @@ const initService = {
 					for (let i = data.history.length - 1; i >= 0; i--)
 						if (item.url === data.history[i].url) {
 							data.history[i].title = info.title;
-							send('sidebar', 'history', 'title', {'id': data.history[i].id, 'title': info.title});
+							send('sidebar', 'history', 'title', {'id': data.history[i].id, 'title': info.title, 'url': data.history[i].url});
 							break;
 						}
 				}
@@ -2021,7 +2021,7 @@ const initService = {
 					bookmark.url   = info.url;
 				if (info.hasOwnProperty('title'))
 					bookmark.title = info.title;
-				send('sidebar', 'bookmarks', 'changedBookmark', {'id': id, 'info': info});
+				send('sidebar', 'bookmarks', 'changedBookmark', {'id': id, 'url': bookmark.url, 'title': bookmark.title});
 			}
 			else {
 				const folder = getFolderById('bookmarks', id);

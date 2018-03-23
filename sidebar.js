@@ -487,8 +487,6 @@ const initBlock = {
 			}
 		};
 
-		const makeTitle     = (title, url) => `${title}\n\n${url}`;
-
 		prepareBlock('tabs');
 		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
@@ -710,14 +708,6 @@ const initBlock = {
 			}
 		};
 
-		const changeBook      = (id, info) => {
-			const bookmark = getById(id);
-			if (info.hasOwnProperty('url'))
-				bookmark.title = info.url;
-			if (info.hasOwnProperty('title'))
-				bookmark.textContent = info.title;
-		};
-
 		prepareBlock('bookmarks');
 		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
@@ -732,7 +722,11 @@ const initBlock = {
 				removeFolderById(info.id);
 			},
 			changedBookmark : info => {
-				changeBook(info.id, info.info);
+				const bookmark       = getById(id);
+				if (bookmark === false) return;
+				bookmark.textContent = info.title;
+				bookmark.href        = info.url;
+				bookmark.title       = makeTitle(info.title, info.url);
 			},
 			changedFolder   : info => {
 				const folde = getFolderById(info.id);
@@ -787,7 +781,7 @@ const initBlock = {
 				checkPid(items[i]);
 				const bookmark       = createById(items[i].id, true);
 				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
-				bookmark.title       = items[i].url;
+				bookmark.title       = makeTitle(items[i].title, items[i].url);
 				bookmark.href        = items[i].url;
 				bookmark.textContent = items[i].title;
 				if (count > items[i].index - 1)
@@ -840,8 +834,8 @@ const initBlock = {
 					folder = getFolderById(pid);
 				}
 				hist.classList.add('history', 'item', `domain-${items[i].domain}`);
-				hist.title = items[i].url;
-				hist.href  = items[i].url;
+				hist.title       = makeTitle(items[i].title, items[i].url);
+				hist.href        = items[i].url;
 				hist.textContent = items[i].title;
 				insert[method](hist);
 			}
@@ -885,8 +879,9 @@ const initBlock = {
 			},
 			title   : info =>  {
 				const item = getById(info.id);
-				if (item !== false)
-					item.textContent = info.title;
+				if (item === false) return;
+				item.textContent = info.title;
+				item.title       = makeTitle(info.title, info.url);
 			}
 		};
 
@@ -1185,7 +1180,7 @@ const initBlock = {
 			pocket.dataset.url = info.url;
 			pocket.textContent = info.title;
 			pocket.classList   = classList;
-			pocket.title       = info.description !== '' ? info.description : info.url;
+			pocket.title       = `${info.title}\n\n${info.description !== '' ? info.description + '\n\n' : ''} ${info.url}`;
 		};
 
 		prepareBlock('pocket');
@@ -1971,6 +1966,10 @@ function makeSearch(mode) {
 		else
 			searchActive(false);
 	}, {'passive': true});
+}
+
+function makeTitle(title, url){
+	return `${title}\n\n${url}`;
 }
 
 const buttonsEvents = {
