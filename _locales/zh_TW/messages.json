@@ -45,19 +45,19 @@
 		"description"   : ""
 	},
 	"sbControlsLeftBarShowTitle" : {
-		"message"       : "Show leftbar",
+		"message"       : "顯示左邊欄",
 		"description"   : ""
 	},
 	"sbControlsLeftBarHideTitle" : {
-		"message"       : "Hide leftbar",
+		"message"       : "隱藏左邊欄",
 		"description"   : ""
 	},
 	"sbControlsRightBarShowTitle" : {
-		"message"       : "Show rightbar",
+		"message"       : "顯示右邊欄",
 		"description"   : ""
 	},
 	"sbControlsRightBarHideTitle" : {
-		"message"       : "Hide rightbar",
+		"message"       : "隱藏右邊欄",
 		"description"   : ""
 	},
 
@@ -419,7 +419,7 @@
 		"description"   : ""
 	},
 	"optMiscManualSwitchLabel" : {
-		"message"       : "Show or hide sidebar manually",
+		"message"       : "手動顯示或隱藏側邊欄",
 		"description"   : ""
 	},
 	"optMiscWikiSearchLangLabel" : {
