@@ -44,6 +44,22 @@
 		"message"       : "取消固定此视图",
 		"description"   : ""
 	},
+	"sbControlsLeftBarShowTitle" : {
+		"message"       : "Show leftbar",
+		"description"   : ""
+	},
+	"sbControlsLeftBarHideTitle" : {
+		"message"       : "Hide leftbar",
+		"description"   : ""
+	},
+	"sbControlsRightBarShowTitle" : {
+		"message"       : "Show rightbar",
+		"description"   : ""
+	},
+	"sbControlsRightBarHideTitle" : {
+		"message"       : "Hide rightbar",
+		"description"   : ""
+	},
 
 	"tabsNew" : {
 		"message"       : "创建新标签页",
@@ -402,8 +418,8 @@
 		"message"       : "RSS 更新周期",
 		"description"   : ""
 	},
-	"optMiscExpandOnClickLabel" : {
-		"message"       : "Expand thin iframe sidebar on click istead of hover",
+	"optMiscManualSwitchLabel" : {
+		"message"       : "Show or hide sidebar manually",
 		"description"   : ""
 	},
 	"optMiscWikiSearchLangLabel" : {

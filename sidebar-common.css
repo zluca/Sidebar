@@ -8,6 +8,7 @@
 	--background-color-active: #e3ecf1;
 	background-color: var(--background-color);
 }
+
 .leftBar {
 	padding-right: .1rem;
 }
@@ -19,19 +20,16 @@ body {
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-clip: border-box;
-	margin: 0 0 3rem 0;
+	box-sizing: border-box;
+	margin: 0;
 	padding: 0;
 	display: grid;
 	grid-template-rows: auto 1fr;
 	grid-template-columns: 100%;
 	width: 100%;
-	overflow: hidden;
+	overflow-y: scroll;
 	height: 100vh;
 	font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, “Roboto”, “Oxygen”, “Ubuntu”, “Cantarell”, “Fira Sans”, “Droid Sans”, “Helvetica Neue”, sans-serif;
-}
-.fixed body {
-	height: auto;
-	overflow-y: scroll;
 }
 a,
 a:visited {
@@ -46,6 +44,7 @@ main {
 	width: 100%;
 	height: auto;
 	position: relative;
+	margin-bottom: 3rem;
 	color: var(--font-color);
 }
 
@@ -93,34 +92,22 @@ nav {
 }
 
 	.controls {
-		display: none;
+		display: inline-flex;
 		background-color: inherit;
 	}
 	nav>.controls {
-		flex-flow: column;
+		flex-flow: row;
 		flex-wrap: wrap;
 		width: auto;
 		max-width: 100%;
-	}
-	.fixed nav>.controls  {
-		flex-flow: row;
 	}
 
 	#controls-sidebar {
 		display: inline-flex;
 	}
 
-	.fixed .controls {
-		display: inline-flex;
-	}
-
 	#controls-user {
 		display: none;
-	}
-	.fixed .pocket #controls-user {
-		display: flex;
-		margin-bottom: .5rem;
-		margin-top: .5rem;
 	}
 	#controls-button {
 		width: 100%;
@@ -145,9 +132,6 @@ nav {
 		border-top-width: .1rem;
 		border-top-style: solid;
 		padding: .4rem .2rem;
-	}
-	.fixed #controls-bottom {
-		display: flex;
 	}
 
 	#controls-item {
@@ -205,25 +189,12 @@ nav {
 		.leftBar nav>.controls>.button {
 			margin-left: .1rem;
 		}
-		.leftBar.fixed nav>.controls>.button,
 		.leftBar #controls-bottom>.button {
 			margin-left: .4rem;
 		}
 		.rightBar nav>.controls>.button,
 		.rightBar #controls-bottom>.button {
 			margin-right: .4rem;
-		}
-		.unfixed #controls-sidebar>.button {
-			display: none;
-		}
-		.fixed #controls-sidebar>.button {
-			display: inline-block;
-		}
-
-		.fixed #controls-button>.button {
-			margin-right: .5rem;
-			margin-left: .5rem;
-			padding: .3rem 0;
 		}
 
 		#controls-bottom>.button {
@@ -290,26 +261,6 @@ nav {
 				padding: 0;
 			}
 
-		.hover.fixed.narrow #header-narrow,
-		.hover.fixed.wide #header-wide,
-		.hover.fixed #header-pin,
-		.fixed #header-unpin {
-			display: inline-block;
-		}
-		.fixed.hover #header-unpin {
-			display: none;
-		}
-
-		.unfixed .tabs #header-tabs,
-		.unfixed .bookmarks #header-bookmarks,
-		.unfixed .history #header-history,
-		.unfixed .downloads #header-downloads,
-		.unfixed .rss #header-rss,
-		.unfixed .pocket #header-pocket,
-		.unfixed .search #header-search {
-			display: inline-block;
-		}
-
 			.tabs #header-tabs::before,
 			.bookmarks #header-bookmarks::before,
 			.history #header-history::before,
@@ -338,9 +289,6 @@ nav {
 				background-color: var(--background-color-active);
 			}
 
-.fixed .tabs.tree>#root-folder>.folder {
-	border-left: none;
-}
 .tree-view.moved>.folder-content .folder{
 	display: none!important;
 }
@@ -349,10 +297,6 @@ nav {
 	}
 	.hidden-view.folder.folded>.folder-content {
 		display: block;
-	}
-	.fixed .folder-content {
-		margin-left: .8rem;
-		border-left: .1rem dotted var(--border-color-active);
 	}
 	.hidden-view>.folder-content,
 	.tabs #root-folder>div>.tree-view>.folder-content {
@@ -420,9 +364,7 @@ nav {
 		.rightBar .item {
 			background-position-x: .1rem;
 		}
-		.leftBar.fixed .item {
-			background-position-x: 0;
-		}
+
 
 		.item:hover {
 			background-color: var(--border-color);
@@ -473,21 +415,6 @@ nav {
 			.folded .folder-name::before {
 				transform: rotate(-90deg);
 			}
-		.fixed .folder.normal-view>.item,
-		.fixed .folder.type-view>.item {
-			padding-left: 1.6rem;
-			margin-left: .8rem;
-			border-left: .1rem dotted var(--border-color-active);
-			background-position: .4rem 0rem;
-		}
-		.fixed .folder.domain-view .item {
-			padding-left: .6rem;
-			margin-left: 0;
-			background-image: none;
-		}
-		.fixed .tree>#tabs-folder-0>.folder>.folder-content>.item {
-			border-left: none;
-		}
 
 #search-results {
 	display: none;
@@ -549,4 +476,90 @@ nav {
 }
 .domain-extension {
 	background-image: url(icons/default.svg);
+}
+
+@media (max-width: 2rem) {
+	body {
+		overflow:hidden;
+	}
+		main {
+			max-height: calc(100vh - 3rem);
+			overflow: hidden;
+		}
+		nav>.controls {
+			flex-flow: column;
+		}
+			#controls-sidebar>.button {
+				display: none;
+			}
+			.manual.unfixed #header-leftBarShow,
+			.manual.unfixed #header-rightBarShow,
+			.tabs #header-tabs,
+			.bookmarks #header-bookmarks,
+			.history #header-history,
+			.downloads #header-downloads,
+			.rss #header-rss,
+			.pocket #header-pocket,
+			.search #header-search {
+				display: inline-block;
+			}
+}
+
+@media (min-width: 2.01rem) {
+
+		.pocket #controls-user {
+			display: flex;
+			margin-bottom: .5rem;
+			margin-top: .5rem;
+		}
+		#controls-bottom {
+			display: flex;
+		}
+			#controls-sidebar>.button {
+				display: inline-block;
+			}
+			#controls-button>.button {
+				margin-right: .5rem;
+				margin-left: .5rem;
+				padding: .3rem 0;
+			}
+			.manual.unfixed #header-leftBarHide,
+			.manual.unfixed #header-rightBarHide,
+			.unfixed.narrow #header-narrow,
+			.unfixed.wide #header-wide,
+			.unfixed #header-pin,
+			.fixed #header-unpin {
+				display: inline-block;
+			}
+			.hover #header-unpin {
+				display: none;
+			}
+			.leftBar nav>.controls>.button {
+				margin-left: .4rem;
+			}
+	.tabs.tree>#root-folder>.folder {
+		border-left: none;
+	}
+		.folder-content {
+			margin-left: .8rem;
+			border-left: .1rem dotted var(--border-color-active);
+		}
+			.leftBar .item {
+				background-position-x: 0;
+			}
+			.folder.normal-view>.item,
+			.folder.type-view>.item {
+				padding-left: 1.6rem;
+				margin-left: .8rem;
+				border-left: .1rem dotted var(--border-color-active);
+				background-position: .4rem 0rem;
+			}
+			.folder.domain-view .item {
+				padding-left: .6rem;
+				margin-left: 0;
+				background-image: none;
+			}
+			.tree>#tabs-folder-0>.folder>.folder-content>.item {
+				border-left: none;
+			}
 }

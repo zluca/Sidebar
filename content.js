@@ -13,7 +13,7 @@ const options = {
 		method   : '',
 		fixed    : false,
 		wide     : false,
-		hover    : false,
+		open     : false,
 		over     : false,
 		resize   : false
 	},
@@ -22,7 +22,7 @@ const options = {
 		method   : '',
 		fixed    : false,
 		wide     : false,
-		hover    : false,
+		open     : false,
 		over     : false,
 		resize   : false
 	},
@@ -32,13 +32,12 @@ const options = {
 		borderColorActive : '#000'
 	},
 	misc : {
-		expandOnClick : false
+		manualSwitch : false
 	}
 };
 
 const status  = {
 	leftBar: {
-		hover    : false,
 		over     : false,
 		resize   : false,
 		listeners: {
@@ -48,7 +47,6 @@ const status  = {
 		}
 	},
 	rightBar: {
-		hover    : false,
 		over     : false,
 		resize   : false,
 		listeners: {
@@ -92,6 +90,10 @@ const messageHandler = {
 		fixed             : info => {
 			setSideBarFixed(info.section, info.value);
 		},
+		open              : info => {
+			options[info.section].open = info.value;
+			setSideBarWidth(info.section);
+		},
 		borderColor       : info => {
 			options.theme.borderColor = info.value;
 			setColor();
@@ -99,13 +101,6 @@ const messageHandler = {
 		borderColorActive : info => {
 			options.theme.borderColorActive = info.value;
 			setColor();
-		},
-		expandOnClick     : info => {
-			options.misc.expandOnClick = info.value;
-			if (options.leftBar.method === 'iframe')
-				setSideBarFixed('leftBar');
-			if (options.rightBar.method === 'iframe')
-				setSideBarFixed('rightBar');
 		}
 	},
 	iframe: {
@@ -132,6 +127,10 @@ const messageHandler = {
 					setSideBarWideMode(side, info[side].wide);
 				if (info[side].width !== options[side].width)
 					setSideBarWidth(side, info[side].width);
+				if (info[side].open !== options[side].open) {
+					options[side].open = info[side].open;
+					setSideBarWidth(side);
+				}
 			};
 			reInitSide('leftBar');
 			reInitSide('rightBar');
@@ -153,6 +152,13 @@ const messageHandler = {
 			if (options.theme.borderColorActive !== info.theme.borderColorActive) {
 				options.theme.borderColorActive = info.theme.borderColorActive;
 				setColor();
+			}
+			if (options.misc.manualSwitch !== info.misc.manualSwitch) {
+				options.misc.manualSwitch = info.misc.manualSwitch;
+				if (options.leftBar.method === 'iframe')
+					setSideBarWidth('leftBar');
+				if (options.rightBar.method === 'iframe')
+					setSideBarWidth('rightBar');
 			}
 		}
 	},
@@ -216,7 +222,7 @@ function init() {
 		options.theme.fontSize          = response.fontSize;
 		options.theme.borderColor       = response.borderColor;
 		options.theme.borderColorActive = response.borderColorActive;
-		options.misc.expandOnClick      = response.expandOnClick;
+		options.misc.manualSwitch       = response.manualSwitch;
 		if (status.docReady === true) {
 			injectElements();
 			window.addEventListener('resize', event => {
@@ -250,6 +256,7 @@ function deleteIframe(side) {
 	setSideBarFixed(side, false);
 	document.body.removeChild(sidebar[side]);
 	sidebar[side] = null;
+	makeIframe(side);
 }
 
 function cleanOldStuff() {
@@ -282,23 +289,28 @@ function makeIframe(side) {
 	sidebar[side].appendChild(border);
 	sidebar[side].appendChild(iframe);
 	border.addEventListener('mousedown', event => {
-		if (options.misc.expandOnClick === true)
-			if (status[side].over === false)
-				return;
+		if (options[side].fixed === false)
+			if (options.misc.manualSwitch === true)
+				if (options[side].open === false)
+					return;
 		if (event.which === 1)
 			resizeSideBar(side);
 	}, {'passive': true});
 }
 
-function setHover(side, hover) {
-	send('background', 'set', 'hover', {side: side, hover: hover, needResponse: true}, _ => {
-		status[side].hover = hover;
-		sidebar[side].classList[hover ? 'remove' : 'add']('unhover');
-		setSideBarWidth(side);
-	});
+function setOpen(side, open) {
+	send('background', 'options', 'handler', {'section': side, 'option': 'open', 'value': open});
 }
 
 function setSideBarFixed(side, value) {
+	if (options[side].fixed === value)
+		return;
+	if (value !== undefined)
+		options[side].fixed = value;
+	setSideBarWidth(side);
+}
+
+function setEventListeners(side) {
 
 	const timer = {
 		over  : 0,
@@ -316,9 +328,10 @@ function setSideBarFixed(side, value) {
 			event.stopPropagation();
 		if (status[side].over === true)
 			return;
-		if (options.misc.expandOnClick === true)
-			if (options[side].wide === false)
-				return;
+		if (options.misc.manualSwitch === true)
+			if (options[side].fixed === false)
+				if (options[side].wide === false)
+					return;
 		status[side].over = true;
 		if (timer.leave !== 0)
 			cleanTimer('leave');
@@ -326,7 +339,7 @@ function setSideBarFixed(side, value) {
 			timer.over = setTimeout(_ => {
 				if (!status[side].over)
 					return cleanTimer('over');
-				setHover(side, true);
+				setOpen(side, true);
 				cleanTimer('over');
 			}, 100);
 	};
@@ -347,7 +360,7 @@ function setSideBarFixed(side, value) {
 			timer.leave = setTimeout(_ => {
 				if (status[side].over === true)
 					return cleanTimer('leave');
-				setHover(side, false);
+				setOpen(side, false);
 				cleanTimer('leave');
 			}, 200);
 	};
@@ -356,8 +369,7 @@ function setSideBarFixed(side, value) {
 		event.stopPropagation();
 		if (event.which !== 1)
 			return;
-		status[side].over = true;
-		setHover(side, true);
+		setOpen(side, true);
 	};
 
 	const setListener = (which, enabled) => {
@@ -379,46 +391,31 @@ function setSideBarFixed(side, value) {
 			listeners[which](enabled === true ? 'add' : 'remove');
 	};
 
-	if (options[side].fixed === value)
-		return;
-	if (value !== undefined)
-		options[side].fixed = value;
 	if (options[side].fixed === true) {
 		setListener('mouseover', false);
 		setListener('mouseleave', false);
 		setListener('borderclick', false);
 		cleanTimer('leave');
 		cleanTimer('over');
-		sidebar[side].classList.remove('unfixed');
+	}
+	else if (options.misc.manualSwitch === true) {
+		setListener('mouseover', false);
+		setListener('mouseleave', false);
+		setListener('borderclick', options[side].open === false);
+		cleanTimer('leave');
+		cleanTimer('over');
 	}
 	else {
-		sidebar[side].classList.add('unfixed');
-		if (options.misc.expandOnClick === true) {
-			if (options[side].wide === false) {
-				setListener('mouseover', false);
-				setListener('mouseleave', true);
-				setListener('borderclick', true);
-				cleanTimer('leave');
-				cleanTimer('over');
-			}
-		}
-		else {
-			setHover(side, false);
-			setListener('mouseover', true);
-			setListener('mouseleave', true);
-			setListener('borderclick', false);
-		}
+		setListener('mouseover', true);
+		setListener('mouseleave', true);
+		setListener('borderclick', false);
 	}
-	setSideBarWidth(side);
 }
 
 function setSideBarWideMode(side, value) {
 	if (value !== undefined)
 		options[side].wide = value;
-	if (options[side].wide === true)
-		sidebar[side].classList.remove('narrow');
-	else
-		sidebar[side].classList.add('narrow');
+	sidebar[side].classList[options[side].wide === true ? 'remove' : 'add']('narrow');
 	setSideBarWidth(side);
 }
 
@@ -438,19 +435,26 @@ function setSideBarWidth(side, value) {
 	if (options[side].fixed === true) {
 		doc.style.setProperty(`margin-${trueSide}`, `${options[side].width}%`, 'important');
 		sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+		sidebar[side].firstChild.style.removeProperty('background-color');
 	}
 	else {
-		if (status[side].hover === true)
+		if (options[side].open === true) {
+			doc.style.setProperty(`margin-${trueSide}`, '0', 'important');
 			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+			sidebar[side].firstChild.style.removeProperty('background-color');
+		}
 		else if (options[side].wide === true) {
 			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
+			sidebar[side].firstChild.style.removeProperty('background-color');
 		}
 		else {
-			doc.style.setProperty(`margin-${trueSide}`, '0', 'important');
+			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${borderWidth}px`, 'important');
+			sidebar[side].firstChild.style.setProperty('background-color', 'transparent', 'important');
 		}
 	}
+	setEventListeners(side);
 }
 
 function resizeSideBar(side) {
@@ -480,8 +484,6 @@ function resizeSideBar(side) {
 		mask.classList.remove('active');
 		status[side].resize = false;
 		setSideBarFixed(side, isFixed);
-		if (isFixed === false)
-			setHover(side, false);
 		if (cancel === false)
 			send('background', 'options', 'handler', {section: side, option: 'width', value: options[side].width});
 	};

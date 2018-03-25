@@ -125,6 +125,9 @@ const messageHandler = {
 		fixed              : info => {
 			setFixed(info.value);
 		},
+		manualSwitch       : info => {
+			setManual(info.value);
+		},
 		width              : info => {
 			options.sidebar.width = info.value;
 		},
@@ -215,14 +218,6 @@ const messageHandler = {
 				info.timeStamp.favs = status.timeStamp.info.favs;
 				setDomainStyle.update(info.data.domains);
 			}
-		},
-		hover       : info => {
-			if (info === true) {
-				if (options.sidebar.fixed === false)
-					setFixed(true, true);
-			}
-			else
-				setFixed(options.sidebar.fixed);
 		},
 		side        : info => {
 			if (options.sidebar.method === 'native')
@@ -328,7 +323,6 @@ function initSidebar(response) {
 
 	brauzer.runtime.onMessage.removeListener(onMessage);
 
-	status.side         = response.side;
 	status.timeStamp    = response.timeStamp;
 	options.misc        = response.options.misc;
 	options.theme       = response.options.theme;
@@ -358,6 +352,8 @@ function initSidebar(response) {
 	setRssUnreaded(status.info.rssUnreaded);
 	setDownloadStatus[status.info.downloadStatus]();
 
+	if (options.sidebar.method === 'native')
+		status.side = response.side;
 	if (options.sidebar.method === 'iframe') {
 		doc.classList.remove('fixed');
 		window.onresize = _ => {setFontSize();};
@@ -367,7 +363,10 @@ function initSidebar(response) {
 			makeButton('unpin', 'header', 'iframe');
 			makeButton('wide', 'header', 'iframe');
 			makeButton('narrow', 'header', 'iframe');
+			makeButton(`${status.side}Show`, 'header', 'iframe');
+			makeButton(`${status.side}Hide`, 'header', 'iframe');
 		}
+		setManual(options.misc.manualSwitch);
 		setWide(options.sidebar.wide);
 		setFixed(options.sidebar.fixed);
 	}
@@ -380,7 +379,7 @@ function initSidebar(response) {
 function prepareBlock(mode) {
 
 	oldBlock = block;
-	block    = dcea('div', document.body, []);
+	block    = dcea('main', document.body, []);
 
 	controls.user    = dcea('div', block, [['classList', 'controls'], ['id', 'controls-user']]);
 	rootFolder       = dcea('div', block, [['id', 'root-folder']]);
@@ -1469,6 +1468,18 @@ const initBlock = {
 	}
 };
 
+function setManual(mode) {
+	options.misc.manualSwitch = mode;
+	if (mode) {
+		doc.classList.add('manual');
+		doc.classList.remove('auto');
+	}
+	else {
+		doc.classList.add('auto');
+		doc.classList.remove('manual');
+	}
+}
+
 function setWide(mode) {
 	options.sidebar.wide = mode;
 	if (mode) {
@@ -2013,6 +2024,18 @@ const buttonsEvents = {
 		},
 		narrow: event => {
 			send('background', 'options', 'handler', {'section': status.side, 'option': 'wide', 'value': true});
+		},
+		leftBarShow : event => {
+			send('background', 'options', 'handler', {'section': 'leftBar', 'option': 'open', 'value': true});
+		},
+		leftBarHide : event => {
+			send('background', 'options', 'handler', {'section': 'leftBar', 'option': 'open', 'value': false});
+		},
+		rightBarShow : event => {
+			send('background', 'options', 'handler', {'section': 'rightBar', 'option': 'open', 'value': true});
+		},
+		rightBarHide : event => {
+			send('background', 'options', 'handler', {'section': 'rightBar', 'option': 'open', 'value': false});
 		}
 	},
 	tabs      : {

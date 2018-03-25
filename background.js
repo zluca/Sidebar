@@ -42,17 +42,21 @@ const i18n = {
 		extension : getI18n('domainsExtension')
 	},
 	header: {
-		wide      : getI18n('sbControlsWideTitle'),
-		narrow    : getI18n('sbControlsNarrowTitle'),
-		pin       : getI18n('sbControlsFixedTitle'),
-		unpin     : getI18n('sbControlsUnfixedTitle'),
-		tabs      : getI18n('optServicesTabsLabel'),
-		bookmarks : getI18n('optServicesBookmarksLabel'),
-		history   : getI18n('optServicesHistoryLabel'),
-		downloads : getI18n('optServicesDownloadsLabel'),
-		rss       : getI18n('optServicesRssLabel'),
-		pocket    : getI18n('optServicesPocketLabel'),
-		search    : getI18n('optServicesSearchLabel')
+		wide         : getI18n('sbControlsWideTitle'),
+		narrow       : getI18n('sbControlsNarrowTitle'),
+		pin          : getI18n('sbControlsFixedTitle'),
+		unpin        : getI18n('sbControlsUnfixedTitle'),
+		leftBarShow  : getI18n('sbControlsLeftBarShowTitle'),
+		leftBarHide  : getI18n('sbControlsLeftBarHideTitle'),
+		rightBarShow : getI18n('sbControlsRightBarShowTitle'),
+		rightBarHide : getI18n('sbControlsRightBarHideTitle'),
+		tabs         : getI18n('optServicesTabsLabel'),
+		bookmarks    : getI18n('optServicesBookmarksLabel'),
+		history      : getI18n('optServicesHistoryLabel'),
+		downloads    : getI18n('optServicesDownloadsLabel'),
+		rss          : getI18n('optServicesRssLabel'),
+		pocket       : getI18n('optServicesPocketLabel'),
+		search       : getI18n('optServicesSearchLabel')
 	},
 	startpage   : {},
 	tabs        : {},
@@ -221,6 +225,11 @@ const options = {
 			type    : 'boolean',
 			targets : ['leftBar' ,'content']
 		},
+		open   : {
+			value   : false,
+			type    : 'boolean',
+			targets : ['content']
+		},
 		mode   : {
 			value   : 'bookmarks',
 			type    : 'select',
@@ -266,6 +275,11 @@ const options = {
 			value   : true,
 			type    : 'boolean',
 			targets : ['rightBar' ,'content']
+		},
+		open   : {
+			value   : false,
+			type    : 'boolean',
+			targets : ['content']
 		},
 		mode   : {
 			value   : 'bookmarks',
@@ -468,11 +482,6 @@ const options = {
 			handler : 'rssReadedMode',
 			hidden  : true
 		},
-		expandOnClick      : {
-			value   : false,
-			type    : 'boolean',
-			targets : ['content']
-		},
 		wikiSearchLang : {
 			value   : 'en',
 			type    : 'text',
@@ -508,6 +517,11 @@ const options = {
 			targets : [],
 			handler : 'view',
 			hidden  : true
+		},
+		manualSwitch    : {
+			value   : false,
+			type    : 'boolean',
+			targets : ['content']
 		}
 	},
 	startpage: {
@@ -1019,7 +1033,7 @@ const messageHandler = {
 				'fontSize'          : optionsShort.theme.fontSize,
 				'borderColor'       : optionsShort.theme.borderColor,
 				'borderColorActive' : optionsShort.theme.borderColorActive,
-				'expandOnClick'     : optionsShort.misc.expandOnClick
+				'manualSwitch'      : optionsShort.misc.manualSwitch
 			});
 			if (status.dialogData !== null)
 				setTimeout(_ => {sendToTab(sender.tab.id, 'content', 'dialog', 'create', status.dialogType);}, 50);
@@ -1104,10 +1118,6 @@ const messageHandler = {
 			folder.folded = message.data.folded;
 			makeTimeStamp(message.data.mode);
 			send('sidebar', 'set', 'fold', message.data);
-		},
-		hover : (message, sender, sendResponse) => {
-			send(message.data.side, 'set', 'hover', message.data.hover);
-			sendResponse('done');
 		},
 		rightClick : (message, sender, sendResponse) => {
 			send('content', 'set', 'rightClick', '');
@@ -1714,6 +1724,9 @@ const initService = {
 					borderColor       : options.theme.borderColor.value,
 					borderColorActive : options.theme.borderColorActive.value,
 					fontSize          : options.theme.fontSize.value
+				},
+				misc     : {
+					manualSwitch      : options.misc.manualSwitch.value
 				}
 			});
 		};

@@ -44,6 +44,22 @@
 		"message"       : "取消釘選此檢視",
 		"description"   : ""
 	},
+	"sbControlsLeftBarShowTitle" : {
+		"message"       : "Show leftbar",
+		"description"   : ""
+	},
+	"sbControlsLeftBarHideTitle" : {
+		"message"       : "Hide leftbar",
+		"description"   : ""
+	},
+	"sbControlsRightBarShowTitle" : {
+		"message"       : "Show rightbar",
+		"description"   : ""
+	},
+	"sbControlsRightBarHideTitle" : {
+		"message"       : "Hide rightbar",
+		"description"   : ""
+	},
 
 	"tabsNew" : {
 		"message"       : "建立新分頁",
@@ -402,8 +418,8 @@
 		"message"       : "RSS 更新週期",
 		"description"   : ""
 	},
-	"optMiscExpandOnClickLabel" : {
-		"message"       : "點選而非懸浮展開窄 iframe 側邊欄",
+	"optMiscManualSwitchLabel" : {
+		"message"       : "Show or hide sidebar manually",
 		"description"   : ""
 	},
 	"optMiscWikiSearchLangLabel" : {

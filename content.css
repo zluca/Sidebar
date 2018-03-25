@@ -31,10 +31,6 @@
 		cursor:    col-resize!important;
 		z-index:   999;
 	}
-	.sbp-sidebar.unfixed.narrow.unhover>div {
-		contain: strict!important;
-		background-color: transparent!important;
-	}
 	.sbp-sidebar>div:hover {
 		contain: strict!important;
 		background-color: var(--sbp-border-color-active)!important;

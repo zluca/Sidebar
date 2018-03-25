@@ -44,6 +44,22 @@
 		"message"       : "Открепить панель",
 		"description"   : ""
 	},
+	"sbControlsLeftBarShowTitle" : {
+		"message"       : "Показать левую панель",
+		"description"   : ""
+	},
+	"sbControlsLeftBarHideTitle" : {
+		"message"       : "Скрыть левую панель",
+		"description"   : ""
+	},
+	"sbControlsRightBarShowTitle" : {
+		"message"       : "Показать правую панель",
+		"description"   : ""
+	},
+	"sbControlsRightBarHideTitle" : {
+		"message"       : "Скрыть правую панель",
+		"description"   : ""
+	},
 
 	"tabsNew" : {
 		"message"       : "Новая вкладка",
@@ -398,8 +414,8 @@
 		"message"       : "Период обновления RSS",
 		"description"   : ""
 	},
-	"optMiscExpandOnClickLabel" : {
-		"message"       : "Раскрывать свёрнутый ифрейм по клику, вместо наведения курсора",
+	"optMiscManualSwitchLabel" : {
+		"message"       : "Скрывать и раскрывать сайдбар вручную",
 		"description"   : ""
 	},
 	"optMiscWikiSearchLangLabel" : {
