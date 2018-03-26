@@ -425,6 +425,30 @@ function setColor() {
 }
 
 function setSideBarWidth(side, value) {
+
+	const openWide = {
+		truetrue   : _ => {
+			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
+			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+			sidebar[side].firstChild.style.removeProperty('background-color');
+		},
+		truefalse  : _ => {
+			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
+			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+			sidebar[side].firstChild.style.removeProperty('background-color');
+		},
+		falsetrue  : _ => {
+			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
+			sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
+			sidebar[side].firstChild.style.removeProperty('background-color');
+		},
+		falsefalse : _ => {
+			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
+			sidebar[side].style.setProperty('width', `${borderWidth}px`, 'important');
+			sidebar[side].firstChild.style.setProperty('background-color', 'transparent', 'important');
+		}
+	};
+
 	const borderWidth = options.theme.fontSize / 8 / window.devicePixelRatio;
 	const iconWidth   = options.theme.fontSize * 1.7 / window.devicePixelRatio;
 	const trueSide    = side.replace('Bar', '');
@@ -437,23 +461,8 @@ function setSideBarWidth(side, value) {
 		sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
 		sidebar[side].firstChild.style.removeProperty('background-color');
 	}
-	else {
-		if (options[side].open === true) {
-			doc.style.setProperty(`margin-${trueSide}`, '0', 'important');
-			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
-			sidebar[side].firstChild.style.removeProperty('background-color');
-		}
-		else if (options[side].wide === true) {
-			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
-			sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
-			sidebar[side].firstChild.style.removeProperty('background-color');
-		}
-		else {
-			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
-			sidebar[side].style.setProperty('width', `${borderWidth}px`, 'important');
-			sidebar[side].firstChild.style.setProperty('background-color', 'transparent', 'important');
-		}
-	}
+	else
+		openWide[`${options[side].open === true}${options[side].wide === true}`]();
 	setEventListeners(side);
 }
 
