@@ -372,43 +372,24 @@ function setEventListeners(side) {
 		setOpen(side, true);
 	};
 
-	const setListener = (which, enabled) => {
-
-		const listeners = {
-			mouseover : action => {
-				sidebar[side][`${action}EventListener`]('mouseover', mouseOver);
-			},
-			mouseleave : action => {
-				sidebar[side][`${action}EventListener`]('mouseleave', mouseLeave);
-			},
-			borderclick : action => {
-				sidebar[side].firstChild[`${action}EventListener`]('mousedown', borderClick);
-			},
-		};
-
-		if (status[side].listeners[which] !== enabled)
-			status[side].listeners[which] = enabled;
-			listeners[which](enabled === true ? 'add' : 'remove');
-	};
-
 	if (options[side].fixed === true) {
-		setListener('mouseover', false);
-		setListener('mouseleave', false);
-		setListener('borderclick', false);
+		sidebar[side].onmouseover        = null;
+		sidebar[side].onmouseleave       = null;
+		sidebar[side].firstChild.onclick = null;
 		cleanTimer('leave');
 		cleanTimer('over');
 	}
 	else if (options.misc.manualSwitch === true) {
-		setListener('mouseover', false);
-		setListener('mouseleave', false);
-		setListener('borderclick', options[side].open === false);
+		sidebar[side].onmouseover        = null;
+		sidebar[side].onmouseleave       = null;
+		sidebar[side].firstChild.onclick = options[side].open === false ? borderClick : null;
 		cleanTimer('leave');
 		cleanTimer('over');
 	}
 	else {
-		setListener('mouseover', true);
-		setListener('mouseleave', true);
-		setListener('borderclick', false);
+		sidebar[side].onmouseover        = mouseOver;
+		sidebar[side].onmouseleave       = mouseLeave;
+		sidebar[side].firstChild.onclick = null;
 	}
 }
 
