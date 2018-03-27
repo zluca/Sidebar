@@ -101,6 +101,9 @@ nav {
 		width: auto;
 		max-width: 100%;
 	}
+	#controls-iframe {
+		margin-top: .4rem;
+	}
 
 	#controls-sidebar {
 		display: inline-flex;
