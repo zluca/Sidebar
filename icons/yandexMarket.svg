@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="512"
+   viewBox="0 0 135.46666 135.46667"
+   version="1.1"
+   id="svg941"
+   inkscape:version="0.92.2 2405546, 2018-03-11"
+   sodipodi:docname="yandexMarket.svg">
+  <defs
+     id="defs935" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="-256.93977"
+     inkscape:cy="247.83145"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="1023"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata938">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-161.53332)">
+    <path
+       style="display:inline;fill:#0275fe;fill-opacity:1;stroke:none;stroke-width:2.18150425px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 51.722776,255.67234 69.463894,-20.44812 -3.08729,-37.75031 H 50.17915 L 37.830007,173.87988 H 8.5008095 v 20.44814 H 25.480862 Z"
+       id="path1497"
+       inkscape:connector-curvature="0" />
+    <ellipse
+       style="display:inline;opacity:1;fill:#282828;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.18493986;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path1499"
+       cx="43.61866"
+       cy="276.90692"
+       rx="11.577314"
+       ry="11.79698" />
+    <ellipse
+       style="display:inline;opacity:1;fill:#282828;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.18493986;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path1499-3"
+       cx="98.032043"
+       cy="276.90692"
+       rx="11.577314"
+       ry="11.79698" />
+  </g>
+</svg>
