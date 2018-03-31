@@ -668,8 +668,7 @@ const options = {
 			value   : 'general',
 			type    : 'select',
 			values  : ['general', 'dev', 'social', 'buy'],
-			targets : [],
-			handler : 'clickActions'
+			targets : ['sidebar']
 		},
 		duckduckgo : {
 			value   : true,
