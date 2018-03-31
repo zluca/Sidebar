@@ -1945,24 +1945,24 @@ const initService = {
 						site.url   = message.data.url;
 						site.color = message.data.color;
 						saveLater('startpage');
-						send('startpage', 'site', 'changed', {index: message.data.index, site: site});
+						send('startpage', 'site', 'changed', {'index': message.data.index, 'site': site});
 					}
 				},
 				delete : (message, sender, sendResponse) => {
 					makeSite(message.data.index);
 					saveLater('startpage');
-					send('startpage', 'site', 'changed', {index: message.data.index, site: data.startpage[message.data.index]});
+					send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
 				},
 				create : (message, sender, sendResponse) => {
 					makeSite(message.data.index, message.data);
-					saveLater('startpage');
-					send('startpage', 'site', 'changed', {index: message.data.index, site: data.startpage[message.data.index]});
+					saveNow('startpage');
+					send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
 				},
 				move : (message, sender, sendResponse) => {
 					const movedSite = data.startpage.splice(message.data.from, 1)[0];
 					data.startpage.splice(message.data.to, 0, movedSite);
 					saveLater('startpage');
-					send('startpage', 'site', 'moved', {from: message.data.from, to: message.data.to});
+					send('startpage', 'site', 'moved', {'from': message.data.from, 'to': message.data.to});
 				}
 			};
 			i18n.startpage = {

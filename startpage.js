@@ -214,8 +214,8 @@ function init(response) {
 
 	siteContainer.addEventListener('click', event => {
 		const target = event.target;
-		if (target.classList.contains('add-new'))
-			send('background', 'dialog', 'siteCreate', {'index': target.dataset.index});
+		if (target.parentNode.classList.contains('add-new'))
+			send('background', 'dialog', 'siteCreate', {'index': target.parentNode.dataset.index});
 		else if (target.classList.contains('site')) {
 			if (event.ctrlKey === true)
 				send('background', 'tabs', 'new', {'url': event.target.title});
