@@ -57,7 +57,7 @@ const i18n = {
 		rss          : getI18n('optServicesRssLabel'),
 		pocket       : getI18n('optServicesPocketLabel'),
 		search       : getI18n('optServicesSearchLabel'),
-		bottomBarOptionsTitle : getI18n('')
+		bottomBarOptions : getI18n('dialogActionsHeader')
 	},
 	startpage   : {},
 	tabs        : {},
