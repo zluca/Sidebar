@@ -1969,7 +1969,7 @@ const initService = {
 				pageTitle            : getI18n('startpagePageTitle'),
 				addNewSiteTitle      : getI18n('startpageAddNewSiteTitle'),
 				editButtonTitle      : getI18n('startpageEditButtonTitle'),
-				searchButtonTitle    : getI18n('startpageEditButtonTitle')
+				searchButtonTitle    : getI18n('startpageSearchButtonTitle')
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, ['startpage', 'speadDial']);
 			if (status.init.tabs === true)
