@@ -105,69 +105,68 @@
 		"message"       : "Organize tabs in tree view",
 		"description"   : ""
 	},
-	"bkBookmarkThis" : {
+	"bookmarksControlsBookmarkThis" : {
 		"message"       : "Bookmark this tab",
 		"description"   : ""
 	},
-	"bkBookmarkFolderNew" : {
+	"bookmarksControlsFolderNew" : {
 		"message"       : "Create new folder",
 		"description"   : ""
 	},
-	"bkEditBookmark" : {
+	"bookmarksControlsEdit" : {
 		"message"       : "Edit bookmark",
 		"description"   : ""
 	},
-	"bkMoveBookmark" : {
+	"bookmarksControlsMove" : {
 		"message"       : "Move bookmark",
 		"description"   : ""
 	},
-	"bkDeleteBookmark" : {
+	"bookmarksControlsDelete" : {
 		"message"       : "Delete bookmark",
 		"description"   : ""
 	},
-	"bkDeleteBookmarkFolder" : {
+	"bookmarksControlsFolderDelete" : {
 		"message"       : "Delete folder",
 		"description"   : ""
 	},
-	"bkSearchPlaceholder" : {
+	"bookmarksSearchPlaceholder" : {
 		"message"       : "Search",
 		"description"   : ""
 	},
 
-	"hsGetMoreText" : {
+	"historyGetMoreText" : {
 		"message"       : "Show more",
 		"description"   : "text on 'Get more history' button"
 	},
-	"hsGetMoreTitle" : {
+	"historyGetMoreTitle" : {
 		"message"       : "Show more history entries",
 		"description"   : ""
 	},
-	"hsSearchPlaceholder" : {
+	"historySearchPlaceholder" : {
 		"message"       : "Search",
 		"description"   : ""
 	},
 
-	"dlControlsPause" : {
+	"downloadsControlsPause" : {
 		"message"       : "Pause",
 		"description"   : ""
 	},
-	"dlControlsResume" : {
+	"downloadsControlsResume" : {
 		"message"       : "Resume",
 		"description"   : ""
 	},
-	"dlControlsReload" : {
+	"downloadsControlsReload" : {
 		"message"       : "Reload",
 		"description"   : ""
 	},
-	"dlControlsCancel" : {
+	"downloadsControlsCancel" : {
 		"message"       : "Cancel",
 		"description"   : ""
 	},
-	"dlControlsDelete" : {
+	"downloadsControlsDelete" : {
 		"message"       : "Delete",
 		"description"   : ""
 	},
-
 
 	"rssNew" : {
 		"message"       : "Add new RSS feed",
@@ -645,22 +644,6 @@
 		"message"       : "Buy",
 		"description"   : ""
 	},
-	"searchTypeGeneral" : {
-		"message"       : "General",
-		"description"   : ""
-	},
-	"searchTypeVideo" : {
-		"message"       : "Video",
-		"description"   : ""
-	},
-	"searchTypeDev" : {
-		"message"       : "Development",
-		"description"   : ""
-	},
-	"searchTypeBuy" : {
-		"message"       : "Shop",
-		"description"   : ""
-	},
 
 	"searchEngineDuckDuckGo" : {
 		"message"       : "DuckDuckGo",
@@ -1014,6 +997,11 @@
 		"description"   : ""
 	},
 
+	"dialogActionsHeader" : {
+		"message"       : "Configure mouse actions",
+		"description"   : ""
+	},
+
 	"domainsDefault" : {
 		"message"       : "Unknown",
 		"description"   : ""
@@ -1028,6 +1016,99 @@
 	},
 	"domainsExtension" : {
 		"message"       : "Extensions",
+		"description"   : ""
+	},
+
+	"typeGeneral" : {
+		"message"       : "General",
+		"description"   : ""
+	},
+	"typeVideo" : {
+		"message"       : "Video",
+		"description"   : ""
+	},
+	"typeDev" : {
+		"message"       : "Development",
+		"description"   : ""
+	},
+	"typeBuy" : {
+		"message"       : "Shop",
+		"description"   : ""
+	},
+	"typeHoverActions" : {
+		"message"       : "Hover actions",
+		"description"   : ""
+	},
+	"typeClickActions" : {
+		"message"       : "Click actions",
+		"description"   : ""
+	},
+	"clickActionsNormal" : {
+		"message"       : "Normal click",
+		"description"   : ""
+	},
+	"clickActionsAlt" : {
+		"message"       : "Alt + click",
+		"description"   : ""
+	},
+	"clickActionsShift" : {
+		"message"       : "Shift + click",
+		"description"   : ""
+	},
+	"clickActionsCtrl" : {
+		"message"       : "Ctrl + click",
+		"description"   : ""
+	},
+	"clickActionsOpen" : {
+		"message"       : "Open",
+		"description"   : ""
+	},
+	"clickActionsOpenInNewTab" : {
+		"message"       : "Open in new tab",
+		"description"   : ""
+	},
+	"clickActionsOpenInNewWindow" : {
+		"message"       : "Open in new window",
+		"description"   : ""
+	},
+	"clickActionsSetActive" : {
+		"message"       : "Switch to tab",
+		"description"   : ""
+	},
+	"clickActionsClose" : {
+		"message"       : "Close",
+		"description"   : ""
+	},
+	"clickActionsBookmark" : {
+		"message"       : "Add to bookmarks",
+		"description"   : ""
+	},
+	"clickActionsDeleteBookmark" : {
+		"message"       : "Delete",
+		"description"   : ""
+	},
+	"clickActionsDeletePocket" : {
+		"message"       : "Delete",
+		"description"   : ""
+	},
+	"clickActionsDeleteFile" : {
+		"message"       : "Delete file",
+		"description"   : ""
+	},
+	"clickActionsPinUnpin" : {
+		"message"       : "Pin or unpin tab",
+		"description"   : ""
+	},
+	"clickActionsMarkReaded" : {
+		"message"       : "Mark readed",
+		"description"   : ""
+	},
+	"clickActionsOpenFile" : {
+		"message"       : "Open",
+		"description"   : ""
+	},
+	"clickActionsOpenFolder" : {
+		"message"       : "Open folder",
 		"description"   : ""
 	}
 }

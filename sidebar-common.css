@@ -125,6 +125,7 @@ nav {
 		display: none;
 		flex-flow: row;
 		height: auto;
+		min-height: 2rem;
 		width: 100%;
 		box-sizing: border-box;
 		position: fixed;
@@ -135,6 +136,7 @@ nav {
 		border-top-width: .1rem;
 		border-top-style: solid;
 		padding: .4rem .2rem;
+		padding-right: 1rem;
 	}
 
 	#controls-item {
@@ -204,6 +206,16 @@ nav {
 			display: inline-block;
 		}
 
+		#mainControls-bottomBarOptions {
+			position: absolute;
+			top: 0.45rem;
+			right: .2rem;
+			margin-right: 0!important;
+		}
+			#mainControls-bottomBarOptions>span {
+				width: .7rem;
+			}
+
 		.text-button {
 			user-select: none;
 			--moz-user-select: none;
@@ -264,13 +276,13 @@ nav {
 				padding: 0;
 			}
 
-			.tabs #header-tabs::before,
-			.bookmarks #header-bookmarks::before,
-			.history #header-history::before,
-			.downloads #header-downloads::before,
-			.rss #header-rss::before,
-			.pocket #header-pocket::before,
-			.search #header-search::before,
+			.tabs #mainControls-tabs::before,
+			.bookmarks #mainControls-bookmarks::before,
+			.history #mainControls-history::before,
+			.downloads #mainControls-downloads::before,
+			.rss #mainControls-rss::before,
+			.pocket #mainControls-pocket::before,
+			.search #mainControls-search::before,
 			.plain #tabs-plain::before,
 			.domain #tabs-domain::before,
 			.tree #tabs-tree::before,
@@ -432,7 +444,7 @@ nav {
 	.search-input {
 		height: 1.6rem;
 		width: 100%;
-		text-indent: 2rem;
+		text-indent: 1.6rem;
 		background-color: var(--background-color-active);
 		border-style: solid;
 		border-color: var(--border-color);
@@ -495,15 +507,15 @@ nav {
 			#controls-sidebar>.button {
 				display: none;
 			}
-			.manual.unfixed #header-leftBarShow,
-			.manual.unfixed #header-rightBarShow,
-			.tabs #header-tabs,
-			.bookmarks #header-bookmarks,
-			.history #header-history,
-			.downloads #header-downloads,
-			.rss #header-rss,
-			.pocket #header-pocket,
-			.search #header-search {
+			.manual.unfixed #mainControls-leftBarShow,
+			.manual.unfixed #mainControls-rightBarShow,
+			.tabs #mainControls-tabs,
+			.bookmarks #mainControls-bookmarks,
+			.history #mainControls-history,
+			.downloads #mainControls-downloads,
+			.rss #mainControls-rss,
+			.pocket #mainControls-pocket,
+			.search #mainControls-search {
 				display: inline-block;
 			}
 }
@@ -526,15 +538,15 @@ nav {
 				margin-left: .5rem;
 				padding: .3rem 0;
 			}
-			.manual.unfixed #header-leftBarHide,
-			.manual.unfixed #header-rightBarHide,
-			.unfixed.narrow #header-narrow,
-			.unfixed.wide #header-wide,
-			.unfixed #header-pin,
-			.fixed #header-unpin {
+			.manual.unfixed #mainControls-leftBarHide,
+			.manual.unfixed #mainControls-rightBarHide,
+			.unfixed.narrow #mainControls-narrow,
+			.unfixed.wide #mainControls-wide,
+			.unfixed #mainControls-pin,
+			.fixed #mainControls-unpin {
 				display: inline-block;
 			}
-			.hover #header-unpin {
+			.hover #mainControls-unpin {
 				display: none;
 			}
 			.leftBar nav>.controls>.button {

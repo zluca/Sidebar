@@ -105,65 +105,68 @@
 		"message"       : "Отображать вкладки в виде дерева",
 		"description"   : ""
 	},
-	"bkBookmarkThis" : {
+	"bookmarksControlsBookmarkThis" : {
 		"message"       : "Сделать закладку",
 		"description"   : ""
 	},
-	"bkBookmarkFolderNew" : {
+	"bookmarksControlsFolderNew" : {
 		"message"       : "Создать папку",
 		"description"   : ""
 	},
-	"bkMoveBookmark" : {
+	"bookmarksControlsEdit" : {
+		"message"       : "Редактировать закладку",
+		"description"   : ""
+	},
+	"bookmarksControlsMove" : {
 		"message"       : "Переместить закладку",
 		"description"   : ""
 	},
-	"bkDeleteBookmark" : {
+	"bookmarksControlsDelete" : {
 		"message"       : "Удалить закладку",
 		"description"   : ""
 	},
-	"bkDeleteBookmarkFolder" : {
+	"bookmarksControlsFolderDelete" : {
 		"message"       : "Удалить папку",
 		"description"   : ""
 	},
-	"bkSearchPlaceholder" : {
+	"bookmarksSearchPlaceholder" : {
 		"message"       : "Искать",
 		"description"   : ""
 	},
 
-	"hsGetMoreText" : {
+	"historyGetMoreText" : {
 		"message"       : "Дальше",
 		"description"   : ""
 	},
-	"hsGetMoreTitle" : {
+	"historyGetMoreTitle" : {
 		"message"       : "Показать предыдущюю историю",
 		"description"   : ""
 	},
-	"hsSearchPlaceholder" : {
+	"historySearchPlaceholder" : {
 		"message"       : "Искать",
 		"description"   : ""
 	},
 
-	"dlControlsPause" : {
+	"downloadsControlsPause" : {
 		"message"       : "Пауза",
 		"description"   : ""
 	},
-	"dlControlsResume" : {
+	"downloadsControlsResume" : {
 		"message"       : "Продолжить",
 		"description"   : ""
 	},
-	"dlControlsReload" : {
+	"downloadsControlsReload" : {
 		"message"       : "Перезакачать",
 		"description"   : ""
 	},
-	"dlControlsCancel" : {
+	"downloadsControlsCancel" : {
 		"message"       : "Отмена",
 		"description"   : ""
 	},
-	"dlControlsDelete" : {
+	"downloadsControlsDelete" : {
 		"message"       : "Удалить",
 		"description"   : ""
 	},
-
 
 	"rssNew" : {
 		"message"       : "Добавить RSS канал",
@@ -641,22 +644,6 @@
 		"message"       : "Купить",
 		"description"   : ""
 	},
-	"searchTypeGeneral" : {
-		"message"       : "Поиск в вебе",
-		"description"   : ""
-	},
-	"searchTypeVideo" : {
-		"message"       : "Видео",
-		"description"   : ""
-	},
-	"searchTypeDev" : {
-		"message"       : "Разработка",
-		"description"   : ""
-	},
-	"searchTypeBuy" : {
-		"message"       : "Магазины",
-		"description"   : ""
-	},
 
 	"searchEngineDuckDuckGo" : {
 		"message"       : "DuckDuckGo",
@@ -1010,6 +997,11 @@
 		"description"   : ""
 	},
 
+	"dialogActionsHeader" : {
+		"message"       : "Настроить действия мыши",
+		"description"   : ""
+	},
+
 	"domainsDefault" : {
 		"message"       : "Не известно",
 		"description"   : ""
@@ -1024,6 +1016,99 @@
 	},
 	"domainsExtension" : {
 		"message"       : "Расширения",
+		"description"   : ""
+	},
+
+	"typeGeneral" : {
+		"message"       : "Поиск в вебе",
+		"description"   : ""
+	},
+	"typeVideo" : {
+		"message"       : "Видео",
+		"description"   : ""
+	},
+	"typeDev" : {
+		"message"       : "Разработка",
+		"description"   : ""
+	},
+	"typeBuy" : {
+		"message"       : "Магазины",
+		"description"   : ""
+	},
+	"typeHoverActions" : {
+		"message"       : "Действия по наведению",
+		"description"   : ""
+	},
+	"typeClickActions" : {
+		"message"       : "Действия по нажатию",
+		"description"   : ""
+	},
+	"clickActionsNormal" : {
+		"message"       : "Обычный клик",
+		"description"   : ""
+	},
+	"clickActionsAlt" : {
+		"message"       : "Alt + клик",
+		"description"   : ""
+	},
+	"clickActionsShift" : {
+		"message"       : "Shift + клик",
+		"description"   : ""
+	},
+	"clickActionsCtrl" : {
+		"message"       : "Ctrl + клик",
+		"description"   : ""
+	},
+	"clickActionsOpen" : {
+		"message"       : "Открыть",
+		"description"   : ""
+	},
+	"clickActionsOpenInNewTab" : {
+		"message"       : "Открыть в новой вкладке",
+		"description"   : ""
+	},
+	"clickActionsOpenInNewWindow" : {
+		"message"       : "Открыть в новом окне",
+		"description"   : ""
+	},
+	"clickActionsSetActive" : {
+		"message"       : "Переключиться на вкладку",
+		"description"   : ""
+	},
+	"clickActionsClose" : {
+		"message"       : "Закрыть",
+		"description"   : ""
+	},
+	"clickActionsBookmark" : {
+		"message"       : "В закладки",
+		"description"   : ""
+	},
+	"clickActionsDeleteBookmark" : {
+		"message"       : "Удалить",
+		"description"   : ""
+	},
+	"clickActionsDeletePocket" : {
+		"message"       : "Удалить",
+		"description"   : ""
+	},
+	"clickActionsDeleteFile" : {
+		"message"       : "Удалить файл",
+		"description"   : ""
+	},
+	"clickActionsPinUnpin" : {
+		"message"       : "Закрепить/открепить",
+		"description"   : ""
+	},
+	"clickActionsMarkReaded" : {
+		"message"       : "Отметить как прочтённое",
+		"description"   : ""
+	},
+	"clickActionsOpenFile" : {
+		"message"       : "Открыть",
+		"description"   : ""
+	},
+	"clickActionsOpenFolder" : {
+		"message"       : "Открыть папку",
 		"description"   : ""
 	}
 }

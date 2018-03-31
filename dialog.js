@@ -115,6 +115,65 @@ function makeDialogWindow(data, warnings, colors) {
 			}
 			return input;
 		},
+		togglers : (type, options, prefix, select = false) => {
+			const label         = document.createElement('label');
+			label.textContent   = getI18n(`type${type}`);
+			label.classList.add('options-section');
+			label.dataset.id    = type;
+			const section = document.createElement('div');
+			section.classList.add('options-section');
+			if (select === true) {
+				section.classList.add('active');
+				label.classList.add('active');
+			}
+			if (prefix === 'searchEngine') {
+				label.style.backgroundImage = `url(icons/${type}.svg)`;
+				label.style.paddingLeft     = '2.8rem';
+			}
+			for (let option in options) {
+				const optionIcon        = document.createElement('span');
+				optionIcon.classList    = `option ${options[option] === true ? ' selected' : ''}`;
+				optionIcon.style.backgroundImage = `url(icons/${option}.svg)`;
+				optionIcon.dataset.id   = option;
+				optionIcon.dataset.type = type;
+				optionIcon.title        = getI18n(`${prefix}${option}`);
+				section.appendChild(optionIcon);
+			}
+			main.appendChild(label);
+			main.appendChild(section);
+		},
+		selectors : (type, options) => {
+			const label         = document.createElement('label');
+			label.textContent   = getI18n(`type${type}`);
+			label.classList.add('options-section');
+			label.dataset.id    = type;
+			const section       = document.createElement('div');
+			section.classList.add('options-section');
+			for (let option in options) {
+				const label          = document.createElement('label');
+				label.textContent    = getI18n(`clickActions${option}`);
+				const selector       = document.createElement('select');
+				selector.dataset.id  = option;
+				selector.name        = option;
+				selector.addEventListener('change', event => {
+					for (let i = selector.children.length - 1; i >= 0; i--)
+						if (selector.children[i].selected === true)
+							options[option].value = selector.children[i].value;
+				});
+				for (let i = 0, l = options[option].values.length; i < l; i++) {
+					const opt       = document.createElement('option');
+					opt.textContent = getI18n(`clickActions${options[option].values[i]}`);
+					opt.value       = options[option].values[i];
+					if (options[option].values[i] === options[option].value)
+						opt.selected = true;
+					selector.appendChild(opt);
+				}
+				label.appendChild(selector);
+				section.appendChild(label);
+			}
+			main.appendChild(label);
+			main.appendChild(section);
+		}
 	};
 
 	const addSelectRow = (labelText, options) => {
@@ -576,48 +635,20 @@ function makeDialogWindow(data, warnings, colors) {
 
 		searchSelect : _ => {
 
-			let active  = null;
 			let options = {};
-			for (let option in data.options)
-				options[option] = data.options[option];
-			const addModeRow = type => {
-				const label         = document.createElement('label');
-				label.textContent   = getI18n(`searchType${type}`);
-				label.classList.add('search-engines');
-				label.dataset.id    = type;
-				label.style.backgroundImage = `url(icons/${type}.svg)`;
-				const searchEngines = document.createElement('div');
-				searchEngines.classList.add('search-engines');
-				if (type === options.type) {
-					active = label;
-					searchEngines.classList.add('active');
-					label.classList.add('active');
-				}
-				for (let i = 0, l = data.searchTypes[type].length; i < l; i++) {
-					const engineName    = data.searchTypes[type][i];
-					const engine        = document.createElement('span');
-					engine.classList    = `domain-${engineName} engine ${options[engineName] === true ? ' selected' : ''}`;
-					engine.dataset.id   = data.searchTypes[type][i];
-					engine.title        = getI18n(`searchEngine${engineName}`);
-					searchEngines.appendChild(engine);
-				}
-				main.appendChild(label);
-				main.appendChild(searchEngines);
-			};
-
-			const style = document.createElement('link');
-			style.type  = 'text/css';
-			style.rel   = 'stylesheet';
-			style.href  = 'sidebar-search.css';
-			document.head.appendChild(style);
 
 			setHeader();
-			for (let type in data.searchTypes)
-				addModeRow(type);
+			for (let type in data.searchTypes) {
+				options[type] = {};
+				for (let i = 0, l = data.searchTypes[type].length; i < l; i++)
+					options[type][data.searchTypes[type][i]] = data.options[data.searchTypes[type][i]];
+				addInputRow.togglers(type, options[type], 'searchEngine', data.options.type === type);
+			}
 			addButton('save', _ => {
-				for (let option in options)
-					if (options[option] !== data.options[option])
-						send('background', 'options', 'handler', {'section': data.target, 'option': option, 'value': options[option]});
+				for (let type in options)
+					for (let option in options[type])
+						if (options[type][option] !== data.options[option])
+							send('background', 'options', 'handler', {'section': data.target, 'option': option, 'value': options[type][option]});
 				removeDialogWindow();
 			});
 			addButton('cancel');
@@ -625,15 +656,56 @@ function makeDialogWindow(data, warnings, colors) {
 			main.addEventListener('click', event => {
 				if (event.target.nodeName === 'SPAN') {
 					event.target.classList.toggle('selected');
-					options[event.target.dataset.id] = !options[event.target.dataset.id];
+					options[event.target.dataset.type][event.target.dataset.id] = !options[event.target.dataset.type][event.target.dataset.id];
 				}
 				else if (event.target.nodeName === 'LABEL') {
-					active.classList.remove('active');
-					active.nextElementSibling.classList.remove('active');
+					const active = document.getElementsByClassName('active');
+					active[1].classList.remove('active');
+					active[0].classList.remove('active');
 					event.target.classList.add('active');
 					event.target.nextElementSibling.classList.add('active');
 					options.type = event.target.dataset.id;
-					active       = event.target;
+				}
+			});
+		},
+
+		actions : _ => {
+
+			const options = {
+				'clickActions' : {},
+				'hoverActions' : {}
+			};
+			for (let option in data.hoverActions)
+				options.hoverActions[option] = data.hoverActions[option];
+			for (let option in data.clickActions)
+				if (option !== 'hidden') {
+					options.clickActions[option]        = {};
+					options.clickActions[option].value  = data.clickActions[option].value;
+					options.clickActions[option].values = data.clickActions[option].values;
+				}
+
+			setHeader();
+			for (let option in options.hoverActions) {
+				addInputRow.togglers('hoverActions', options.hoverActions, data.prefix);
+				break;
+			}
+			addInputRow.selectors('clickActions', options.clickActions);
+
+			addButton('save', _ => {
+				for (let option in options.hoverActions)
+					if (options.hoverActions[option] !== data.hoverActions[option])
+						send('background', 'options', 'handler', {'section': `${data.type}HoverActions`, 'option': option, 'value': options.hoverActions[option]});
+				for (let option in options.clickActions)
+					if (options.clickActions[option].value !== data.clickActions[option].value)
+						send('background', 'options', 'handler', {'section': `${data.type}ClickActions`, 'option': option, 'value': options.clickActions[option].value});
+				removeDialogWindow();
+			});
+			addButton('cancel');
+
+			main.addEventListener('click', event => {
+				if (event.target.nodeName === 'SPAN') {
+					event.target.classList.toggle('selected');
+					options.hoverActions[event.target.dataset.id] = !options.hoverActions[event.target.dataset.id];
 				}
 			});
 		}

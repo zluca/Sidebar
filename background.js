@@ -41,7 +41,7 @@ const i18n = {
 		system    : getI18n('domainsSystem'),
 		extension : getI18n('domainsExtension')
 	},
-	header: {
+	mainControls: {
 		wide         : getI18n('sbControlsWideTitle'),
 		narrow       : getI18n('sbControlsNarrowTitle'),
 		pin          : getI18n('sbControlsFixedTitle'),
@@ -56,7 +56,8 @@ const i18n = {
 		downloads    : getI18n('optServicesDownloadsLabel'),
 		rss          : getI18n('optServicesRssLabel'),
 		pocket       : getI18n('optServicesPocketLabel'),
-		search       : getI18n('optServicesSearchLabel')
+		search       : getI18n('optServicesSearchLabel'),
+		bottomBarOptionsTitle : getI18n('')
 	},
 	startpage   : {},
 	tabs        : {},
@@ -356,12 +357,14 @@ const options = {
 		bookmarkDelete       : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		bookmarkFolderDelete : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		siteDelete           : {
 			value   : true,
@@ -371,22 +374,26 @@ const options = {
 		rssFeedDelete        : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		domainFolderClose    : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		pocketDelete         : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		pocketFolderDelete   : {
 			value   : true,
 			type    : 'boolean',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		tooManyBookmarks     : {
 			value   : true,
@@ -440,13 +447,15 @@ const options = {
 		sidebarImage   : {
 			value   : '',
 			type    : 'image',
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		sidebarImageStyle : {
 			value   : 'cover',
 			type    : 'select',
 			values  : ['cover', 'contain', 'center', 'repeat'],
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		}
 	},
 	misc: {
@@ -454,7 +463,8 @@ const options = {
 			value   : 50,
 			type    : 'integer',
 			range   : [10, 999],
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		limitBookmarks     : {
 			value   : 1999,
@@ -467,13 +477,15 @@ const options = {
 			value   : 99,
 			type    : 'integer',
 			range   : [10, 999],
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		rssUpdatePeriod    : {
 			value   : 60,
 			type    : 'integer',
 			range   : [20, 999],
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		rssHideReaded      : {
 			value   : false,
@@ -656,7 +668,8 @@ const options = {
 			value   : 'general',
 			type    : 'select',
 			values  : ['general', 'dev', 'social', 'buy'],
-			targets : ['sidebar']
+			targets : [],
+			handler : 'clickActions'
 		},
 		duckduckgo : {
 			value   : true,
@@ -878,6 +891,418 @@ const options = {
 			handler : 'searchEngine'
 		}
 	},
+	tabsClickActions: {
+		hidden : {},
+		normal : {
+			value   : 'setActive',
+			type    : 'select',
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		alt    : {
+			value   : 'setActive',
+			type    : 'select',
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		ctrl   : {
+			value   : 'close',
+			type    : 'select',
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		shift  : {
+			value   : 'pinUnpin',
+			type    : 'select',
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			targets : [],
+			handler : 'clickActions'
+		}
+	},
+	bookmarksClickActions: {
+		hidden : {},
+		normal : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		alt    : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		ctrl   : {
+			value   : 'openInNewTab',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		shift  : {
+			value   : 'openInNewWindow',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			targets : [],
+			handler : 'clickActions'
+		}
+	},
+	historyClickActions: {
+		hidden : {},
+		normal : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		alt    : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		ctrl   : {
+			value   : 'openInNewTab',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		shift  : {
+			value   : 'openInNewWindow',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		}
+	},
+	downloadsClickActions: {
+		hidden : {},
+		normal : {
+			value   : 'openFile',
+			type    : 'select',
+			values  : ['openFile', 'openFolder', 'deleteFile'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		alt    : {
+			value   : 'openFile',
+			type    : 'select',
+			values  : ['openFile', 'openFolder', 'deleteFile'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		ctrl   : {
+			value   : 'openFolder',
+			type    : 'select',
+			values  : ['openFile', 'openFolder', 'deleteFile'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		shift  : {
+			value   : 'openFolder',
+			type    : 'select',
+			values  : ['openFile', 'openFolder', 'deleteFile'],
+			targets : [],
+			handler : 'clickActions'
+		}
+	},
+	rssClickActions: {
+		hidden : {},
+		normal : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		alt    : {
+			value   : 'markRead',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		ctrl   : {
+			value   : 'openInNewTab',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		shift  : {
+			value   : 'openInNewWindow',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		}
+	},
+	pocketClickActions: {
+		hidden : {},
+		normal : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		alt    : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		ctrl   : {
+			value   : 'openInNewTab',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		shift  : {
+			value   : 'openInNewWindow',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			targets : [],
+			handler : 'clickActions'
+		}
+	},
+	searchClickActions: {
+		hidden : {},
+		normal : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		alt    : {
+			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		ctrl   : {
+			value   : 'openInNewTab',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		shift  : {
+			value   : 'openInNewWindow',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		}
+	},
+	tabsHoverActions: {
+		hidden  : {},
+		fav: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		move: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		reload: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		pin: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		unpin: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		close: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		closeAll: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		}
+	},
+	bookmarksHoverActions: {
+		hidden  : {},
+		move: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		delete: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		folderDelete: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		edit: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		}
+	},
+	historyHoverActions: {
+		hidden  : {}
+	},
+	downloadsHoverActions: {
+		hidden  : {},
+		pause: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		resume: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		reload: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		stop: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		delete: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		}
+	},
+	rssHoverActions: {
+		hidden  : {},
+		options: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		move: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		reload: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		markReaded: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		markReadedAll: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		}
+	},
+	pocketHoverActions: {
+		hidden  : {},
+		move: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		fav: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		unfav: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		archive: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		unarchive: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		folderArchive: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		delete: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		folderDelete: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		}
+	},
+	searchHoverActions: {
+		hidden  : {}
+	}
 };
 
 const optionsShort = {};
@@ -1020,6 +1445,14 @@ const optionsHandler = {
 	},
 	searchEnabled    : (section, option, newValue) => {
 		send('startpage', 'options', 'searchEnabled', {'value': newValue, 'searchFolders': data.searchFolders, 'searchQuery': data.searchQuery});
+	},
+	hoverActions     : (section, option, newValue) => {
+		const mode = section.replace('HoverActions', '');
+		send('sidebar', 'options', 'hoverActions', {'mode': mode, 'option': option, 'value': newValue});
+	},
+	clickActions     : (section, option, newValue) => {
+		const mode = section.replace('ClickActions', '');
+		send('sidebar', 'options', 'clickActions', {'mode': mode, 'option': option, 'value': newValue});
 	}
 };
 
@@ -1204,9 +1637,6 @@ const messageHandler = {
 		rssFeedDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
-		rssItemDelete : (message, sender, sendResponse) => {
-			createDialogWindow(message.action, message.data);
-		},
 		downloadDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
@@ -1244,6 +1674,9 @@ const messageHandler = {
 				'options'     : optionsShort.spSearch,
 				'searchTypes' : config.searchTypes
 			});
+		},
+		actions     : (message, sender, sendResponse) => {
+			createDialogWindow(message.action, {'type': message.data, 'clickActions': options[`${message.data}ClickActions`], 'prefix': `${message.data}Controls`,'hoverActions': optionsShort[`${message.data}HoverActions`]});
 		}
 	},
 
@@ -1931,13 +2364,13 @@ const initService = {
 			};
 
 			i18n.bookmarks = {
-				new                : getI18n('bkBookmarkThis'),
-				folderNew          : getI18n('bkBookmarkFolderNew'),
-				edit               : getI18n('bkEditBookmark'),
-				move               : getI18n('bkMoveBookmark'),
-				delete             : getI18n('bkDeleteBookmark'),
-				deleteFolder       : getI18n('bkDeleteBookmarkFolder'),
-				searchPlaceholder  : getI18n('bkSearchPlaceholder')
+				new                : getI18n('bookmarksControlsBookmarkThis'),
+				folderNew          : getI18n('bookmarksControlsFolderNew'),
+				edit               : getI18n('bookmarksControlsEdit'),
+				move               : getI18n('bookmarksControlsMove'),
+				delete             : getI18n('bookmarksControlsDelete'),
+				folderDelete       : getI18n('bookmarksControlsFolderDelete'),
+				searchPlaceholder  : getI18n('bookmarksSearchPlaceholder')
 			};
 
 			modeData.bookmarks = _ => {
@@ -2185,9 +2618,9 @@ const initService = {
 			};
 
 			i18n.history = {
-				getMoreText        : getI18n('hsGetMoreText'),
-				getMore            : getI18n('hsGetMoreTitle'),
-				searchPlaceholder  : getI18n('hsSearchPlaceholder')
+				getMoreText        : getI18n('historyGetMoreText'),
+				getMore            : getI18n('historyGetMoreTitle'),
+				searchPlaceholder  : getI18n('historySearchPlaceholder')
 			};
 
 			modeData.history = _ => {
@@ -2385,11 +2818,11 @@ const initService = {
 			};
 
 			i18n.downloads           = {
-				pause  : getI18n('dlControlsPause'),
-				resume : getI18n('dlControlsResume'),
-				reload : getI18n('dlControlsReload'),
-				stop   : getI18n('dlControlsCancel'),
-				delete : getI18n('dlControlsDelete')
+				pause  : getI18n('downloadsControlsPause'),
+				resume : getI18n('downloadsControlsResume'),
+				reload : getI18n('downloadsControlsReload'),
+				stop   : getI18n('downloadsControlsCancel'),
+				delete : getI18n('downloadsControlsDelete')
 			};
 
 			modeData.downloads  = _ => {
@@ -3434,7 +3867,7 @@ const initService = {
 					i18n             : i18n.pocket,
 					pocket           : data.pocket,
 					pocketFolders    : data.pocketFolders,
-					domains          : data.pocketDomains,
+					domains          : data.pocketDomains
 				};
 			};
 
@@ -3866,9 +4299,10 @@ const initService = {
 			};
 
 			i18n.search             = {
-				typegeneral          : getI18n('searchTypeGeneral'),
-				typedev              : getI18n('searchTypeDev'),
-				typebuy              : getI18n('searchTypeBuy'),
+				typegeneral          : getI18n('typeGeneral'),
+				typevideo            : getI18n('typeVideo'),
+				typedev              : getI18n('typeDev'),
+				typebuy              : getI18n('typeBuy'),
 				duckduckgo           : getI18n('searchEngineDuckDuckGo'),
 				google               : getI18n('searchEngineGoogle'),
 				yandex               : getI18n('searchEngineYandex'),
@@ -3956,8 +4390,8 @@ function initWindow() {
 }
 
 function sideBarData(side) {
-	if (status.timeStamp.sidebarCached !== status.timeStamp[side]) {
-		status.timeStamp.sidebarCached = status.timeStamp[side];
+	if (status.timeStamp.sidebarCached !== status.timeStamp[options[side].mode.value]) {
+		status.timeStamp.sidebarCached = status.timeStamp[options[side].mode.value];
 		data.sidebarData.data          = modeData[options[side].mode.value]();
 		data.sidebarData.timeStamp     = status.timeStamp;
 	}
@@ -3985,10 +4419,28 @@ function sideBarData(side) {
 				'rss'       : optionsShort.services.rss,
 				'pocket'    : optionsShort.services.pocket,
 				'search'    : optionsShort.services.search
-			}
+			},
+			'clickActions' : {
+				'tabs'      : optionsShort.tabsClickActions,
+				'bookmarks' : optionsShort.bookmarksClickActions,
+				'history'   : optionsShort.historyClickActions,
+				'downloads' : optionsShort.downloadsClickActions,
+				'rss'       : optionsShort.rssClickActions,
+				'pocket'    : optionsShort.pocketClickActions,
+				'search'    : optionsShort.searchClickActions
+			},
+			'hoverActions' : {
+				'tabs'      : optionsShort.tabsHoverActions,
+				'bookmarks' : optionsShort.bookmarksHoverActions,
+				'history'   : optionsShort.historyHoverActions,
+				'downloads' : optionsShort.downloadsHoverActions,
+				'rss'       : optionsShort.rssHoverActions,
+				'pocket'    : optionsShort.pocketHoverActions,
+				'search'    : optionsShort.searchHoverActions
+			},
 		};
 		data.sidebarData.i18n            = {
-			'header' : i18n.header,
+			'mainControls' : i18n.mainControls,
 			'mode'   : i18n[options[side].mode.value]
 		};
 		data.sidebarData.data            = modeData[options[side].mode.value]();

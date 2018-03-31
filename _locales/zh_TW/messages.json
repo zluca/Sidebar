@@ -105,69 +105,68 @@
 		"message"       : "以樹形檢視組織分頁",
 		"description"   : ""
 	},
-	"bkBookmarkThis" : {
+	"bookmarksControlsBookmarkThis" : {
 		"message"       : "將此分頁加入書籤",
 		"description"   : ""
 	},
-	"bkBookmarkFolderNew" : {
+	"bookmarksControlsFolderNew" : {
 		"message"       : "建立新資料夾",
 		"description"   : ""
 	},
-	"bkEditBookmark" : {
+	"bookmarksControlsEdit" : {
 		"message"       : "編輯書籤",
 		"description"   : ""
 	},
-	"bkMoveBookmark" : {
+	"bookmarksControlsMove" : {
 		"message"       : "移動書籤",
 		"description"   : ""
 	},
-	"bkDeleteBookmark" : {
+	"bookmarksControlsDelete" : {
 		"message"       : "刪除書籤",
 		"description"   : ""
 	},
-	"bkDeleteBookmarkFolder" : {
+	"bookmarksControlsFolderDelete" : {
 		"message"       : "刪除資料夾",
 		"description"   : ""
 	},
-	"bkSearchPlaceholder" : {
+	"bookmarksSearchPlaceholder" : {
 		"message"       : "搜尋",
 		"description"   : ""
 	},
 
-	"hsGetMoreText" : {
+	"historyGetMoreText" : {
 		"message"       : "顯示更多",
 		"description"   : "text on 'Get more history' button"
 	},
-	"hsGetMoreTitle" : {
+	"historyGetMoreTitle" : {
 		"message"       : "顯示更多歷史項目",
 		"description"   : ""
 	},
-	"hsSearchPlaceholder" : {
+	"historySearchPlaceholder" : {
 		"message"       : "搜尋",
 		"description"   : ""
 	},
 
-	"dlControlsPause" : {
+	"downloadsControlsPause" : {
 		"message"       : "暫停",
 		"description"   : ""
 	},
-	"dlControlsResume" : {
+	"downloadsControlsResume" : {
 		"message"       : "恢復",
 		"description"   : ""
 	},
-	"dlControlsReload" : {
+	"downloadsControlsReload" : {
 		"message"       : "重新整理",
 		"description"   : ""
 	},
-	"dlControlsCancel" : {
+	"downloadsControlsCancel" : {
 		"message"       : "取消",
 		"description"   : ""
 	},
-	"dlControlsDelete" : {
+	"downloadsControlsDelete" : {
 		"message"       : "刪除",
 		"description"   : ""
 	},
-
 
 	"rssNew" : {
 		"message"       : "新增 RSS feed",
@@ -645,22 +644,6 @@
 		"message"       : "購買",
 		"description"   : ""
 	},
-	"searchTypeGeneral" : {
-		"message"       : "一般",
-		"description"   : ""
-	},
-	"searchTypeVideo" : {
-		"message"       : "影片",
-		"description"   : ""
-	},
-	"searchTypeDev" : {
-		"message"       : "開發",
-		"description"   : ""
-	},
-	"searchTypeBuy" : {
-		"message"       : "商店",
-		"description"   : ""
-	},
 
 	"searchEngineDuckDuckGo" : {
 		"message"       : "DuckDuckGo",
@@ -1014,6 +997,11 @@
 		"description"   : ""
 	},
 
+	"dialogActionsHeader" : {
+		"message"       : "Configure mouse actions",
+		"description"   : ""
+	},
+
 	"domainsDefault" : {
 		"message"       : "未知",
 		"description"   : ""
@@ -1028,6 +1016,99 @@
 	},
 	"domainsExtension" : {
 		"message"       : "擴充套件",
+		"description"   : ""
+	},
+
+	"typeGeneral" : {
+		"message"       : "一般",
+		"description"   : ""
+	},
+	"typeVideo" : {
+		"message"       : "影片",
+		"description"   : ""
+	},
+	"typeDev" : {
+		"message"       : "開發",
+		"description"   : ""
+	},
+	"typeBuy" : {
+		"message"       : "商店",
+		"description"   : ""
+	},
+	"typeHoverActions" : {
+		"message"       : "Hover actions",
+		"description"   : ""
+	},
+	"typeClickActions" : {
+		"message"       : "Click actions",
+		"description"   : ""
+	},
+	"clickActionsNormal" : {
+		"message"       : "Normal click",
+		"description"   : ""
+	},
+	"clickActionsAlt" : {
+		"message"       : "Alt + click",
+		"description"   : ""
+	},
+	"clickActionsShift" : {
+		"message"       : "Shift + click",
+		"description"   : ""
+	},
+	"clickActionsCtrl" : {
+		"message"       : "Ctrl + click",
+		"description"   : ""
+	},
+	"clickActionsOpen" : {
+		"message"       : "Open",
+		"description"   : ""
+	},
+	"clickActionsOpenInNewTab" : {
+		"message"       : "Open in new tab",
+		"description"   : ""
+	},
+	"clickActionsOpenInNewWindow" : {
+		"message"       : "Open in new window",
+		"description"   : ""
+	},
+	"clickActionsSetActive" : {
+		"message"       : "Switch to tab",
+		"description"   : ""
+	},
+	"clickActionsClose" : {
+		"message"       : "Close",
+		"description"   : ""
+	},
+	"clickActionsBookmark" : {
+		"message"       : "Add to bookmarks",
+		"description"   : ""
+	},
+	"clickActionsDeleteBookmark" : {
+		"message"       : "Delete",
+		"description"   : ""
+	},
+	"clickActionsDeletePocket" : {
+		"message"       : "Delete",
+		"description"   : ""
+	},
+	"clickActionsDeleteFile" : {
+		"message"       : "Delete file",
+		"description"   : ""
+	},
+	"clickActionsPinUnpin" : {
+		"message"       : "Pin or unpin tab",
+		"description"   : ""
+	},
+	"clickActionsMarkReaded" : {
+		"message"       : "Mark readed",
+		"description"   : ""
+	},
+	"clickActionsOpenFile" : {
+		"message"       : "Open",
+		"description"   : ""
+	},
+	"clickActionsOpenFolder" : {
+		"message"       : "Open folder",
 		"description"   : ""
 	}
 }

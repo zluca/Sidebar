@@ -39,8 +39,8 @@
 		mask-image: url("icons/close.svg");
 	}
 	.download.in_progress::before {
-		-webkit-mask-image: url("icons/start.svg");
-		mask-image: url("icons/start.svg");
+		-webkit-mask-image: url("icons/resume.svg");
+		mask-image: url("icons/resume.svg");
 	}
 	.download.interrupted::before {
 		-webkit-mask-image: url("icons/attention.svg");

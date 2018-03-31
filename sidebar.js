@@ -63,7 +63,7 @@ const data     = {
 	domainsId : []
 };
 
-const options  = {
+let options    = {
 	sidebar          : {
 		method            : window.location.hash.replace('#', '').split('-')[1],
 		fixed             : false,
@@ -88,7 +88,6 @@ if (options.sidebar.method === 'window') {
 let initTimer  = -1;
 tryToInit();
 
-let onClick     = _ => {};
 let insertItems = _ => {};
 
 document.title      = options.sidebar.method;
@@ -193,6 +192,21 @@ const messageHandler = {
 		},
 		type               : info => {
 			setBlockClass(undefined, info.value);
+		},
+		hoverActions       : info => {
+			if (options.hoverActions[info.mode][info.option] !== info.value) {
+				options.hoverActions[info.mode][info.option] !== info.value;
+				if (info.value === true)
+					makeButton(info.option, info.mode, 'item');
+				else {
+					const button = document.getElementById(`${info.mode}-${info.option}`);
+					if (button !== null)
+						controls.item.removeChild(button);
+				}
+			}
+		},
+		clickActions        : info => {
+			options.clickActions[info.mode][info.option] = info.value;
 		}
 	},
 	set       : {
@@ -323,16 +337,10 @@ function initSidebar(response) {
 
 	brauzer.runtime.onMessage.removeListener(onMessage);
 
-	status.timeStamp    = response.timeStamp;
-	options.misc        = response.options.misc;
-	options.theme       = response.options.theme;
-	options.warnings    = response.options.warnings;
-	options.sidebar     = response.options.sidebar;
-	options.pocket      = response.options.pocket;
-	options.search      = response.options.search;
-	options.scroll      = response.options.scroll;
-	i18n.header         = response.i18n.header;
-	status.info         = response.info;
+	status.timeStamp     = response.timeStamp;
+	options              = response.options;
+	i18n.mainControls    = response.i18n.mainControls;
+	status.info          = response.info;
 
 	setFontSize();
 	setColor(options.theme);
@@ -342,7 +350,7 @@ function initSidebar(response) {
 
 	for (let service in response.options.services)
 		if (button[service] === null) {
-			button[service] = makeButton(service, 'header', 'sidebar', !response.options.services[service]);
+			button[service] = makeButton(service, 'mainControls', 'sidebar', !response.options.services[service]);
 			if (service === 'rss')
 				dcea('div', button.rss, [['id', 'rss-unreaded']]);
 		}
@@ -359,12 +367,12 @@ function initSidebar(response) {
 		window.onresize = _ => {setFontSize();};
 		if (controls.iframe === null) {
 			controls.iframe = dcea('div', controls.main, [['id', 'controls-iframe'], ['classList', 'controls']]);
-			makeButton('pin', 'header', 'iframe');
-			makeButton('unpin', 'header', 'iframe');
-			makeButton('wide', 'header', 'iframe');
-			makeButton('narrow', 'header', 'iframe');
-			makeButton(`${status.side}Show`, 'header', 'iframe');
-			makeButton(`${status.side}Hide`, 'header', 'iframe');
+			makeButton('pin', 'mainControls', 'iframe');
+			makeButton('unpin', 'mainControls', 'iframe');
+			makeButton('wide', 'mainControls', 'iframe');
+			makeButton('narrow', 'mainControls', 'iframe');
+			makeButton(`${status.side}Show`, 'mainControls', 'iframe');
+			makeButton(`${status.side}Hide`, 'mainControls', 'iframe');
 		}
 		setManual(options.misc.manualSwitch);
 		setWide(options.sidebar.wide);
@@ -393,6 +401,10 @@ function prepareBlock(mode) {
 	controls.item    = dcea('div', block, [['classList', 'controls'], ['id', 'controls-item']]);
 	controls.button  = dcea('div', block, [['classList', 'controls'], ['id', 'controls-button']]);
 	controls.bottom  = dcea('div', block, [['classList', 'controls'], ['id', 'controls-bottom']]);
+	makeButton('bottomBarOptions', 'mainControls', 'bottom');
+	for (let option in options.hoverActions[mode])
+		if (options.hoverActions[mode][option] === true)
+			makeButton(option, mode, 'item');
 
 	clearData();
 
@@ -409,7 +421,7 @@ function prepareBlock(mode) {
 	searchActive(false);
 }
 
-function finishBlock() {
+function finishBlock(mode) {
 	document.body.classList = options.sidebar.mode;
 	if (oldBlock !== null)
 		document.body.removeChild(oldBlock);
@@ -437,8 +449,14 @@ function finishBlock() {
 		}
 		else if (status.moving === true)
 			return;
+		else if (event.shiftKey)
+			clickActions[options.clickActions[mode].shift](event);
+		else if (event.ctrlKey)
+			clickActions[options.clickActions[mode].ctrl](event);
+		else if (event.altKey)
+			clickActions[options.clickActions[mode].alt](event);
 		else
-			onClick(event);
+			clickActions[options.clickActions[mode].normal](event);
 	});
 
 	setTimeout(setScroll, 100);
@@ -486,10 +504,10 @@ const initBlock = {
 			}
 		};
 
+		i18n.tabs             = info.i18n;
 		prepareBlock('tabs');
 		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
-		i18n.tabs             = info.i18n;
 		status.activeTabId    = info.activeTabId;
 		status.timeStamp.mode = info.timeStamp;
 
@@ -664,28 +682,14 @@ const initBlock = {
 			}
 		};
 
-		onClick     = event => {
-			if (event.target.classList.contains('active'))
-				return;
-			else if (event.target.classList.contains('tab'))
-				send('background', 'tabs', 'setActive', {'id': parseInt(event.target.dataset.id)});
-		};
-
 		makeButton('new', 'tabs', 'button');
-		makeButton('move', 'tabs', 'item');
-		makeButton('fav', 'tabs', 'item');
-		makeButton('reload', 'tabs', 'item');
-		makeButton('pin', 'tabs', 'item');
-		makeButton('unpin', 'tabs', 'item');
-		makeButton('close', 'tabs', 'item');
-		makeButton('closeAll', 'tabs', 'item');
 		makeButton('new', 'tabs', 'bottom');
 		makeButton('plain', 'tabs', 'bottom');
 		makeButton('domain', 'tabs', 'bottom');
 		makeButton('tree', 'tabs', 'bottom');
 
 		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode);
-		finishBlock();
+		finishBlock('tabs');
 	},
 
 	bookmarks : info => {
@@ -707,10 +711,10 @@ const initBlock = {
 			}
 		};
 
+		i18n.bookmarks           = info.i18n;
 		prepareBlock('bookmarks');
 		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
-		i18n.bookmarks           = info.i18n;
 		status.timeStamp.mode    = info.timeStamp;
 
 		messageHandler.bookmarks = {
@@ -746,11 +750,6 @@ const initBlock = {
 				else if (info.isFolder === true)
 					moveBook(getFolderById(info.id) , getFolderById(info.pid), info.newIndex);
 			}
-		};
-
-		onClick               = event => {
-			if (event.target.classList.contains('bookmark'))
-				openLink(event);
 		};
 
 		insertItems = (items, method = 'last') => {
@@ -792,16 +791,12 @@ const initBlock = {
 
 		makeButton('new', 'bookmarks', 'button');
 		makeButton('folderNew', 'bookmarks', 'button');
-		makeButton('edit', 'bookmarks', 'item');
-		makeButton('move', 'bookmarks', 'item');
-		makeButton('delete', 'bookmarks', 'item');
-		makeButton('folderDelete', 'bookmarks', 'item');
 		makeSearch('bookmarks');
 
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders(info.bookmarksFolders);
 		insertItems(info.bookmarks, 'last');
-		finishBlock();
+		finishBlock('bookmarks');
 	},
 
 	history   : info => {
@@ -851,10 +846,10 @@ const initBlock = {
 			getMoreButton.classList.add('hidden');
 		};
 
+		i18n.history             = info.i18n;
 		prepareBlock('history');
 		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
-		i18n.history             = info.i18n;
 		status.timeStamp.mode    = info.timeStamp;
 
 		messageHandler.history   = {
@@ -884,11 +879,6 @@ const initBlock = {
 			}
 		};
 
-		onClick               = event => {
-			if (event.target.classList.contains('history'))
-				openLink(event);
-		};
-
 		const now = new Date();
 		status.historyInfo.lastDate = now.toLocaleDateString();
 
@@ -900,7 +890,7 @@ const initBlock = {
 		insertItems(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
-		finishBlock();
+		finishBlock('history');
 	},
 
 	downloads : info => {
@@ -922,10 +912,10 @@ const initBlock = {
 			rootFolder.lastChild.insertBefore(down, rootFolder.lastChild.lastChild);
 		};
 
+		i18n.downloads           = info.i18n;
 		prepareBlock('downloads');
 		setBlockClass();
 		setDomainStyle.rewrite(info.domains);
-		i18n.downloads           = info.i18n;
 		status.timeStamp.mode    = info.timeStamp;
 
 		messageHandler.downloads = {
@@ -972,30 +962,9 @@ const initBlock = {
 			}
 		};
 
-		onClick = event => {
-			const target = event.target.classList.contains('download') ?
-				event.target :
-				event.target.parentNode.classList.contains('download') ?
-					event.target.parentNode :
-					null;
-			if (target !== null)
-				if (target.classList.contains('complete')) {
-					if (event.pageX - target.offsetLeft < options.theme.fontSize)
-						brauzer.downloads.show(parseInt(target.dataset.id));
-					else
-						brauzer.downloads.open(parseInt(target.dataset.id));
-				}
-		};
-
-		makeButton('pause', 'downloads', 'item');
-		makeButton('resume', 'downloads', 'item');
-		makeButton('reload', 'downloads', 'item');
-		makeButton('stop', 'downloads', 'item');
-		makeButton('delete', 'downloads', 'item');
-
 		for (let i = 0, l = info.downloads.length; i < l; i++)
 			insertDownload(info.downloads[i]);
-		finishBlock();
+		finishBlock('downloads');
 	},
 
 	rss       : info => {
@@ -1007,10 +976,10 @@ const initBlock = {
 			setBlockClass(options.misc.rssMode, readedMode === true ? 'hide-readed' : 'show-readed');
 		};
 
+		i18n.rss              = info.i18n;
 		prepareBlock('rss');
 		setReadedMode(options.misc.rssHideReaded);
 		setDomainStyle.rewrite(info.domains);
-		i18n.rss              = info.i18n;
 		status.timeStamp.mode = info.timeStamp;
 
 		messageHandler.rss    = {
@@ -1146,13 +1115,6 @@ const initBlock = {
 		};
 
 		makeButton('new', 'rss', 'button');
-		makeButton('reload', 'rss', 'item');
-		makeButton('move', 'rss', 'item');
-		makeButton('markReaded', 'rss', 'item');
-		makeButton('markReadedAll', 'rss', 'item');
-		makeButton('hideReaded', 'rss', 'item');
-		makeButton('showReaded', 'rss', 'item');
-		makeButton('options', 'rss', 'item');
 		makeButton('new', 'rss', 'bottom');
 		makeButton('importExport', 'rss', 'bottom');
 		makeButton('hideReadedAll', 'rss', 'bottom');
@@ -1161,14 +1123,9 @@ const initBlock = {
 		makeButton('reloadAll', 'rss', 'bottom');
 		makeButton('plain', 'rss', 'bottom');
 		makeButton('domain', 'rss', 'bottom');
-		onClick = event => {
-			if (event.target.classList.contains('item')) {
-				openLink(event);
-				send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
-			}
-		};
+
 		setView(options.misc.rssMode, info.rss, info.rssFolders);
-		finishBlock();
+		finishBlock('rss');
 	},
 
 	pocket    : info => {
@@ -1182,10 +1139,10 @@ const initBlock = {
 			pocket.title       = `${info.title}\n\n${info.description !== '' ? info.description + '\n\n' : ''} ${info.url}`;
 		};
 
+		i18n.pocket           = info.i18n;
 		prepareBlock('pocket');
 		setBlockClass(options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
 		setDomainStyle.rewrite(info.domains);
-		i18n.pocket           = info.i18n;
 		status.timeStamp.mode = info.timeStamp;
 
 		messageHandler.pocket = {
@@ -1288,11 +1245,6 @@ const initBlock = {
 			}
 		};
 
-		onClick               = event => {
-			if (event.target.classList.contains('item'))
-				openLink(event);
-		};
-
 		insertItems           = (items, position = 'last') => {
 			let pid    = 0;
 			let folder = rootFolder;
@@ -1329,14 +1281,6 @@ const initBlock = {
 		makeButton('login', 'pocket', 'user');
 		makeButton('logout', 'pocket', 'user');
 		makeButton('new', 'pocket', 'button');
-		makeButton('move', 'pocket', 'item');
-		makeButton('fav', 'pocket', 'item');
-		makeButton('unfav', 'pocket', 'item');
-		makeButton('archive', 'pocket', 'item');
-		makeButton('folderArchive', 'pocket', 'item');
-		makeButton('unarchive', 'pocket', 'item');
-		makeButton('delete', 'pocket', 'item');
-		makeButton('folderDelete', 'pocket', 'item');
 		makeButton('new', 'pocket', 'bottom');
 		makeButton('plain', 'pocket', 'bottom');
 		makeButton('type', 'pocket', 'bottom');
@@ -1344,7 +1288,7 @@ const initBlock = {
 		makeButton('reload', 'pocket', 'bottom');
 
 		setView(options.misc.pocketMode, info.pocket, info.pocketFolders);
-		finishBlock();
+		finishBlock('pocket');
 	},
 
 	search    : info => {
@@ -1376,13 +1320,11 @@ const initBlock = {
 			types[options.search.type]();
 		};
 
+		i18n.search           = info.i18n;
 		prepareBlock('search');
 		setBlockClass(undefined, options.search.type);
 		setDomainStyle.rewrite(info.domains);
-		i18n.search           = info.i18n;
 		status.timeStamp.mode = info.timeStamp;
-
-		makeButton('move', 'search', 'item');
 
 		messageHandler.search = {
 			update     : info => {
@@ -1414,11 +1356,6 @@ const initBlock = {
 				folder.classList.add('hidden');
 			},
 			type       : info => {}
-		};
-
-		onClick               = event => {
-			if (event.target.classList.contains('item'))
-				openLink(event);
 		};
 
 		insertItems           = (items, position = 'last') => {
@@ -1464,7 +1401,7 @@ const initBlock = {
 		insertFolders(info.searchFolders);
 		insertItems(info.search);
 
-		finishBlock();
+		finishBlock('search');
 	}
 };
 
@@ -1718,22 +1655,6 @@ function send(target, subject, action, data = {}, callback = _ => {}) {
 	brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': data}, callback);
 }
 
-function openLink(event) {
-	if (status.moving === true)
-		return;
-	if (event.target.id === status.lastClicked.id)
-		if (Date.now() - status.lastClicked.time < 1000)
-			return;
-	if (event.ctrlKey)
-		send('background', 'tabs', 'new', {'url': event.target.href});
-	else if (event.shiftKey)
-		send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': true});
-	else
-		send('background', 'tabs', 'update', {'url': event.target.href});
-	status.lastClicked.id   = event.target.id;
-	status.lastClicked.time = Date.now();
-}
-
 function finishMoving(event) {
 	event.stopPropagation();
 	event.preventDefault();
@@ -1984,7 +1905,7 @@ function makeTitle(title, url){
 }
 
 const buttonsEvents = {
-	header    : {
+	mainControls: {
 		tabs : event => {
 			if (options.sidebar.mode !== 'tabs')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'tabs'});
@@ -2036,6 +1957,9 @@ const buttonsEvents = {
 		},
 		rightBarHide : event => {
 			send('background', 'options', 'handler', {'section': 'rightBar', 'option': 'open', 'value': false});
+		},
+		bottomBarOptions : event => {
+			send('background', 'dialog', 'actions', options.sidebar.mode);
 		}
 	},
 	tabs      : {
@@ -2126,7 +2050,7 @@ const buttonsEvents = {
 		reload: event => {
 			send('background', 'downloads', 'reload', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
-		cancel: event => {
+		stop: event => {
 			send('background', 'downloads', 'cancel', {'id': parseInt(controls.item.parentNode.dataset.id), 'url': controls.item.parentNode.title});
 		},
 		delete: event => {
@@ -2174,9 +2098,6 @@ const buttonsEvents = {
 		},
 		showReaded: event => {
 			send('background', 'rss', 'rssShowReaded', {'id': controls.item.parentNode.dataset.id});
-		},
-		delete: event => {
-			send('background', 'dialog', 'rssItemDelete', {'id': controls.item.parentNode.dataset.id, 'title': controls.item.parentNode.textContent});
 		},
 		plain: event => {
 			if (options.misc.rssMode !== 'plain')
@@ -2244,9 +2165,65 @@ const buttonsEvents = {
 		}
 	},
 	search    : {
-		move: event => {
-			moveItem('search', controls.item.parentNode);
-		},
+	}
+};
+
+const clickActions = {
+	open            : event => {
+		send('background', 'tabs', 'update', {'url': event.target.href});
+	},
+	openInNewTab    : event => {
+		send('background', 'tabs', 'new', {'url': event.target.href});
+	},
+	openInNewWindow : event => {
+		send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': true});
+	},
+	setActive       : event => {
+		if (event.target.classList.contains('active'))
+			return;
+		send('background', 'tabs', 'setActive', {'id': parseInt(event.target.dataset.id)});
+	},
+	close           : event => {
+		send('background', 'tabs', 'removeById', {'idList': [parseInt(event.target.dataset.id)]});
+	},
+	bookmark        : event => {
+		send('background', 'dialog', 'bookmarkTab', {'id': parseInt(event.target.dataset.id)});
+	},
+	deleteBookmark  : event => {
+		if (options.warnings.bookmarkDelete === true)
+			send('background', 'dialog', 'bookmarkDelete', {'id': event.target.dataset.id, 'title': event.target.textContent});
+		else
+			send('background', 'bookmarks', 'bookmarkDelete', {'id': event.target.dataset.id});
+	},
+	deletePocket    : event => {
+		if (options.warnings.pocketDelete === true)
+			send('background', 'dialog', 'pocketDelete', event.target.dataset.id);
+		else
+			send('background', 'pocket', 'delete', event.target.dataset.id);
+	},
+	deleteFile    : event => {
+
+	},
+	pinUnpin        : event => {
+		if (event.target.classList.contains('pinned'))
+			send('background', 'tabs', 'unpin', {'id': parseInt(event.target.dataset.id)});
+		else
+			send('background', 'tabs', 'pin', {'id': parseInt(event.target.dataset.id)});
+	},
+	markReaded      : event => {
+		send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
+	},
+	openFile        : event => {
+		if (event.target.classList.contains('item'))
+			brauzer.downloads.open(parseInt(event.target.dataset.id));
+		else if (event.target.nodeName === 'P')
+			brauzer.downloads.open(parseInt(event.target.parentNode.dataset.id));
+	},
+	openFolder      : event => {
+		if (event.target.classList.contains('item'))
+			brauzer.downloads.show(parseInt(event.target.dataset.id));
+		else if (event.target.nodeName === 'P')
+			brauzer.downloads.show(parseInt(event.target.parentNode.dataset.id));
 	}
 };
 

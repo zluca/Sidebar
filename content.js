@@ -135,9 +135,10 @@ const messageHandler = {
 			reInitSide('leftBar');
 			reInitSide('rightBar');
 
-			if (dialog !== null)
-				document.body.removeChild(dialog);
-
+			if (dialog !== null) {
+				dialog.parentNode.removeChild(dialog);
+				dialog = null;
+			}
 			if (options.theme.fontSize !== info.theme.fontSize) {
 				options.theme.fontSize = info.theme.fontSize;
 				if (options.leftBar.method === 'iframe')
@@ -164,15 +165,17 @@ const messageHandler = {
 	},
 	dialog : {
 		create      : info => {
-			if (dialog !== null)
-				document.body.removeChild(dialog);
+			if (dialog !== null){
+				dialog.parentNode.removeChild(dialog);
+				dialog = null;
+			}
 			dialog     = document.createElement('iframe');
 			dialog.id  = 'sbp-dialog';
 			dialog.src = `${brauzer.extension.getURL('dialog.html')}#${info}`;
 			document.body.appendChild(dialog);
 		},
 		remove      : info => {
-			document.body.removeChild(dialog);
+			dialog.parentNode.removeChild(dialog);
 			dialog = null;
 		},
 		checkRss    : info => {
