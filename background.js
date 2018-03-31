@@ -3055,7 +3055,7 @@ const initService = {
 					if (feed === false) return;
 					rssSetReaded('feed', feed, 'kill');
 					brauzer.alarms.clear(`rss-update**${message.data.id}`);
-					deleteFolderById('rss', message.data.id);
+					deleteFolderById('rss', message.data.id, true);
 					saveLater('rss');
 					saveLater('rssFolders');
 					send('sidebar', 'rss', 'rssFeedDeleted', {'id': message.data.id});
@@ -3393,6 +3393,8 @@ const initService = {
 						else
 							makeDomain('rss', data.rssFolders[i].url);
 						rssSetUpdate(res.rssFolders[i], options.misc.rssUpdatePeriod.value);
+						while (data.rssFolders[i].itemsId.length > options.misc.maxSavedRssPerFeed.value)
+							deleteById('rss', data.rssFolders[i].itemsId[0]);
 					}
 					rssSetReaded('count');
 				}
@@ -4811,6 +4813,13 @@ function createById(mode, item, position) {
 function deleteById(mode, id) {
 	const index = data[`${mode}Id`].indexOf(id);
 	if (index === -1) return;
+	const folder = getFolderById(mode, data[mode][index].pid);
+	if (folder !== false)
+		if (folder.hasOwnProperty('itemsId')) {
+			const idIndex = folder.itemsId.indexOf(id);
+			if (idIndex !== -1)
+				folder.itemsId.splice(idIndex, 1);
+		}
 	data[mode].splice(index, 1);
 	data[`${mode}Id`].splice(index, 1);
 }
