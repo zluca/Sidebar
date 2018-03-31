@@ -13,7 +13,7 @@ send('background', 'request', 'dialog', {needResponse: true}, response => {
 });
 
 function setFontSize() {
-	document.body.style.fontSize = `${10 / window.devicePixelRatio}px`;
+	document.documentElement.style.fontSize = `${10 / window.devicePixelRatio}px`;
 }
 
 function makeDialogWindow(data, warnings, colors) {
@@ -44,7 +44,7 @@ function makeDialogWindow(data, warnings, colors) {
 	let width = document.body.offsetWidth / 3;
 	if (width > 600) width  = 600;
 	if (width < 300) width  = 300;
-	dialog.style.width      = `${width}px`;
+	dialog.style.width      = `${width / document.body.offsetWidth * 100}%`;
 	dialog.appendChild(header);
 	dialog.appendChild(main);
 	dialog.appendChild(footer);
@@ -160,13 +160,15 @@ function makeDialogWindow(data, warnings, colors) {
 						if (selector.children[i].selected === true)
 							options[option].value = selector.children[i].value;
 				});
+				const optgroup       = document.createElement('optgroup');
+				selector.appendChild(optgroup);
 				for (let i = 0, l = options[option].values.length; i < l; i++) {
 					const opt       = document.createElement('option');
 					opt.textContent = getI18n(`clickActions${options[option].values[i]}`);
 					opt.value       = options[option].values[i];
 					if (options[option].values[i] === options[option].value)
 						opt.selected = true;
-					selector.appendChild(opt);
+					optgroup.appendChild(opt);
 				}
 				label.appendChild(selector);
 				section.appendChild(label);
@@ -715,7 +717,7 @@ function makeDialogWindow(data, warnings, colors) {
 	};
 
 	fillWindow[type]();
-	document.body.style.paddingTop = `calc(50vh - ${dialog.offsetHeight >> 1}px)`;
+	document.body.style.paddingTop = `calc(50vh - ${((document.body.offsetHeight - dialog.offsetHeight) >> 1) / document.body.offsetWidth * 100}%)`;
 	document.body.addEventListener('keydown', keyboardListener);
 }
 

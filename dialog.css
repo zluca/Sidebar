@@ -12,7 +12,6 @@ body {
 	height: 100vh;
 	box-sizing: border-box;
 	overflow: visible;
-	font-size: 10px;
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, “Roboto”, “Oxygen”, “Ubuntu”, “Cantarell”, “Fira Sans”, “Droid Sans”, “Helvetica Neue”, sans-serif;
 }
@@ -23,40 +22,40 @@ body {
 	overflow: hidden;
 	z-index: 9999;
 	background-color: var(--background-color);
-	padding: 1.5em 1em;
+	padding: 1.5rem 1rem;
 	margin-left: auto;
 	margin-right: auto;
 	user-select: none;
 	moz-user-select: none;
 	word-wrap: break-word;
 	border-style: solid;
-	border-width: .1em;
+	border-width: .1rem;
 	border-color: var(--border-color);
 	box-shadow: 0 0 .1rem .1rem var(--border-color-active);
 }
 	header {
 		word-wrap: none;
 		text-align: center;
-		font-size: 2.4em;
+		font-size: 2.4rem;
 	}
 	main {
-		margin: 1em 0 2em 0;
+		margin: 1rem 0 2rem 0;
 		display: grid;
 		grid-template-columns: min-content auto;
-		grid-row-gap: 1em;
-		grid-column-gap: 0.8em;
+		grid-row-gap: 1rem;
+		grid-column-gap: 0.8rem;
 		align-items: center;
-		font-size: 1.8em;
+		font-size: 1.8rem;
 	}
 		main>p {
 			grid-column-start: 1;
 			grid-column-end: 3;
-			margin: 0.5em 0;
+			margin: 0.5rem 0;
 			display: inline-block;
 		}
 		main>label {
-			padding: 0.3em;
-			font-size: 1em;
+			padding: 0.3rem;
+			font-size: 1.8rem;
 		}
 		main>label {
 			text-align: right;
@@ -67,16 +66,16 @@ body {
 		main>input {
 			padding: 0;
 			margin: 0;
-			font-size: 1em;
-			border: solid 0.05em var(--border-color);
-			padding: 0.1em 0.3em;
+			font-size: 1.8rem;
+			border: solid 0.05rem var(--border-color);
+			padding: 0.1rem 0.3rem;
 			background-color: var(--background-color);
 		}
 		main>textarea {
-			font-size: 1em;
-			min-height: 4em;
-			min-width: 15em;
-			padding: 0.1em 0.3em;
+			font-size: 1rem;
+			min-height: 4rem;
+			min-width: 5rem;
+			padding: 0.1rem 0.3rem;
 			max-lines: 6;
 			background-color: var(--background-color);
 			color: var(--font-color-active);
@@ -86,7 +85,7 @@ body {
 		}
 		main>input[type="text"] {
 			color: var(--font-color-active);
-			min-width: 15em;
+			min-width: 5rem;
 		}
 		main>input[type="text"]::placeholder {
 			color: var(--font-color-inactive);
@@ -108,6 +107,7 @@ body {
 			background-repeat: no-repeat;
 			background-size: 2rem 2rem;
 			background-position: 0 .3rem;
+			font-size: 1.5rem;
 		}
 		label.options-section.active {
 			background-color: var(--background-color-active);
@@ -142,11 +142,19 @@ body {
 				margin-bottom: .5rem;
 			}
 				select {
+					font-size: 1.4rem;
 					display: block;
+					border-width: .1rem;
 				}
+					optgroup {
+						font-size: 1.4rem;
+					}
+						option {
+							padding: .2rem .3rem;
+						}
 
 	footer {
-		font-size: 1.6em;
+		font-size: 1.6rem;
 		display: grid;
 		grid-template-columns: 1fr auto;
 	}
@@ -156,12 +164,12 @@ body {
 			align-items: middle;
 		}
 			footer>div>span {
-				margin: 0.5em 0 0.5em 1em;
-				padding: 0.3em 1em;
-				min-width: 5em;
+				margin: 0.5rem 0 0.5rem 1rem;
+				padding: 0.3rem 1rem;
+				min-width: 5rem;
 				border-style: solid;
 				border-color: var(--border-color);
-				border-width: 0.05em;
+				border-width: 0.05rem;
 				cursor: pointer;
 			}
 			footer>div>span:hover {
@@ -173,8 +181,8 @@ body {
 		display: none;
 		position: fixed;
 		overflow: hidden;
-		font-size: 1.8em;
-		border-width: 0.05em;
+		font-size: 1.8rem;
+		border-width: 0.05rem;
 		border-style: solid;
 		border-color: var(--border-color);
 		background-color: var(--background-color);
@@ -184,13 +192,13 @@ body {
 			color: var(--font-color);
 			width: 100%;
 			margin: 0;
-			padding: 0.1em 0.5em 0.1em 1.6em;
+			padding: 0.1rem 0.5rem 0.1rem 1.6rem;
 			border-style: solid;
 			border-color: transparent;
-			border-width: 0.1em 0;
+			border-width: 0.1rem 0;
 			background-repeat: no-repeat;
-			background-size: 1.2em 1.2em;
-			background-position: 0 0.2em;
+			background-size: 1.2rem 1.2rem;
+			background-position: 0 0.2rem;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
