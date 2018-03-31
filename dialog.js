@@ -717,7 +717,7 @@ function makeDialogWindow(data, warnings, colors) {
 	};
 
 	fillWindow[type]();
-	document.body.style.paddingTop = `calc(50vh - ${((document.body.offsetHeight - dialog.offsetHeight) >> 1) / document.body.offsetWidth * 100}%)`;
+	document.body.style.paddingTop = `calc(${((document.body.offsetHeight - dialog.offsetHeight) >> 1) / document.body.offsetWidth * 80}%)`;
 	document.body.addEventListener('keydown', keyboardListener);
 }
 
