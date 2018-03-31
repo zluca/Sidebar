@@ -208,9 +208,12 @@ nav {
 
 		#mainControls-bottomBarOptions {
 			position: absolute;
-			top: 0.45rem;
-			right: .2rem;
+			background-color: var(--background-color);
+			z-index: 999;
+			top: 0;
+			right: 0;
 			margin-right: 0!important;
+			padding: .45rem .2rem;
 		}
 			#mainControls-bottomBarOptions>span {
 				width: .7rem;
