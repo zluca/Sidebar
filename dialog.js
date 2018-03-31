@@ -636,6 +636,7 @@ function makeDialogWindow(data, warnings, colors) {
 		searchSelect : _ => {
 
 			let options = {};
+			let type    = data.type;
 
 			setHeader();
 			for (let type in data.searchTypes) {
@@ -649,6 +650,8 @@ function makeDialogWindow(data, warnings, colors) {
 					for (let option in options[type])
 						if (options[type][option] !== data.options[option])
 							send('background', 'options', 'handler', {'section': data.target, 'option': option, 'value': options[type][option]});
+				if (type !== data.type)
+					send('background', 'options', 'handler', {'section': data.target, 'option': 'type', 'value': type});
 				removeDialogWindow();
 			});
 			addButton('cancel');
@@ -664,7 +667,7 @@ function makeDialogWindow(data, warnings, colors) {
 					active[0].classList.remove('active');
 					event.target.classList.add('active');
 					event.target.nextElementSibling.classList.add('active');
-					options.type = event.target.dataset.id;
+					type = event.target.dataset.id;
 				}
 			});
 		},
