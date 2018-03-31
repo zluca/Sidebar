@@ -3999,7 +3999,7 @@ const initService = {
 				},
 				bing       : result => {
 					const item        = {};
-					const link        = result.querySelector('h2>a');
+					const link        = result.querySelector('h2>a:last-child');
 					if (link === null)
 						return false;
 					item.title        = link.innerHTML;
@@ -4008,7 +4008,7 @@ const initService = {
 						return false;
 					const body        = link.parentNode.lastChild;
 					if (body !== null)
-						item.description  = body.textContent;
+						item.description = body.textContent;
 					item.pid          = 'bing';
 					return item;
 				},
