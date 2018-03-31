@@ -895,7 +895,7 @@ const initBlock = {
 
 	downloads : info => {
 
-		const insertDownload = item => {
+		const insertDownload = (item, position = -1) => {
 			const down           = createById(item.id);
 			down.title           = item.url;
 			const filename       = dcea('p', down, [['textContent', item.filename]]);
@@ -909,7 +909,11 @@ const initBlock = {
 			dcea('span', progress, []).style.width = item.progressPercent;
 			dcea('div', status, [['classList', 'recived'], ['textContent', item.progressNumbers]]);
 			dcea('div', status, [['classList', 'file-size'], ['textContent', item.fileSize]]);
-			rootFolder.lastChild.insertBefore(down, rootFolder.lastChild.lastChild);
+			if (position > -1)
+				if (rootFolder.lastChild.children.length > 0)
+					if (rootFolder.lastChild.children.length > position)
+						return rootFolder.lastChild.insertBefore(down, rootFolder.lastChild.children[position]);
+			rootFolder.lastChild.appendChild(down);
 		};
 
 		i18n.downloads           = info.i18n;
@@ -920,7 +924,7 @@ const initBlock = {
 
 		messageHandler.downloads = {
 			created    : info => {
-				insertDownload(info.item);
+				insertDownload(info.item, info.index);
 			},
 			erased     : info => {
 				removeById(info.id);

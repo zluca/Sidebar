@@ -2891,7 +2891,9 @@ const initService = {
 
 		const onCreated = download => {
 			makeTimeStamp('downloads');
-			send('sidebar', 'downloads', 'created', {'item': createById('downloads', download, 'last')});
+			const down  = createById('downloads', download, 'idReverse');
+			const index = data.downloadsId.indexOf(down.id);
+			send('sidebar', 'downloads', 'created', {'item': down, 'index': index});
 		};
 
 		const onErased = id => {
@@ -2931,7 +2933,7 @@ const initService = {
 
 		const getDownloads = downloads => {
 			for (let i = 0, l = downloads.length; i < l; i ++)
-				createById('downloads', downloads[i], 'last');
+				createById('downloads', downloads[i], 'idReverse');
 			initDownloads();
 		};
 
@@ -4775,6 +4777,28 @@ function createById(mode, item, position) {
 				}
 			data[mode].push({'id': item.id});
 			index = data[`${mode}Id`].push(item.id) - 1;
+			return data[mode][index];
+		},
+		id : _ => {
+			for (let i = 0, l = data[`${mode}Id`].length; i < l; i++)
+				if (item.id < data[`${mode}Id`][i]) {
+					data[mode].splice(i, 0, {'id': item.id});
+					data[`${mode}Id`].splice(i, 0, item.id);
+					return data[mode][i];
+				}
+			data[mode].push({'id': item.id});
+			const index = data[`${mode}Id`].push(item.id) - 1;
+			return data[mode][index];
+		},
+		idReverse : _ => {
+			for (let i = 0, l = data[mode].length; i < l; i++)
+				if (item.id > data[`${mode}Id`][i]) {
+					data[mode].splice(i, 0, {'id': item.id});
+					data[`${mode}Id`].splice(i, 0, item.id);
+					return data[mode][i];
+				}
+			data[mode].push({'id': item.id});
+			const index = data[`${mode}Id`].push(item.id) - 1;
 			return data[mode][index];
 		}
 	};
