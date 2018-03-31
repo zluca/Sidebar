@@ -4247,15 +4247,16 @@ const initService = {
 			};
 		};
 
-		const resetSearch = _ => {
+		const resetSearch = (shutdown = false) => {
 			data[`${mode}Query`]     = '';
 			data[mode]               = [];
 			data[`${mode}Id`]        = [];
 			data[`${mode}Folders`]   = [];
 			data[`${mode}FoldersId`] = [];
-			for (let type in config.searchTypes)
-				for (let i = 0, l = config.searchTypes[type].length; i < l; i++)
-					updateFolder[mode]({'type': type, 'pid': config.searchTypes[type][i]});
+			if (shutdown === false)
+				for (let type in config.searchTypes)
+					for (let i = 0, l = config.searchTypes[type].length; i < l; i++)
+						updateFolder[mode]({'type': type, 'pid': config.searchTypes[type][i]});
 		};
 
 		const clearSearch = type => {
@@ -4367,7 +4368,7 @@ const initService = {
 				};
 			};
 
-			resetSearch(options[mode].type.value);
+			resetSearch(false);
 			status.init[mode]     = true;
 		}
 		else {
@@ -4375,9 +4376,8 @@ const initService = {
 			updateItem[mode]      = null;
 			i18n.search           = null;
 			modeData[mode]        = null;
-			resetSearch(options[mode].type.value);
+			resetSearch(true);
 			status.init[mode]     = false;
-			//
 		}
 	}
 };
