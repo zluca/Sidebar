@@ -631,6 +631,10 @@
 		"message"       : "Начать",
 		"description"   : ""
 	},
+	"startpageClearSearchButtonTitle" : {
+		"message"       : "Очистить поиск",
+		"description"   : ""
+	},
 
 	"searchGeneralPlaceholder" : {
 		"message"       : "Искать",

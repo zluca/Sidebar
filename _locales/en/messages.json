@@ -631,6 +631,10 @@
 		"message"       : "Start",
 		"description"   : ""
 	},
+	"startpageClearSearchButtonTitle" : {
+		"message"       : "Clear search",
+		"description"   : ""
+	},
 
 	"searchGeneralPlaceholder" : {
 		"message"       : "Search",

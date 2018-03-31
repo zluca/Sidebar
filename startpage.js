@@ -69,6 +69,8 @@ function init(response) {
 	searchOptions            = dcea('span', search, ['id', 'search-options']);
 	dcea('span', searchOptions, ['classList', 'search-icon']);
 	searchField              = dcea('input', search, ['id', 'search-field']);
+	const clearSearch        = dceam('span', search, [['id', 'clear-search'], ['title', i18n.clearSearchButtonTitle]]);
+	dce('span', clearSearch);
 	const letsSearch         = dceam('span', search, [['id', 'lets-search'], ['title', i18n.searchButtonTitle]]);
 	dce('span', letsSearch);
 	siteContainer            = dcea('main', document.body, ['id', 'site-container']);
@@ -245,6 +247,11 @@ function init(response) {
 		else
 			send('background', 'spSearch', 'changeQuery', subject);
 	}, {'passive': true});
+
+	clearSearch.addEventListener('click', event => {
+		searchField.value = '';
+		send('background', 'spSearch', 'changeQuery', '');
+	});
 
 	searchField.addEventListener('keyup', event => {
 		if (event.key === 'Enter')

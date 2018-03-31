@@ -631,6 +631,10 @@
 		"message"       : "開始",
 		"description"   : ""
 	},
+	"startpageClearSearchButtonTitle" : {
+		"message"       : "Clear search",
+		"description"   : ""
+	},
 
 	"searchGeneralPlaceholder" : {
 		"message"       : "搜尋",
