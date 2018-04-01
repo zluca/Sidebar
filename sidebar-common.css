@@ -452,7 +452,7 @@ nav {
 		border-style: solid;
 		border-color: var(--border-color);
 		border-width: .05rem;
-		margin-left: .2rem;
+		margin: 0 .2rem;
 		color: var(--font-color-active);
 	}
 	.search-input::placeholder {
