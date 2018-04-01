@@ -2184,6 +2184,16 @@ const initService = {
 			status.activeTabsIds[status.activeWindow]  = tabInfo.tabId;
 			tab.readed = true;
 			makeTimeStamp('tabs');
+			if (options.leftBar.method.value === 'iframe')
+				if (options.leftBar.fixed.value === false)
+					if (options.misc.manualSwitch.value === false)
+						if (options.leftBar.open.value === true)
+							setOption('leftBar', 'open', false);
+			if (options.rightBar.method.value === 'iframe')
+				if (options.rightBar.fixed.value === false)
+					if (options.misc.manualSwitch.value === false)
+						if (options.rightBar.open.value === true)
+							setOption('rightBar', 'open', false);
 			reInit(tabInfo.tabId);
 			if (options.services.startpage.value === true)
 				if (tab.url === config.extensionStartPage)
