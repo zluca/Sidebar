@@ -3289,7 +3289,7 @@ const initService = {
 						if (/^https?:\/\//i.test(link))
 							item.link = link;
 						else
-							item.link = `${feed.link}${link}`;
+							item.link = `${domainFromUrl(feed.url)}${link}`;
 					}
 					else if (nodeName === 'description' || nodeName === 'content')
 						item.description = ch[j].textContent.replace(/&#?....;/g, '').replace(/<[^<>]*>/g, '').replace(/\s\s*/g, ' ');
