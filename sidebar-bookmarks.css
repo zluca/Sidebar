@@ -8,8 +8,3 @@
 #root-folder>div>.folder>.folder-name>.controls {
 	display: none;
 }
-@media (max-width: 2rem) {
-	#controls-button {
-		display: none;
-	}
-}

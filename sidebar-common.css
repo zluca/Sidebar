@@ -507,6 +507,16 @@ nav {
 		nav>.controls {
 			flex-flow: column;
 		}
+		#controls-item {
+			display: none!important;
+		}
+		#controls-button {
+			flex-flow: column;
+			padding: 0 .2rem;
+		}
+			#controls-button>.button {
+				margin-top: .3rem;
+			}
 			#controls-sidebar>.button {
 				display: none;
 			}
