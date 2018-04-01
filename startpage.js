@@ -304,19 +304,37 @@ function insertSearchItems(info, clean) {
 	let folder         = null;
 	let pid            = -1;
 	let alreadyCleaned = [];
+
+	const makeTitle    = (target, title) => {
+		const l = title.length;
+		let i   = 1;
+		target.appendChild(document.createTextNode(title[0]));
+		while (i < l) {
+			dcea('b', target, ['textContent', title[i]]);
+			target.appendChild(document.createTextNode(title[i + 1]));
+			i = i + 2;
+		}
+	};
 	const makeItem     = {
-		general : item => dceamd('a', folder,
-			[['innerHTML', item.title], ['href', item.url], ['title', `${item.description}\n\n${item.url}`], ['classList', `${item.domain}-domain search item`]],
-			[['url', item.url], ['domain', item.domain]]),
-		dev     : item => dceamd('a', folder,
-			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
-			[['url', item.url], ['domain', item.domain]]),
-		video   : item => dceamd('a', folder,
-			[['innerHTML', item.title], ['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]],
-			[['url', item.url], ['domain', item.domain]]),
-		buy     : item => dceamd('a', folder,
-			[['innerHTML', `<b>${item.price}</b><p>${item.title}</p>`], ['href', item.url], ['title', `${item.price}\n\n${item.title}`], ['classList', `${item.domain}-domain search item`]],
-			[['url', item.url], ['domain', item.domain]]).style.backgroundImage = `url(${item.img}`
+		general : item => {
+			const searchItem = dceamd('a', folder, [['href', item.url], ['title', `${item.description}\n\n${item.url}`], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			makeTitle(searchItem, item.title);
+		},
+		dev     : item => {
+			const searchItem = dceamd('a', folder, [['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			makeTitle(searchItem, item.title);
+		},
+		video   : item => {
+			const searchItem = dceamd('a', folder, [['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			makeTitle(searchItem, item.title);
+		},
+		buy     : item => {
+			const searchItem = dceamd('a', folder, [['href', item.url], ['title', `${item.price}\n\n${item.title.join('')}`], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			searchItem.style.backgroundImage = `url(${item.img}`;
+			dcea('b', searchItem, ['textContent', item.price]);
+			const p  = dce('p', searchItem);
+			makeTitle(p, item.title);
+		}
 	};
 
 	for (let i = 0, l = info.length; i < l; i++) {

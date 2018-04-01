@@ -3955,7 +3955,7 @@ const initService = {
 					const link        = result.querySelector('.result__title>a');
 					if (link === null)
 						return false;
-					item.title        = link.innerHTML;
+					item.title        = makeCleanTitle(link.innerHTML, '<b>', '</b>');
 					item.url          = link.getAttribute('href');
 					if (item.url.match('://') === null)
 						return false;
@@ -3971,7 +3971,7 @@ const initService = {
 					const link        = result.querySelector('h3>a');
 					if (link === null)
 						return false;
-					item.title        = link.innerHTML;
+					item.title        = makeCleanTitle(link.innerHTML, '<b>', '</b>');
 					item.url          = link.getAttribute('href');
 					if (item.url.match('://') === null)
 						return false;
@@ -3990,7 +3990,8 @@ const initService = {
 					if (link === null)
 						return false;
 					link.removeChild(link.firstChild);
-					item.title        = link.innerHTML;
+					const title       = link.hasChildNodes() ? link.firstChild.innerHTML : link.innerHTML;
+					item.title        = makeCleanTitle(title, '<b class="needsclick">', '</b>');
 					item.url          = link.getAttribute('href');
 					if (item.url.match('://') === null)
 						return false;
@@ -4005,7 +4006,7 @@ const initService = {
 					const link        = result.querySelector('h2>a:last-child');
 					if (link === null)
 						return false;
-					item.title        = link.innerHTML;
+					item.title        = makeCleanTitle(link.innerHTML, '<strong>', '</strong>');
 					item.url          = link.getAttribute('href');
 					if (item.url.match('://') === null)
 						return false;
@@ -4020,7 +4021,7 @@ const initService = {
 					const title       = result.querySelector('h3>a');
 					if (title === null)
 						return false;
-					item.title        = title.innerHTML;
+					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
 					const link        = result.querySelector('h3+div>span');
 					if (link === null)
 						return false;
@@ -4036,7 +4037,7 @@ const initService = {
 					const title       = result.querySelector('div>a');
 					if (title === null)
 						return false;
-					item.title        = title.textContent;
+					item.title        = makeCleanTitle(title.innerHTML, '<span class="searchmatch">', '</span>');
 					item.url          = `https://${options.misc.wikiSearchLang.value}.wikipedia.org${title.getAttribute('href')}`;
 					const body        = title.parentNode.nextElementSibling;
 					if (body !== null)
@@ -4049,7 +4050,7 @@ const initService = {
 					const title       = result.querySelector('h4>a');
 					if (title === null)
 						return false;
-					item.title        = title.textContent;
+					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
 					item.url          = title.href;
 					const body        = title.parentNode.nextElementSibling;
 					if (body !== null)
@@ -4062,7 +4063,7 @@ const initService = {
 					const title       = result.querySelector('.result-link>span>a');
 					if (title === null)
 						return false;
-					item.title        = title.textContent;
+					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
 					item.url          = `https://stackoverflow.com/${title.getAttribute('href')}`;
 					const body        = title.parentNode.parentNode.nextElementSibling;
 					if (body !== null)
@@ -4075,7 +4076,7 @@ const initService = {
 					const title       = result.querySelector('.s-item-container a>h2');
 					if (title === null)
 						return false;
-					item.title        = title.textContent;
+					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
 					item.url          = title.parentNode.href;
 					const img         = result.querySelector('a>img');
 					if (img !== null)
@@ -4092,7 +4093,7 @@ const initService = {
 					const title       = result.querySelector('h3.lvtitle>a');
 					if (title === null)
 						return false;
-					item.title        = title.textContent;
+					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
 					item.url          = title.href;
 					const img         = result.querySelector('a>img');
 					if (img !== null)
@@ -4109,7 +4110,7 @@ const initService = {
 					const title       = result.querySelector('.n-snippet-card2__part_type_center .n-snippet-card2__title');
 					if (title === null)
 						return false;
-					item.title        = title.textContent;
+					item.title        = makeCleanTitle(title.innerHTML, '<strong>', '</strong>');
 					item.url          = `https://market.yandex.com${title.firstChild.getAttribute('href')}`;
 					const img         = result.querySelector('.n-snippet-card2__part_type_left img');
 					if (img !== null)
@@ -4126,7 +4127,7 @@ const initService = {
 					const title       = result.querySelector('.info>h3>a,.detail>h3>a');
 					if (title === null)
 						return false;
-					item.title        = title.textContent;
+					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
 					item.url          = `https:${title.getAttribute('href')}`;
 					const img         = result.querySelector('.pic>a>img,.img>a>img');
 					if (img !== null)
@@ -4155,6 +4156,22 @@ const initService = {
 			makeItem.youtube               = result => checkUrl(makeItem.google(result), /https?:\/\/www.youtube/);
 			makeItem.dailymotion           = result => checkUrl(makeItem.duckduckgo(result), /https?:\/\/www.dailymotion/);
 			makeItem.vimeo                 = result => checkUrl(makeItem.yandex(result), /https?:\/\/vimeo.com/);
+
+			const makeCleanTitle = (string, openTag, closeTag) => {
+				const l1   = openTag.length;
+				const l2   = closeTag.length;
+				let index1 = -l2;
+				let index2 = string.indexOf(openTag);
+				let result = [];
+				while (index2 !== -1) {
+					result.push(string.substring(index1 + l2, index2).replace(/\<[^>]*\>/ig, ''));
+					index1 = string.indexOf(closeTag, index2);
+					result.push(string.substring(index2 + l1, index1 !== -1 ? index1 : undefined).replace(/\<[^>]*\>/ig, ''));
+					index2 = string.indexOf(openTag, index1);
+				}
+				result.push(string.substring(index1 + l2, undefined).replace(/\<[^>]*\>/ig, ''));
+				return result;
+			}
 
 			const cleanse     = html => {
 
@@ -4199,7 +4216,7 @@ const initService = {
 					type        : type,
 					pid         : type,
 					url         : searchLink,
-					title       : i18n.search[`${subType}Title`],
+					title       : [i18n.search[`${subType}Title`]],
 					description : i18n.search[`${subType}Description`]
 				};
 				return [createById(mode, item, 'last')];

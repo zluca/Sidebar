@@ -1298,22 +1298,37 @@ const initBlock = {
 	search    : info => {
 
 		const updateItem      = (item, info) => {
+
+			const makeTitle    = (target, title) => {
+				const l = title.length;
+				let i   = 1;
+				target.appendChild(document.createTextNode(title[0]));
+				while (i < l) {
+					dcea('b', target, [['textContent', title[i]]]);
+					target.appendChild(document.createTextNode(title[i + 1]));
+					i = i + 2;
+				}
+			};
+
 			const types = {
 				general : _ => {
-					item.innerHTML   = info.title;
+					makeTitle(item, info.title);
 					item.title       = `${info.description}\n\n${info.url}`;
 				},
 				dev : _ => {
-					item.innerHTML   = info.title;
+					makeTitle(item, info.title);
 					item.title       = `${info.description}\n\n${info.url}`;
 				},
 				video : _ => {
-					item.innerHTML   = info.title;
+					makeTitle(item, info.title);
 					item.title       = `${info.description}\n\n${info.url}`;
 				},
 				buy     : _ => {
-					item.innerHTML   = `<b>${info.price}</b><p>${info.title}</p>`;
-					item.title       = `${info.price}\n\n${info.title}`;
+					dcea('b', item, [['textContent', info.price]]);
+					const p  = dce('p');
+					item.appendChild(p);
+					makeTitle(p, info.title);
+					item.title       = `${info.price}\n\n${info.title.join('')}`;
 					item.style.backgroundImage = `url(${info.img})`;
 				}
 			};
