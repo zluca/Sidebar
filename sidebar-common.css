@@ -27,7 +27,7 @@ body {
 	grid-template-rows: auto 1fr;
 	grid-template-columns: 100%;
 	width: 100%;
-	overflow-y: scroll;
+	overflow: hidden;
 	height: 100vh;
 	font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, “Roboto”, “Oxygen”, “Ubuntu”, “Cantarell”, “Fira Sans”, “Droid Sans”, “Helvetica Neue”, sans-serif;
 }
@@ -42,9 +42,10 @@ ul {
 }
 main {
 	width: 100%;
-	height: auto;
 	position: relative;
-	margin-bottom: 3rem;
+	margin-bottom: 2.5rem;
+	overflow-x: hidden;
+	overflow-y: auto;
 	color: var(--font-color);
 }
 
@@ -81,12 +82,9 @@ main {
 }
 
 nav {
-	position: sticky;
-	top: 0;
 	width: 100%;
 	padding: .3rem 0;
 	background-color: var(--background-color);
-	z-index: 99;
 	user-select: none;
 	moz-user-select: none;
 }
