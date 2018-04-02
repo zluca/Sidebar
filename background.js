@@ -149,6 +149,8 @@ const data = {
 	historyDomainsId   : [],
 	downloads          : [],
 	downloadsId        : [],
+	downloadsFolders   : [],
+	downloadsFoldersId : [],
 	rss                : [],
 	rssId              : [],
 	rssFolders         : [],
@@ -2808,11 +2810,9 @@ const initService = {
 					brauzer.downloads.cancel(message.data.id);
 				},
 				reload : (message, sender, sendResponse) => {
-					const index = data.downloadsId.indexOf(message.data.id);
-					if (data.downloads[index].exists === true)
-						brauzer.downloads.removeFile(message.data.id);
-					brauzer.downloads.erase({'id': message.data.id});
-					brauzer.downloads.download({'url': data.downloads[index].url, 'conflictAction': 'uniquify'});
+					const down = getById('downloads', message.data.id);
+					if (down === false) return;
+					brauzer.downloads.download({'url': down.url, 'conflictAction': 'uniquify'});
 				},
 				erase : (message, sender, sendResponse) => {
 					brauzer.downloads.erase({'id': message.data.id});
@@ -2820,6 +2820,8 @@ const initService = {
 				removeFile : (message, sender, sendResponse) => {
 					const down = getById('downloads', message.data.id);
 					if (down === false) return;
+					if (down.exists === false) return;
+					if (down.state === 'interrupted') return;
 					brauzer.downloads.removeFile(message.data.id);
 					down.exists = false;
 					send('sidebar', 'downloads', 'exists', {'id': message.data.id, 'method': 'add'});
@@ -2996,7 +2998,7 @@ const initService = {
 				newItem.canResume       = item.canResume;
 				newItem.url             = url;
 				newItem.state           = item.state;
-				newItem.exists          = item.state === 'in_progress' ? true : item.exists;
+				newItem.exists          = item.exists;
 				if (status.init.downloads === true)
 					makeTimeStamp('downloads');
 				return newItem;
