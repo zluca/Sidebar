@@ -1040,79 +1040,79 @@
 		"description"   : ""
 	},
 	"typeHoverActions" : {
-		"message"       : "Hover actions",
+		"message"       : "滑鼠游標停在其上時的動作",
 		"description"   : ""
 	},
 	"typeClickActions" : {
-		"message"       : "Click actions",
+		"message"       : "點擊動作",
 		"description"   : ""
 	},
 	"clickActionsNormal" : {
-		"message"       : "Normal click",
+		"message"       : "一般點擊",
 		"description"   : ""
 	},
 	"clickActionsAlt" : {
-		"message"       : "Alt + click",
+		"message"       : "Alt + 點擊",
 		"description"   : ""
 	},
 	"clickActionsShift" : {
-		"message"       : "Shift + click",
+		"message"       : "Shift + 點擊",
 		"description"   : ""
 	},
 	"clickActionsCtrl" : {
-		"message"       : "Ctrl + click",
+		"message"       : "Ctrl + 點擊",
 		"description"   : ""
 	},
 	"clickActionsOpen" : {
-		"message"       : "Open",
+		"message"       : "開啟",
 		"description"   : ""
 	},
 	"clickActionsOpenInNewTab" : {
-		"message"       : "Open in new tab",
+		"message"       : "在新分頁中開啟",
 		"description"   : ""
 	},
 	"clickActionsOpenInNewWindow" : {
-		"message"       : "Open in new window",
+		"message"       : "在新視窗中開啟",
 		"description"   : ""
 	},
 	"clickActionsSetActive" : {
-		"message"       : "Switch to tab",
+		"message"       : "切換至分頁",
 		"description"   : ""
 	},
 	"clickActionsClose" : {
-		"message"       : "Close",
+		"message"       : "關閉",
 		"description"   : ""
 	},
 	"clickActionsBookmark" : {
-		"message"       : "Add to bookmarks",
+		"message"       : "新增至書籤",
 		"description"   : ""
 	},
 	"clickActionsDeleteBookmark" : {
-		"message"       : "Delete",
+		"message"       : "刪除",
 		"description"   : ""
 	},
 	"clickActionsDeletePocket" : {
-		"message"       : "Delete",
+		"message"       : "刪除",
 		"description"   : ""
 	},
 	"clickActionsDeleteFile" : {
-		"message"       : "Delete file",
+		"message"       : "刪除檔案",
 		"description"   : ""
 	},
 	"clickActionsPinUnpin" : {
-		"message"       : "Pin or unpin tab",
+		"message"       : "釘選或取消釘選分頁",
 		"description"   : ""
 	},
 	"clickActionsMarkReaded" : {
-		"message"       : "Mark readed",
+		"message"       : "標示為已讀",
 		"description"   : ""
 	},
 	"clickActionsOpenFile" : {
-		"message"       : "Open",
+		"message"       : "開啟",
 		"description"   : ""
 	},
 	"clickActionsOpenFolder" : {
-		"message"       : "Open folder",
+		"message"       : "開啟資料夾",
 		"description"   : ""
 	}
 }
