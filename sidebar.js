@@ -2190,12 +2190,18 @@ const buttonsEvents = {
 const clickActions = {
 	open            : event => {
 		send('background', 'tabs', 'update', {'url': event.target.href});
+		if (options.sidebar.mode === 'rss')
+			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 	},
 	openInNewTab    : event => {
 		send('background', 'tabs', 'new', {'url': event.target.href});
+		if (options.sidebar.mode === 'rss')
+			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 	},
 	openInNewWindow : event => {
 		send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': true});
+		if (options.sidebar.mode === 'rss')
+			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 	},
 	setActive       : event => {
 		if (event.target.classList.contains('active'))
