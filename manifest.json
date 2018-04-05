@@ -4,10 +4,10 @@
 	"version"            : "0.5.6",
 	"description"        : "__MSG_extDescription__",
 	"author"             : "zluka",
-	"developer"          : {
-		"name"  : "zluka",
-		"url"   : "https://github.com/zluca/Sidebar"
-	},
+	// "developer"          : {
+	// 	"name"  : "zluka",
+	// 	"url"   : "https://github.com/zluca/Sidebar"
+	// },
 	"homepage_url"   : "https://github.com/zluca/",
 	"default_locale" : "en",
 	"icons": {
@@ -40,11 +40,11 @@
 		"sidebar.html",
 		"dialog.html"
 	],
-	"sidebar_action": {
-		"default_icon"  : "icons/sidebar-icon-64.png",
-		"default_title" : "Sidebar+",
-		"default_panel" : "sidebar.html#leftBar-native"
-	},
+	// "sidebar_action": {
+	// 	"default_icon"  : "icons/sidebar-icon-64.png",
+	// 	"default_title" : "Sidebar+",
+	// 	"default_panel" : "sidebar.html#leftBar-native"
+	// },
 	"background": {
 		"scripts": ["background.js"]
 	},
@@ -55,8 +55,7 @@
 		"browser_style" : true
 	},
 	"options_ui": {
-		"page"          : "options.html#services",
-		"browser_style" : true
+		"page"          : "options.html#services"
 	// },
 	// "commands": {
 	// 	"_execute_sidebar_action": {
