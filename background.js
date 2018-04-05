@@ -4245,9 +4245,9 @@ const initService = {
 			xhttp.onreadystatechange = _ => {
 				if (xhttp.readyState === 4) {
 					if (xhttp.status === 200) {
-						const doc     = document.createElement('html');
+						const parser  = new DOMParser();
 						const html    = cleanse(xhttp.responseText).replace(/src=/ig, 'data-src=').replace(/image-src=/ig, 'data-src=').replace(/srcset=/ig, 'data-srcset=');
-						doc.innerHTML = html;
+						const doc     = parser.parseFromString(html, "text/html");
 						let items     = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
 						const folder  = getFolderById(mode, type);
