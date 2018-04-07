@@ -156,10 +156,14 @@ const messageHandler = {
 			}
 			if (options.misc.manualSwitch !== info.misc.manualSwitch) {
 				options.misc.manualSwitch = info.misc.manualSwitch;
-				if (options.leftBar.method === 'iframe')
+				if (options.leftBar.method === 'iframe') {
 					setSideBarWidth('leftBar');
-				if (options.rightBar.method === 'iframe')
+					setEventListeners('leftBar');
+				}
+				if (options.rightBar.method === 'iframe') {
 					setSideBarWidth('rightBar');
+					setEventListeners('rightBar');
+				}
 			}
 		}
 	},
@@ -287,7 +291,7 @@ function makeIframe(side) {
 	sidebar[side].id = `sbp-${side}`;
 	sidebar[side].classList.add('sbp-sidebar');
 	const iframe     = document.createElement('iframe');
-	iframe.src       = chrome.extension.getURL(`sidebar.html#${side}-iframe`);
+	iframe.src       = brauzer.extension.getURL(`sidebar.html#${side}-iframe`);
 	const border     = document.createElement('div');
 	sidebar[side].appendChild(border);
 	sidebar[side].appendChild(iframe);
@@ -311,6 +315,7 @@ function setSideBarFixed(side, value) {
 	if (value !== undefined)
 		options[side].fixed = value;
 	setSideBarWidth(side);
+	setEventListeners(side);
 }
 
 function setEventListeners(side) {
@@ -326,44 +331,45 @@ function setEventListeners(side) {
 	};
 
 	const mouseOver = event => {
+		const realSide = (window.innerWidth >> 1) - event.screenX > 0 ? 'leftBar' : 'rightBar';
 		rightClick = false;
-		if (event !== undefined)
-			event.stopPropagation();
-		if (status[side].over === true)
+		if (status[realSide].over === true)
 			return;
 		if (options.misc.manualSwitch === true)
-			if (options[side].fixed === false)
-				if (options[side].wide === false)
+			if (options[realSide].fixed === false)
+				if (options[realSide].wide === false)
 					return;
-		status[side].over = true;
+		status[realSide].over = true;
 		if (timer.leave !== 0)
 			cleanTimer('leave');
 		else
 			timer.over = setTimeout(_ => {
-				if (!status[side].over)
+				if (!status[realSide].over)
 					return cleanTimer('over');
-				setOpen(side, true);
+				setOpen(realSide, true);
 				cleanTimer('over');
-			}, 100);
+			}, 50);
 	};
 
 	const mouseLeave = event => {
 		if (rightClick)
 			return;
-		if (event !== undefined)
-			event.stopPropagation();
-		if (status[side].over === false || status[side].resize === true)
+		if (event.target !== sidebar.leftBar && event.target !== sidebar.rightBar)
 			return;
-		status[side].over = false;
-		if (options[side].fixed === true)
+		event.stopPropagation();
+		const realSide = (window.innerWidth >> 1) - event.screenX > 0 ? 'leftBar' : 'rightBar';
+		if (status[realSide].over === false || status[realSide].resize === true)
+			return;
+		status[realSide].over = false;
+		if (options[realSide].fixed === true)
 			return;
 		if (timer.over !== 0)
 			cleanTimer('over');
 		else
 			timer.leave = setTimeout(_ => {
-				if (status[side].over === true)
+				if (status[realSide].over === true)
 					return cleanTimer('leave');
-				setOpen(side, false);
+				setOpen(realSide, false);
 				cleanTimer('leave');
 			}, 200);
 	};
@@ -392,7 +398,7 @@ function setEventListeners(side) {
 	else {
 		sidebar[side].onmouseover        = mouseOver;
 		sidebar[side].onmouseleave       = mouseLeave;
-		sidebar[side].firstChild.onclick = null;
+		sidebar[side].firstChild.onclick = borderClick;
 	}
 }
 
@@ -401,6 +407,7 @@ function setSideBarWideMode(side, value) {
 		options[side].wide = value;
 	sidebar[side].classList[options[side].wide === true ? 'remove' : 'add']('narrow');
 	setSideBarWidth(side);
+	setEventListeners(side);
 }
 
 function setColor() {
@@ -409,7 +416,6 @@ function setColor() {
 }
 
 function setSideBarWidth(side, value) {
-
 	const openWide = {
 		truetrue   : _ => {
 			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
@@ -437,7 +443,6 @@ function setSideBarWidth(side, value) {
 	const iconWidth   = options.theme.fontSize * 1.7 / window.devicePixelRatio;
 	const trueSide    = side.replace('Bar', '');
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
-	sidebar[side].lastChild.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
 	if (value !== undefined)
 		options[side].width = value;
 	if (options[side].fixed === true) {
@@ -447,7 +452,6 @@ function setSideBarWidth(side, value) {
 	}
 	else
 		openWide[`${options[side].open === true}${options[side].wide === true}`]();
-	setEventListeners(side);
 }
 
 function resizeSideBar(side) {

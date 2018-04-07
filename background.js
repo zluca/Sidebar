@@ -2167,6 +2167,19 @@ const initService = {
 
 		const checkStartPage    = tab => tab.url === config.defaultStartPage ? true : false;
 
+		const closeIframe       = _ => {
+			if (options.leftBar.method.value === 'iframe')
+				if (options.leftBar.fixed.value === false)
+					if (options.misc.manualSwitch.value === false)
+						if (options.leftBar.open.value === true)
+							setOption('leftBar', 'open', false);
+			if (options.rightBar.method.value === 'iframe')
+				if (options.rightBar.fixed.value === false)
+					if (options.misc.manualSwitch.value === false)
+						if (options.rightBar.open.value === true)
+							setOption('rightBar', 'open', false);
+		};
+
 		const createTab         = tab => {
 			if (status.sidebarWindowCreating === true) {
 				status.sidebarWindowCreating = false;
@@ -2185,17 +2198,8 @@ const initService = {
 			if (tab === false) return;
 			status.activeTabsIds[status.activeWindow]  = tabInfo.tabId;
 			tab.readed = true;
+			closeIframe();
 			makeTimeStamp('tabs');
-			if (options.leftBar.method.value === 'iframe')
-				if (options.leftBar.fixed.value === false)
-					if (options.misc.manualSwitch.value === false)
-						if (options.leftBar.open.value === true)
-							setOption('leftBar', 'open', false);
-			if (options.rightBar.method.value === 'iframe')
-				if (options.rightBar.fixed.value === false)
-					if (options.misc.manualSwitch.value === false)
-						if (options.rightBar.open.value === true)
-							setOption('rightBar', 'open', false);
 			reInit(tabInfo.tabId);
 			if (options.services.startpage.value === true)
 				if (tab.url === config.extensionStartPage)
@@ -2221,6 +2225,7 @@ const initService = {
 				const url = info.url === 'about:blank' ? oldTab.url : info.url;
 				const newDomain = makeDomain('tabs', url);
 				oldTab.url      = info.url;
+				closeIframe();
 				if (newDomain.id !== oldFolder.id) {
 					removeFromFolder('tabs', oldTab);
 					oldTab.domain   = newDomain.id;
