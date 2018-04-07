@@ -378,8 +378,7 @@ function initSidebar(response) {
 		setWide(options.sidebar.wide);
 		setFixed(options.sidebar.fixed);
 	}
-
-	initBlock[options.sidebar.mode](response.data);
+	initBlock[response.data.mode](response.data);
 
 	brauzer.runtime.onMessage.addListener(onMessage);
 }
@@ -430,8 +429,7 @@ function finishBlock(mode) {
 		const target = event.target;
 		if (target.classList.contains('item')) {
 			target.appendChild(controls.item);
-			if (options.sidebar.mode === 'rss')
-				target.title = target.dataset.title;
+			target.title = target.dataset.title;
 		}
 		else if (target.classList.contains('folder-name'))
 			target.appendChild(controls.item);
@@ -534,8 +532,8 @@ const initBlock = {
 			title      : info => {
 				const tab = getById(info.id);
 				if (tab !== false) {
-					tab.textContent = info.title;
-					tab.title       = makeTitle(info.title, info.url);
+					tab.textContent   = info.title;
+					tab.dataset.title = makeTitle(info.title, info.url);
 				}
 			},
 			status     : info => {
@@ -546,8 +544,8 @@ const initBlock = {
 			urlChanged  : info => {
 				const tab = getById(info.id);
 				if (tab !== false) {
-					tab.href  = info.url;
-					tab.title = makeTitle(info.title, info.url);
+					tab.href          = info.url;
+					tab.dataset.title = makeTitle(info.title, info.url);
 				}
 			},
 			folderChanged : info => {
@@ -666,10 +664,10 @@ const initBlock = {
 				tab = getById(tabs[i].id);
 				if (tab === false)
 					tab = createById(tabs[i].id);
-				tab.textContent = tabs[i].title;
-				tab.title       = makeTitle(tabs[i].title, tabs[i].url);
-				tab.href        = tabs[i].url;
-				let classList   = `tab item domain-${tabs[i].domain} ${tabs[i].status}`;
+				tab.textContent   = tabs[i].title;
+				tab.dataset.title = makeTitle(tabs[i].title, tabs[i].url);
+				tab.href          = tabs[i].url;
+				let classList     = `tab item domain-${tabs[i].domain} ${tabs[i].status}`;
 				if (tabs[i].id === status.activeTabId) {
 					status.activeTab = tab;
 					classList += ' active';
@@ -725,11 +723,11 @@ const initBlock = {
 				removeFolderById(info.id);
 			},
 			changedBookmark : info => {
-				const bookmark       = getById(id);
+				const bookmark         = getById(id);
 				if (bookmark === false) return;
-				bookmark.textContent = info.title;
-				bookmark.href        = info.url;
-				bookmark.title       = makeTitle(info.title, info.url);
+				bookmark.textContent   = info.title;
+				bookmark.href          = info.url;
+				bookmark.dataset.title = makeTitle(info.title, info.url);
 			},
 			changedFolder   : info => {
 				const folde = getFolderById(info.id);
@@ -777,11 +775,11 @@ const initBlock = {
 
 			for (let i = 0, l = items.length; i < l; i++) {
 				checkPid(items[i]);
-				const bookmark       = createById(items[i].id, true);
+				const bookmark         = createById(items[i].id, true);
 				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
-				bookmark.title       = makeTitle(items[i].title, items[i].url);
-				bookmark.href        = items[i].url;
-				bookmark.textContent = items[i].title;
+				bookmark.dataset.title = makeTitle(items[i].title, items[i].url);
+				bookmark.href          = items[i].url;
+				bookmark.textContent   = items[i].title;
 				if (count > items[i].index - 1)
 					folder.lastChild.insertBefore(bookmark, folder.lastChild.children[items[i].index]);
 				else
@@ -828,9 +826,9 @@ const initBlock = {
 					folder = getFolderById(pid);
 				}
 				hist.classList.add('history', 'item', `domain-${items[i].domain}`);
-				hist.title       = makeTitle(items[i].title, items[i].url);
-				hist.href        = items[i].url;
-				hist.textContent = items[i].title;
+				hist.dataset.title = makeTitle(items[i].title, items[i].url);
+				hist.href          = items[i].url;
+				hist.textContent   = items[i].title;
 				insert[method](hist);
 			}
 		};
@@ -874,8 +872,8 @@ const initBlock = {
 			title   : info =>  {
 				const item = getById(info.id);
 				if (item === false) return;
-				item.textContent = info.title;
-				item.title       = makeTitle(info.title, info.url);
+				item.textContent   = info.title;
+				item.title.dataset = makeTitle(info.title, info.url);
 			}
 		};
 
@@ -897,7 +895,7 @@ const initBlock = {
 
 		const insertDownload = (item, position = -1) => {
 			const down           = createById(item.id);
-			down.title           = item.url;
+			down.dataset.title   = item.url;
 			const filename       = dcea('p', down, [['textContent', item.filename]]);
 			let classList        = `download item ${item.state}`;
 			classList            += item.exists === true ? '' : ' deleted';
@@ -1135,12 +1133,12 @@ const initBlock = {
 	pocket    : info => {
 
 		const updateItem      = (pocket, info) => {
-			let classList      = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
-			pocket.href        = info.url;
-			pocket.dataset.url = info.url;
-			pocket.textContent = info.title;
-			pocket.classList   = classList;
-			pocket.title       = `${info.title}\n\n${info.description !== '' ? info.description + '\n\n' : ''} ${info.url}`;
+			let classList        = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
+			pocket.href          = info.url;
+			pocket.dataset.url   = info.url;
+			pocket.textContent   = info.title;
+			pocket.classList     = classList;
+			pocket.dataset.title = `${info.title}\n\n${info.description !== '' ? info.description + '\n\n' : ''} ${info.url}`;
 		};
 
 		i18n.pocket           = info.i18n;
@@ -1299,7 +1297,7 @@ const initBlock = {
 
 		const updateItem      = (item, info) => {
 
-			const makeTitle    = (target, title) => {
+			const makeSearchText    = (target, title) => {
 				const l = title.length;
 				let i   = 1;
 				target.appendChild(document.createTextNode(title[0]));
@@ -1312,23 +1310,23 @@ const initBlock = {
 
 			const types = {
 				general : _ => {
-					makeTitle(item, info.title);
-					item.title       = `${info.description}\n\n${info.url}`;
+					makeSearchText(item, info.title);
+					item.dataset.title         = `${info.description}\n\n${info.url}`;
 				},
 				dev : _ => {
-					makeTitle(item, info.title);
-					item.title       = `${info.description}\n\n${info.url}`;
+					makeSearchText(item, info.title);
+					item.dataset.title         = `${info.description}\n\n${info.url}`;
 				},
 				video : _ => {
-					makeTitle(item, info.title);
-					item.title       = `${info.description}\n\n${info.url}`;
+					makeSearchText(item, info.title);
+					item.dataset.title         = `${info.description}\n\n${info.url}`;
 				},
 				buy     : _ => {
 					dcea('b', item, [['textContent', info.price]]);
 					const p  = dce('p');
 					item.appendChild(p);
-					makeTitle(p, info.title);
-					item.title       = `${info.price}\n\n${info.title.join('')}`;
+					makeSearchText(p, info.title);
+					item.dataset.title         = `${info.price}\n\n${info.title.join('')}`;
 					item.style.backgroundImage = `url(${info.img})`;
 				}
 			};
