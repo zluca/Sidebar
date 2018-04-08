@@ -28,6 +28,7 @@ const i18n     = {
 
 const status   = {
 	side              : window.location.hash.replace('#', '').split('-')[0],
+	method            : window.location.hash.replace('#', '').split('-')[1],
 	bookmarkFolders  : [],
 	historyInfo       : {
 		lastDate : 0,
@@ -63,20 +64,9 @@ const data     = {
 	domainsId : []
 };
 
-let options    = {
-	sidebar          : {
-		method            : window.location.hash.replace('#', '').split('-')[1],
-		fixed             : false,
-		wide              : false,
-		width             : 0,
-		mode              : '',
-	},
-	theme            : null,
-	misc             : null,
-	warnings         : null,
-};
+let options    = {};
 
-if (options.sidebar.method === 'window') {
+if (status.method === 'window') {
 	const setWindowPosition = _ => {
 		send('background', 'options', 'handler', {'section': status.side, 'option': 'left', 'value': window.screenX});
 		send('background', 'options', 'handler', {'section': status.side, 'option': 'top', 'value': window.screenY});
@@ -90,7 +80,7 @@ tryToInit();
 
 let insertItems = _ => {};
 
-document.title      = options.sidebar.method;
+document.title      = status.method;
 doc.classList.add(status.side);
 
 const blockStyle    = dcea('link', document.head, [['type', 'text/css'], ['rel', 'stylesheet']]);
@@ -234,7 +224,7 @@ const messageHandler = {
 			}
 		},
 		side        : info => {
-			if (options.sidebar.method === 'native')
+			if (status.method === 'native')
 				status.side = info;
 		},
 		scroll      : info => {
@@ -272,13 +262,13 @@ const messageHandler = {
 };
 
 function tryToInit() {
-	send('background', 'request', 'mode', {'side': status.side, 'method': options.sidebar.method, needResponse: true}, response => {
+	send('background', 'request', 'mode', {'side': status.side, 'method': status.method, needResponse: true}, response => {
 		if (response === undefined) {
 			initTimer = setTimeout(tryToInit, 200);
 			return;
 		}
 
-		if (options.sidebar.method === 'native') {
+		if (status.method === 'native') {
 			const port = brauzer.runtime.connect({name: 'sidebar-alive'});
 			if (firefox) {
 				doc.addEventListener('mouseleave', event => {
@@ -289,7 +279,7 @@ function tryToInit() {
 				}, {'passive': true});
 			}
 		}
-		else if (options.sidebar.method === 'iframe') {
+		else if (status.method === 'iframe') {
 			if (firefox)
 				if (status.side === 'rightBar') {
 					doc.addEventListener('mouseleave', event => {
@@ -360,9 +350,9 @@ function initSidebar(response) {
 	setRssUnreaded(status.info.rssUnreaded);
 	setDownloadStatus[status.info.downloadStatus]();
 
-	if (options.sidebar.method === 'native')
+	if (status.method === 'native')
 		status.side = response.side;
-	if (options.sidebar.method === 'iframe') {
+	if (status.method === 'iframe') {
 		doc.classList.remove('fixed');
 		window.onresize = _ => {setFontSize();};
 		if (controls.iframe === null) {
