@@ -13,14 +13,13 @@
 	min-width: 0!important;
 	display: grid!important;
 	grid-template-rows: 100%!important;
+	grid-template-columns: max-content 1fr;
 }
 #sbp-rightBar {
-	grid-template-columns: 1fr auto;
 	right:   0!important;
 	left:    unset!important;
 }
 #sbp-leftBar {
-	grid-template-columns: auto 1fr;
 	left:    0!important;
 	right:   unset!important;
 	direction: rtl!important;
