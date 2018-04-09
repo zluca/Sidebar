@@ -43,7 +43,6 @@ ul {
 main {
 	width: 100%;
 	position: relative;
-	margin-bottom: 2.5rem;
 	overflow-x: hidden;
 	overflow-y: auto;
 	color: var(--font-color);
@@ -533,6 +532,9 @@ nav {
 
 @media (min-width: 2.01rem) {
 
+	main {
+		margin-bottom: 2.5rem;
+	}
 		.pocket #controls-user {
 			display: flex;
 			margin-bottom: .5rem;
