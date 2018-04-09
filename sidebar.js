@@ -182,6 +182,7 @@ const messageHandler = {
 			options.misc.pocketMode = info;
 		},
 		type               : info => {
+			options.search.type = info.value;
 			setBlockClass(undefined, info.value);
 		},
 		hoverActions       : info => {
@@ -1368,8 +1369,7 @@ const initBlock = {
 				if (folder === false) return;
 				folder.classList.add('hidden');
 				folder.classList.add('hidden');
-			},
-			type       : info => {}
+			}
 		};
 
 		insertItems           = (items, position = 'last') => {
