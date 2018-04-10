@@ -15,7 +15,8 @@ const status  = {
 	timeStamp           : {
 		startpage : 0,
 		spSearch  : 0
-	}
+	},
+	titles              : {}
 };
 
 const data    = {
@@ -270,6 +271,14 @@ function init(response) {
 	searchResults.addEventListener('mouseover', event => {
 		if (hoveredItem === event.target)
 			return;
+		if (event.target.nodeName === 'A') {
+			const id = event.target.dataset.id;
+			if (status.titles.hasOwnProperty(id))
+				if (status.titles[id].active === false) {
+					status.titles[id].active = true;
+					event.target.title       = status.titles[id].title;
+				}
+		}
 		if (options.search.type === 'general')
 			if (event.target.parentNode.nodeName === 'UL') {
 				hoveredItem = event.target;
@@ -305,7 +314,7 @@ function insertSearchItems(info, clean) {
 	let pid            = -1;
 	let alreadyCleaned = [];
 
-	const makeTitle    = (target, title) => {
+	const makeSearchItemText    = (target, title) => {
 		const l = title.length;
 		let i   = 1;
 		target.appendChild(document.createTextNode(title[0]));
@@ -317,23 +326,31 @@ function insertSearchItems(info, clean) {
 	};
 	const makeItem     = {
 		general : item => {
-			const searchItem = dceamd('a', folder, [['href', item.url], ['title', `${item.description}\n\n${item.url}`], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
-			makeTitle(searchItem, item.title);
+			const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			searchItem.dataset.id  = item.id;
+			status.titles[item.id] = {'active': false, 'title': `${item.description}\n\n${item.url}`};
+			makeSearchItemText(searchItem, item.title);
 		},
 		dev     : item => {
-			const searchItem = dceamd('a', folder, [['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
-			makeTitle(searchItem, item.title);
+			const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			searchItem.dataset.id  = item.id;
+			status.titles[item.id] = {'active': false, 'title': item.description};
+			makeSearchItemText(searchItem, item.title);
 		},
 		video   : item => {
-			const searchItem = dceamd('a', folder, [['href', item.url], ['title', item.description], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
-			makeTitle(searchItem, item.title);
+			const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			searchItem.dataset.id  = item.id;
+			status.titles[item.id] = {'active': false, 'title': item.description};
+			makeSearchItemText(searchItem, item.title);
 		},
 		buy     : item => {
-			const searchItem = dceamd('a', folder, [['href', item.url], ['title', `${item.price}\n\n${item.title.join('')}`], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item`]], [['url', item.url], ['domain', item.domain]]);
+			searchItem.dataset.id  = item.id;
 			searchItem.style.backgroundImage = `url(${item.img}`;
+			status.titles[item.id] = {'active': false, 'title': `${item.price}\n\n${item.title.join('')}`};
 			dcea('b', searchItem, ['textContent', item.price]);
 			const p  = dce('p', searchItem);
-			makeTitle(p, item.title);
+			makeSearchItemText(p, item.title);
 		}
 	};
 
