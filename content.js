@@ -230,13 +230,8 @@ function init() {
 		options.theme.borderColor       = response.borderColor;
 		options.theme.borderColorActive = response.borderColorActive;
 		options.misc.manualSwitch       = response.manualSwitch;
-		if (status.docReady === true) {
+		if (status.docReady === true)
 			injectElements();
-			window.addEventListener('resize', event => {
-				if (options.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
-				if (options.rightBar.method === 'iframe') setSideBarWidth('rightBar');
-			});
-		}
 	});
 }
 
@@ -284,6 +279,10 @@ function injectElements() {
 	if (options.rightBar.method === 'iframe' && sidebar.rightBar.style)
 		injectIframe('rightBar');
 	doc.appendChild(mask);
+	window.addEventListener('resize', event => {
+		if (options.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
+		if (options.rightBar.method === 'iframe') setSideBarWidth('rightBar');
+	});
 }
 
 function makeIframe(side) {
