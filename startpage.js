@@ -63,7 +63,6 @@ function init(response) {
 	options                  = response.options;
 	i18n                     = response.i18n;
 	status.timeStamp         = response.timeStamp;
-	document.title           = i18n.pageTitle;
 
 	const siteStyle          = dce('style', document.head);
 	search                   = dcea('header', document.body, ['id', 'search']);
@@ -250,7 +249,6 @@ function init(response) {
 	}, {'passive': true});
 
 	clearSearch.addEventListener('click', event => {
-		searchField.value = '';
 		send('background', 'spSearch', 'changeQuery', '');
 	});
 
@@ -426,6 +424,7 @@ const messageHandler = {
 		},
 		mode                  : info => {
 			setMode(info.value);
+			setPageTitle(searchField.value);
 		},
 		type                  : info => {
 			setSearchType(info.value);
@@ -490,8 +489,10 @@ const messageHandler = {
 			const index = data.searchFoldersId.indexOf(info.target);
 			if (index === -1) return;
 			insertSearchItems(info.items, info.clean);
-			if (info.clean)
+			if (info.clean) {
+				setPageTitle(searchField.value);
 				data.searchHeaders[index].firstChild.href = info.searchLink;
+			}
 		},
 		changeQuery  : info => {
 			searchField.value = info;
@@ -565,7 +566,8 @@ function initSearch(folders, query = '') {
 	data.searchFolders   = [];
 	data.searchHeaders   = [];
 	status.activeFolders = 0;
-	searchField.value    = options.startpage.mode === 'search' ? query : '';
+
+	setPageTitle(query);
 
 	if (options.startpage.searchEnabled === false)
 		return search.style.display = 'none';
@@ -582,6 +584,19 @@ function initSearch(folders, query = '') {
 	}
 	setSearchWidth();
 	setSearchType();
+}
+
+function setPageTitle(query) {
+	console.log('set');
+	console.log(query);
+	if (options.startpage.mode === 'search') {
+		searchField.value = query;
+		document.title    = query;
+	}
+	else {
+		searchField.value = '';
+		document.title    = i18n.pageTitle;
+	}
 }
 
 function setDomainStyle(item) {
