@@ -587,8 +587,6 @@ function initSearch(folders, query = '') {
 }
 
 function setPageTitle(query) {
-	console.log('set');
-	console.log(query);
 	if (options.startpage.mode === 'search') {
 		searchField.value = query;
 		document.title    = query;
