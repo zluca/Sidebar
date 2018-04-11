@@ -3365,11 +3365,12 @@ const initService = {
 						save : _ => {
 							for (let itemsId = target.itemsId, i = itemsId.length - 1; i >= 0; i--) {
 								const rssItem = getById('rss', itemsId[i]);
-								if (rssItem.readed !== true) continue;
+								if (rssItem.readed === true)
+									continue;
 								rssItem.readed = true;
 								status.info.rssUnreaded--;
 							}
-							saveLater('rss');
+							saveNow('rss');
 							send('sidebar', 'rss', 'rssReadedAll', {'id': target.id});
 						}
 					};
@@ -3387,7 +3388,7 @@ const initService = {
 					status.info.rssUnreaded = 0;
 					for (let i = data.rss.length - 1; i >= 0; i--)
 						data.rss[i].readed = true;
-					saveLater('rss');
+					saveNow('rss');
 					send('sidebar', 'rss', 'rssReadedAllFeeds', '');
 				}
 			};

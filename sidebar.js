@@ -999,7 +999,7 @@ const initBlock = {
 				const feed = getFolderById(info.id);
 				if (feed === false) return;
 				feed.classList.remove('unreaded');
-				for (let items = feed.children, i = items.length - 1; i >= 0; i--)
+				for (let items = feed.lastChild.children, i = items.length - 1; i >= 0; i--)
 					items[i].classList.remove('unreaded');
 			},
 			rssReadedAllFeeds : info => {
