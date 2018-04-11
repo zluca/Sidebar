@@ -94,6 +94,9 @@ main {
 				border-width: .05rem 0 .05rem 0;
 				border-style: solid;
 			}
+			a.viewed {
+				text-decoration: line-through;
+			}
 			.search-folder>a:hover {
 				border-color: var(--border-color-active);
 				color: var(--font-color-active);

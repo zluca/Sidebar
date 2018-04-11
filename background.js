@@ -2222,6 +2222,28 @@ const initService = {
 				if (options.services.startpage.value === true)
 					if (checkStartPage(tab))
 						return brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
+				if (options.services.search.value === true) {
+					let idList = [];
+					for (let matched = searchByUrl('search', info.url), i = matched.length - 1; i >= 0; i--) {
+						matched[i].viewed = true;
+						idList.push(matched[i].id);
+					}
+					if (idList.length > 0) {
+						makeTimeStamp('search');
+						send('sidebar', 'search', 'viewed', {'idList': idList});
+					}
+				}
+				if (options.services.startpage.value === true) {
+					let idList = [];
+					for (let matched = searchByUrl('spSearch', info.url), i = matched.length - 1; i >= 0; i--) {
+						matched[i].viewed = true;
+						idList.push(matched[i].id);
+					}
+					if (idList.length > 0) {
+						makeTimeStamp('spSearch');
+						send('startpage', 'search', 'viewed', {'idList': idList});
+					}
+				}
 				const url = info.url === 'about:blank' ? oldTab.url : info.url;
 				const newDomain = makeDomain('tabs', url);
 				oldTab.url      = info.url;
@@ -2284,6 +2306,14 @@ const initService = {
 			for (let i = 0, l = tabs.length; i < l; i++)
 				createTab(tabs[i], true);
 			initTabs();
+		};
+
+		const searchByUrl       = (mode, url) => {
+			let match = [];
+			for (let i = data[mode].length - 1; i >= 0; i--)
+				if (data[mode][i].url === url)
+					match.push(data[mode][i]);
+			return match;
 		};
 
 		if (status.init.tabs === false) {
@@ -4312,6 +4342,7 @@ const initService = {
 				newItem.description = item.description;
 				newItem.title       = item.title;
 				newItem.url         = item.url;
+				newItem.viewed      = false;
 				newItem.price       = item.price || 0;
 				newItem.img         = item.img || '';
 				newItem.domain      = domain.id;

@@ -1327,7 +1327,7 @@ const initBlock = {
 
 			item.href        = info.url;
 			item.dataset.url = info.url;
-			item.classList   = `search item domain-${info.domain} type-${info.type}`;
+			item.classList   = `search item domain-${info.domain} type-${info.type} ${info.viewed ? 'viewed' : ''}`;
 			types[options.search.type]();
 		};
 
@@ -1367,6 +1367,13 @@ const initBlock = {
 				if (folder === false) return;
 				folder.classList.add('hidden');
 				folder.classList.add('hidden');
+			},
+			viewed     : info => {
+				for (let i = info.idList.length - 1; i >= 0; i--) {
+					const item = getById(info.idList[i]);
+					if (item === false) continue;
+					item.classList.add('viewed');
+				}
 			}
 		};
 
