@@ -181,10 +181,6 @@ const messageHandler = {
 		pocketMode         : info => {
 			options.misc.pocketMode = info;
 		},
-		type               : info => {
-			options.search.type = info.value;
-			setBlockClass(undefined, info.value);
-		},
 		hoverActions       : info => {
 			if (options.hoverActions[info.mode][info.option] !== info.value) {
 				options.hoverActions[info.mode][info.option] !== info.value;
@@ -1374,6 +1370,12 @@ const initBlock = {
 			}
 		};
 
+		messageHandler.options.type =  info => {
+			options.search.type = info.value;
+			searchIcon.title    = i18n.search[`type${options.search.type}`];
+			setBlockClass(undefined, info.value);
+		},
+
 		insertItems           = (items, position = 'last') => {
 			let pid    = 0;
 			let folder = rootFolder;
@@ -1391,7 +1393,7 @@ const initBlock = {
 
 		status.lastSearch = '';
 		const search      = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n.search[`${options.search.type}Placeholder`]], ['value', info.query]]);
-		const searchIcon  = dcea('span', controls.bottom, [['classList', `search-icon ${options.search.type}`]]);
+		const searchIcon  = dcea('span', controls.bottom, [['classList', `search-icon ${options.search.type}`], ['title', i18n.search[`type${options.search.type}`]]]);
 
 		searchIcon.addEventListener('click', event => {
 			send('background', 'dialog', 'searchSelect', '');
@@ -1896,7 +1898,7 @@ function makeButton(type, mode, sub, hidden = false) {
 function makeSearch(mode) {
 	status.lastSearch   = '';
 	const search = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
-	dcea('span', controls.bottom, [['classList', 'search-icon']]);
+	dcea('span', controls.bottom, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
 
 	search.addEventListener('keyup', event => {
 		const value = search.value;

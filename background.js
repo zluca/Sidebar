@@ -4478,7 +4478,7 @@ function sideBarData(side) {
 		};
 		data.sidebarData.i18n            = {
 			'mainControls' : i18n.mainControls,
-			'mode'   : i18n[options[side].mode.value]
+			'mode'         : i18n[options[side].mode.value]
 		};
 		data.sidebarData.data            = modeData[options[side].mode.value]();
 		data.sidebarData.timeStamp       = status.timeStamp;
