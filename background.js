@@ -3400,7 +3400,7 @@ const initService = {
 								rssItem.readed = true;
 								status.info.rssUnreaded--;
 							}
-							saveNow('rss');
+							saveLater('rss');
 							send('sidebar', 'rss', 'rssReadedAll', {'id': target.id});
 						}
 					};
@@ -3418,7 +3418,7 @@ const initService = {
 					status.info.rssUnreaded = 0;
 					for (let i = data.rss.length - 1; i >= 0; i--)
 						data.rss[i].readed = true;
-					saveNow('rss');
+					saveLater('rss');
 					send('sidebar', 'rss', 'rssReadedAllFeeds', '');
 				}
 			};
