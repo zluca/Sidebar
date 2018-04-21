@@ -2003,6 +2003,15 @@ const initService = {
 		const initTabs = _ => {
 			messageHandler.tabs = {
 				new : (message, sender, sendResponse) => {
+					if (message.data.url === '') {
+						const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
+						if (activeTab === false) return;
+						if (activeTab.url !== config.extensionStartPage) {
+							const startPageTab = getByUrl('tabs', config.extensionStartPage);
+							if (startPageTab.length > 0)
+								return brauzer.tabs.update(startPageTab[0].id, {active: true});
+						}
+					}
 					createNewTab(message.data.url, message.data.newWindow);
 				},
 				update : (message, sender, sendResponse) => {
@@ -2224,7 +2233,7 @@ const initService = {
 						return brauzer.tabs.update(tab.id, {url: config.extensionStartPage});
 				if (options.services.search.value === true) {
 					let idList = [];
-					for (let matched = searchByUrl('search', info.url), i = matched.length - 1; i >= 0; i--) {
+					for (let matched = getByUrl('search', info.url), i = matched.length - 1; i >= 0; i--) {
 						matched[i].viewed = true;
 						idList.push(matched[i].id);
 					}
@@ -2235,7 +2244,7 @@ const initService = {
 				}
 				if (options.services.startpage.value === true) {
 					let idList = [];
-					for (let matched = searchByUrl('spSearch', info.url), i = matched.length - 1; i >= 0; i--) {
+					for (let matched = getByUrl('spSearch', info.url), i = matched.length - 1; i >= 0; i--) {
 						matched[i].viewed = true;
 						idList.push(matched[i].id);
 					}
@@ -2306,14 +2315,6 @@ const initService = {
 			for (let i = 0, l = tabs.length; i < l; i++)
 				createTab(tabs[i], true);
 			initTabs();
-		};
-
-		const searchByUrl       = (mode, url) => {
-			let match = [];
-			for (let i = data[mode].length - 1; i >= 0; i--)
-				if (data[mode][i].url === url)
-					match.push(data[mode][i]);
-			return match;
 		};
 
 		if (status.init.tabs === false) {
@@ -4894,6 +4895,14 @@ function getById(mode, id) {
 	if (index !== -1)
 		return data[mode][index];
 	else return false;
+}
+
+function getByUrl(mode, url) {
+	let match = [];
+	for (let i = data[mode].length - 1; i >= 0; i--)
+		if (data[mode][i].url === url)
+			match.push(data[mode][i]);
+	return match;
 }
 
 function moveFromTo(mode, from, to) {
