@@ -7,34 +7,7 @@ const brauzer = firefox ? browser : chrome;
 
 const doc     = document.documentElement;
 
-const options = {
-	leftBar: {
-		width    : 0,
-		method   : '',
-		fixed    : false,
-		wide     : false,
-		open     : false,
-		over     : false,
-		resize   : false
-	},
-	rightBar: {
-		width    : 0,
-		method   : '',
-		fixed    : false,
-		wide     : false,
-		open     : false,
-		over     : false,
-		resize   : false
-	},
-	theme : {
-		fontSize          : 10,
-		borderColor       : '#444',
-		borderColorActive : '#000'
-	},
-	misc : {
-		manualSwitch : false
-	}
-};
+let options   = {};
 
 const status  = {
 	leftBar: {
@@ -224,12 +197,9 @@ function init() {
 			});
 		}
 
-		options.leftBar                 = response.leftBar;
-		options.rightBar                = response.rightBar;
-		options.theme.fontSize          = response.fontSize;
-		options.theme.borderColor       = response.borderColor;
-		options.theme.borderColorActive = response.borderColorActive;
-		options.misc.manualSwitch       = response.manualSwitch;
+		options               = response;
+		options.leftBar.open  = false;
+		options.rightBar.open = false;
 		if (status.docReady === true)
 			injectElements();
 	});
@@ -239,7 +209,8 @@ function checkDocumentReady() {
 	if (document.readyState === 'interactive' || document.readyState === 'complete') {
 		document.removeEventListener('readystatechange', checkDocumentReady);
 		status.docReady = true;
-		injectElements();
+		if (options.hasOwnProperty('theme'))
+			injectElements();
 	}
 }
 
@@ -274,9 +245,9 @@ function cleanOldStuff() {
 }
 
 function injectElements() {
-	if (options.leftBar.method === 'iframe' && sidebar.leftBar.style)
+	if (options.leftBar.method === 'iframe')
 		injectIframe('leftBar');
-	if (options.rightBar.method === 'iframe' && sidebar.rightBar.style)
+	if (options.rightBar.method === 'iframe')
 		injectIframe('rightBar');
 	doc.appendChild(mask);
 	window.addEventListener('resize', event => {

@@ -1462,12 +1462,16 @@ const messageHandler = {
 	request : {
 		content : (message, sender, sendResponse) => {
 			sendResponse({
-				'leftBar'           : optionsShort.leftBar,
-				'rightBar'          : optionsShort.rightBar,
-				'fontSize'          : optionsShort.theme.fontSize,
-				'borderColor'       : optionsShort.theme.borderColor,
-				'borderColorActive' : optionsShort.theme.borderColorActive,
-				'manualSwitch'      : optionsShort.misc.manualSwitch
+				'leftBar'  : optionsShort.leftBar,
+				'rightBar' : optionsShort.rightBar,
+				'theme'    : {
+					'fontSize'          : optionsShort.theme.fontSize,
+					'borderColor'       : optionsShort.theme.borderColor,
+					'borderColorActive' : optionsShort.theme.borderColorActive
+				},
+				'misc'     : {
+					'manualSwitch'      : optionsShort.misc.manualSwitch
+				}
 			});
 			if (status.dialogData !== null)
 				setTimeout(_ => {sendToTab(sender.tab.id, 'content', 'dialog', 'create', status.dialogType);}, 50);
