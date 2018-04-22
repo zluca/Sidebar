@@ -2297,8 +2297,7 @@ const initService = {
 			const tab = getById('tabs', id);
 			if (tab === false) return;
 			const newOpenerId = tab.opener;
-			deleteById('tabs', id);
-			removeFromFolder('tabs', tab);
+			removeFromFolder('tabs', tab, true);
 			for (let i = data.tabs.length - 1; i >= 0; i--)
 				if (data.tabs[i].opener === id)
 					data.tabs[i].opener = newOpenerId;
@@ -3630,9 +3629,8 @@ const initService = {
 				delete  : response => {
 					const pocket = getById('pocket', info);
 					if (pocket === false) return;
-					deleteById('pocket', info);
 					send('sidebar', 'pocket', 'deleted', info);
-					removeFromFolder('pocket', pocket);
+					removeFromFolder('pocket', pocket, true);
 					saveNow('pocket');
 				},
 				auth    : response => {
@@ -4955,12 +4953,14 @@ function addToFolder(mode, item) {
 	return folder;
 }
 
-function removeFromFolder(mode, item) {
+function removeFromFolder(mode, item, killItem = false) {
 	const folder = getFolderById(mode, item.domain);
 	if (folder === false) return;
 	const index = folder.itemsId.indexOf(item.id);
 	if (index === -1) return;
 	folder.itemsId.splice(index, 1);
+	if (killItem === true)
+		deleteById(mode, item.id);
 	checkCount(mode, folder);
 }
 
