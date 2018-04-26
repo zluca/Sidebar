@@ -4706,9 +4706,9 @@ function createDialogWindow(type, dialogData) {
 	if (activeTab === false)
 		return;
 	if (tabIsProtected(activeTab) === false)
-		sendToTab(status.activeTabsIds[status.activeWindow], 'content', 'dialog', 'create', type);
-	else
-		brauzer.tabs.create({'url': config.extensionStartPage, 'windowId': status.activeWindow});
+		if (activeTab.status !== 'loading')
+			return sendToTab(status.activeTabsIds[status.activeWindow], 'content', 'dialog', 'create', type);
+	brauzer.tabs.create({'url': config.extensionStartPage, 'windowId': status.activeWindow});
 }
 
 function tabIsProtected(tab) {
