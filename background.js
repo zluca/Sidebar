@@ -1830,18 +1830,18 @@ const initService = {
 			if (Array.isArray(res.foldedId))
 				data.foldedId      = res.foldedId;
 
-			if (options.services.startpage.value === true)
-				initService.startpage(true);
-
 			for (let service in options.services)
-				if (options.services[service]) {
-					if (options.leftBar.mode.value === service || options.rightBar.mode.value === service)
+				if (options.services[service].value === true) {
+					if (service === 'startpage')
+						initService.startpage(true);
+					else if (options.leftBar.mode.value === service || options.rightBar.mode.value === service)
 						initService[service](true);
 					else
 						initLater.push(service);
 				}
 				else
 					status.init[service] = true;
+
 			setTimeout(_ => {
 				for (let i = initLater.length - 1; i >= 0; i--)
 					initService[initLater[i]](true);
