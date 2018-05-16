@@ -3432,6 +3432,8 @@ const initService = {
 		};
 
 		const getRss = res => {
+
+			let cleanFolders = false;
 			if (res.hasOwnProperty('rssFolders'))
 				if (res.hasOwnProperty('rss')) {
 					data.rssFolders   = res.rssFolders;
@@ -3444,11 +3446,19 @@ const initService = {
 						else
 							makeDomain('rss', data.rssFolders[i].url);
 						rssSetUpdate(res.rssFolders[i], options.misc.rssUpdatePeriod.value);
-						while (data.rssFolders[i].itemsId.length > options.misc.maxSavedRssPerFeed.value)
-							deleteById('rss', data.rssFolders[i].itemsId[0]);
+						let j = 0;
+						while (data.rssFolders[i].itemsId.length > options.misc.maxSavedRssPerFeed.value && j++ < options.misc.maxSavedRssPerFeed.range[1]) {
+							const result = deleteById('rss', data.rssFolders[i].itemsId[0]);
+							if (result === false) {
+								cleanFolders = true;
+								data.rssFolders[i].itemsId.shift();
+							}
+						}
 					}
 					rssSetReaded('count');
 				}
+			if (cleanFolders === true)
+				saveNow('rssFolders');
 			initRss();
 			brauzer.alarms.onAlarm.addListener(alarm => {
 				if (/rss-update\*\*/i.test(alarm.name)) {
