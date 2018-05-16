@@ -4880,7 +4880,7 @@ function createById(mode, item, position) {
 
 function deleteById(mode, id) {
 	const index = data[`${mode}Id`].indexOf(id);
-	if (index === -1) return;
+	if (index === -1) return false;
 	const folder = getFolderById(mode, data[mode][index].pid);
 	if (folder !== false)
 		if (folder.hasOwnProperty('itemsId')) {
@@ -4890,6 +4890,7 @@ function deleteById(mode, id) {
 		}
 	data[mode].splice(index, 1);
 	data[`${mode}Id`].splice(index, 1);
+	return true;
 }
 
 function getById(mode, id) {
@@ -4959,13 +4960,14 @@ function addToFolder(mode, item) {
 
 function removeFromFolder(mode, item, killItem = false) {
 	const folder = getFolderById(mode, item.domain);
-	if (folder === false) return;
+	if (folder === false) return false;
 	const index = folder.itemsId.indexOf(item.id);
-	if (index === -1) return;
+	if (index === -1) return false;
 	folder.itemsId.splice(index, 1);
 	if (killItem === true)
 		deleteById(mode, item.id);
 	checkCount(mode, folder);
+	return true;
 }
 
 function checkCount(mode, folder) {
