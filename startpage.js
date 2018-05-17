@@ -71,7 +71,7 @@ function init(response) {
 	searchOptions            = dcea('span', search, ['id', 'search-options']);
 	dcea('span', searchOptions, ['classList', 'search-icon']);
 	searchField              = dcea('input', search, ['id', 'search-field']);
-	const clearSearch        = dceam('span', search, [['id', 'clear-search'], ['title', i18n.clearSearchButtonTitle]]);
+	const clearSearch        = dceam('span', search, [['id', 'clear-search'], ['title', i18n.clearSearchTitle]]);
 	dce('span', clearSearch);
 	const letsSearch         = dceam('span', search, [['id', 'lets-search'], ['title', i18n.searchButtonTitle]]);
 	dce('span', letsSearch);

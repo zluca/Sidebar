@@ -1906,9 +1906,14 @@ function makeSearch(mode) {
 	status.lastSearch   = '';
 	const search = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
 	dcea('span', controls.bottom, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
+	const clearSearch = dcea('span', controls.bottom, [['classList', 'clear-search'], ['title', i18n[mode].clearSearchTitle]]);
 
 	search.addEventListener('keyup', event => {
 		const value = search.value;
+		if (value.length > 0)
+			clearSearch.style.setProperty('display', 'inline-block');
+		else
+			clearSearch.style.setProperty('display', 'none');
 		if (value.length > 1) {
 			if (status.lastSearch !== value) {
 				status.lastSearch = value;
@@ -1923,6 +1928,14 @@ function makeSearch(mode) {
 		else
 			searchActive(false);
 	}, {'passive': true});
+
+	clearSearch.addEventListener('click', event => {
+		search.value = '';
+		while (searchResults.lastChild.firstChild)
+			searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
+		searchActive(false);
+	}, {'passive': true});
+
 }
 
 function makeTitle(id, title, url){

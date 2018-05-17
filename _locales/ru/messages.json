@@ -631,11 +631,11 @@
 		"message"       : "Начать",
 		"description"   : ""
 	},
-	"startpageClearSearchButtonTitle" : {
+
+	"searchClearSearchTitle" : {
 		"message"       : "Очистить поиск",
 		"description"   : ""
 	},
-
 	"searchGeneralPlaceholder" : {
 		"message"       : "Искать",
 		"description"   : ""

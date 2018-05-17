@@ -1974,7 +1974,8 @@ const initService = {
 				pageTitle            : getI18n('startpagePageTitle'),
 				addNewSiteTitle      : getI18n('startpageAddNewSiteTitle'),
 				editButtonTitle      : getI18n('startpageEditButtonTitle'),
-				searchButtonTitle    : getI18n('startpageSearchButtonTitle')
+				searchButtonTitle    : getI18n('startpageSearchButtonTitle'),
+				clearSearchTitle     : getI18n('searchClearSearchTitle')
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, ['startpage', 'speadDial']);
 			if (status.init.tabs === true)
@@ -2420,7 +2421,8 @@ const initService = {
 				move               : getI18n('bookmarksControlsMove'),
 				delete             : getI18n('bookmarksControlsDelete'),
 				folderDelete       : getI18n('bookmarksControlsFolderDelete'),
-				searchPlaceholder  : getI18n('bookmarksSearchPlaceholder')
+				searchPlaceholder  : getI18n('bookmarksSearchPlaceholder'),
+				clearSearchTitle   : getI18n('searchClearSearchTitle')
 			};
 
 			modeData.bookmarks = _ => {
@@ -2670,7 +2672,8 @@ const initService = {
 			i18n.history = {
 				getMoreText        : getI18n('historyGetMoreText'),
 				getMore            : getI18n('historyGetMoreTitle'),
-				searchPlaceholder  : getI18n('historySearchPlaceholder')
+				searchPlaceholder  : getI18n('historySearchPlaceholder'),
+				clearSearchTitle   : getI18n('searchClearSearchTitle')
 			};
 
 			modeData.history = _ => {
@@ -4408,7 +4411,8 @@ const initService = {
 				captchaTitle         : getI18n('searchCaptchaTitle'),
 				captchaDescription   : getI18n('searchCaptchaDescription'),
 				noResultsTitle       : getI18n('searchNoResultsTitle'),
-				noResultsDescription : getI18n('searchNoResultsDescription')
+				noResultsDescription : getI18n('searchNoResultsDescription'),
+				clearSearchTitle     : getI18n('searchClearSearchTitle')
 			};
 
 			messageHandler[mode]    = {

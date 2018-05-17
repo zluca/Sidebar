@@ -631,11 +631,11 @@
 		"message"       : "Start",
 		"description"   : ""
 	},
-	"startpageClearSearchButtonTitle" : {
+
+	"searchClearSearchTitle" : {
 		"message"       : "Clear search",
 		"description"   : ""
 	},
-
 	"searchGeneralPlaceholder" : {
 		"message"       : "Search",
 		"description"   : ""

@@ -475,6 +475,26 @@ nav {
 		mask-mode: alpha;
 		mask-image: url(icons/search.svg);
 	}
+	.clear-search {
+		display: none;
+		width: 1.2rem;
+		height: 1.2rem;
+		position: absolute;
+		z-index: 99;
+		right: 1.4rem;
+		top: .6rem;
+		background-color: var(--font-color-inactive);
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-size: 100% 100%;
+		-webkit-mask-position: center;
+		-webkit-mask-mode: alpha;
+		-webkit-mask-image: url(icons/close.svg);
+		mask-repeat: no-repeat;
+		mask-size: 100% 100%;
+		mask-position: center;
+		mask-mode: alpha;
+		mask-image: url(icons/close.svg);
+	}
 
 	.search .search-icon:hover {
 		background-color: var(--font-color-active);
