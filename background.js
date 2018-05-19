@@ -57,7 +57,7 @@ const i18n = {
 		rss          : getI18n('optServicesRssLabel'),
 		pocket       : getI18n('optServicesPocketLabel'),
 		search       : getI18n('optServicesSearchLabel'),
-		bottomBarOptions : getI18n('dialogActionsHeader')
+		sidebarActions : getI18n('dialogActionsHeader')
 	},
 	startpage   : {},
 	tabs        : {},
@@ -536,6 +536,11 @@ const options = {
 			value   : false,
 			type    : 'boolean',
 			targets : ['content']
+		},
+		searchAtTop     : {
+			value   : false,
+			type    : 'boolean',
+			targets : ['sidebar']
 		}
 	},
 	startpage: {

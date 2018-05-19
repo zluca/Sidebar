@@ -98,13 +98,14 @@ let rootFolder      = null;
 let searchResults   = null;
 
 const button   = {
-	tabs        : null,
-	bookmarks   : null,
-	history     : null,
-	downloads   : null,
-	rss         : null,
-	pocket      : null,
-	search      : null
+	tabs          : null,
+	bookmarks     : null,
+	history       : null,
+	downloads     : null,
+	rss           : null,
+	pocket        : null,
+	search        : null,
+	sidebarActions: null
 };
 
 const messageHandler = {
@@ -195,6 +196,19 @@ const messageHandler = {
 		},
 		clickActions        : info => {
 			options.clickActions[info.mode][info.option] = info.value;
+		},
+		searchAtTop         : info => {
+			let target = controls.bottom;
+			let old    = contorls.top;
+			if (info.value === true) {
+				target = controls.top;
+				old    = controls.bottom;
+				block.classList.add('search-at-top');
+			}
+			else
+				block.classList.remove('search-at-top');
+			while (old.hasChildNodes())
+				target.appendChild(old.firstChild)
 		}
 	},
 	set       : {
@@ -376,7 +390,7 @@ function prepareBlock(mode) {
 	oldBlock = block;
 	block    = dcea('main', document.body, []);
 
-	controls.user    = dcea('div', block, [['classList', 'controls'], ['id', 'controls-user']]);
+	controls.top     = dcea('div', block, [['classList', 'controls'], ['id', 'controls-top']]);
 	rootFolder       = dcea('div', block, [['id', 'root-folder']]);
 	dcea('div', rootFolder, []).dataset.id = '0';
 	dcea('div', rootFolder, []);
@@ -388,7 +402,7 @@ function prepareBlock(mode) {
 	controls.item    = dcea('div', block, [['classList', 'controls'], ['id', 'controls-item']]);
 	controls.button  = dcea('div', block, [['classList', 'controls'], ['id', 'controls-button']]);
 	controls.bottom  = dcea('div', block, [['classList', 'controls'], ['id', 'controls-bottom']]);
-	makeButton('bottomBarOptions', 'mainControls', 'bottom');
+	button.sidebarActions = makeButton('sidebarActions', 'mainControls', 'bottom');
 	for (let option in options.hoverActions[mode])
 		if (options.hoverActions[mode][option] === true)
 			makeButton(option, mode, 'item');
@@ -705,7 +719,7 @@ const initBlock = {
 
 		i18n.bookmarks           = info.i18n;
 		prepareBlock('bookmarks');
-		setBlockClass();
+		setBlockClass(undefined, options.misc.searchAtTop ? 'search-at-top' : '');
 		setDomainStyle.rewrite(info.domains);
 		status.timeStamp.mode    = info.timeStamp;
 
@@ -840,7 +854,7 @@ const initBlock = {
 
 		i18n.history             = info.i18n;
 		prepareBlock('history');
-		setBlockClass();
+		setBlockClass(undefined, options.misc.searchAtTop ? 'search-at-top' : '');
 		setDomainStyle.rewrite(info.domains);
 		status.timeStamp.mode    = info.timeStamp;
 
@@ -1184,8 +1198,8 @@ const initBlock = {
 				block.classList.remove('logout');
 				i18n.pocket.usernameText             = info.username;
 				i18n.pocket.username                 = info.username;
-				controls.user.firstChild.textContent = info.username;
-				controls.user.firstChild.title       = info.username;
+				controls.top.firstChild.textContent  = info.username;
+				controls.top.firstChild.title        = info.username;
 			},
 			logout       : info => {
 				options.pocket.auth = false;
@@ -1273,9 +1287,9 @@ const initBlock = {
 
 		i18n.pocket.usernameText = info.username;
 		i18n.pocket.username     = info.username;
-		makeButton('username', 'pocket', 'user');
-		makeButton('login', 'pocket', 'user');
-		makeButton('logout', 'pocket', 'user');
+		makeButton('username', 'pocket', 'top');
+		makeButton('login', 'pocket', 'top');
+		makeButton('logout', 'pocket', 'top');
 		makeButton('new', 'pocket', 'button');
 		makeButton('new', 'pocket', 'bottom');
 		makeButton('plain', 'pocket', 'bottom');
@@ -1333,7 +1347,7 @@ const initBlock = {
 
 		i18n.search           = info.i18n;
 		prepareBlock('search');
-		setBlockClass(undefined, options.search.type);
+		setBlockClass(undefined, `${options.search.type} ${options.misc.searchAtTop ? 'search-at-top' : ''}`);
 		setDomainStyle.rewrite(info.domains);
 		status.timeStamp.mode = info.timeStamp;
 
@@ -1380,7 +1394,7 @@ const initBlock = {
 		messageHandler.options.type =  info => {
 			options.search.type = info.value;
 			searchIcon.title    = i18n.search[`type${options.search.type}`];
-			setBlockClass(undefined, info.value);
+			setBlockClass(undefined, `${info.value} ${options.misc.searchAtTop ? 'search-at-top' : ''}`);
 		},
 
 		insertItems           = (items, position = 'last') => {
@@ -1903,10 +1917,15 @@ function makeButton(type, mode, sub, hidden = false) {
 }
 
 function makeSearch(mode) {
-	status.lastSearch   = '';
-	const search = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
-	dcea('span', controls.bottom, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
-	const clearSearch = dcea('span', controls.bottom, [['classList', 'clear-search'], ['title', i18n[mode].clearSearchTitle]]);
+	let target = controls.bottom;
+	if (options.misc.searchAtTop === true) {
+		target = controls.top;
+		controls.top.appendChild(button.sidebarActions);
+	}
+	status.lastSearch = '';
+	const search      = dcea('input', target, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
+	dcea('span', target, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
+	const clearSearch = dcea('span', target, [['classList', 'clear-search'], ['title', i18n[mode].clearSearchTitle]]);
 
 	search.addEventListener('keyup', event => {
 		const value = search.value;
@@ -1935,7 +1954,6 @@ function makeSearch(mode) {
 			searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
 		searchActive(false);
 	}, {'passive': true});
-
 }
 
 function makeTitle(id, title, url){
@@ -1999,7 +2017,7 @@ const buttonsEvents = {
 		rightBarHide : event => {
 			send('background', 'options', 'handler', {'section': 'rightBar', 'option': 'open', 'value': false});
 		},
-		bottomBarOptions : event => {
+		sidebarActions : event => {
 			send('background', 'dialog', 'actions', options.sidebar.mode);
 		}
 	},

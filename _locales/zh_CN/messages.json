@@ -425,6 +425,10 @@
 		"message"       : "维基百科搜索语言",
 		"description"   : ""
 	},
+	"optMiscSearchAtTopLabel" : {
+		"message"       : "Show search bar at top",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "警告",

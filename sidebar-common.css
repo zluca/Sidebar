@@ -106,8 +106,22 @@ nav {
 		display: inline-flex;
 	}
 
-	#controls-user {
+	#controls-top {
 		display: none;
+		flex-flow: row;
+		height: auto;
+		min-height: 2rem;
+		width: 100%;
+		box-sizing: border-box;
+		position: sticky;
+		top: 0;
+		z-index: 99;
+		background-color: var(--background-color);
+		border-top-color: var(--border-color);
+		border-top-width: .1rem;
+		border-top-style: solid;
+		padding: .4rem .2rem;
+		padding-right: 1rem;
 	}
 	#controls-button {
 		width: 100%;
@@ -199,11 +213,12 @@ nav {
 			margin-right: .4rem;
 		}
 
-		#controls-bottom>.button {
+		#controls-bottom>.button,
+		#controls-top>.button {
 			display: inline-block;
 		}
 
-		#mainControls-bottomBarOptions {
+		#mainControls-sidebarActions {
 			position: absolute;
 			background-color: var(--background-color);
 			z-index: 999;
@@ -212,8 +227,9 @@ nav {
 			margin-right: 0!important;
 			padding: .45rem .2rem;
 		}
-			#mainControls-bottomBarOptions>span {
-				width: .7rem;
+			#mainControls-sidebarActions>span {
+				width: .7rem!important;
+				height: 1.4rem!important;
 			}
 
 		.text-button {
@@ -249,7 +265,7 @@ nav {
 				height: 1.2rem;
 			}
 			#controls-item>.button>span,
-			#controls-user>.button>span {
+			#controls-top>.button>span {
 				width: .9rem;
 				height: .9rem;
 			}
@@ -341,6 +357,7 @@ nav {
 			background-size: .9rem .9rem;
 			background-position-y: .1rem;
 			user-select: none;
+			--moz-user-select: none;
 		}
 		.folder.domain-view .loading.item {
 			padding-left: 1.4rem!important;
@@ -555,13 +572,20 @@ nav {
 	main {
 		margin-bottom: 2.5rem;
 	}
-		.pocket #controls-user {
+	main.search-at-top {
+		margin-bottom: 0;
+	}
+		.pocket #controls-top,
+		.search-at-top #controls-top {
 			display: flex;
 			margin-bottom: .5rem;
 			margin-top: .5rem;
 		}
 		#controls-bottom {
 			display: flex;
+		}
+		.search-at-top #controls-bottom {
+			display: none;
 		}
 			#controls-sidebar>.button {
 				display: inline-block;

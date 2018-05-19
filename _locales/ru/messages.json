@@ -425,6 +425,10 @@
 		"message"       : "Язык поиска в Википедии",
 		"description"   : ""
 	},
+	"optMiscSearchAtTopLabel" : {
+		"message"       : "Поиск сверху",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Предупреждения",

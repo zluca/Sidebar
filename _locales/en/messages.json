@@ -425,6 +425,10 @@
 		"message"       : "Wikipedia search language",
 		"description"   : ""
 	},
+	"optMiscSearchAtTopLabel" : {
+		"message"       : "Show search bar at top",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Warnings",
