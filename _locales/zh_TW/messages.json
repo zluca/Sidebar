@@ -426,7 +426,7 @@
 		"description"   : ""
 	},
 	"optMiscSearchAtTopLabel" : {
-		"message"       : "Show search bar at top",
+		"message"       : "在頂部顯示搜尋欄",
 		"description"   : ""
 	},
 
@@ -570,7 +570,7 @@
 		"description"   : ""
 	},
 	"popupButtonShareTitle" : {
-		"message"       : "Share",
+		"message"       : "分享",
 		"description"   : ""
 	},
 	"popupButtonFacebookTitle" : {
@@ -637,7 +637,7 @@
 	},
 
 	"searcgClearSearchTitle" : {
-		"message"       : "Clear search",
+		"message"       : "清除搜尋",
 		"description"   : ""
 	},
 	"searchGeneralPlaceholder" : {
@@ -1006,7 +1006,7 @@
 	},
 
 	"dialogActionsHeader" : {
-		"message"       : "Configure mouse actions",
+		"message"       : "設定滑鼠動作",
 		"description"   : ""
 	},
 
