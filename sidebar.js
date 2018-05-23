@@ -1950,6 +1950,7 @@ function makeSearch(mode) {
 
 	clearSearch.addEventListener('click', event => {
 		search.value = '';
+		clearSearch.style.setProperty('display', 'none');
 		while (searchResults.lastChild.firstChild)
 			searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
 		searchActive(false);
