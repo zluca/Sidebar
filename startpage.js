@@ -663,8 +663,10 @@ function setSearchWidth() {
 function setSiteProperties(target, site) {
 	target.classList              = site.class;
 	target.firstChild.textContent = site.text;
-	if (site.url === '')
+	if (site.url === '') {
+		target.firstChild.href = '';
 		target.title           = i18n.addNewSiteTitle;
+	}
 	else {
 		target.firstChild.href = site.url;
 		target.title           = site.url;
