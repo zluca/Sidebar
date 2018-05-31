@@ -1954,13 +1954,13 @@ const initService = {
 						site.text  = message.data.text;
 						site.url   = message.data.url;
 						site.color = message.data.color;
-						saveLater('startpage');
+						saveNow('startpage');
 						send('startpage', 'site', 'changed', {'index': message.data.index, 'site': site});
 					}
 				},
 				delete : (message, sender, sendResponse) => {
 					makeSite(message.data.index);
-					saveLater('startpage');
+					saveNow('startpage');
 					send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
 				},
 				create : (message, sender, sendResponse) => {
@@ -1971,7 +1971,7 @@ const initService = {
 				move : (message, sender, sendResponse) => {
 					const movedSite = data.startpage.splice(message.data.from, 1)[0];
 					data.startpage.splice(message.data.to, 0, movedSite);
-					saveLater('startpage');
+					saveNow('startpage');
 					send('startpage', 'site', 'moved', {'from': message.data.from, 'to': message.data.to});
 				}
 			};
@@ -3084,14 +3084,14 @@ const initService = {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed === false) return;
 					feed.hideReaded = true;
-					saveLater('rssFolders');
+					saveNow('rssFolders');
 					send('sidebar', 'rss', 'rssHideReaded', {'id': message.data.id});
 				},
 				rssShowReaded : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed === false) return;
 					feed.hideReaded = false;
-					saveLater('rssFolders');
+					saveNow('rssFolders');
 					send('sidebar', 'rss', 'rssShowReaded', {'id': message.data.id});
 				},
 				rssNew : (message, sender, sendResponse) => {
@@ -3105,7 +3105,7 @@ const initService = {
 					if (feed === false) return;
 					feed.title = message.data.title;
 					feed.description = message.data.description;
-					saveLater('rssFolders');
+					saveNow('rssFolders');
 					send('sidebar', 'rss', 'rssFeedChanged', {'id': message.data.id, 'title': message.data.title, 'description': message.data.description});
 				},
 				rssFeedDelete : (message, sender, sendResponse) => {
@@ -3114,8 +3114,8 @@ const initService = {
 					rssSetReaded('feed', feed, 'kill');
 					brauzer.alarms.clear(`rss-update**${message.data.id}`);
 					deleteFolderById('rss', message.data.id, true);
-					saveLater('rss');
-					saveLater('rssFolders');
+					saveNow('rss');
+					saveNow('rssFolders');
 					send('sidebar', 'rss', 'rssFeedDeleted', {'id': message.data.id});
 				},
 				updateFeed   : (message, sender, sendResponse) => {
@@ -3268,7 +3268,7 @@ const initService = {
 							send('sidebar', 'rss', 'createdFeed', {'feed': feed});
 						injectRss(xmlDoc, feed);
 						rssSetUpdate(feed, options.misc.rssUpdatePeriod.value);
-						saveLater('rssFolders');
+						saveNow('rssFolders');
 					}
 					else
 						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNewFeedErrorTitle, 'message':  `${i18n.notification.rssNewFeedErrorText}
@@ -3293,7 +3293,7 @@ const initService = {
 						feed.lastUpdate = Date.now();
 						injectRss(xmlDoc, feed);
 						rssSetUpdate(feed, options.misc.rssUpdatePeriod.value);
-						saveLater('rssFolders');
+						saveNow('rssFolders');
 					}
 					else {
 						feed.lastUpdate = Date.now();
@@ -3366,7 +3366,7 @@ const initService = {
 				newItems.sort((a, b) => a.date - b.date);
 				for (let i = 0, l = newItems.length, r = data.rssId.length - 1; i < l; i++)
 					newItems[i].index = r - data.rssId.indexOf(newItems[i].id);
-				saveLater('rss');
+				saveNow('rss');
 				send('sidebar', 'rss', 'newItems', {'items': newItems});
 				rssSetReaded('info');
 			}
@@ -3389,7 +3389,7 @@ const initService = {
 						}
 					}
 					feed.readed = feedReaded;
-					saveLater('rss');
+					saveNow('rss');
 					send('sidebar', 'rss', 'rssReaded', {'id': target.id, 'feedReaded': feedReaded});
 				},
 				feed    : _ => {
@@ -3412,7 +3412,7 @@ const initService = {
 								rssItem.readed = true;
 								status.info.rssUnreaded--;
 							}
-							saveLater('rss');
+							saveNow('rss');
 							send('sidebar', 'rss', 'rssReadedAll', {'id': target.id});
 						}
 					};
@@ -3430,7 +3430,7 @@ const initService = {
 					status.info.rssUnreaded = 0;
 					for (let i = data.rss.length - 1; i >= 0; i--)
 						data.rss[i].readed = true;
-					saveLater('rss');
+					saveNow('rss');
 					send('sidebar', 'rss', 'rssReadedAllFeeds', '');
 				}
 			};
