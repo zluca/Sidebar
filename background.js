@@ -4957,7 +4957,7 @@ function createFolderById(mode, id, position) {
 }
 
 function deleteFolderById(mode, id, killChildrens = false) {
-	const index = data[`${mode}FoldersId`].indexOf(id);
+	let index = data[`${mode}FoldersId`].indexOf(id);
 	if (index === -1) return;
 	if (killChildrens === true) {
 		for (let maybeChildren = data[mode], i = maybeChildren.length - 1; i >= 0; i--)
@@ -4966,6 +4966,10 @@ function deleteFolderById(mode, id, killChildrens = false) {
 	}
 	data[`${mode}Folders`].splice(index, 1);
 	data[`${mode}FoldersId`].splice(index, 1);
+	index = data.foldedId.indexOf(id);
+	if (index === -1) return;
+	data.foldedId.splice(index, 1);
+	saveNow('foldedId');
 }
 
 function addToFolder(mode, item) {
