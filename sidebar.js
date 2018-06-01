@@ -1070,21 +1070,18 @@ const initBlock = {
 		insertItems = (items, method) => {
 			const insert = {
 				domainfirst : (item, info) => {
-					pidCheck(info.pid);
 					folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 				},
 				plainfirst  : (item, info) => {
 					folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 				},
 				domainlast  : (item, info) => {
-					pidCheck(info.pid);
 					folder.lastChild.appendChild(item);
 				},
 				plainlast   : (item, info) => {
 					folder.lastChild.appendChild(item);
 				},
 				domaindate  : (item, info) => {
-					pidCheck(info.pid);
 					if (folder.lastChild.hasChildNodes())
 						folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
 					else
@@ -1100,14 +1097,24 @@ const initBlock = {
 
 			const pidCheck = newPid => {
 				if (pid !== newPid) {
-					pid    = newPid;
-					folder = getFolderById(pid);
+					const tryFolder = getFolderById(newPid);
+					if (tryFolder !== false) {
+						pid    = newPid;
+						folder = tryFolder;
+					}
+					else {
+						pid    = -1;
+						folder = null;
+					}
 				}
 			};
 
 			let pid = 0;
 			let folder = rootFolder;
 			for (let i = 0, l = items.length; i < l; i++) {
+				if (options.misc.rssMode === 'domain')
+					pidCheck(items[i].pid);
+				if (pid === -1) continue;
 				const item         = createById(items[i].id);
 				item.textContent   = items[i].title;
 				item.dataset.link  = items[i].link;
