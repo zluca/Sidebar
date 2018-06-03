@@ -66,6 +66,7 @@ const messageHandler = {
 		open              : info => {
 			options[info.section].open = info.value;
 			setSideBarWidth(info.section);
+			setEventListeners(info.section);
 		},
 		borderColor       : info => {
 			options.theme.borderColor = info.value;
