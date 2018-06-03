@@ -391,21 +391,25 @@ function setSideBarWidth(side, value) {
 			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
 			sidebar[side].firstChild.style.removeProperty('background-color');
+			sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
 		},
 		truefalse  : _ => {
 			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
 			sidebar[side].firstChild.style.removeProperty('background-color');
+			sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
 		},
 		falsetrue  : _ => {
 			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
 			sidebar[side].firstChild.style.removeProperty('background-color');
+			sidebar[side].firstChild.style.setProperty('cursor', 'normal', 'important');
 		},
 		falsefalse : _ => {
 			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${borderWidth}px`, 'important');
 			sidebar[side].firstChild.style.setProperty('background-color', 'transparent', 'important');
+			sidebar[side].firstChild.style.setProperty('cursor', 'pointer', 'important');
 		}
 	};
 
@@ -419,6 +423,7 @@ function setSideBarWidth(side, value) {
 		doc.style.setProperty(`margin-${trueSide}`, `${options[side].width}%`, 'important');
 		sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
 		sidebar[side].firstChild.style.removeProperty('background-color');
+		sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
 	}
 	else
 		openWide[`${options[side].open === true}${options[side].wide === true}`]();

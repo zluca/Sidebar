@@ -27,7 +27,6 @@
 	.sbp-sidebar>div {
 		height:    100%!important;
 		background-color: var(--sbp-border-color)!important;
-		cursor:    col-resize!important;
 	}
 	.sbp-sidebar>div:hover {
 		background-color: var(--sbp-border-color-active)!important;
