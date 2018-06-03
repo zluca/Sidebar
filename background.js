@@ -179,6 +179,8 @@ const data = {
 	spSearchDomainsId  : [],
 	favs               : [],
 	favsId             : [],
+	favsFolders        : [],
+	favsFoldersId      : [],
 	startpage          : [],
 	startpageCurrent   : [],
 	foldedId           : [],
@@ -1798,7 +1800,8 @@ const updateItem = {
 		return newItem;
 	},
 	favs      : (newItem, item) => {
-		newItem.fav = item.fav;
+		newItem.fav      = item.fav;
+		newItem.lastUsed = Date.now();
 		return newItem;
 	}
 };
@@ -1831,6 +1834,7 @@ const initService = {
 			if (Array.isArray(res.favs)) {
 				data.favs          = res.favs;
 				data.favsId        = res.favsId;
+				cleanFavs();
 			}
 			if (Array.isArray(res.foldedId))
 				data.foldedId      = res.foldedId;
@@ -4653,8 +4657,10 @@ function makeFav(id, url, favIconUrl, update = false) {
 	let fav         = getById('favs', id);
 	if (fav === false)
 		fav = createById('favs', {id: id, fav: (typeof favIconUrl === 'string' && favIconUrl !== '') ? favIconUrl : favFromUrl()}, 'last');
-	else if (typeof favIconUrl === 'string' && favIconUrl !== '')
-		fav.fav = favIconUrl;
+	else if (typeof favIconUrl === 'string' && favIconUrl !== '') {
+		fav.fav      = favIconUrl;
+		fav.lastUsed = Date.now();
+	}
 	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket', 'search', 'spSearch'], i = targets.length - 1; i >= 0; i--) {
 		if (data[`${targets[i]}Domains`].indexOf(id) !== -1)
 			data[`${targets[i]}Domains`].fav = fav;
@@ -4714,6 +4720,22 @@ function makeDomain(mode, url, fav) {
 	else if (fav !== undefined)
 		makeFav(id, url, fav, true);
 	return domain;
+}
+
+function cleanFavs() {
+	const favsCount     = data.favs.length;
+	if (favsCount < 10000) return;
+	const toDeleteCount = favsCount - 9800;
+	let tempArray       = [];
+	for (let i = favsCount - 1; i >= 0; i--) {
+		if (!data.favs[i].hasOwnProperty('lastUsed'))
+			data.favs[i].lastUsed = 0;
+		tempArray.push(data.favs[i]);
+	}
+	tempArray = tempArray.sort((a, b) => a.lastUsed - b.lastUsed).slice(0, toDeleteCount);
+	for (let i = tempArray.length - 1; i >= 0; i--)
+		deleteById('favs', tempArray[i].id);
+	saveLater('favs');
 }
 
 function createDialogWindow(type, dialogData) {
