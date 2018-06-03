@@ -644,6 +644,12 @@ function setSearchType(type) {
 	searchOptions.title       = i18n[`type${options.search.type}`];
 	searchField.placeholder   = i18n[`${options.search.type}Placeholder`];
 	document.body.classList   = options.search.type;
+	status.activeFolders      = 0;
+	for (let i = data.searchFolders.length - 1; i >= 0; i--)
+		if (data.searchFolders[i].classList.contains(`mode-${options.search.type}`))
+			if (!data.searchFolders[i].classList.contains('hidden'))
+				status.activeFolders++;
+	setSearchWidth();
 }
 
 function setSearchWidth() {
