@@ -1453,7 +1453,7 @@ const initBlock = {
 
 function setManual(mode) {
 	options.misc.manualSwitch = mode;
-	if (mode) {
+	if (mode === true) {
 		doc.classList.add('manual');
 		doc.classList.remove('auto');
 	}
@@ -1465,7 +1465,7 @@ function setManual(mode) {
 
 function setWide(mode) {
 	options.sidebar.wide = mode;
-	if (mode) {
+	if (mode === true) {
 		doc.classList.add('wide');
 		doc.classList.remove('narrow');
 	}
