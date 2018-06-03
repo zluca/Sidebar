@@ -2031,12 +2031,10 @@ const initService = {
 					const tab = getById('tabs', message.data.id);
 					if (tab === false) return;
 					const windowId = tab.windowId;
-					if (status.activeWindow !== windowId) {
-						status.activeWindow = windowId;
+					if (status.activeWindow !== windowId)
 						brauzer.windows.update(windowId, {focused: true}, _ => {
 							brauzer.tabs.update(message.data.id, {active: true});
 						});
-					}
 					else
 						brauzer.tabs.update(message.data.id, {active: true});
 				},
@@ -2215,7 +2213,7 @@ const initService = {
 		const onActivated       = tabInfo => {
 			const tab = getById('tabs', tabInfo.tabId);
 			if (tab === false) return;
-			status.activeTabsIds[status.activeWindow]  = tabInfo.tabId;
+			status.activeTabsIds[tabInfo.windowId] = tabInfo.tabId;
 			tab.readed = true;
 			closeIframe();
 			makeTimeStamp('tabs');
