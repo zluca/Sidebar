@@ -13,8 +13,9 @@ const status  = {
 	dragging            : false,
 	activeFolders       : 0,
 	timeStamp           : {
-		startpage : 0,
-		spSearch  : 0
+		data    : 0,
+		options : 0,
+		search  : 0
 	},
 	titles              : {}
 };
@@ -533,31 +534,35 @@ const messageHandler = {
 	},
 	reInit  : {
 		page : info => {
-			for (let option in info.options.theme)
-				if (info.options.theme[option] !== options.theme[option])
-					if (messageHandler.options.hasOwnProperty(option))
-						messageHandler.options[option]({'value': info.options.theme[option]});
-			for (let option in info.options.startpage)
-				if (info.options.startpage[option] !== options.startpage[option])
-					if (messageHandler.options.hasOwnProperty(option))
-						messageHandler.options[option]({'value': info.options.startpage[option]});
-			if (options.startpage.searchEnabled === true)
-				for (let option in info.options.search)
-					if (info.options.search[option] !== options.search[option]) {
-						options.search = info.options.search;
-						initSearch(info.searchFolders, info.searchQuery);
-						insertSearchItems(info.search, true);
-						break;
-					}
-			if (info.timeStamp.spSearch !== status.timeStamp.spSearch) {
+			console.log(info);
+			if (info.timeStamp.options !== status.timeStamp.options) {
+				for (let option in info.options.theme)
+					if (info.options.theme[option] !== options.theme[option])
+						if (messageHandler.options.hasOwnProperty(option))
+							messageHandler.options[option]({'value': info.options.theme[option]});
+				for (let option in info.options.startpage)
+					if (info.options.startpage[option] !== options.startpage[option])
+						if (messageHandler.options.hasOwnProperty(option))
+							messageHandler.options[option]({'value': info.options.startpage[option]});
+				if (options.startpage.searchEnabled === true)
+					for (let option in info.options.search)
+						if (info.options.search[option] !== options.search[option]) {
+							options.search = info.options.search;
+							initSearch(info.searchFolders, info.searchQuery);
+							insertSearchItems(info.search, true);
+							break;
+						}
+				status.timeStamp.options = info.timeStamp.options;
+			}
+			if (info.timeStamp.search !== status.timeStamp.search) {
 				initSearch(info.searchFolders, info.searchQuery);
 				if (options.startpage.mode === 'search')
 					insertSearchItems(info.search, true);
-				status.timeStamp.spSearch = info.timeStamp.spSearch;
+				status.timeStamp.search = info.timeStamp.search;
 			}
-			if (info.timeStamp.startpage !== status.timeStamp.startpage) {
+			if (info.timeStamp !== status.timeStamp.data) {
 				initSites(info.sites);
-				status.timeStamp.startpage = info.timeStamp.startpage;
+				status.timeStamp.data = info.timeStamp.data;
 			}
 		}
 	}
