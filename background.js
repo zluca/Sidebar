@@ -194,6 +194,7 @@ const data = {
 	startpageCurrent   : [],
 	foldedId           : [],
 	leftBar        : {
+		'side'     : 'leftBar',
 		'options'  : null,
 		'data'     : null,
 		'info'     : null,
@@ -201,6 +202,7 @@ const data = {
 		'timeStamp': null
 		},
 	rightBar        : {
+		'side'     : 'rightBar',
 		'options'  : null,
 		'data'     : null,
 		'info'     : null,
