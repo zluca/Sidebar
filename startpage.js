@@ -534,7 +534,6 @@ const messageHandler = {
 	},
 	reInit  : {
 		page : info => {
-			console.log(info);
 			if (info.timeStamp.options !== status.timeStamp.options) {
 				for (let option in info.options.theme)
 					if (info.options.theme[option] !== options.theme[option])
