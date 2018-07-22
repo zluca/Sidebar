@@ -925,6 +925,13 @@ const options = {
 			targets : [],
 			handler : 'clickActions'
 		},
+		middle : {
+			value   : 'close',
+			type    : 'select',
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			targets : [],
+			handler : 'clickActions'
+		},
 		alt    : {
 			value   : 'setActive',
 			type    : 'select',
@@ -951,6 +958,13 @@ const options = {
 		hidden : {},
 		normal : {
 			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		middle : {
+			value   : 'deleteBookmark',
 			type    : 'select',
 			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
 			targets : [],
@@ -987,6 +1001,13 @@ const options = {
 			targets : [],
 			handler : 'clickActions'
 		},
+		middle : {
+			value   : 'bookmark',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
 		alt    : {
 			value   : 'open',
 			type    : 'select',
@@ -1013,6 +1034,13 @@ const options = {
 		hidden : {},
 		normal : {
 			value   : 'openFile',
+			type    : 'select',
+			values  : ['openFile', 'openFolder', 'deleteFile'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		middle : {
+			value   : 'deleteFile',
 			type    : 'select',
 			values  : ['openFile', 'openFolder', 'deleteFile'],
 			targets : [],
@@ -1049,6 +1077,13 @@ const options = {
 			targets : [],
 			handler : 'clickActions'
 		},
+		middle : {
+			value   : 'bookmark',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
 		alt    : {
 			value   : 'markRead',
 			type    : 'select',
@@ -1080,6 +1115,13 @@ const options = {
 			targets : [],
 			handler : 'clickActions'
 		},
+		middle : {
+			value   : 'deletePocket',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			targets : [],
+			handler : 'clickActions'
+		},
 		alt    : {
 			value   : 'open',
 			type    : 'select',
@@ -1106,6 +1148,13 @@ const options = {
 		hidden : {},
 		normal : {
 			value   : 'open',
+			type    : 'select',
+			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			targets : [],
+			handler : 'clickActions'
+		},
+		middle : {
+			value   : 'bookmark',
 			type    : 'select',
 			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
 			targets : [],

@@ -445,6 +445,14 @@ function finishBlock(mode) {
 			target.parentNode.appendChild(controls.item);
 	}, {'passive': true});
 
+	block.addEventListener('mousedown', event => {
+		if (event.button !== 1)
+			return;
+		event.stopPropagation();
+		event.preventDefault();
+		clickActions[options.clickActions[mode].middle](event);
+	});
+
 	block.addEventListener('click', event => {
 		if (event.button !== 0) return;
 		event.stopPropagation();

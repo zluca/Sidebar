@@ -1055,6 +1055,10 @@
 		"message"       : "Обычный клик",
 		"description"   : ""
 	},
+	"clickActionsMiddle" : {
+		"message"       : "Клик средней кнопкой",
+		"description"   : ""
+	},
 	"clickActionsAlt" : {
 		"message"       : "Alt + клик",
 		"description"   : ""
