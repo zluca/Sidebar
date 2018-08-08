@@ -2194,7 +2194,6 @@ const initService = {
 			brauzer.tabs.onMoved.addListener(onMoved);
 
 			brauzer.windows.onCreated.addListener(onWindowCreated);
-			brauzer.windows.onFocusChanged.addListener(onFocusChanged);
 			brauzer.windows.onRemoved.addListener(onWindowRemoved);
 
 			status.init.tabs = true;
@@ -2208,17 +2207,6 @@ const initService = {
 		const onWindowCreated   = win => {
 			if (win.type === 'normal')
 				status.activeWindow = win.id;
-		};
-
-		const onFocusChanged    = id => {
-			if (id === -1) return;
-			brauzer.windows.get(id, win => {
-				if (win === undefined) return;
-				if (win.type !== 'normal') return;
-				status.activeWindow = id;
-				makeTimeStamp('tabs');
-				reInit(status.activeTabsIds[status.activeWindow]);
-			});
 		};
 
 		const reInit  = id => {
