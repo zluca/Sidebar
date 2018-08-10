@@ -7,13 +7,37 @@
 	--background-color: #fcfcfc;
 	--background-color-active: #e3ecf1;
 }
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Regular.woff2);
+	font-style: normal;
+	font-weight: normal;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Italic.woff2);
+	font-style: italic;
+	font-weight: normal;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Bold.woff2);
+	font-style: normal;
+	font-weight: bold;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-BoldItalic.woff2);
+	font-style: italic;
+	font-weight: bold;
+}
 body {
 	width: 100%;
 	height: 100vh;
 	box-sizing: border-box;
 	overflow: visible;
 	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, “Roboto”, “Oxygen”, “Ubuntu”, “Cantarell”, “Fira Sans”, “Droid Sans”, “Helvetica Neue”, sans-serif;
+	font-family: “Roboto”;
 }
 #sbp-dialog {
 	color: var(--font-color);

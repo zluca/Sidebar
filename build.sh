@@ -24,6 +24,7 @@ cp *.html ./temp/
 cp ./icons/*.gif ./temp/icons/
 cp ./icons/*.png ./temp/icons/
 cp LICENSE ./temp/
+cp ./*.woff2 ./temp/
 
 jsFiles=$(ls *.js)
 i=$(ls *.js | wc -l)
