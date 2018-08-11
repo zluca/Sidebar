@@ -300,7 +300,7 @@ function init(response) {
 
 function insertSite(index, newSite) {
 	data.sites[index] = dceamd('section', siteContainer, [['id', `site-${index}`]], [['index', index]]);
-	dce('a', data.sites[index]);
+	dce('a', data.sites[index]).addEventListener('click', event => {event.preventDefault()});
 	setSiteProperties(data.sites[index], newSite);
 }
 
