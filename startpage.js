@@ -216,6 +216,8 @@ function init(response) {
 	}, {'passive': true});
 
 	siteContainer.addEventListener('click', event => {
+		event.preventDefault();
+		event.stopPropagation();
 		const target = event.target;
 		if (target.parentNode.classList.contains('add-new'))
 			send('background', 'dialog', 'siteCreate', {'index': target.parentNode.dataset.index});
@@ -227,7 +229,7 @@ function init(response) {
 			else
 				document.location = event.target.title;
 		}
-	}, {'passive': true});
+	});
 
 	editButton.addEventListener('click', event => {
 		event.stopPropagation();
