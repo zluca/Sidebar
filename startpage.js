@@ -139,8 +139,6 @@ function init(response) {
 				target.style.height = 'auto';
 				if (startPosition !== placeholderPosition)
 					send('background', 'startpage', 'move', {'from': startPosition, 'to': newPosition});
-				else
-					status.dragging = false;
 			};
 
 			const calculatePos = (x, y) => {
@@ -300,7 +298,12 @@ function init(response) {
 
 function insertSite(index, newSite) {
 	data.sites[index] = dceamd('section', siteContainer, [['id', `site-${index}`]], [['index', index]]);
-	dce('a', data.sites[index]).addEventListener('click', event => {event.preventDefault()});
+	dce('a', data.sites[index]).addEventListener('click', event => {
+		if (status.dragging === true) {
+			event.preventDefault();
+			return status.dragging = false;
+		}
+	});
 	setSiteProperties(data.sites[index], newSite);
 }
 
