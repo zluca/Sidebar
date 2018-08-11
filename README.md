@@ -30,8 +30,8 @@ none yet
 no idea
 
 **Firefox**
-- Create "Chrome" folder inside your profile folder
-- Create file "userChrome.css" inside "Chrome" folder
+- Create "chrome" folder inside your profile folder
+- Create file "userChrome.css" inside "chrome" folder
 - Copypaste "#TabsToolbar {visibility: collapse;}" info "userChrome.css"
 - Restart Firefox
 
