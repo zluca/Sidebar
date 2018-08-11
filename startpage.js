@@ -218,16 +218,16 @@ function init(response) {
 	siteContainer.addEventListener('click', event => {
 		event.preventDefault();
 		event.stopPropagation();
-		const target = event.target;
-		if (target.parentNode.classList.contains('add-new'))
-			send('background', 'dialog', 'siteCreate', {'index': target.parentNode.dataset.index});
+		const target = event.target.parentNode;
+		if (target.classList.contains('add-new'))
+			send('background', 'dialog', 'siteCreate', {'index': target.dataset.index});
 		else if (target.classList.contains('site')) {
 			if (event.ctrlKey === true)
-				send('background', 'tabs', 'new', {'url': event.target.title});
+				send('background', 'tabs', 'new', {'url': target.title});
 			else if (event.shiftKey === true)
-				send('background', 'tabs', 'new', {'url': event.target.title, 'newWindow': true});
+				send('background', 'tabs', 'new', {'url': target.title, 'newWindow': true});
 			else
-				document.location = event.target.title;
+				document.location = target.title;
 		}
 	});
 
