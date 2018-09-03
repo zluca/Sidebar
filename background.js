@@ -3263,6 +3263,10 @@ const initService = {
 			return id;
 		};
 
+		const makeRssDomain = (link, url) => {
+			return link !== null ? makeDomain('rss', `${guidFromUrl(url)}.rss`, link.textContent.trim()) : makeDomain('rss', url);
+		};
+
 		const createRssFeed = (url, title) => {
 			const rssUrl = urlFromUser(url);
 			for (let i = data.rssFolders.length - 1; i >= 0; i--)
@@ -3294,10 +3298,9 @@ const initService = {
 						let desc         = head.querySelector('description, subtitle');
 						if (desc !== null)
 							desc   = desc.textContent.trim();
-						const fav        = head.querySelector('image>url');
 						const guid       = guidFromUrl(rssUrl);
 						const feed       = createFolderById('rss', guid, 'first');
-						const rssDomain  = fav !== null ? makeDomain('rss', `${guid}.rss`, fav.textContent.trim()) : makeDomain('rss', rssUrl);
+						const rssDomain  = makeRssDomain(head.querySelector('image>url'), rssUrl);
 						feed.folded      = false;
 						feed.pid         = 0;
 						feed.title       = rssTitle;
@@ -3338,6 +3341,7 @@ const initService = {
 						const parser    = new DOMParser();
 						const xmlDoc    = parser.parseFromString(xhttp.responseText, 'text/xml');
 						feed.lastUpdate = Date.now();
+						makeRssDomain(xmlDoc.querySelector('channel image>url, feed image>url'), feed.url);
 						injectRss(xmlDoc, feed);
 						rssSetUpdate(feed, options.misc.rssUpdatePeriod.value);
 						saveNow('rssFolders');
@@ -3364,6 +3368,7 @@ const initService = {
 
 		const deleteRssItem = id => {
 			const rssItem = getById('rss', id);
+			if (rssItem === false) return;
 			rssSetReaded('rssItem', rssItem);
 			const feed   = getFolderById('rss', rssItem.pid);
 			const index2 = feed.itemsId.indexOf(id);
