@@ -79,7 +79,9 @@ if (status.method === 'window') {
 let initTimer  = -1;
 tryToInit();
 
-let insertItems = _ => {};
+let insertItems       = _ => {};
+let insertSearchItems = _ => {};
+let searchActive      = _ => {};
 
 document.title      = status.method;
 doc.classList.add(status.side);
@@ -763,6 +765,12 @@ const initBlock = {
 					moveBook(getById(info.id) , getFolderById(info.pid), info.newIndex);
 				else if (info.isFolder === true)
 					moveBook(getFolderById(info.id) , getFolderById(info.pid), info.newIndex);
+			},
+			bookmarksSearch     : info => {
+				if (info.value === false)
+					searchActive(false);
+				else
+					insertSearchItems(info.bookmarksSearch, info.bookmarksSearchTerm);
 			}
 		};
 
@@ -810,13 +818,15 @@ const initBlock = {
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders(info.bookmarksFolders);
 		insertItems(info.bookmarks, 'last');
+		if (options.misc.bookmarksSearch === true)
+			insertSearchItems(info.bookmarksSearch, info.bookmarksSearchTerm);
 		finishBlock('bookmarks');
 	},
 
 	history   : info => {
 
 		insertItems    = (items, method) => {
-			let pid = -1;
+			let pid    = -1;
 			let folder = null;
 			const insert = {
 				first : item => {
@@ -890,6 +900,12 @@ const initBlock = {
 				if (item === false) return;
 				item.textContent   = info.title;
 				makeTitle(info.id, info.title, info.url);
+			},
+			historySearch     : info => {
+				if (info.value === false)
+					searchActive(false);
+				else
+					insertSearchItems(info.historySearch, info.historySearchTerm);
 			}
 		};
 
@@ -904,6 +920,8 @@ const initBlock = {
 		insertItems(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
+		if (options.misc.historySearch === true)
+			insertSearchItems(info.historySearch, info.historySearchTerm);
 		finishBlock('history');
 	},
 
@@ -1901,18 +1919,6 @@ function moveFolder(mode, info) {
 		folder.parentNode.insertBefore(folder, folder.parentNode.children[info.newIndex + 1]);
 }
 
-function searchActive(isIt) {
-	if (isIt === true) {
-		block.classList.add('search-active');
-		status.searchActive = true;
-	}
-	else {
-		block.classList.remove('search-active');
-		status.searchActive = false;
-		window.scrollTo(0, options.scroll[options.sidebar.mode]);
-	}
-}
-
 function makeButton(type, mode, sub, hidden = false) {
 	const button     = dcea('span', controls[sub], [['id', `${mode}-${type}`], ['title', i18n[mode][type]]]);
 	if (i18n[mode].hasOwnProperty(`${type}Text`)) {
@@ -1942,33 +1948,46 @@ function makeSearch(mode) {
 	dcea('span', target, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
 	const clearSearch = dcea('span', target, [['classList', 'clear-search'], ['title', i18n[mode].clearSearchTitle]]);
 
+	insertSearchItems = (items, searchTerm) => {
+		while (searchResults.lastChild.firstChild)
+			searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
+		insertItems(items, 'search');
+		if (searchTerm !== undefined)
+			search.value = searchTerm;
+		clearSearch.style.setProperty('display', 'inline-block');
+		searchActive(true);
+	};
+
+	searchActive = isIt => {
+		if (isIt === true) {
+			block.classList.add('search-active');
+			status.searchActive = true;
+		}
+		else {
+			block.classList.remove('search-active');
+			clearSearch.style.setProperty('display', 'none');
+			search.value        = '';
+			status.searchActive = false;
+			window.scrollTo(0, options.scroll[options.sidebar.mode]);
+		}
+	}
+
 	search.addEventListener('keyup', event => {
 		const value = search.value;
 		if (value.length > 0)
 			clearSearch.style.setProperty('display', 'inline-block');
 		else
-			clearSearch.style.setProperty('display', 'none');
-		if (value.length > 1) {
+			clearSearch.click();
+		if (value.length > 2) {
 			if (status.lastSearch !== value) {
 				status.lastSearch = value;
-				send('background', mode, 'search', {'request': value, needResponse: true}, response => {
-					while (searchResults.lastChild.firstChild)
-						searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
-					insertItems(response, 'search');
-					searchActive(true);
-				});
+				send('background', mode, 'search', {'request': value});
 			}
 		}
-		else
-			searchActive(false);
 	}, {'passive': true});
 
 	clearSearch.addEventListener('click', event => {
-		search.value = '';
-		clearSearch.style.setProperty('display', 'none');
-		while (searchResults.lastChild.firstChild)
-			searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
-		searchActive(false);
+		send('background', 'options', 'handler', {'section': 'misc', 'option': `${mode}Search`, 'value': false});
 	}, {'passive': true});
 }
 

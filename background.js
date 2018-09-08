@@ -150,12 +150,16 @@ const data = {
 	bookmarksFoldersId : [],
 	bookmarksDomains   : [],
 	bookmarksDomainsId : [],
+	bookmarksSearch    : [],
+	bookmarksSearchTerm: '',
 	history            : [],
 	historyId          : [],
 	historyFolders     : [],
 	historyFoldersId   : [],
 	historyDomains     : [],
 	historyDomainsId   : [],
+	historySearch      : [],
+	historySearchTerm  : '',
 	downloads          : [],
 	downloadsId        : [],
 	downloadsFolders   : [],
@@ -542,6 +546,22 @@ const options = {
 			values  : ['plain', 'tree'],
 			targets : [],
 			hidden  : true
+		},
+		bookmarksSearch    : {
+			value   : false,
+			type    : 'boolean',
+			targets : [],
+			handler : 'innerSearch',
+			hidden  : true,
+			reset   : true
+		},
+		historySearch      : {
+			value   : false,
+			type    : 'boolean',
+			targets : [],
+			handler : 'innerSearch',
+			hidden  : true,
+			reset   : true
 		},
 		pocketMode      : {
 			value   : 'type',
@@ -1527,6 +1547,17 @@ const optionsHandler = {
 	clickActions     : (section, option, newValue) => {
 		const mode = section.replace('ClickActions', '');
 		send('sidebar', 'options', 'clickActions', {'mode': mode, 'option': option, 'value': newValue});
+	},
+	innerSearch      : (section, option, newValue) => {
+		const mode = option.replace('Search', '');
+		if (newValue === false)
+			send('sidebar', mode, option, {'value': false});
+		else {
+			const answer            = {'value' : true}
+			answer[`${option}`]     = data[option];
+			answer[`${option}Term`] = data[`${option}Term`];
+			send('sidebar', mode, option, answer);
+		}
 	}
 };
 
@@ -1841,7 +1872,8 @@ const initExtension = res => {
 				for (let option in res.options[section])
 					if (options.hasOwnProperty(section))
 						if (options[section].hasOwnProperty(option))
-							options[section][option].value = res.options[section][option];
+							if (!options[section][option].hasOwnProperty('reset'))
+								options[section][option].value = res.options[section][option];
 			starter();
 		}
 	}
@@ -2446,20 +2478,21 @@ const initService = {
 				},
 				search : (message, sender, sendResponse) => {
 					const onFulfilled = bookmarkItems => {
-						const result = [];
 						const l      = bookmarkItems.length < options.misc.limitBookmarks.value ?
 							bookmarkItems.length : options.misc.limitBookmarks.value;
 						for (let i = 0; i < l; i++) {
 							if (bookmarkItems[i].hasOwnProperty('url'))
 								if (bookmarkItems[i].url !== '')
-									result.push({
+									data.bookmarksSearch.push({
 										id       : bookmarkItems[i].id,
 										url      : bookmarkItems[i].url,
 										title    : bookmarkItems[i].title,
 										domain   : makeDomain('bookmarks', bookmarkItems[i].url).id
 									});
 						}
-						sendResponse(result);
+						data.bookmarksSearchTerm = message.data.request;
+						setOption('misc', 'bookmarksSearch', true, false);
+						optionsHandler.innerSearch('misc', 'bookmarksSearch', true);
 					};
 					execMethod(brauzer.bookmarks.search, onFulfilled, {'query': message.data.request});
 					return true;
@@ -2479,12 +2512,14 @@ const initService = {
 
 			modeData.bookmarks = _ => {
 				return {
-					mode             : 'bookmarks',
-					timeStamp        : status.timeStamp.bookmarks,
-					i18n             : i18n.bookmarks,
-					bookmarks        : data.bookmarks,
-					bookmarksFolders : data.bookmarksFolders,
-					domains          : data.bookmarksDomains
+					mode                : 'bookmarks',
+					timeStamp           : status.timeStamp.bookmarks,
+					i18n                : i18n.bookmarks,
+					bookmarks           : data.bookmarks,
+					bookmarksFolders    : data.bookmarksFolders,
+					bookmarksSearch     : data.bookmarksSearch,
+					bookmarksSearchTerm : data.bookmarksSearchTerm,
+					domains             : data.bookmarksDomains
 				};
 			};
 
@@ -2687,6 +2722,8 @@ const initService = {
 			data.bookmarksId         = [];
 			data.bookmarksFolders    = [];
 			data.bookmarksFoldersId  = [];
+			data.bookmarksSearch     = [];
+			data.bookmarksSearchTerm = '';
 			makeTimeStamp('bookmarks');
 			execMethod(brauzer.bookmarks.getRecent, getRecent, options.misc.limitBookmarks.value);
 		}
@@ -2700,6 +2737,8 @@ const initService = {
 			data.bookmarksId         = [];
 			data.bookmarksFolders    = [];
 			data.bookmarksFoldersId  = [];
+			data.bookmarksSearch     = [];
+			data.bookmarksSearchTerm = '';
 			brauzer.bookmarks.onCreated.removeListener(onCreated);
 			brauzer.bookmarks.onChanged.removeListener(onChanged);
 			brauzer.bookmarks.onMoved.removeListener(onMoved);
@@ -2716,8 +2755,9 @@ const initService = {
 					searchMore(true);
 				},
 				search : (message, sender, sendResponse) => {
-					search(sendResponse, message.data.request, 999);
-					return true;
+					data.historySearchTerm = message.data.request;
+					setOption('misc', 'historySearch', true, false);
+					search(result => {data.historySearch = result; optionsHandler.innerSearch('misc', 'historySearch', true);}, message.data.request, 999);
 				}
 			};
 
@@ -2730,13 +2770,15 @@ const initService = {
 
 			modeData.history = _ => {
 				return {
-					mode             : 'history',
-					timeStamp        : status.timeStamp.history,
-					i18n             : i18n.history,
-					history          : data.history,
-					historyEnd       : status.historyEnd,
-					historyFolders   : data.historyFolders,
-					domains          : data.historyDomains
+					mode              : 'history',
+					timeStamp         : status.timeStamp.history,
+					i18n              : i18n.history,
+					history           : data.history,
+					historyEnd        : status.historyEnd,
+					historyFolders    : data.historyFolders,
+					historySearch     : data.historySearch,
+					historySearchTerm : data.historySearchTerm,
+					domains           : data.historyDomains
 				};
 			};
 
