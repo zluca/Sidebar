@@ -2270,6 +2270,11 @@ const clickActions = {
 		if (options.sidebar.mode === 'rss')
 			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 	},
+	openInNewInactiveTab  : event => {
+		send('background', 'tabs', 'new', {'url': event.target.href, 'active': false});
+		if (options.sidebar.mode === 'rss')
+			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
+	},
 	openInNewWindow : event => {
 		send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': true});
 		if (options.sidebar.mode === 'rss')

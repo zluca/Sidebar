@@ -1079,6 +1079,10 @@
 		"message"       : "在新分頁中開啟",
 		"description"   : ""
 	},
+	"clickActionsOpenInNewInactiveTab" : {
+		"message"       : "Open in new inactive tab",
+		"description"   : ""
+	},
 	"clickActionsOpenInNewWindow" : {
 		"message"       : "在新視窗中開啟",
 		"description"   : ""

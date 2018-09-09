@@ -979,35 +979,35 @@ const options = {
 		normal : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deleteBookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		middle : {
 			value   : 'deleteBookmark',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deleteBookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		alt    : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deleteBookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		ctrl   : {
 			value   : 'openInNewTab',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deleteBookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		shift  : {
 			value   : 'openInNewWindow',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deleteBookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deleteBookmark'],
 			targets : [],
 			handler : 'clickActions'
 		}
@@ -1017,35 +1017,35 @@ const options = {
 		normal : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		middle : {
 			value   : 'bookmark',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		alt    : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		ctrl   : {
 			value   : 'openInNewTab',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		shift  : {
 			value   : 'openInNewWindow',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		}
@@ -1093,35 +1093,35 @@ const options = {
 		normal : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'markReaded', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		middle : {
 			value   : 'bookmark',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'markReaded', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		alt    : {
 			value   : 'markRead',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'markReaded', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		ctrl   : {
 			value   : 'openInNewTab',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'markReaded', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		shift  : {
 			value   : 'openInNewWindow',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'markReaded', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'markReaded', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		}
@@ -1131,35 +1131,35 @@ const options = {
 		normal : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		middle : {
 			value   : 'deletePocket',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		alt    : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		ctrl   : {
 			value   : 'openInNewTab',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		shift  : {
 			value   : 'openInNewWindow',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'deletePocket'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
 			targets : [],
 			handler : 'clickActions'
 		}
@@ -1169,35 +1169,35 @@ const options = {
 		normal : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		middle : {
 			value   : 'bookmark',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		alt    : {
 			value   : 'open',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		ctrl   : {
 			value   : 'openInNewTab',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		shift  : {
 			value   : 'openInNewWindow',
 			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewWindow', 'bookmark'],
+			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'bookmark'],
 			targets : [],
 			handler : 'clickActions'
 		}
@@ -2115,7 +2115,7 @@ const initService = {
 		const initTabs = _ => {
 			messageHandler.tabs = {
 				new : (message, sender, sendResponse) => {
-					createNewTab(message.data.url, message.data.newWindow);
+					createNewTab(message.data.url, message.data.newWindow, message.data.active);
 				},
 				update : (message, sender, sendResponse) => {
 					brauzer.tabs.update(status.activeTabsIds[status.activeWindow], {'url': message.data.url});
@@ -4931,7 +4931,7 @@ function setIcon() {
 	set[`${options.leftBar.method.value !== 'disabled'}${options.rightBar.method.value !== 'disabled'}`]();
 }
 
-function createNewTab(url = '', newWindow = false) {
+function createNewTab(url = '', newWindow = false, active = true) {
 	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 	if (activeTab === false) return;
 	const url2 = url === '' ? config.extensionStartPage : url;
@@ -4951,10 +4951,10 @@ function createNewTab(url = '', newWindow = false) {
 		});
 	else {
 		const newTab = {
-			truetrue   : {'url': config.extensionStartPage, 'windowId': status.activeWindow},
-			truefalse  : {'url': url2, 'windowId': status.activeWindow},
-			falsetrue  : {'windowId': status.activeWindow},
-			falsefalse : {'url': url2, 'windowId': status.activeWindow}
+			truetrue   : {'url': config.extensionStartPage, 'windowId': status.activeWindow, 'active': active},
+			truefalse  : {'url': url2, 'windowId': status.activeWindow, 'active': active},
+			falsetrue  : {'windowId': status.activeWindow, 'active': active},
+			falsefalse : {'url': url2, 'windowId': status.activeWindow, 'active': active}
 		};
 		brauzer.tabs.create(newTab[`${options.services.startpage.value}${url2 === config.extensionStartPage}`]);
 	}

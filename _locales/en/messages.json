@@ -1079,6 +1079,10 @@
 		"message"       : "Open in new tab",
 		"description"   : ""
 	},
+	"clickActionsOpenInNewInactiveTab" : {
+		"message"       : "Open in new inactive tab",
+		"description"   : ""
+	},
 	"clickActionsOpenInNewWindow" : {
 		"message"       : "Open in new window",
 		"description"   : ""

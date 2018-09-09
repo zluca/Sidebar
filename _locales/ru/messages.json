@@ -1079,6 +1079,10 @@
 		"message"       : "Открыть в новой вкладке",
 		"description"   : ""
 	},
+	"clickActionsOpenInNewInactiveTab" : {
+		"message"       : "Открыть в неактивной вкладке",
+		"description"   : ""
+	},
 	"clickActionsOpenInNewWindow" : {
 		"message"       : "Открыть в новом окне",
 		"description"   : ""
