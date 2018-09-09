@@ -1677,10 +1677,7 @@ function getFolderById(id) {
 	if (id === 0)
 		return rootFolder;
 	const index = data.foldersId.indexOf(id);
-	if (index !== -1)
-		return data.folders[index];
-	else
-		return false;
+	return index !== -1 ? data.folders[index] : false;
 }
 
 function removeFolderById(id) {

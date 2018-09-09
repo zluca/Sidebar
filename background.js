@@ -2804,7 +2804,7 @@ const initService = {
 					const item   = createById('history', history[i], 'last');
 					const folder = updateFolder.history(history[i], 'last');
 					if (sendData !== false) {
-						if (foldersId.indexOf(folder.id) === -1) {
+						if (!foldersId.contains(folder.id)) {
 							foldersId.push(folder.id);
 							dataToSend.historyFolders.push(folder);
 						}
@@ -3453,7 +3453,7 @@ const initService = {
 				}
 				if (item.title === '')
 					item.title = item.description.substring(0, 40);
-				if (feed.itemsId.indexOf(item.id) === -1)
+				if (!feed.itemsId.contains(item.id))
 					newItems.push(createById('rss', item, 'date'));
 			}
 			if (newItems.length > 0) {
@@ -4753,7 +4753,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		fav.lastUsed = Date.now();
 	}
 	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket', 'search', 'spSearch'], i = targets.length - 1; i >= 0; i--) {
-		if (data[`${targets[i]}Domains`].indexOf(id) !== -1)
+		if (data[`${targets[i]}Domains`].contains(id))
 			data[`${targets[i]}Domains`].fav = fav;
 		if (update === false) continue;
 		for (let i = domainsId.length - 1; i >= 0; i--) {
@@ -5032,9 +5032,7 @@ function deleteById(mode, id) {
 
 function getById(mode, id) {
 	const index = data[`${mode}Id`].indexOf(id);
-	if (index !== -1)
-		return data[mode][index];
-	else return false;
+	return index !== -1 ? data[mode][index] : false;
 }
 
 function getByUrl(mode, url) {
@@ -5066,12 +5064,8 @@ function createFolderById(mode, id, position) {
 			return data[`${mode}Folders`][0];
 		}
 	};
-	let index = data[`${mode}FoldersId`].indexOf(id);
 
-	if (index !== -1)
-		return false;
-	else
-		return insert[position]();
+	return data[`${mode}FoldersId`].contains(id) ? false : insert[position]();
 }
 
 function deleteFolderById(mode, id, killChildrens = false) {
@@ -5093,7 +5087,7 @@ function deleteFolderById(mode, id, killChildrens = false) {
 function addToFolder(mode, item) {
 	const folder = getFolderById(mode, item.domain);
 	if (folder === false) return false;
-	if (folder.itemsId.indexOf(item.id) !== -1) return folder;
+	if (folder.itemsId.contains(item.id)) return folder;
 	folder.itemsId.push(item.id);
 	checkCount(mode, folder);
 	return folder;
@@ -5130,13 +5124,11 @@ function checkCount(mode, folder) {
 
 function getFolderById(mode, id) {
 	const index = data[`${mode}FoldersId`].indexOf(id);
-	if (index !== -1)
-		return data[`${mode}Folders`][index];
-	else return false;
+	return index !== -1 ? data[`${mode}Folders`][index] : false;
 }
 
 function getFolded(id) {
-	return data.foldedId.indexOf(id) !== -1 ? true : false;
+	return data.foldedId.contains(id) ? true : false;
 }
 
 function domainFromUrl(url, noProtocol = false) {
