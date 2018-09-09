@@ -2804,7 +2804,7 @@ const initService = {
 					const item   = createById('history', history[i], 'last');
 					const folder = updateFolder.history(history[i], 'last');
 					if (sendData !== false) {
-						if (!foldersId.contains(folder.id)) {
+						if (!foldersId.includes(folder.id)) {
 							foldersId.push(folder.id);
 							dataToSend.historyFolders.push(folder);
 						}
@@ -3453,7 +3453,7 @@ const initService = {
 				}
 				if (item.title === '')
 					item.title = item.description.substring(0, 40);
-				if (!feed.itemsId.contains(item.id))
+				if (!feed.itemsId.includes(item.id))
 					newItems.push(createById('rss', item, 'date'));
 			}
 			if (newItems.length > 0) {
@@ -4753,7 +4753,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		fav.lastUsed = Date.now();
 	}
 	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket', 'search', 'spSearch'], i = targets.length - 1; i >= 0; i--) {
-		if (data[`${targets[i]}Domains`].contains(id))
+		if (data[`${targets[i]}Domains`].includes(id))
 			data[`${targets[i]}Domains`].fav = fav;
 		if (update === false) continue;
 		for (let i = domainsId.length - 1; i >= 0; i--) {
@@ -5064,8 +5064,8 @@ function createFolderById(mode, id, position) {
 			return data[`${mode}Folders`][0];
 		}
 	};
-
-	return data[`${mode}FoldersId`].contains(id) ? false : insert[position]();
+    let index = data[`${mode}FoldersId`].indexOf(id);
+	return index !== -1 ? false : insert[position]();
 }
 
 function deleteFolderById(mode, id, killChildrens = false) {
@@ -5087,7 +5087,7 @@ function deleteFolderById(mode, id, killChildrens = false) {
 function addToFolder(mode, item) {
 	const folder = getFolderById(mode, item.domain);
 	if (folder === false) return false;
-	if (folder.itemsId.contains(item.id)) return folder;
+	if (folder.itemsId.includes(item.id)) return folder;
 	folder.itemsId.push(item.id);
 	checkCount(mode, folder);
 	return folder;
@@ -5128,7 +5128,7 @@ function getFolderById(mode, id) {
 }
 
 function getFolded(id) {
-	return data.foldedId.contains(id) ? true : false;
+	return data.foldedId.includes(id) ? true : false;
 }
 
 function domainFromUrl(url, noProtocol = false) {
