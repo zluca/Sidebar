@@ -1272,6 +1272,12 @@ const options = {
 			type    : 'boolean',
 			handler : 'hoverActions',
 			targets : []
+		},
+		openAll : {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
 		}
 	},
 	historyHoverActions: {
@@ -2496,6 +2502,15 @@ const initService = {
 					};
 					execMethod(brauzer.bookmarks.search, onFulfilled, {'query': message.data.request});
 					return true;
+				},
+				openAll : (message, sender, sendResponse) => {
+					const folder = getFolderById('bookmarks', message.data);
+					if (folder === false) return;
+					for (let i = folder.itemsId.length - 1; i >= 0; i--) {
+						const bookmark = getById('bookmarks', folder.itemsId[i]);
+						if (bookmark === false) continue;
+						createNewTab(bookmark.url, false, false);
+					}
 				}
 			};
 

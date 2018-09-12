@@ -129,6 +129,10 @@
 		"message"       : "Удалить папку",
 		"description"   : ""
 	},
+	"bookmarksControlsOpenAll" : {
+		"message"       : "Открыть все закладки",
+		"description"   : ""
+	},
 	"bookmarksSearchPlaceholder" : {
 		"message"       : "Искать",
 		"description"   : ""

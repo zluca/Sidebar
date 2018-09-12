@@ -129,6 +129,10 @@
 		"message"       : "删除文件夹",
 		"description"   : ""
 	},
+	"bookmarksControlsOpenAll" : {
+		"message"       : "Open all bookmarks",
+		"description"   : ""
+	},
 	"bookmarksSearchPlaceholder" : {
 		"message"       : "搜索",
 		"description"   : ""

@@ -1,6 +1,7 @@
 .item #bookmarks-delete,
 .item #bookmarks-move,
 .folder-name #bookmarks-folderDelete,
+.folder-name #bookmarks-openAll,
 #bookmarks-move,
 #bookmarks-edit {
 	display: inline-block;

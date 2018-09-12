@@ -2124,6 +2124,9 @@ const buttonsEvents = {
 				send('background', 'dialog', 'bookmarkFolderEdit', {'id': target.dataset.id});
 			else
 				send('background', 'dialog', 'bookmarkEdit', {'id': target.dataset.id});
+		},
+		openAll : event => {
+			send('background', 'bookmarks', 'openAll', controls.item.parentNode.dataset.id)
 		}
 	},
 	history   : {

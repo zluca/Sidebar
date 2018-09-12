@@ -129,6 +129,10 @@
 		"message"       : "Delete folder",
 		"description"   : ""
 	},
+	"bookmarksControlsOpenAll" : {
+		"message"       : "Open all bookmarks",
+		"description"   : ""
+	},
 	"bookmarksSearchPlaceholder" : {
 		"message"       : "Search",
 		"description"   : ""

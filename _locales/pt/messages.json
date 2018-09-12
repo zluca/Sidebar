@@ -129,6 +129,10 @@
 		"message"       : "Apagar pasta",
 		"description"   : ""
 	},
+	"bookmarksControlsOpenAll" : {
+		"message"       : "Open all bookmarks",
+		"description"   : ""
+	},
 	"bookmarksSearchPlaceholder" : {
 		"message"       : "Procurar",
 		"description"   : ""
