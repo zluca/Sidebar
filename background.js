@@ -1831,7 +1831,8 @@ const initExtension = res => {
 		for (let section in options) {
 			optionsShort[section] = {};
 			for (let option in options[section])
-				optionsShort[section][option] = options[section][option].value;
+				if (options[section][option].hasOwnProperty('value'))
+					optionsShort[section][option] = options[section][option].value;
 		}
 		initService.data(true);
 	};
