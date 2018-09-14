@@ -75,7 +75,9 @@ const status = {
 		rssUpdated      : false,
 		rssUpdatedCount : 0,
 		downloadStatus  : 'idle',
-		downloadsCount  : 0
+		downloadsCount  : 0,
+		bookmarksSearch : false,
+		historySearch   : false
 	},
 	init               : {
 		'data'      : false,
@@ -546,22 +548,6 @@ const options = {
 			values  : ['plain', 'tree'],
 			targets : [],
 			hidden  : true
-		},
-		bookmarksSearch    : {
-			value   : false,
-			type    : 'boolean',
-			targets : [],
-			handler : 'innerSearch',
-			hidden  : true,
-			reset   : true
-		},
-		historySearch      : {
-			value   : false,
-			type    : 'boolean',
-			targets : [],
-			handler : 'innerSearch',
-			hidden  : true,
-			reset   : true
 		},
 		pocketMode      : {
 			value   : 'type',
@@ -1553,17 +1539,6 @@ const optionsHandler = {
 	clickActions     : (section, option, newValue) => {
 		const mode = section.replace('ClickActions', '');
 		send('sidebar', 'options', 'clickActions', {'mode': mode, 'option': option, 'value': newValue});
-	},
-	innerSearch      : (section, option, newValue) => {
-		const mode = option.replace('Search', '');
-		if (newValue === false)
-			send('sidebar', mode, option, {'value': false});
-		else {
-			const answer            = {'value' : true}
-			answer[`${option}`]     = data[option];
-			answer[`${option}Term`] = data[`${option}Term`];
-			send('sidebar', mode, option, answer);
-		}
 	}
 };
 
@@ -1879,8 +1854,7 @@ const initExtension = res => {
 				for (let option in res.options[section])
 					if (options.hasOwnProperty(section))
 						if (options[section].hasOwnProperty(option))
-							if (!options[section][option].hasOwnProperty('reset'))
-								options[section][option].value = res.options[section][option];
+							options[section][option].value = res.options[section][option];
 			starter();
 		}
 	}
@@ -2497,12 +2471,16 @@ const initService = {
 										domain   : makeDomain('bookmarks', bookmarkItems[i].url).id
 									});
 						}
-						data.bookmarksSearchTerm = message.data.request;
-						setOption('misc', 'bookmarksSearch', true, false);
-						optionsHandler.innerSearch('misc', 'bookmarksSearch', true);
+						data.bookmarksSearchTerm    = message.data.request;
+						status.info.bookmarksSearch = true;
+						send('sidebar', 'bookmarks', 'search', {'search': data.bookmarksSearch, 'searchTerm': data.bookmarksSearchTerm});
 					};
 					execMethod(brauzer.bookmarks.search, onFulfilled, {'query': message.data.request});
 					return true;
+				},
+				clearSearch : (message, sender, sendResponse) => {
+					status.info.bookmarksSearch = false;
+					send('sidebar', 'bookmarks', 'clearSearch');
 				},
 				openAll : (message, sender, sendResponse) => {
 					const folder = getFolderById('bookmarks', message.data);
@@ -2533,8 +2511,8 @@ const initService = {
 					i18n                : i18n.bookmarks,
 					bookmarks           : data.bookmarks,
 					bookmarksFolders    : data.bookmarksFolders,
-					bookmarksSearch     : data.bookmarksSearch,
-					bookmarksSearchTerm : data.bookmarksSearchTerm,
+					search              : data.bookmarksSearch,
+					searchTerm          : data.bookmarksSearchTerm,
 					domains             : data.bookmarksDomains
 				};
 			};
@@ -2772,9 +2750,13 @@ const initService = {
 				},
 				search : (message, sender, sendResponse) => {
 					data.historySearchTerm = message.data.request;
-					setOption('misc', 'historySearch', true, false);
-					search(result => {data.historySearch = result; optionsHandler.innerSearch('misc', 'historySearch', true);}, message.data.request, 999);
-				}
+					status.info.historySearch = true;
+					search(result => {data.historySearch = result; send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm})}, message.data.request, 999);
+				},
+				clearSearch : (message, sender, sendResponse) => {
+					status.info.historySearch = false;
+					send('sidebar', 'history', 'clearSearch');
+				},
 			};
 
 			i18n.history = {
@@ -2792,8 +2774,8 @@ const initService = {
 					history           : data.history,
 					historyEnd        : status.historyEnd,
 					historyFolders    : data.historyFolders,
-					historySearch     : data.historySearch,
-					historySearchTerm : data.historySearchTerm,
+					search            : data.historySearch,
+					searchTerm        : data.historySearchTerm,
 					domains           : data.historyDomains
 				};
 			};

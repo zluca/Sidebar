@@ -766,11 +766,12 @@ const initBlock = {
 				else if (info.isFolder === true)
 					moveBook(getFolderById(info.id) , getFolderById(info.pid), info.newIndex);
 			},
-			bookmarksSearch     : info => {
-				if (info.value === false)
-					searchActive(false);
-				else
-					insertSearchItems(info.bookmarksSearch, info.bookmarksSearchTerm);
+			search     : info => {
+				insertSearchItems(info.search, info.searchTerm);
+			},
+			clearSearch : info => {
+				status.info.bookmarksSearch = false;
+				searchActive(false);
 			}
 		};
 
@@ -818,8 +819,8 @@ const initBlock = {
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders(info.bookmarksFolders);
 		insertItems(info.bookmarks, 'last');
-		if (options.misc.bookmarksSearch === true)
-			insertSearchItems(info.bookmarksSearch, info.bookmarksSearchTerm);
+		if (status.info.bookmarksSearch === true)
+			insertSearchItems(info.search, info.searchTerm);
 		finishBlock('bookmarks');
 	},
 
@@ -901,11 +902,12 @@ const initBlock = {
 				item.textContent   = info.title;
 				makeTitle(info.id, info.title, info.url);
 			},
-			historySearch     : info => {
-				if (info.value === false)
-					searchActive(false);
-				else
-					insertSearchItems(info.historySearch, info.historySearchTerm);
+			search     : info => {
+				insertSearchItems(info.search, info.searchTerm);
+			},
+			clearSearch : info => {
+				status.info.historySearch = false;
+				searchActive(false);
 			}
 		};
 
@@ -920,8 +922,8 @@ const initBlock = {
 		insertItems(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
-		if (options.misc.historySearch === true)
-			insertSearchItems(info.historySearch, info.historySearchTerm);
+		if (status.info.historySearch === true)
+			insertSearchItems(info.search, info.searchTerm);
 		finishBlock('history');
 	},
 
@@ -1984,7 +1986,7 @@ function makeSearch(mode) {
 	}, {'passive': true});
 
 	clearSearch.addEventListener('click', event => {
-		send('background', 'options', 'handler', {'section': 'misc', 'option': `${mode}Search`, 'value': false});
+		send('background', mode, 'clearSearch');
 	}, {'passive': true});
 }
 
