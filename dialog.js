@@ -712,7 +712,9 @@ function makeDialogWindow(data, warnings, colors) {
 					event.target.classList.toggle('selected');
 					options.hoverActions[event.target.dataset.id] = !options.hoverActions[event.target.dataset.id];
 				}
-				else if (event.target.nodeName === 'SELECT')
+			});
+			main.addEventListener('change', event => {
+				if (event.target.nodeName === 'SELECT')
 					options.clickActions[event.target.dataset.id].value = event.target.value;
 			});
 		}
