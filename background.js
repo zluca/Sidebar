@@ -2500,6 +2500,7 @@ const initService = {
 				move               : getI18n('bookmarksControlsMove'),
 				delete             : getI18n('bookmarksControlsDelete'),
 				folderDelete       : getI18n('bookmarksControlsFolderDelete'),
+				openAll            : getI18n('bookmarksControlsOpenAll'),
 				searchPlaceholder  : getI18n('bookmarksSearchPlaceholder'),
 				clearSearchTitle   : getI18n('searchClearSearchTitle')
 			};
