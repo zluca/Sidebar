@@ -296,6 +296,13 @@ function init(response) {
 		hoveredItem = null;
 		siteStyle.textContent = '';
 	}, {'passive': true});
+
+	searchResults.addEventListener('click', event => {
+		event.preventDefault();
+		event.stopPropagation();
+		if (event.target.nodeName === 'A')
+			send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': false, 'active': !event.ctrlKey});
+	});
 }
 
 function insertSite(index, newSite) {
