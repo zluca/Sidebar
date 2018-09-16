@@ -302,6 +302,8 @@ function init(response) {
 		event.stopPropagation();
 		if (event.target.nodeName === 'A')
 			send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': false, 'active': !event.ctrlKey});
+		else if (event.target.nodeName === 'B')
+			send('background', 'tabs', 'new', {'url': event.target.parentNode.href, 'newWindow': false, 'active': !event.ctrlKey});
 	});
 }
 
