@@ -227,7 +227,7 @@ function init(response) {
 			else if (event.shiftKey === true)
 				send('background', 'tabs', 'new', {'url': target.title, 'newWindow': true});
 			else
-				document.location = target.title;
+				send('background', 'tabs', 'update', {'url': target.title});
 		}
 	});
 

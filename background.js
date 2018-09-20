@@ -2096,9 +2096,12 @@ const initService = {
 		const initTabs = _ => {
 			messageHandler.tabs = {
 				new : (message, sender, sendResponse) => {
-					createNewTab(message.data.url, message.data.newWindow, message.data.active);
+					createNewTab(message.data.url === '' ? config.extensionStartPage : message.data.url, message.data.newWindow, message.data.active);
 				},
 				update : (message, sender, sendResponse) => {
+					for (let i = data.tabs.length - 1; i >=0 ; i--)
+						if (data.tabs[i].url === message.data.url)
+							return brauzer.tabs.update(data.tabs[i].id, {active: true});
 					brauzer.tabs.update(status.activeTabsIds[status.activeWindow], {'url': message.data.url});
 				},
 				setActive : (message, sender, sendResponse) => {
@@ -4933,32 +4936,31 @@ function setIcon() {
 	set[`${options.leftBar.method.value !== 'disabled'}${options.rightBar.method.value !== 'disabled'}`]();
 }
 
-function createNewTab(url = '', newWindow = false, active = true) {
+function createNewTab(url = config.extensionStartPage, newWindow = false, active = true) {
 	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 	if (activeTab === false) return;
-	const url2 = url === '' ? config.extensionStartPage : url;
 	for (let i = data.tabs.length - 1; i >=0 ; i--)
-		if (data.tabs[i].url === url2)
-			if (activeTab.url !== url2)
+		if (data.tabs[i].url === url)
+			if (activeTab.url !== url)
 				return brauzer.tabs.update(data.tabs[i].id, {active: true});
 	if (newWindow !== false)
 		brauzer.windows.get(status.activeWindow, win => {
 			const newTab = {
 				truetrue   : {'url': config.extensionStartPage, width: win.width, height: win.height, left: win.left, top: win.top},
-				truefalse  : {'url': url2, width: win.width, height: win.height, left: win.left, top: win.top},
+				truefalse  : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top},
 				falsetrue  : {width: win.width, height: win.height, left: win.left, top: win.top},
-				falsefalse : {'url': url2, width: win.width, height: win.height, left: win.left, top: win.top}
+				falsefalse : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top}
 			};
-			brauzer.windows.create(newTab[`${options.services.startpage.value}${url2 === config.extensionStartPage}`]);
+			brauzer.windows.create(newTab[`${options.services.startpage.value}${url === config.extensionStartPage}`]);
 		});
 	else {
 		const newTab = {
 			truetrue   : {'url': config.extensionStartPage, 'windowId': status.activeWindow, 'active': active},
-			truefalse  : {'url': url2, 'windowId': status.activeWindow, 'active': active},
+			truefalse  : {'url': url, 'windowId': status.activeWindow, 'active': active},
 			falsetrue  : {'windowId': status.activeWindow, 'active': active},
-			falsefalse : {'url': url2, 'windowId': status.activeWindow, 'active': active}
+			falsefalse : {'url': url, 'windowId': status.activeWindow, 'active': active}
 		};
-		brauzer.tabs.create(newTab[`${options.services.startpage.value}${url2 === config.extensionStartPage}`]);
+		brauzer.tabs.create(newTab[`${options.services.startpage.value}${url === config.extensionStartPage}`]);
 	}
 }
 
