@@ -1734,18 +1734,21 @@ function finishMoving(event) {
 
 function moveItem(mode, eventTarget) {
 
-	let lastPosition = -1;
-	let movingUp     = false;
+	let lastPosition  = -1;
+	let movingUp      = false;
+	let folderTimeout = 0;
 
 	const moveItemOverTree = event => {
 
 		event.stopPropagation();
 		event.preventDefault();
-		const target = event.target;
+		clearTimeout(folderTimeout);
+		folderTimeout = 0;
+		const target  = event.target;
 		if (target.parentNode === item)
 			return;
-		movingUp   = event.screenY < lastPosition;
-		lastPosition = event.screenY;
+		movingUp      = event.screenY < lastPosition;
+		lastPosition  = event.screenY;
 		if (target.classList.contains('item')) {
 			if (movingUp)
 				target.parentNode.insertBefore(item, target);
@@ -1755,9 +1758,11 @@ function moveItem(mode, eventTarget) {
 				target.parentNode.appendChild(item);
 		}
 		else if (target.classList.contains('folder-name')) {
-			target.nextElementSibling.appendChild(item);
 			if (target.parentNode.classList.contains('folded'))
-				target.click();
+				if (folderTimeout === 0)
+					folderTimeout = setTimeout(_ => {target.click()}, 1000);
+			else
+				target.nextElementSibling.appendChild(item);
 		}
 		else if (target.classList.contains('folder'))
 			target.lastChild.appendChild(item);
@@ -1777,7 +1782,7 @@ function moveItem(mode, eventTarget) {
 			return;
 		if (target.parentNode !== folder)
 			return;
-		movingUp   = event.screenY < lastPosition;
+		movingUp     = event.screenY < lastPosition;
 		lastPosition = event.screenY;
 		if (movingUp)
 			target.parentNode.insertBefore(item, target);
@@ -1832,14 +1837,22 @@ function moveItem(mode, eventTarget) {
 		finilize();
 	};
 
+	const stopClick = event => {
+		event.preventDefault();
+		event.stopPropagation();
+	}
+
 	const finilize = _ => {
-		doc.removeEventListener('keydown', keydown);
-		block.removeEventListener('mouseover', moveItemOverTree);
-		block.removeEventListener('mouseover', moveItemOverFolder);
-		doc.removeEventListener('mousedown', getIndex);
-		doc.removeEventListener('mousedown', getSiblings);
-		item.classList.remove('moved');
-		rootFolder.classList.remove('moving');
+		setTimeout(_ => {
+			doc.removeEventListener('keydown', keydown);
+			block.removeEventListener('mouseover', moveItemOverTree);
+			block.removeEventListener('mouseover', moveItemOverFolder);
+			block.removeEventListener('click', stopClick);
+			doc.removeEventListener('mousedown', getIndex);
+			doc.removeEventListener('mousedown', getSiblings);
+			item.classList.remove('moved');
+			rootFolder.classList.remove('moving');
+		}, 200);
 	};
 
 	const setListeners = {
@@ -1848,6 +1861,7 @@ function moveItem(mode, eventTarget) {
 				plain  : _ => {
 					block.addEventListener('mouseover', moveItemOverFolder);
 					doc.addEventListener('mousedown', getIndex);
+					block.addEventListener('click', stopClick);
 				},
 				domain : _ => {
 					block.addEventListener('mouseover', moveItemOverFolder);
@@ -1855,10 +1869,12 @@ function moveItem(mode, eventTarget) {
 						doc.addEventListener('mousedown', getIndex);
 					else
 						doc.addEventListener('mousedown', getSiblings);
+					block.addEventListener('click', stopClick);
 				},
 				tree   : _ => {
 					block.addEventListener('mouseover', moveItemOverFolder);
 					doc.addEventListener('mousedown', getSiblings);
+					block.addEventListener('click', stopClick);
 				}
 			};
 			modes[options.misc.tabsMode]();
@@ -1866,18 +1882,22 @@ function moveItem(mode, eventTarget) {
 		bookmarks : _ => {
 			block.addEventListener('mouseover', moveItemOverTree);
 			doc.addEventListener('mousedown', getIndex);
+			block.addEventListener('click', stopClick);
 		},
 		rss : _ => {
 			block.addEventListener('mouseover', moveItemOverFolder);
 			doc.addEventListener('mousedown', getIndex);
+			block.addEventListener('click', stopClick);
 		},
 		pocket : _ => {
 			block.addEventListener('mouseover', moveItemOverFolder);
 			doc.addEventListener('mousedown', getIndex);
+			block.addEventListener('click', stopClick);
 		},
 		search : _ => {
 			block.addEventListener('mouseover', moveItemOverFolder);
 			doc.addEventListener('mousedown', getIndex);
+			block.addEventListener('click', stopClick);
 		}
 	};
 
