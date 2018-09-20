@@ -2750,14 +2750,17 @@ const initService = {
 					searchMore(true);
 				},
 				search : (message, sender, sendResponse) => {
-					data.historySearchTerm = message.data.request;
+					data.historySearchTerm    = message.data.request;
 					status.info.historySearch = true;
-					search(result => {data.historySearch = result; send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm})}, message.data.request, 999);
+					search(result => {data.historySearch = result; send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm})}, message.data.request);
 				},
 				clearSearch : (message, sender, sendResponse) => {
 					status.info.historySearch = false;
 					send('sidebar', 'history', 'clearSearch');
 				},
+				searchSite : (message, sender, sendResponse) => {
+					search(sendResponse, message.data.request, message.data.maxResults);
+				}
 			};
 
 			i18n.history = {
@@ -2824,11 +2827,11 @@ const initService = {
 			execMethod(brauzer.history.search, searchHandler, searchObject);
 		};
 
-		const search = (sendResponse, request) => {
+		const search = (sendResponse, request, maxSearch = options.misc.limitHistory.value) => {
 
 			const searchHandler = history => {
 				let results = [];
-				for (let i = 0, l = history.length; i < l && i < options.misc.limitHistory.value; i++) {
+				for (let i = 0, l = history.length; i < l && i < maxSearch; i++) {
 					const domain = makeDomain('history', history[i].url);
 					results.push({
 						url    : history[i].url,

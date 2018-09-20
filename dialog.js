@@ -338,7 +338,7 @@ function makeDialogWindow(data, warnings, colors) {
 				if (inputUrl.value.length > 2) {
 					if (lastValue !== inputUrl.value) {
 						lastValue = inputUrl.value;
-						send('background', 'history', 'search', {request: inputUrl.value, maxResults: 10, needResponse: true}, response => showCompleter(response));
+						send('background', 'history', 'searchSite', {request: inputUrl.value, maxResults: 10, needResponse: true}, response => showCompleter(response));
 					}
 				}
 				else
