@@ -138,8 +138,16 @@
 		"description"   : ""
 	},
 
+	"historyControlsDelete" : {
+		"message"       : "Удалить",
+		"description"   : ""
+	},
+	"historyControlsFolderDelete" : {
+		"message"       : "Удалить историю за день",
+		"description"   : ""
+	},
 	"historyGetMoreText" : {
-		"message"       : "Дальше",
+		"message"       : "Далее",
 		"description"   : ""
 	},
 	"historyGetMoreTitle" : {
@@ -858,6 +866,19 @@
 	},
 	"dialogBookmarkFolderDeleteAlert" : {
 		"message"       : "Удалить папку \"$name$\" ? Все вложенные вкладки также будут удалены.",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogHistoryFolderDeleteHeader" : {
+		"message"       : "Очистка истории",
+		"description"   : ""
+	},
+	"dialogHistoryFolderDeleteAlert" : {
+		"message"       : "Удалить историю за \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

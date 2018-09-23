@@ -138,6 +138,14 @@
 		"description"   : ""
 	},
 
+	"historyControlsDelete" : {
+		"message"       : "Delete entry",
+		"description"   : ""
+	},
+	"historyControlsFolderDelete" : {
+		"message"       : "Delete history for a day",
+		"description"   : ""
+	},
 	"historyGetMoreText" : {
 		"message"       : "Show more",
 		"description"   : "text on 'Get more history' button"
@@ -858,6 +866,19 @@
 	},
 	"dialogBookmarkFolderDeleteAlert" : {
 		"message"       : "Do you really want to delete folder \"$name$\" ? All it's content will be lost.",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogHistoryFolderDeleteHeader" : {
+		"message"       : "Wipe history",
+		"description"   : ""
+	},
+	"dialogHistoryFolderDeleteAlert" : {
+		"message"       : "Do you really want to delete all history for \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

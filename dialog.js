@@ -479,6 +479,18 @@ function makeDialogWindow(data, warnings, colors) {
 			addButton('cancel');
 		},
 
+		historyFolderDelete : _ => {
+
+			setHeader();
+			addAlert();
+			addWarning();
+			addButton('confirm', _ => {
+				removeDialogWindow();
+				send('background', 'history', 'historyFolderDelete', {'id': data.id});
+			});
+			addButton('cancel');
+		},
+
 		rssNew : _ => {
 
 			setHeader();

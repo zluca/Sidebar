@@ -138,6 +138,14 @@
 		"description"   : ""
 	},
 
+	"historyControlsDelete" : {
+		"message"       : "Delete entry",
+		"description"   : ""
+	},
+	"historyControlsFolderDelete" : {
+		"message"       : "Delete history for a day",
+		"description"   : ""
+	},
 	"historyGetMoreText" : {
 		"message"       : "显示更多",
 		"description"   : "text on 'Get more history' button"
@@ -858,6 +866,19 @@
 	},
 	"dialogBookmarkFolderDeleteAlert" : {
 		"message"       : "确定删除文件夹“$name$”？里面的所有内容都将丢失。",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogHistoryFolderDeleteHeader" : {
+		"message"       : "Wipe history",
+		"description"   : ""
+	},
+	"dialogHistoryFolderDeleteAlert" : {
+		"message"       : "Do you really want to delete all history for \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

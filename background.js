@@ -393,6 +393,12 @@ const options = {
 			targets : [],
 			handler : 'clickActions'
 		},
+		historyFolderDelete : {
+			value   : true,
+			type    : 'boolean',
+			targets : [],
+			handler : 'clickActions'
+		},
 		siteDelete           : {
 			value   : true,
 			type    : 'boolean',
@@ -1267,7 +1273,19 @@ const options = {
 		}
 	},
 	historyHoverActions: {
-		hidden  : {}
+		hidden  : {},
+		delete: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		folderDelete: {
+			value   : true,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
 	},
 	downloadsHoverActions: {
 		hidden  : {},
@@ -1707,6 +1725,9 @@ const messageHandler = {
 			const folder = getFolderById('bookmarks', message.data.id);
 			if (folder !== false)
 				createDialogWindow('bookmarkFolderEdit', {'id': message.data.id, 'title': folder.title});
+		},
+		historyFolderDelete : (message, sender, sendResponse) => {
+			createDialogWindow(message.action, message.data);
 		},
 		rssNew : (message, sender, sendResponse) => {
 			const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
@@ -2749,10 +2770,10 @@ const initService = {
 
 		const initHistory = _ => {
 			messageHandler.history = {
-				getMore : (message, sender, sendResponse) => {
+				getMore    : (message, sender, sendResponse) => {
 					searchMore(true);
 				},
-				search : (message, sender, sendResponse) => {
+				search     : (message, sender, sendResponse) => {
 					data.historySearchTerm    = message.data.request;
 					status.info.historySearch = true;
 					search(result => {data.historySearch = result; send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm})}, message.data.request);
@@ -2761,12 +2782,27 @@ const initService = {
 					status.info.historySearch = false;
 					send('sidebar', 'history', 'clearSearch');
 				},
-				searchSite : (message, sender, sendResponse) => {
+				searchSite  : (message, sender, sendResponse) => {
 					search(sendResponse, message.data.request, message.data.maxResults);
+				},
+				delete      : (message, sender, sendResponse) => {
+					brauzer.history.deleteUrl({url: message.data.url});
+				},
+				historyFolderDelete: (message, sender, sendResponse) => {
+					const folder = getFolderById('history', message.data.id);
+					if (folder === false) return;
+					const year      = folder.date.getFullYear();
+					const month     = folder.date.getMonth();
+					const day       = folder.date.getDate();
+					const startTime = new Date(year, month, day, 0, 0, 0, 0);
+					const endTime   = new Date(year, month, day, 23, 59, 59, 999);
+					execMethod(brauzer.history.deleteRange, _ => {}, {'startTime': startTime.getTime(), 'endTime': endTime.getTime()});
 				}
 			};
 
 			i18n.history = {
+				delete             : getI18n('historyControlsDelete'),
+				folderDelete       : getI18n('historyControlsFolderDelete'),
 				getMoreText        : getI18n('historyGetMoreText'),
 				getMore            : getI18n('historyGetMoreTitle'),
 				searchPlaceholder  : getI18n('historySearchPlaceholder'),
@@ -2903,8 +2939,8 @@ const initService = {
 			};
 
 			updateFolder.history = (item, position) => {
-				let title   = new Date(item.lastVisitTime);
-				title       = title.toLocaleDateString();
+				const date  = new Date(item.lastVisitTime);
+				const title = date.toLocaleDateString();
 				const id    = title.replace(/\./g, '');
 				let folder  = getFolderById('history', id);
 				if (folder === false) {
@@ -2913,6 +2949,7 @@ const initService = {
 					folder.view   = 'normal';
 					folder.folded = getFolded(`history-${id}`);
 					folder.title  = title;
+					folder.date   = date;
 				}
 				if (status.init.history === true)
 					makeTimeStamp('history');

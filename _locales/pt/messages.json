@@ -138,6 +138,14 @@
 		"description"   : ""
 	},
 
+	"historyControlsDelete" : {
+		"message"       : "Delete entry",
+		"description"   : ""
+	},
+	"historyControlsFolderDelete" : {
+		"message"       : "Delete history for a day",
+		"description"   : ""
+	},
 	"historyGetMoreText" : {
 		"message"       : "Mostrar mais",
 		"description"   : "Texto do botão 'Mostrar mais histórico'"
@@ -858,6 +866,19 @@
 	},
 	"dialogBookmarkFolderDeleteAlert" : {
 		"message"       : "Quer mesmo apagar a pasta \"$name$\" ? Todo o seu conteúdo será perdido.",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogHistoryFolderDeleteHeader" : {
+		"message"       : "Wipe history",
+		"description"   : ""
+	},
+	"dialogHistoryFolderDeleteAlert" : {
+		"message"       : "Do you really want to delete all history for \"$name$\" ?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

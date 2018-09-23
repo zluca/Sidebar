@@ -1939,7 +1939,7 @@ function moveFolder(mode, info) {
 }
 
 function makeButton(type, mode, sub, hidden = false) {
-	const button     = dcea('span', controls[sub], [['id', `${mode}-${type}`], ['title', i18n[mode][type]]]);
+	const button = dcea('span', controls[sub], [['id', `${mode}-${type}`], ['title', i18n[mode][type]]]);
 	if (i18n[mode].hasOwnProperty(`${type}Text`)) {
 		button.classList   = `text-button ${hidden === true ? ' hidden' : ''}`;
 		button.textContent = i18n[mode][`${type}Text`];
@@ -2154,6 +2154,16 @@ const buttonsEvents = {
 	history   : {
 		getMore : event => {
 			send('background', 'history', 'getMore', '');
+		},
+		delete  : event => {
+			send('background', 'history', 'delete', {'url': controls.item.parentNode.href});
+		},
+		folderDelete : event => {
+			const target = controls.item.parentNode;
+			if (options.warnings.historyFolderDelete === true)
+				send('background', 'dialog', 'historyFolderDelete', {'id': target.dataset.id, 'title': target.title});
+			else
+				send('background', 'history', 'historyFolderDelete', {'id': target.dataset.id});
 		}
 	},
 	downloads : {
