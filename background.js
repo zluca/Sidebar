@@ -4837,7 +4837,7 @@ function makeDomain(mode, url, fav) {
 		};
 	}
 	else {
-		title = domainFromUrl(url, true);
+		title = domainFromUrl(url);
 		id    = title.replace(/\./g, '');
 	}
 	let domain = getById(`${mode}Domains`, id);
@@ -5172,19 +5172,15 @@ function getFolded(id) {
 	return data.foldedId.includes(id) ? true : false;
 }
 
-function domainFromUrl(url, noProtocol = false) {
+function domainFromUrl(url) {
 	if (url === undefined || url === '')
 		return 'default';
-	else if (noProtocol === false) {
-		const domain = url.match(/^(.*:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})/i);
-		if (domain !== null)
-			return domain[0];
-	}
-	else {
-		const domain = url.match(/([\da-z\.-]+)\.([a-z\.]{2,6})/i);
-		if (domain !== null)
-			return domain[0];
-	}
+	let domain = url.split('//');
+	domain     = domain[domain.length > 0 ? 1 : 0];
+	domain     = domain.split('/')[0];
+	domain     = domain.match(/^([\da-z\.-]+)(\.([a-z\.]{2,6}))?/i);
+	if (domain !== null)
+		return domain[0];
 	return 'default';
 }
 
@@ -5214,7 +5210,7 @@ function makeSite(index, site) {
 
 	if (site !== undefined) {
 		const url  = urlFromUser(site.url);
-		let domen  = domainFromUrl(site.url, true).replace('/', '');
+		let domen  = domainFromUrl(site.url).replace('/', '');
 		domen      = domen.split('.', 6);
 		let text   = ' ' + domen[0];
 		const l    = domen.length;
