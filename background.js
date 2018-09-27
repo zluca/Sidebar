@@ -2357,6 +2357,8 @@ const initService = {
 					oldTab.pid      = newDomain.id;
 					const newFolder = updateFolder.tabs(oldTab, newDomain);
 					send('sidebar', 'tabs', 'folderChanged', {'tab': oldTab, 'folder': newFolder});
+					if (newFolder.folded === true)
+						messageHandler.set.fold({'data' : {'mode': 'tabs', 'id': newFolder.id, 'folded': false}});
 				}
 				else
 					send('sidebar', 'tabs', 'urlChanged', {'id': oldTab.id, 'title': oldTab.title, 'url': oldTab.url});
@@ -2378,6 +2380,8 @@ const initService = {
 			if (info.hasOwnProperty('status')) {
 				oldTab.status = info.status;
 				send('sidebar', 'tabs', 'status', {'id': id, 'loading': info.status === 'loading' ? 'add' : 'remove'});
+				if (oldFolder.folded === true)
+					messageHandler.set.fold({'data' : {'mode': 'tabs', 'id': oldFolder.id, 'folded': false}});
 			}
 			if (info.hasOwnProperty('favIconUrl')) {
 				const domain = getById('tabsDomains', oldTab.domain);
