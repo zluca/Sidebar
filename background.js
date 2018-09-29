@@ -5179,7 +5179,7 @@ function getFolded(id) {
 function domainFromUrl(url) {
 	if (url === undefined || url === '')
 		return 'default';
-	let domain = url.split('//');
+	let domain = /\/\//.test(url) ? url.split('//') : url;
 	domain     = domain[domain.length > 0 ? 1 : 0];
 	domain     = domain.split('/')[0];
 	domain     = domain.match(/^([\da-z\.-]+)(\.([a-z\.]{2,6}))?/i);
