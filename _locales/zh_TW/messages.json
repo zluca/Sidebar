@@ -139,11 +139,11 @@
 	},
 
 	"historyControlsDelete" : {
-		"message"       : "Delete entry",
+		"message"       : "刪除項目",
 		"description"   : ""
 	},
 	"historyControlsFolderDelete" : {
-		"message"       : "Delete history for a day",
+		"message"       : "刪除一天的歷史紀錄",
 		"description"   : ""
 	},
 	"historyGetMoreText" : {
@@ -874,11 +874,11 @@
 		}
 	},
 	"dialogHistoryFolderDeleteHeader" : {
-		"message"       : "Wipe history",
+		"message"       : "清除歷史",
 		"description"   : ""
 	},
 	"dialogHistoryFolderDeleteAlert" : {
-		"message"       : "Do you really want to delete all history for \"$name$\" ?",
+		"message"       : "您真的想要刪除所有 \"$name$\" 的歷史紀錄嗎？",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {
