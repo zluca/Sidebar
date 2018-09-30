@@ -1955,7 +1955,6 @@ const initService = {
 				for (let i = initLater.length - 1; i >= 0; i--)
 					initService[initLater[i]](true);
 			}, 2000);
-
 			if (sidebarAction !== null) {
 				let port;
 				brauzer.runtime.onConnect.addListener(p => {
@@ -2122,19 +2121,14 @@ const initService = {
 				update : (message, sender, sendResponse) => {
 					for (let i = data.tabs.length - 1; i >=0 ; i--)
 						if (data.tabs[i].url === message.data.url)
-							return brauzer.tabs.update(data.tabs[i].id, {active: true});
+							return brauzer.tabs.update(data.tabs[i].id, {'active': true});
 					brauzer.tabs.update(status.activeTabsIds[status.activeWindow], {'url': message.data.url});
 				},
 				setActive : (message, sender, sendResponse) => {
 					const tab = getById('tabs', message.data.id);
 					if (tab === false) return;
-					const windowId = tab.windowId;
-					if (status.activeWindow !== windowId)
-						brauzer.windows.update(windowId, {focused: true}, _ => {
-							brauzer.tabs.update(message.data.id, {active: true});
-						});
-					else
-						brauzer.tabs.update(message.data.id, {active: true});
+					brauzer.tabs.update(message.data.id, {'active': true});
+					brauzer.windows.update(tab.windowId, {'focused': true});
 				},
 				reload : (message, sender, sendResponse) => {
 					brauzer.tabs.reload(message.data.id);
@@ -2232,6 +2226,8 @@ const initService = {
 
 			brauzer.windows.onCreated.addListener(onWindowCreated);
 			brauzer.windows.onRemoved.addListener(onWindowRemoved);
+			brauzer.windows.onFocusChanged.addListener(onFocusChanged);
+
 
 			status.init.tabs = true;
 		};
@@ -2243,7 +2239,29 @@ const initService = {
 
 		const onWindowCreated   = win => {
 			if (win.type === 'normal')
-				status.activeWindow = win.id;
+				if (win.focused === true)
+					status.activeWindow = win.id;
+		};
+
+		const onFocusChanged = id => {
+			const checkType = win => {
+				if (win.type === 'normal') {
+					status.activeWindow = id;
+					const tab = getById('tabs', status.activeTabsIds[id]);
+					if (tab !== false) {
+					status.activeTabsIds[id] = tab.id;
+					tab.readed = true;
+					closeIframe();
+					makeTimeStamp('tabs');
+					reInit(tab.id);
+					if (options.services.startpage.value === true)
+						if (tab.url === config.extensionStartPage)
+							send('startpage', 'reInit', 'page', startpageData());
+					}
+				}
+			};
+			if (id > 0)
+				execMethod(brauzer.windows.get, checkType, id);
 		};
 
 		const reInit  = id => {
