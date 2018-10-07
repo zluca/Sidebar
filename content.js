@@ -49,8 +49,16 @@ makeIframe('rightBar');
 let initTimer  = -1;
 init();
 
-document.addEventListener('readystatechange', checkDocumentReady);
-checkDocumentReady();
+const checkDocumentReady = function(mutationsList, observer) {
+	if (document.body) {
+		observer.disconnect();
+		status.docReady = true;
+		if (options.hasOwnProperty('theme'))
+			injectElements();
+	}
+};
+const observer = new MutationObserver(checkDocumentReady);
+observer.observe(document, { attributes: false, childList: true, subtree: true });
 
 const messageHandler = {
 	options : {
@@ -204,15 +212,6 @@ function init() {
 		if (status.docReady === true)
 			injectElements();
 	});
-}
-
-function checkDocumentReady() {
-	if (document.readyState === 'interactive' || document.readyState === 'complete') {
-		document.removeEventListener('readystatechange', checkDocumentReady);
-		status.docReady = true;
-		if (options.hasOwnProperty('theme'))
-			injectElements();
-	}
 }
 
 function injectIframe(side, width) {
