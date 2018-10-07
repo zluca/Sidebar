@@ -85,6 +85,10 @@
 		"message"       : "Открепить",
 		"description"   : ""
 	},
+    "tabsControlsDuplicate" : {
+      "message"       : "Duplicate",
+      "description"   : ""
+    },
 	"tabsControlsClose" : {
 		"message"       : "Закрыть",
 		"description"   : ""
@@ -1138,6 +1142,10 @@
 	},
 	"clickActionsPinUnpin" : {
 		"message"       : "Закрепить/открепить",
+		"description"   : ""
+	},
+	"clickActionsDuplicate" : {
+		"message"       : "Duplicate tab",
 		"description"   : ""
 	},
 	"clickActionsMarkReaded" : {
