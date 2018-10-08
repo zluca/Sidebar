@@ -51,7 +51,6 @@
 .item #tabs-unpin,
 .item #tabs-duplicate,
 .item #tabs-close,
-.item #tabs-closeAll,
 .folder-name #tabs-closeAll {
 	display: inline-block;
 }
