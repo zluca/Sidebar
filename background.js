@@ -437,10 +437,11 @@ const options = {
 	},
 	theme: {
 		fontSize              : {
-			value   : 16,
-			type    : 'float',
-			range   : [5, 32],
-			targets : ['sidebar' ,'content', 'startpage']
+			value   : 'medium',
+			type    : 'dropdown',
+			values  : ['x-small', 'small', 'medium', 'large', 'x-large'],
+			targets : ['sidebar' ,'content', 'startpage'],
+            handler : 'clickActions'
 		},
 		backgroundColor       : {
 			value   : '#fafafa',
@@ -1849,7 +1850,7 @@ const initExtension = res => {
 
 		options.startpage.rows.value           = Math.ceil(window.screen.height / 400);
 		options.startpage.columns.value        = Math.ceil(window.screen.width  / 400);
-		options.theme.fontSize.value           = Math.ceil(window.screen.height / 60);
+		options.theme.fontSize.value           = 'medium';
 		const top = topSites => {
 			for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
 				data.startpage.push(makeSite(i, topSites[i]));

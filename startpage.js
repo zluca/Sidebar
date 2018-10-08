@@ -717,13 +717,12 @@ function setColor(colors) {
 }
 
 function setStyle() {
-	const fontSize        = options.theme.fontSize  / window.devicePixelRatio;
+	doc.style.fontSize    = options.theme.fontSize;
 	const marginH         = options.startpage.marginH / window.devicePixelRatio;
 	const marginV         = options.startpage.marginV / window.devicePixelRatio;
 	const padding         = options.startpage.padding / window.devicePixelRatio;
-	const containerHeight = window.innerHeight - (2 * padding) - (options.startpage.searchEnabled * (fontSize + padding));
+	const containerHeight = window.innerHeight - (2 * padding) - (options.startpage.searchEnabled * (+window.getComputedStyle(document.documentElement).getPropertyValue('font-size').replace(/\D/g,'') + padding));
 	const sectionSize     = Math.round(((containerHeight - ((options.startpage.rows + 1) * marginV)) / options.startpage.rows));
-	doc.style.fontSize    = fontSize;
 	doc.style.setProperty('--marginH', `${marginH}px`);
 	doc.style.setProperty('--marginV', `${marginV}px`);
 	doc.style.setProperty('--padding', `${padding}px`);

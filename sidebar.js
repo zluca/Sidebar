@@ -1523,8 +1523,7 @@ function setFixed(mode, hover) {
 function setFontSize(fontSize) {
 	if (fontSize !== undefined)
 		options.theme.fontSize = fontSize;
-	doc.style.fontSize   = `${options.theme.fontSize / window.devicePixelRatio}px`;
-	doc.style.lineHeight = `${options.theme.fontSize / window.devicePixelRatio * 1.2}px`;
+	doc.style.fontSize   = options.theme.fontSize;
 }
 
 function setColor(colors) {

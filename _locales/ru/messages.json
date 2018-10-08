@@ -528,6 +528,27 @@
 		"description"   : ""
 	},
 
+	"optXsmallLabel" : {
+		"message"       : "Extra small",
+		"description"   : ""
+	},
+	"optSmallLabel" : {
+		"message"       : "Small",
+		"description"   : ""
+	},
+	"optMediumLabel" : {
+		"message"       : "Medium",
+		"description"   : ""
+	},
+	"optLargeLabel" : {
+		"message"       : "Large",
+		"description"   : ""
+	},
+	"optXLargeLabel" : {
+		"message"       : "Extra Large",
+		"description"   : ""
+	},
+
 	"optCoverLabel" : {
 		"message"       : "Растянуть до наименьшего размера",
 		"description"   : ""

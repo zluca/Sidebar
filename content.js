@@ -413,8 +413,9 @@ function setSideBarWidth(side, value) {
 		}
 	};
 
-	const borderWidth = options.theme.fontSize / 8 / window.devicePixelRatio;
-	const iconWidth   = options.theme.fontSize * 1.7 / window.devicePixelRatio;
+	const computedFontSize = +window.getComputedStyle(document.documentElement).getPropertyValue('font-size').replace(/\D/g,'');
+	const borderWidth = computedFontSize / 8;
+	const iconWidth   = computedFontSize * 1.7 / window.devicePixelRatio;
 	const trueSide    = side.replace('Bar', '');
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
 	if (value !== undefined)
