@@ -86,8 +86,8 @@
 		"description"   : ""
 	},
     "tabsControlsDuplicate" : {
-      "message"       : "Duplicate",
-      "description"   : ""
+	      "message"       : "Дублировать",
+	      "description"   : ""
     },
 	"tabsControlsClose" : {
 		"message"       : "Закрыть",
