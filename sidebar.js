@@ -2091,9 +2091,9 @@ const buttonsEvents = {
 		unpin: event => {
 			send('background', 'tabs', 'unpin', {'id': parseInt(controls.item.parentNode.dataset.id)});
 		},
-        duplicate: event => {
-            send('background', 'tabs', 'duplicate', {'id': parseInt(controls.item.parentNode.dataset.id)});
-        },
+		duplicate: event => {
+			send('background', 'tabs', 'duplicate', {'id': parseInt(controls.item.parentNode.dataset.id)});
+		},
 		close: event => {
 			send('background', 'tabs', 'removeById', {'idList': [parseInt(controls.item.parentNode.dataset.id)]});
 		},
@@ -2350,9 +2350,9 @@ const clickActions = {
 		else
 			send('background', 'tabs', 'pin', {'id': parseInt(event.target.dataset.id)});
 	},
-    duplicate       : event => {
+	duplicate       : event => {
 		send('background', 'tabs', 'duplicate', {'id': parseInt(event.target.dataset.id)});
-    },
+	},
 	markReaded      : event => {
 		send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 	},
