@@ -45,10 +45,7 @@
 .domain .folder-name #tabs-move,
 .tree #root-folder>div>.folder>.folder-content>a>.controls #tabs-move,
 .item #tabs-fav,
-.item #tabs-move,
 .item #tabs-reload,
-.item #tabs-pin,
-.item #tabs-unpin,
 .item #tabs-duplicate,
 .item #tabs-close,
 .folder-name #tabs-closeAll {
