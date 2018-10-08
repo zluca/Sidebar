@@ -85,6 +85,10 @@
 		"message"       : "取消固定",
 		"description"   : ""
 	},
+	"tabsControlsDuplicate" : {
+		"message"       : "Duplicate",
+		"description"   : ""
+	},
 	"tabsControlsClose" : {
 		"message"       : "关闭",
 		"description"   : ""
@@ -1138,6 +1142,10 @@
 	},
 	"clickActionsPinUnpin" : {
 		"message"       : "Pin or unpin tab",
+		"description"   : ""
+	},
+	"clickActionsDuplicate" : {
+		"message"       : "Duplicate tab",
 		"description"   : ""
 	},
 	"clickActionsMarkReaded" : {

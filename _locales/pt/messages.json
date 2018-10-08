@@ -85,6 +85,10 @@
 		"message"       : "Desafixar",
 		"description"   : ""
 	},
+	"tabsControlsDuplicate" : {
+		"message"       : "Duplicate",
+		"description"   : ""
+	},
 	"tabsControlsClose" : {
 		"message"       : "Fechar",
 		"description"   : ""
@@ -1134,6 +1138,10 @@
 	},
 	"clickActionsPinUnpin" : {
 		"message"       : "Pin or unpin tab",
+		"description"   : ""
+	},
+	"clickActionsDuplicate" : {
+		"message"       : "Duplicate tab",
 		"description"   : ""
 	},
 	"clickActionsMarkReaded" : {

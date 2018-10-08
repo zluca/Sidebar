@@ -85,6 +85,10 @@
 		"message"       : "Unpin",
 		"description"   : ""
 	},
+	"tabsControlsDuplicate" : {
+		"message"       : "Duplicate",
+		"description"   : ""
+	},
 	"tabsControlsClose" : {
 		"message"       : "Close",
 		"description"   : ""
@@ -1138,6 +1142,10 @@
 	},
 	"clickActionsPinUnpin" : {
 		"message"       : "Pin or unpin tab",
+		"description"   : ""
+	},
+	"clickActionsDuplicate" : {
+		"message"       : "Duplicate tab",
 		"description"   : ""
 	},
 	"clickActionsMarkReaded" : {

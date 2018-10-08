@@ -85,6 +85,10 @@
 		"message"       : "取消釘選",
 		"description"   : ""
 	},
+	"tabsControlsDuplicate" : {
+		"message"       : "Duplicate",
+		"description"   : ""
+	},
 	"tabsControlsClose" : {
 		"message"       : "關閉",
 		"description"   : ""
@@ -1138,6 +1142,10 @@
 	},
 	"clickActionsPinUnpin" : {
 		"message"       : "釘選或取消釘選分頁",
+		"description"   : ""
+	},
+	"clickActionsDuplicate" : {
+		"message"       : "Duplicate tab",
 		"description"   : ""
 	},
 	"clickActionsMarkReaded" : {

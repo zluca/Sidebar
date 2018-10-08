@@ -44,9 +44,10 @@
 .domain .item #tabs-move,
 .domain .folder-name #tabs-move,
 .tree #root-folder>div>.folder>.folder-content>a>.controls #tabs-move,
-.item #tabs-close,
-.item #tabs-reload,
 .item #tabs-fav,
+.item #tabs-reload,
+.item #tabs-duplicate,
+.item #tabs-close,
 .folder-name #tabs-closeAll {
 	display: inline-block;
 }

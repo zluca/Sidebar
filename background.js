@@ -933,35 +933,35 @@ const options = {
 		normal : {
 			value   : 'setActive',
 			type    : 'select',
-			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin', 'duplicate'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		middle : {
 			value   : 'close',
 			type    : 'select',
-			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin', 'duplicate'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		alt    : {
 			value   : 'setActive',
 			type    : 'select',
-			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin', 'duplicate'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		ctrl   : {
 			value   : 'close',
 			type    : 'select',
-			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin', 'duplicate'],
 			targets : [],
 			handler : 'clickActions'
 		},
 		shift  : {
 			value   : 'pinUnpin',
 			type    : 'select',
-			values  : ['setActive', 'close', 'bookmark', 'pinUnpin'],
+			values  : ['setActive', 'close', 'bookmark', 'pinUnpin', 'duplicate'],
 			targets : [],
 			handler : 'clickActions'
 		}
@@ -1215,13 +1215,19 @@ const options = {
 			targets : []
 		},
 		pin: {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			handler : 'hoverActions',
 			targets : []
 		},
 		unpin: {
-			value   : true,
+			value   : false,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
+		duplicate: {
+			value   : false,
 			type    : 'boolean',
 			handler : 'hoverActions',
 			targets : []
@@ -2189,6 +2195,9 @@ const initService = {
 				},
 				unpin : (message, sender, sendResponse) => {
 					brauzer.tabs.update(message.data.id, {pinned: false});
+				},
+				duplicate : (message, sender, sendResponse) => {
+					brauzer.tabs.duplicate(message.data.id);
 				}
 			};
 
@@ -2199,6 +2208,7 @@ const initService = {
 				reload     : getI18n('tabsControlsReload'),
 				pin        : getI18n('tabsControlsPin'),
 				unpin      : getI18n('tabsControlsUnpin'),
+				duplicate  : getI18n('tabsControlsDuplicate'),
 				close      : getI18n('tabsControlsClose'),
 				closeAll   : getI18n('tabsControlsCloseAll'),
 				plain      : getI18n('tabsPlainModeButton'),
