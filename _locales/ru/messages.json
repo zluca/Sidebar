@@ -1145,7 +1145,7 @@
 		"description"   : ""
 	},
 	"clickActionsDuplicate" : {
-		"message"       : "Duplicate tab",
+		"message"       : "Дублировать",
 		"description"   : ""
 	},
 	"clickActionsMarkReaded" : {
