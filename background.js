@@ -1197,7 +1197,7 @@ const options = {
 	tabsHoverActions: {
 		hidden  : {},
 		fav: {
-			value   : false,
+			value   : true,
 			type    : 'boolean',
 			handler : 'hoverActions',
 			targets : []
@@ -1226,12 +1226,12 @@ const options = {
 			handler : 'hoverActions',
 			targets : []
 		},
-        duplicate: {
-            value   : true,
-            type    : 'boolean',
-            handler : 'hoverActions',
-            targets : []
-        },
+		duplicate: {
+			value   : false,
+			type    : 'boolean',
+			handler : 'hoverActions',
+			targets : []
+		},
 		close: {
 			value   : true,
 			type    : 'boolean',
@@ -1239,7 +1239,7 @@ const options = {
 			targets : []
 		},
 		closeAll: {
-			value   : false,
+			value   : true,
 			type    : 'boolean',
 			handler : 'hoverActions',
 			targets : []
@@ -2197,7 +2197,7 @@ const initService = {
 					brauzer.tabs.update(message.data.id, {pinned: false});
 				},
 				duplicate : (message, sender, sendResponse) => {
-                    brauzer.tabs.duplicate(message.data.id);
+					brauzer.tabs.duplicate(message.data.id);
 				}
 			};
 
@@ -2208,7 +2208,7 @@ const initService = {
 				reload     : getI18n('tabsControlsReload'),
 				pin        : getI18n('tabsControlsPin'),
 				unpin      : getI18n('tabsControlsUnpin'),
-                duplicate  : getI18n('tabsControlsDuplicate'),
+				duplicate  : getI18n('tabsControlsDuplicate'),
 				close      : getI18n('tabsControlsClose'),
 				closeAll   : getI18n('tabsControlsCloseAll'),
 				plain      : getI18n('tabsPlainModeButton'),
