@@ -3235,10 +3235,14 @@ const initService = {
 		const initRss = _ => {
 			messageHandler.rss = {
 				rssReaded : (message, sender, sendResponse) => {
-					rssSetReaded('rssItem', getById('rss', message.data.id));
+					const rssItem = getById('rss', message.data.id);
+					if (rssItem !== false)
+						rssSetReaded('rssItem', rssItem);
 				},
 				rssReadedAll : (message, sender, sendResponse) => {
-					rssSetReaded('feed', getFolderById('rss', message.data.id), 'save');
+					const feed = getFolderById('rss', message.data.id);
+					if (feed !== false)
+						rssSetReaded('feed', , 'save');
 				},
 				rssReadedAllFeeds : (message, sender, sendResponse) => {
 					rssSetReaded('all');
