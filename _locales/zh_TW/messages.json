@@ -86,7 +86,7 @@
 		"description"   : ""
 	},
 	"tabsControlsDuplicate" : {
-		"message"       : "Duplicate",
+		"message"       : "再製",
 		"description"   : ""
 	},
 	"tabsControlsClose" : {
@@ -1145,7 +1145,7 @@
 		"description"   : ""
 	},
 	"clickActionsDuplicate" : {
-		"message"       : "Duplicate tab",
+		"message"       : "再製分頁",
 		"description"   : ""
 	},
 	"clickActionsMarkReaded" : {
