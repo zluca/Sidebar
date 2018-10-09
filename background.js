@@ -3242,7 +3242,7 @@ const initService = {
 				rssReadedAll : (message, sender, sendResponse) => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed !== false)
-						rssSetReaded('feed', , 'save');
+						rssSetReaded('feed', feed, 'save');
 				},
 				rssReadedAllFeeds : (message, sender, sendResponse) => {
 					rssSetReaded('all');
