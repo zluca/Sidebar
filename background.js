@@ -2453,7 +2453,11 @@ const initService = {
 				newItem.pinned     = item.pinned;
 				newItem.index      = item.index;
 				newItem.status     = item.status;
-				newItem.opener     = item.hasOwnProperty('openerTabId') ? item.openerTabId : 0;
+				newItem.opener     = 0;
+				if (item.url !== config.extensionStartPage)
+					if (item.url !== config.defaultStartPage)
+						if (item.hasOwnProperty('openerTabId'))
+							newItem.opener = item.openerTabId
 				newItem.url        = url;
 				newItem.title      = item.title || '_';
 				newItem.discarded  = item.discarded;
