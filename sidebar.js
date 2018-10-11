@@ -329,7 +329,7 @@ function tryToInit() {
 }
 
 function initSidebar(response) {
-	// console.log(response);
+    // console.log(response);
 	const onMessage = (message, sender, sendResponse) => {
 		// console.log(message);
 		if (message.hasOwnProperty('target'))
@@ -346,7 +346,7 @@ function initSidebar(response) {
 	i18n.mainControls    = response.i18n.mainControls;
 	status.info          = response.info;
 
-	handleFontSize();
+	handleFontSize(options.theme.fontSize);
 	setColor(options.theme);
 	setImageStyle[options.theme.sidebarImageStyle]();
 
@@ -1520,15 +1520,19 @@ function setFixed(mode, hover) {
 }
 
 function handleFontSize(defaultFontSize) {
-    doc.style.fontSize = defaultFontSize;
+
+    const getSizeAsNumber = fontSize => {
+        if (fontSize.match(/px$/))
+            return Number(fontSize.replace(/px/, ''));
+        else
+            return Number(window.getComputedStyle(doc).getPropertyValue('font-size').replace(/px/, ''));
+    };
+
+    brauzer.tabs.getZoom(zoom => {
+        doc.style.fontSize = (getSizeAsNumber(defaultFontSize) / zoom) + 'px';
+    });
 
     if (status.method === 'iframe') {
-        const getCurrentFontSize = _ => {
-            if (doc.style.fontSize.match(/px$/))
-                return Number(doc.style.fontSize.replace(/px/, ''));
-            else
-                return Number(window.getComputedStyle(doc).getPropertyValue('font-size').replace(/px/, ''));
-        };
 
         let currentHeight = screen.height;
         let currentDpr = window.devicePixelRatio;
@@ -1537,7 +1541,7 @@ function handleFontSize(defaultFontSize) {
             if (currentHeight !== screen.height)
                 currentHeight = screen.height;
             else
-                doc.style.fontSize = (getCurrentFontSize() * currentDpr / window.devicePixelRatio) + 'px';
+                doc.style.fontSize = (getSizeAsNumber(window.getComputedStyle(doc).getPropertyValue('font-size')) * currentDpr / window.devicePixelRatio) + 'px';
 
             currentDpr = window.devicePixelRatio;
         };
