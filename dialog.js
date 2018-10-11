@@ -12,14 +12,32 @@ send('background', 'request', 'dialog', {needResponse: true}, response => {
 	makeDialogWindow(response.data, response.warnings, response.theme);
 });
 
-function setFontSize(fontSize) {
-	document.documentElement.style.fontSize = fontSize;
+function handleFontSize(defaultFontSize) {
+    doc.style.fontSize = defaultFontSize;
+
+    const getCurrentFontSize = _ => {
+    	if (doc.style.fontSize.match(/px$/))
+    		return Number(doc.style.fontSize.replace(/px/, ''));
+    	else
+            return Number(window.getComputedStyle(doc).getPropertyValue('font-size').replace(/px/, ''));
+	};
+
+    let currentHeight = screen.height;
+    let currentDpr = window.devicePixelRatio;
+
+    window.onresize = _ => {
+        if (currentHeight !== screen.height)
+            currentHeight = screen.height;
+        else
+            doc.style.fontSize = (getCurrentFontSize() * currentDpr / window.devicePixelRatio) + 'px';
+
+        currentDpr = window.devicePixelRatio;
+    };
 }
 
 function makeDialogWindow(data, warnings, theme) {
 
-	setFontSize(theme.fontSize);
-	window.onresize = _ => {setFontSize(theme.fontSize);};
+    handleFontSize(theme.fontSize);
 
 	doc.style.setProperty('--background-color', theme.backgroundColor);
 	doc.style.setProperty('--background-color-active', theme.backgroundColorActive);

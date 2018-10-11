@@ -143,7 +143,7 @@ const messageHandler = {
 			options.warnings.pocketDelete = info.value;
 		},
 		fontSize           : info => {
-			setFontSize(info.value);
+            options.theme.fontSize = fontSize;
 		},
 		backgroundColor       : info => {
 			setColor({'backgroundColor': info.value});
@@ -346,7 +346,7 @@ function initSidebar(response) {
 	i18n.mainControls    = response.i18n.mainControls;
 	status.info          = response.info;
 
-	setFontSize();
+	handleFontSize();
 	setColor(options.theme);
 	setImageStyle[options.theme.sidebarImageStyle]();
 
@@ -368,7 +368,6 @@ function initSidebar(response) {
 		status.side = response.side;
 	if (status.method === 'iframe') {
 		doc.classList.remove('fixed');
-		window.onresize = _ => {setFontSize();};
 		if (controls.iframe === null) {
 			controls.iframe = dcea('div', controls.main, [['id', 'controls-iframe'], ['classList', 'controls']]);
 			makeButton('pin', 'mainControls', 'iframe');
@@ -1520,10 +1519,29 @@ function setFixed(mode, hover) {
 	}
 }
 
-function setFontSize(fontSize) {
-	if (fontSize !== undefined)
-		options.theme.fontSize = fontSize;
-	doc.style.fontSize   = options.theme.fontSize;
+function handleFontSize(defaultFontSize) {
+    doc.style.fontSize = defaultFontSize;
+
+    if (status.method === 'iframe') {
+        const getCurrentFontSize = _ => {
+            if (doc.style.fontSize.match(/px$/))
+                return Number(doc.style.fontSize.replace(/px/, ''));
+            else
+                return Number(window.getComputedStyle(doc).getPropertyValue('font-size').replace(/px/, ''));
+        };
+
+        let currentHeight = screen.height;
+        let currentDpr = window.devicePixelRatio;
+
+        window.onresize = _ => {
+            if (currentHeight !== screen.height)
+                currentHeight = screen.height;
+            else
+                doc.style.fontSize = (getCurrentFontSize() * currentDpr / window.devicePixelRatio) + 'px';
+
+            currentDpr = window.devicePixelRatio;
+        };
+    }
 }
 
 function setColor(colors) {
