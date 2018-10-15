@@ -357,7 +357,7 @@ nav {
 	}
 	.hidden-view>.folder-content,
 	.tree #root-folder>div>.tree-view>.folder-content,
-	.tree #root-folder>div>.domain-view>.folder-content {
+	.tree #root-folder>div>.type-view>.folder-content {
 		margin-left: 0;
 		border-left: none;
 	}

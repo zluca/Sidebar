@@ -445,6 +445,10 @@
 		"message"       : "Поиск сверху",
 		"description"   : ""
 	},
+	"optMiscTreeMaxDepthLabel" : {
+		"message"       : "Максимальная глубина дерева вкладок",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Предупреждения",

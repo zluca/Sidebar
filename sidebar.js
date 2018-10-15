@@ -87,6 +87,7 @@ document.title      = status.method;
 doc.classList.add(status.side);
 
 const blockStyle    = dcea('link', document.head, [['type', 'text/css'], ['rel', 'stylesheet']]);
+const treeStyle     = dcea('style', document.head, []);
 const tempContainer = dce('div');
 
 const controls      = {};
@@ -196,10 +197,10 @@ const messageHandler = {
 				}
 			}
 		},
-		clickActions        : info => {
+		clickActions       : info => {
 			options.clickActions[info.mode][info.option] = info.value;
 		},
-		searchAtTop         : info => {
+		searchAtTop        : info => {
 			let target = controls.bottom;
 			let old    = contorls.top;
 			if (info.value === true) {
@@ -211,6 +212,10 @@ const messageHandler = {
 				block.classList.remove('search-at-top');
 			while (old.hasChildNodes())
 				target.appendChild(old.firstChild)
+		},
+		treeMaxDepth       : info => {
+			options.misc.treeMaxDepth = info.value;
+			setTreeDepth();
 		}
 	},
 	set       : {
@@ -363,6 +368,7 @@ function initSidebar(response) {
 
 	setRssUnreaded(status.info.rssUnreaded);
 	setDownloadStatus[status.info.downloadStatus]();
+	setTreeDepth();
 
 	if (status.method === 'native')
 		status.side = response.side;
@@ -1603,6 +1609,17 @@ const setDownloadStatus = {
 
 function setStyle(item) {
 	dcea('style', document.head, [['id', item.id], ['textContent', `.domain-${item.id}{background-image: url(${item.fav})}`]]);
+}
+
+function setTreeDepth() {
+	let rule = '';
+	if (options.misc.treeMaxDepth > 0) {
+		rule = '.tree';
+		for (let i = 0; i < options.misc.treeMaxDepth + 2; i++)
+			rule += ' .folder-content';
+		rule += ' {margin-left: 0; border-left: none;}';
+	}
+	treeStyle.textContent = rule;
 }
 
 const setImageStyle = {

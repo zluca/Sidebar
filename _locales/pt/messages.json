@@ -445,6 +445,10 @@
 		"message"       : "Show search bar at top",
 		"description"   : ""
 	},
+	"optMiscTreeMaxDepthLabel" : {
+		"message"       : "Maximum depth of tabs tree",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Avisos",

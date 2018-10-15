@@ -535,6 +535,12 @@ const options = {
 			type    : 'text',
 			targets : []
 		},
+		treeMaxDepth   : {
+			value   : 0,
+			type    : 'integer',
+			range   : [0, 10],
+			targets : 'sidebar'
+		},
 		tabsMode           : {
 			value   : 'domain',
 			type    : 'select',
@@ -5337,7 +5343,7 @@ function setOption(section, option, newValue, warn = false) {
 	saveNow('options');
 	if (warn === true)
 		for (let i = options[section][option].targets.length - 1; i >= 0; i--)
-			send(options[section][option].targets[i], 'options', option, {'section': section, 'option': option, value: newValue});
+			send(options[section][option].targets[i], 'options', option, {'section': section, 'option': option, 'value': newValue});
 }
 
 function makeTimeStamp(mode, info = false) {

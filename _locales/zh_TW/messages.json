@@ -445,6 +445,10 @@
 		"message"       : "在頂部顯示搜尋欄",
 		"description"   : ""
 	},
+	"optMiscTreeMaxDepthLabel" : {
+		"message"       : "Maximum depth of tabs tree",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "警告",
