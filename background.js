@@ -2272,7 +2272,7 @@ const initService = {
 		const setWindowsView    = _ => {
 			status.windowsShow = data.windowsFolders.length > 1;
 			for (let i = data.windowsFolders.length - 1; i >= 0; i--)
-				data.windowsFolders[i].view = status.windowsShow ? 'domain' : 'hidden';
+				data.windowsFolders[i].view = status.windowsShow ? 'type' : 'hidden';
 			send('sidebar', 'tabs', 'windowsView', {'view': data.windowsFolders[0].view, 'ids': data.windowsFoldersId});
 		}
 
@@ -2348,7 +2348,7 @@ const initService = {
 			win         = createFolderById('windows', item.id);
 			win.folded  = false;
 			win.hidden  = false;
-			win.view    = 'domain';
+			win.view    = 'type';
 			win.domain  = 'windows';
 			win.pid     = 0;
 			win.focused = item.focused;
