@@ -1055,6 +1055,10 @@
 		"message"       : "Расширения",
 		"description"   : ""
 	},
+	"domainsWindows" : {
+		"message"       : "Окно",
+		"description"   : ""
+	},
 
 	"typeGeneral" : {
 		"message"       : "Поиск в вебе",

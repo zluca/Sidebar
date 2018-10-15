@@ -39,7 +39,8 @@ const i18n = {
 		default   : getI18n('domainsDefault'),
 		startpage : getI18n('domainsStartPage'),
 		system    : getI18n('domainsSystem'),
-		extension : getI18n('domainsExtension')
+		extension : getI18n('domainsExtension'),
+		windows   : getI18n('domainsWindows')
 	},
 	mainControls: {
 		wide         : getI18n('sbControlsWideTitle'),
@@ -144,6 +145,8 @@ const data = {
 	tabsId             : [],
 	tabsFolders        : [],
 	tabsFoldersId      : [],
+	windowsFolders     : [],
+	windowsFoldersId   : [],
 	tabsDomains        : [],
 	tabsDomainsId      : [],
 	bookmarks          : [],
@@ -1517,11 +1520,11 @@ const optionsHandler = {
 	view    : (section, option, newValue) => {
 		const mode = option.replace('Mode', '');
 		if (options.leftBar.mode.value === mode)
-			send('leftBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
+			send('leftBar', mode, 'view', {'view': newValue, 'items': data[mode], 'folders': data[`${mode}Folders`], 'windowsFolders': data.windowsFolders});
 		else
 			send('leftBar', 'options', option, newValue);
 		if (options.rightBar.mode.value === mode)
-			send('rightBar', mode, 'view', {view: newValue, items: data[mode], folders: data[`${mode}Folders`]});
+			send('rightBar', mode, 'view', {'view': newValue, 'items': data[mode], 'folders': data[`${mode}Folders`], 'windowsFolders': data.windowsFolders});
 		else
 			send('rightBar', 'options', option, newValue);
 	},
@@ -1648,9 +1651,10 @@ const messageHandler = {
 
 	set : {
 		fold : (message, sender, sendResponse) => {
-			const folder = getFolderById(message.data.mode, message.data.id);
+			const mode   = message.data.mode;
+			const folder = getFolderById(mode, message.data.id);
 			if (folder === false) return;
-			const fid   = `${message.data.mode}-${message.data.id}`;
+			const fid   = `${mode}-${message.data.id}`;
 			const index = data.foldedId.indexOf(fid);
 			if (index !== -1) {
 				if (message.data.folded === false) {
@@ -1663,8 +1667,8 @@ const messageHandler = {
 				saveNow('foldedId');
 			}
 			folder.folded = message.data.folded;
-			makeTimeStamp(message.data.mode);
-			send('sidebar', 'set', 'fold', message.data);
+			makeTimeStamp(mode);
+			send('sidebar', 'set', 'fold', {'mode': mode === 'windows' ? 'tabs' : mode, 'id': message.data.id, 'folded': message.data.folded, 'method': message.data.method});
 		},
 		rightClick : (message, sender, sendResponse) => {
 			send('content', 'set', 'rightClick', '');
@@ -1688,8 +1692,11 @@ const messageHandler = {
 			createDialogWindow(message.action, message.data);
 		},
 		domainFolderClose : (message, sender, sendResponse) => {
-			const folder = getFolderById('tabs', message.data.id);
-			createDialogWindow(message.action, {id: message.data.id, title: folder.title});
+			let folder = getFolderById('tabs', message.data.id);
+			if (folder === false)
+				folder = getFolderById('windows', parseInt(message.data.id))
+			if (folder !== false)
+				createDialogWindow(message.action, {id: message.data.id, title: folder.title});
 		},
 		bookmarkDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
@@ -2035,10 +2042,6 @@ const initService = {
 			return;
 		status.init.data = true;
 
-		brauzer.windows.getCurrent({}, win => {
-			status.activeWindow = win.id;
-		});
-
 		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId']);
 	},
 
@@ -2144,11 +2147,18 @@ const initService = {
 				},
 				domainFolderClose: (message, sender, sendResponse) => {
 					const folder = getFolderById('tabs', message.data.id);
-					if (folder === false) return;
-					let toClose = [];
-					for (let i = folder.itemsId.length - 1; i >= 0; i--)
-						toClose.push(folder.itemsId[i]);
-					brauzer.tabs.remove(toClose);
+					if (folder !== false) {
+						let toClose = [];
+						for (let i = folder.itemsId.length - 1; i >= 0; i--)
+							toClose.push(folder.itemsId[i]);
+						brauzer.tabs.remove(toClose);
+					}
+					else {
+						const win = getFolderById('windows', parseInt(message.data.id))
+						if (win !== false)
+							brauzer.windows.remove(win.id);
+
+					}
 				},
 				move : (message, sender, sendResponse) => {
 					const id = parseInt(message.data.id);
@@ -2223,6 +2233,7 @@ const initService = {
 					i18n             : i18n.tabs,
 					tabs             : data.tabs,
 					tabsFolders      : data.tabsFolders,
+					windowsFolders   : data.windowsFolders,
 					domains          : data.tabsDomains,
 					activeTabId      : status.activeTabsIds[status.activeWindow]
 				};
@@ -2245,36 +2256,56 @@ const initService = {
 		const onWindowRemoved   = id => {
 			if (status.activeTabsIds.hasOwnProperty(id))
 				delete status.activeTabsIds[id];
+			deleteFolderById('windows', id);
+			send('sidebar', 'tabs', 'windowDelete', id);
+			setWindowsView();
 		};
 
 		const onWindowCreated   = win => {
-			if (win.type === 'normal')
-				if (win.focused === true)
-					status.activeWindow = win.id;
+			if (win.type === 'normal') {
+				const window = createWindow(win);
+				send('sidebar', 'tabs', 'windowNew', window);
+				setWindowsView();
+			}
 		};
 
-		const onFocusChanged = id => {
-			const checkType = win => {
-				if (win.type === 'normal') {
-					status.activeWindow = id;
-					const tab = getById('tabs', status.activeTabsIds[id]);
-					if (tab !== false) {
-					status.activeTabsIds[id] = tab.id;
-					tab.readed = true;
-					closeIframe();
-					makeTimeStamp('tabs');
-					reInit(tab.id);
-					if (options.services.startpage.value === true)
-						if (tab.url === config.extensionStartPage)
-							send('startpage', 'reInit', 'page', startpageData());
-					}
-				}
-			};
-			if (id > 0)
-				execMethod(brauzer.windows.get, checkType, id);
+		const setWindowsView    = _ => {
+			status.windowsShow = data.windowsFolders.length > 1;
+			for (let i = data.windowsFolders.length - 1; i >= 0; i--)
+				data.windowsFolders[i].view = status.windowsShow ? 'domain' : 'hidden';
+			send('sidebar', 'tabs', 'windowsView', {'view': data.windowsFolders[0].view, 'ids': data.windowsFoldersId});
+		}
+
+		const onFocusChanged    = id => {
+			const win                = getFolderById('windows', id);
+			if (win === false) return;
+			setFocused(win, true);
+			status.activeWindow      = id;
+			const tab                = getById('tabs', status.activeTabsIds[id]);
+			if (tab !== false) {
+			status.activeTabsIds[id] = tab.id;
+			tab.readed               = true;
+			closeIframe();
+			makeTimeStamp('tabs');
+			reInit(tab.id);
+			if (options.services.startpage.value === true)
+				if (tab.url === config.extensionStartPage)
+					send('startpage', 'reInit', 'page', startpageData());
+			}
 		};
 
-		const reInit  = id => {
+		const setFocused = (win, focused) => {
+			if (focused) {
+				for (let i = data.windowsFolders.length - 1; i >= 0; i--)
+					data.windowsFolders[i].focused = false;
+				win.focused         = true;
+				status.activeWindow = win.id;
+			}
+			else
+				win.focused = false;
+		};
+
+		const reInit            = id => {
 			const tab = getById('tabs', id);
 			if (tab === false) return;
 			send('sidebar', 'tabs', 'active', status.activeTabsIds[status.activeWindow]);
@@ -2309,6 +2340,22 @@ const initService = {
 					if (options.misc.manualSwitch.value === false)
 						if (options.rightBar.open.value === true)
 							setOption('rightBar', 'open', false);
+		};
+
+		const createWindow      = item => {
+			let win     = getFolderById('windows', item.id);
+			if (win !== false) return win;
+			win         = createFolderById('windows', item.id);
+			win.folded  = false;
+			win.hidden  = false;
+			win.view    = 'domain';
+			win.domain  = 'windows';
+			win.pid     = 0;
+			win.focused = item.focused;
+			if (win.focused)
+				setFocused(win, true);
+			win.title   = `${i18n.domains.windows} #${data.windowsFoldersId.indexOf(item.id) + 1}`;
+			return win;
 		};
 
 		const createTab         = tab => {
@@ -2376,7 +2423,7 @@ const initService = {
 					}
 				}
 				const url = info.url === 'about:blank' ? oldTab.url : info.url;
-				const newDomain = makeDomain('tabs', url);
+				const newDomain = `${oldTab.windowId}_${makeDomain('tabs', url)}`;
 				oldTab.url      = info.url;
 				closeIframe();
 				if (newDomain.id !== oldFolder.id) {
@@ -2431,14 +2478,20 @@ const initService = {
 		};
 
 		const onMoved           = (id, moveInfo) => {
+			const tab = getById('tabs', id);
+			if (tab === false) return;
 			makeTimeStamp('tabs');
 			moveFromTo('tabs', moveInfo.fromIndex, moveInfo.toIndex);
-			send('sidebar', 'tabs', 'moved', {'id': id, 'oldIndex': moveInfo.fromIndex, 'newIndex': moveInfo.toIndex, 'isFolder': false});
+			send('sidebar', 'tabs', 'moved', {'id': id, 'oldIndex': moveInfo.fromIndex, 'newIndex': moveInfo.toIndex, 'isFolder': false, 'window': tab.windowId});
 		};
 
-		const getTabs           = tabs => {
-			for (let i = 0, l = tabs.length; i < l; i++)
-				createTab(tabs[i], true);
+		const getWindows        = windows => {
+			for (let i = windows.length - 1; i >= 0; i--) {
+				const win   = createWindow(windows[i]);
+				for (let j = windows[i].tabs.length - 1; j >= 0; j--)
+					createTab(windows[i].tabs[j], true);
+			}
+			setWindowsView();
 			initTabs();
 		};
 
@@ -2449,6 +2502,7 @@ const initService = {
 				if (item.active === true)
 					status.activeTabsIds[item.windowId] = item.id;
 				newItem.domain     = domain.id;
+				newItem.pid        = `${item.windowId}_${domain.id}`;
 				newItem.readed     = status.init.tabs ? item.active ? true : false : true;
 				newItem.pinned     = item.pinned;
 				newItem.index      = item.index;
@@ -2470,12 +2524,12 @@ const initService = {
 			};
 
 			updateFolder.tabs = (tab, domain) => {
-				let folder   = getFolderById('tabs', domain.id);
+				let folder   = getFolderById('tabs', tab.pid);
 				if (folder === false) {
-					folder            = createFolderById('tabs', domain.id, 'last');
-					folder.pid        = 0;
+					folder            = createFolderById('tabs', tab.pid);
+					folder.pid        = tab.windowId;
 					folder.title      = domain.title;
-					folder.folded     = getFolded(`tabs-${domain.id}`);
+					folder.folded     = getFolded(`tabs-${tab.pid}`);
 					folder.view       = 'hidden';
 					folder.domain     = domain.id;
 					folder.itemsId    = [tab.id];
@@ -2488,7 +2542,7 @@ const initService = {
 				return folder;
 			};
 
-			execMethod(brauzer.tabs.query, getTabs, {});
+			execMethod(brauzer.windows.getAll, getWindows, {'populate': true, 'windowTypes': ['normal']});
 		}
 	},
 
@@ -2754,7 +2808,7 @@ const initService = {
 			updateFolder.bookmarks = folder => {
 				let newFolder = getFolderById('bookmarks', folder.id);
 				if (newFolder === false) {
-					newFolder           = createFolderById('bookmarks', folder.id, 'last');
+					newFolder           = createFolderById('bookmarks', folder.id);
 					newFolder.pid       = folder.parentId;
 					newFolder.title     = folder.title;
 					newFolder.index     = folder.index;
@@ -4027,12 +4081,13 @@ const initService = {
 			updateFolder.pocket = (pocket, domain) => {
 				let folder = getFolderById('pocket', domain.id);
 				if (folder === false) {
-					folder         = createFolderById('pocket', domain.id, 'last');
+					folder         = createFolderById('pocket', domain.id);
 					folder.folded  = false;
 					folder.view    = 'hidden';
 					folder.title   = domain.title;
 					folder.itemsId = [pocket.id];
 					folder.domain  = domain.id;
+					folder.pid     = domain.id;
 					send('sidebar', 'pocket', 'newFolder', folder);
 					return folder;
 				}
@@ -4553,7 +4608,7 @@ const initService = {
 				if (folder !== false)
 					folder.itemsId.push(item.id);
 				else {
-					folder            = createFolderById(mode, item.pid, 'last');
+					folder            = createFolderById(mode, item.pid);
 					folder.pid        = 0;
 					folder.title      = i18n.search[folder.id];
 					folder.domain     = item.pid;
@@ -5017,9 +5072,10 @@ function createNewTab(url = config.extensionStartPage, newWindow = false, active
 	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 	if (activeTab === false) return;
 	for (let i = data.tabs.length - 1; i >=0 ; i--)
-		if (data.tabs[i].url === url)
-			if (activeTab.url !== url)
-				return brauzer.tabs.update(data.tabs[i].id, {active: true});
+		if (data.tabs[i].windowsId === status.activeWindow)
+			if (data.tabs[i].url === url)
+				if (activeTab.url !== url)
+					return brauzer.tabs.update(data.tabs[i].id, {active: true});
 	if (newWindow !== false)
 		brauzer.windows.get(status.activeWindow, win => {
 			const newTab = {
@@ -5131,7 +5187,7 @@ function moveFromTo(mode, from, to) {
 	data[`${mode}Id`].splice(to, 0, item.id);
 }
 
-function createFolderById(mode, id, position) {
+function createFolderById(mode, id, position = 'last') {
 
 	const insert = {
 		last  : _ => {
@@ -5166,7 +5222,7 @@ function deleteFolderById(mode, id, killChildrens = false) {
 }
 
 function addToFolder(mode, item) {
-	const folder = getFolderById(mode, item.domain);
+	const folder = getFolderById(mode, item.pid);
 	if (folder === false) return false;
 	if (folder.itemsId.includes(item.id)) return folder;
 	folder.itemsId.push(item.id);
@@ -5175,7 +5231,7 @@ function addToFolder(mode, item) {
 }
 
 function removeFromFolder(mode, item, killItem = false) {
-	const folder = getFolderById(mode, item.domain);
+	const folder = getFolderById(mode, item.pid);
 	if (folder === false) return false;
 	const index = folder.itemsId.indexOf(item.id);
 	if (index === -1) return false;

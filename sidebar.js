@@ -461,6 +461,9 @@ function finishBlock(mode) {
 		event.preventDefault();
 		if (event.target.classList.contains('folder-name')) {
 			const folded = status.moving === true ? false : !event.target.parentNode.classList.contains('folded');
+			if (mode === 'tabs')
+				if (event.target.classList.contains('domain-windows'))
+					return send('background', 'set', 'fold', {'mode': 'windows', 'id': parseInt(event.target.parentNode.dataset.id), 'folded': folded, 'method': folded ? 'add' : 'remove'});
 			send('background', 'set', 'fold', {'mode': options.sidebar.mode, 'id': event.target.parentNode.dataset.id, 'folded': folded, 'method': folded ? 'add' : 'remove'});
 		}
 		else if (status.moving === true)
@@ -485,38 +488,40 @@ const initBlock = {
 		const moveTab       = info => {
 			const tab = getById(info.id);
 			if (tab === false) return;
+			const win = getFolderById(info.window);
+			if (win === false) return;
 			if (options.misc.tabsMode === 'plain') {
 				if (info.newIndex < info.oldIndex)
-					rootFolder.lastChild.insertBefore(tab, rootFolder.lastChild.children[info.newIndex]);
+					win.lastChild.insertBefore(tab, win.lastChild.children[info.newIndex]);
 				else
-					rootFolder.lastChild.insertBefore(tab, rootFolder.lastChild.children[info.newIndex + 1]);
+					win.lastChild.insertBefore(tab, win.lastChild.children[info.newIndex + 1]);
 			}
 			else if (options.misc.tabsMode === 'tree') {
 				if (info.newIndex < info.oldIndex)
-					rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex]);
+					win.lastChild.insertBefore(tab.parentNode.parentNode, win.lastChild.children[info.newIndex]);
 				else
-					rootFolder.lastChild.insertBefore(tab.parentNode.parentNode, rootFolder.lastChild.children[info.newIndex + 1]);
+					win.lastChild.insertBefore(tab.parentNode.parentNode, win.lastChild.children[info.newIndex + 1]);
 			}
 		};
 
 		const fakeFolder    = tab => {
 			return {
 				id     : tab.id,
-				pid    : tab.opener,
+				pid    : tab.opener === 0 ? tab.windowId : tab.opener,
 				view   : 'tree',
 				folded : false
 			};
 		};
 
-		const checkForTree  = (tabs, folders, view) => {
+		const checkForTree  = (tabs, folders, view, windows) => {
 			setBlockClass(view);
 			if (view !== 'tree')
-				setView(view, tabs, folders);
+				setView(view, tabs, folders, windows);
 			else {
 				let fakeFolders = [];
 				for (let i = 0, l = tabs.length; i < l; i++)
 					fakeFolders.push(fakeFolder(tabs[i]));
-				setView('tree', tabs, fakeFolders);
+				setView('tree', tabs, fakeFolders, windows);
 			}
 		};
 
@@ -645,8 +650,23 @@ const initBlock = {
 					removeFolderById(info);
 			},
 			view         : info => {
-				checkForTree(info.items, info.folders, info.view);
-			}
+				checkForTree(info.items, info.folders, info.view, info.windowsFolders);
+			},
+			windowNew    : info => {
+				insertFolders([info]);
+			},
+			windowView   : info => {
+				for (let i = info.ids.length - 1; i >= 0; i--) {
+					const win = getFolderById(info.ids[i])
+					if (win !== false)
+						win.classList = `folder ${info.view}`;
+				}
+			},
+			windowDelete : info => {
+				const win = getFolderById(info);
+				if (win !== false)
+					removeFolderById(info);
+			},
 		};
 
 		insertItems = tabs => {
@@ -656,12 +676,16 @@ const initBlock = {
 			let treeFolders = [];
 
 			const postProcess = {
-				plain : _ => {
+				plain : i => {
+					if (pid !== tabs[i].windowId) {
+						pid    = tabs[i].windowId;
+						folder = getFolderById(pid);
+					}
 					folder.lastChild.appendChild(tab);
 				},
 				domain : i => {
-					if (pid !== tabs[i].domain) {
-						pid    = tabs[i].domain;
+					if (pid !== tabs[i].pid) {
+						pid    = tabs[i].pid;
 						folder = getFolderById(pid);
 					}
 					if (folder === false) return;
@@ -704,7 +728,7 @@ const initBlock = {
 		makeButton('domain', 'tabs', 'bottom');
 		makeButton('tree', 'tabs', 'bottom');
 
-		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode);
+		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode, info.windowsFolders);
 		finishBlock('tabs');
 	},
 
@@ -1631,12 +1655,14 @@ function setBlockClass(view, extraClass = '') {
 	setTimeout(_ => {block.classList.remove('hidden');}, 100);
 }
 
-function setView(view, items, folders) {
+function setView(view, items, folders, windows) {
 	if (rootFolder.lastChild.hasChildNodes()) {
 		rootFolder.removeChild(rootFolder.lastChild);
 		rootFolder.appendChild(dce('div'));
 	}
 	clearData();
+	if (windows)
+		insertFolders(windows);
 	if (view !== 'plain')
 		insertFolders(folders, view === 'tree');
 	insertItems(items, 'first');

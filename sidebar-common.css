@@ -356,7 +356,8 @@ nav {
 		display: block;
 	}
 	.hidden-view>.folder-content,
-	.tabs #root-folder>div>.tree-view>.folder-content {
+	.tree #root-folder>div>.tree-view>.folder-content,
+	.tree #root-folder>div>.domain-view>.folder-content {
 		margin-left: 0;
 		border-left: none;
 	}
@@ -465,12 +466,12 @@ nav {
 				background-image: url(icons/folder-open-hover.svg);
 			}
 
-		.domain-view .folder-name,
-		.type-view .folder-name,
-		.normal-view .folder-name {
+		.domain-view>.folder-name,
+		.type-view>.folder-name,
+		.normal-view>.folder-name {
 			display: block;
 		}
-			.folded .folder-name::before {
+			.folded>.folder-name::before {
 				transform: rotate(-90deg);
 			}
 
@@ -554,6 +555,9 @@ nav {
 }
 .domain-extension {
 	background-image: url(icons/default.svg);
+}
+.domain-windows {
+	background-image: url(icons/window.svg);
 }
 
 @media (max-width: 2rem) {

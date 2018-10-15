@@ -1055,6 +1055,10 @@
 		"message"       : "Extensões",
 		"description"   : ""
 	},
+	"domainsWindows" : {
+		"message"       : "Window",
+		"description"   : ""
+	},
 
 	"typeGeneral" : {
 		"message"       : "General",
