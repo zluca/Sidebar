@@ -446,7 +446,7 @@
 		"description"   : ""
 	},
 	"optMiscTreeMaxDepthLabel" : {
-		"message"       : "Maximum depth of tabs tree",
+		"message"       : "分頁樹的最大深度",
 		"description"   : ""
 	},
 
@@ -1060,7 +1060,7 @@
 		"description"   : ""
 	},
 	"domainsWindows" : {
-		"message"       : "Window",
+		"message"       : "視窗",
 		"description"   : ""
 	},
 
