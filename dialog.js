@@ -12,22 +12,27 @@ send('background', 'request', 'dialog', {needResponse: true}, response => {
 	makeDialogWindow(response.data, response.warnings, response.theme);
 });
 
-function setFontSize() {
-	document.documentElement.style.fontSize = `${10 / window.devicePixelRatio}px`;
+function setFontSize(mainfontSize) {
+	doc.style.setProperty('font-size', mainfontSize);
+	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	brauzer.tabs.getZoom(zoom => {
+		doc.style.fontSize   = `${fontSize / zoom}px`;
+		doc.style.lineHeight = `${fontSize * 1.2 / zoom}px`;
+	});
 }
 
-function makeDialogWindow(data, warnings, colors) {
+function makeDialogWindow(data, warnings, theme) {
 
 	setFontSize();
-	window.onresize = _ => {setFontSize();};
+	window.onresize = _ => {setFontSize(theme.mainFontSize);};
 
-	doc.style.setProperty('--background-color', colors.backgroundColor);
-	doc.style.setProperty('--background-color-active', colors.backgroundColorActive);
-	doc.style.setProperty('--font-color', colors.fontColor);
-	doc.style.setProperty('--font-color-active', colors.fontColorActive);
-	doc.style.setProperty('--font-color-inactive', colors.fontColorInactive);
-	doc.style.setProperty('--border-color', colors.borderColor);
-	doc.style.setProperty('--border-color-active', colors.borderColorActive);
+	doc.style.setProperty('--background-color', theme.backgroundColor);
+	doc.style.setProperty('--background-color-active', theme.backgroundColorActive);
+	doc.style.setProperty('--font-color', theme.fontColor);
+	doc.style.setProperty('--font-color-active', theme.fontColorActive);
+	doc.style.setProperty('--font-color-inactive', theme.fontColorInactive);
+	doc.style.setProperty('--border-color', theme.borderColor);
+	doc.style.setProperty('--border-color-active', theme.borderColorActive);
 
 	let optionsChanged = false;
 	let completer, completerTimer;

@@ -143,7 +143,7 @@ const messageHandler = {
 		pocketDelete       : info => {
 			options.warnings.pocketDelete = info.value;
 		},
-		fontSize           : info => {
+		mainFontSize           : info => {
 			setFontSize(info.value);
 		},
 		backgroundColor       : info => {
@@ -351,7 +351,7 @@ function initSidebar(response) {
 	i18n.mainControls    = response.i18n.mainControls;
 	status.info          = response.info;
 
-	setFontSize();
+	setFontSize(options.theme.mainFontSize);
 	setColor(options.theme);
 	setImageStyle[options.theme.sidebarImageStyle]();
 
@@ -1550,11 +1550,18 @@ function setFixed(mode, hover) {
 	}
 }
 
-function setFontSize(fontSize) {
-	if (fontSize !== undefined)
-		options.theme.fontSize = fontSize;
-	doc.style.fontSize   = `${options.theme.fontSize / window.devicePixelRatio}px`;
-	doc.style.lineHeight = `${options.theme.fontSize / window.devicePixelRatio * 1.2}px`;
+function setFontSize(newFontSize) {
+	console.log(newFontSize);
+	if (newFontSize !== undefined)
+		options.theme.fontSize = newFontSize;
+	doc.style.setProperty('font-size', options.theme.fontSize);
+	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	brauzer.tabs.getZoom(zoom => {
+		console.log(fontSize);
+		console.log(zoom);
+		doc.style.fontSize   = `${fontSize / zoom}px`;
+		doc.style.lineHeight = `${fontSize * 1.2 / zoom}px`;
+	});
 }
 
 function setColor(colors) {

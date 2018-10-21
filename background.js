@@ -439,10 +439,10 @@ const options = {
 		}
 	},
 	theme: {
-		fontSize              : {
-			value   : 16,
-			type    : 'float',
-			range   : [5, 32],
+		mainFontSize: {
+			value   : 'medium',
+			type    : 'dropdown',
+			values  : ['xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large'],
 			targets : ['sidebar' ,'content', 'startpage']
 		},
 		backgroundColor       : {
@@ -1583,7 +1583,7 @@ const messageHandler = {
 				'leftBar'  : optionsShort.leftBar,
 				'rightBar' : optionsShort.rightBar,
 				'theme'    : {
-					'fontSize'          : optionsShort.theme.fontSize,
+					'mainFontSize'      : optionsShort.theme.mainFontSize,
 					'borderColor'       : optionsShort.theme.borderColor,
 					'borderColorActive' : optionsShort.theme.borderColorActive
 				},
@@ -1862,7 +1862,6 @@ const initExtension = res => {
 
 		options.startpage.rows.value           = Math.ceil(window.screen.height / 400);
 		options.startpage.columns.value        = Math.ceil(window.screen.width  / 400);
-		options.theme.fontSize.value           = Math.ceil(window.screen.height / 60);
 		const top = topSites => {
 			for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
 				data.startpage.push(makeSite(i, topSites[i]));
@@ -2325,7 +2324,7 @@ const initService = {
 				theme    : {
 					borderColor       : options.theme.borderColor.value,
 					borderColorActive : options.theme.borderColorActive.value,
-					fontSize          : options.theme.fontSize.value
+					mainFontSize      : options.theme.mainFontSize.value
 				},
 				misc     : {
 					manualSwitch      : options.misc.manualSwitch.value

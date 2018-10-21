@@ -121,8 +121,8 @@ const messageHandler = {
 				dialog.parentNode.removeChild(dialog);
 				dialog = null;
 			}
-			if (options.theme.fontSize !== info.theme.fontSize) {
-				options.theme.fontSize = info.theme.fontSize;
+			if (options.theme.mainFontSize !== info.theme.mainFontSize) {
+				options.theme.mainFontSize = info.theme.mainFontSize;
 				if (options.leftBar.method === 'iframe')
 					setSideBarWidth('leftBar');
 				if (options.rightBar.method === 'iframe')
@@ -386,47 +386,53 @@ function setColor() {
 }
 
 function setSideBarWidth(side, value) {
-	const openWide = {
-		truetrue   : _ => {
-			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
-			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
-			sidebar[side].firstChild.style.removeProperty('background-color');
-			sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
-		},
-		truefalse  : _ => {
-			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
-			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
-			sidebar[side].firstChild.style.removeProperty('background-color');
-			sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
-		},
-		falsetrue  : _ => {
-			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
-			sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
-			sidebar[side].firstChild.style.removeProperty('background-color');
-			sidebar[side].firstChild.style.setProperty('cursor', 'normal', 'important');
-		},
-		falsefalse : _ => {
-			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
-			sidebar[side].style.setProperty('width', `${borderWidth}px`, 'important');
-			sidebar[side].firstChild.style.setProperty('background-color', 'transparent', 'important');
-			sidebar[side].firstChild.style.setProperty('cursor', 'pointer', 'important');
-		}
-	};
+	doc.style.setProperty('font-size', options.theme.mainFontSize);
+	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	brauzer.tabs.getZoom(zoom => {
+		const trueSide = side.replace('Bar', '');
+		const openWide = {
+			truetrue   : _ => {
+				doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
+				sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+				sidebar[side].firstChild.style.removeProperty('background-color');
+				sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
+			},
+			truefalse  : _ => {
+				doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
+				sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+				sidebar[side].firstChild.style.removeProperty('background-color');
+				sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
+			},
+			falsetrue  : _ => {
+				doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
+				sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
+				sidebar[side].firstChild.style.removeProperty('background-color');
+				sidebar[side].firstChild.style.setProperty('cursor', 'normal', 'important');
+			},
+			falsefalse : _ => {
+				doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
+				sidebar[side].style.setProperty('width', `${borderWidth}px`, 'important');
+				sidebar[side].firstChild.style.setProperty('background-color', 'transparent', 'important');
+				sidebar[side].firstChild.style.setProperty('cursor', 'pointer', 'important');
+			}
+		};
 
-	const borderWidth = options.theme.fontSize / 8 / window.devicePixelRatio;
-	const iconWidth   = options.theme.fontSize * 1.7 / window.devicePixelRatio;
-	const trueSide    = side.replace('Bar', '');
-	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
-	if (value !== undefined)
-		options[side].width = value;
-	if (options[side].fixed === true) {
-		doc.style.setProperty(`margin-${trueSide}`, `${options[side].width}%`, 'important');
-		sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
-		sidebar[side].firstChild.style.removeProperty('background-color');
-		sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
-	}
-	else
-		openWide[`${options[side].open === true}${options[side].wide === true}`]();
+        doc.style.setProperty('font-size', `${fontSize / zoom}px`);
+
+		const borderWidth = fontSize / 8 / zoom;
+		const iconWidth   = fontSize * 1.7 / zoom;
+		sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
+		if (value !== undefined)
+			options[side].width = value;
+		if (options[side].fixed === true) {
+			doc.style.setProperty(`margin-${trueSide}`, `${options[side].width}%`, 'important');
+			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+			sidebar[side].firstChild.style.removeProperty('background-color');
+			sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
+		}
+		else
+			openWide[`${options[side].open === true}${options[side].wide === true}`]();
+	});
 }
 
 function resizeSideBar(side) {
