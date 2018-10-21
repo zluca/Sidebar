@@ -124,10 +124,10 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 			sections[section].appendChild(dropdown);
 			addLabel(`${section}${option}`, sections[section]);
 			for (const opt in response[section][option].values) {
-				const dOption = document.createElement('option');
-				dOption.id    = `${section}-${response[section][option].values[opt]}`;
-				dOption.value = response[section][option].values[opt];
-				dOption.innerHTML = getI18n(`opt${dOption.value.replace('-', '')}Label`) || `"${dOption.value}"`;
+				const dOption       = document.createElement('option');
+				dOption.id          = `${section}-${response[section][option].values[opt]}`;
+				dOption.value       = response[section][option].values[opt];
+				dOption.textContent = getI18n(`opt${dOption.value.replace('-', '')}Label`) || `"${dOption.value}"`;
 				if (response[section][option].values[opt] === response[section][option].value)
 				    dOption.selected = true;
 				dropdown.appendChild(dOption);
@@ -204,6 +204,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 			select   : target => target.dataset.value,
 			color    : target => target.value,
 			text     : target => target.value,
+			dropdown : target => target.value,
 			image    : target => target.checked === true ? true : '',
 			file     : target => {
 			    const reader     = new FileReader();
