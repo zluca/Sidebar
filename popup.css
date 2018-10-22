@@ -84,9 +84,9 @@ main {
 				display: none;
 				background-image: url(/icons/twitter.svg);
 			}
-			#googlePlus {
+			#telegram {
 				display: none;
-				background-image: url(/icons/googlePlus.svg);
+				background-image: url(/icons/telegram.svg);
 			}
 			.share>#options,
 			.share>#translate,
@@ -97,6 +97,6 @@ main {
 			.share>#facebook,
 			.share>#vkontakte,
 			.share>#twitter,
-			.share>#googlePlus {
+			.share>#telegram {
 				display: inline-block;
 			}

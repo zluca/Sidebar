@@ -84,8 +84,8 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 		twitter   : event => {
 			send('background', 'tabs', 'new', {'url': `https://twitter.com/share?url=${extensionUrl}&text=${getI18n('extDescription')}`, 'newWindow': false});
 		},
-		googlePlus: event => {
-			send('background', 'tabs', 'new', {'url': ` https://plus.google.com/share?url=${extensionUrl}`, 'newWindow': false});
+		telegram: event => {
+			send('background', 'tabs', 'new', {'url': `https://telegram.me/share/url?url=${extensionUrl}&amp;text=${getI18n('extDescription')}`, 'newWindow': false});
 		}
 	};
 
@@ -109,7 +109,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 	createButton('facebook');
 	createButton('vkontakte');
 	createButton('twitter');
-	createButton('googlePlus');
+	createButton('telegram');
 	createButton('share');
 	container.appendChild(p);
 	document.body.appendChild(container);
