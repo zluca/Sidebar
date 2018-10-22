@@ -605,8 +605,8 @@
 		"message"       : "Twitter",
 		"description"   : ""
 	},
-	"popupButtonGooglePlusTitle" : {
-		"message"       : "Google+",
+	"popupButtonTelegramTitle" : {
+		"message"       : "Telegram",
 		"description"   : ""
 	},
 
