@@ -2257,6 +2257,7 @@ const initService = {
 
 
 			status.init.tabs = true;
+			createNewTab();
 		};
 
 		const onWindowRemoved   = id => {
