@@ -4275,19 +4275,19 @@ const initService = {
 				},
 				google     : result => {
 					const item        = {};
-					const link        = result.querySelector('h3>a');
+					const title       = result.querySelector('a>h3');
+					if (title === null)
+						return false;
+					const link        = result.querySelector('div.r>a');
 					if (link === null)
 						return false;
-					item.title        = makeCleanTitle(link.innerHTML, '<b>', '</b>');
-					item.url          = link.getAttribute('href');
-					if (item.url.match('://') === null)
+					item.url          = link.href;
+					item.title        = title.textContent;
+					if (!/:\/\//i.test(item.url))
 						return false;
-					const body        = link.parentNode.nextElementSibling;
-					if (body !== null) {
-						const desc        = body.querySelector('.st');
-						if (desc !== null)
-							item.description  = desc.textContent;
-					}
+					const desc        = result.querySelector('.st');
+					if (desc !== null)
+						item.description  = desc.textContent;
 					item.pid          = 'google';
 					return item;
 				},
@@ -4565,8 +4565,9 @@ const initService = {
 										if (type !== 'wikipedia')
 											search(type, query, 1 + page);
 						}
-						else if (page === 0)
-							send(target, 'search', 'newItems', {'items': noResults(searchLink, doc.querySelector(noResultsSelectors[type]) === null ? 'captcha' : 'noResults'), 'searchLink': searchLink, 'target': type, 'clean': true});
+						else if (page === 0) {
+							send(target, 'search', 'newItems', {'items': noResults(searchLink,  doc.querySelector(noResultsSelectors[type]) === null ? 'captcha' : 'noResults'), 'searchLink': searchLink, 'target': type, 'clean': true});
+						}
 					}
 					makeTimeStamp(mode);
 					send(target, 'search', 'update', {'method': 'remove', 'target': type});
