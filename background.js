@@ -4282,7 +4282,7 @@ const initService = {
 					if (link === null)
 						return false;
 					item.url          = link.href;
-					item.title        = title.textContent;
+					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
 					if (!/:\/\//i.test(item.url))
 						return false;
 					const desc        = result.querySelector('.st');
