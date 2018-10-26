@@ -1579,9 +1579,12 @@ const messageHandler = {
 
 	request : {
 		content : (message, sender, sendResponse) => {
+			const tab = getById('tabs', sender.tab.id);
+			if (tab === false) return;
 			sendResponse({
 				'leftBar'  : optionsShort.leftBar,
 				'rightBar' : optionsShort.rightBar,
+				'zoom'     : tab.zoom,
 				'theme'    : {
 					'mainFontSize'      : optionsShort.theme.mainFontSize,
 					'borderColor'       : optionsShort.theme.borderColor,
@@ -1618,9 +1621,9 @@ const messageHandler = {
 				},
 				iframe: side => {
 					const tab = getById('tabs', sender.tab.id);
-					if (tab !== false)
-						tab.activated = true;
-					sendResponse(sideBarData(side));
+					if (tab === false) return;
+					tab.activated = true;
+					sendResponse(sideBarData(side, tab.zoom));
 				}
 			};
 			if (status.init[options[message.data.side].mode.value] === true)
@@ -1629,8 +1632,11 @@ const messageHandler = {
 		},
 		startpage : (message, sender, sendResponse) => {
 			if (status.init.startpage === true)
-				if (options.services.startpage.value === true)
-					sendResponse(startpageData());
+				if (options.services.startpage.value === true) {
+					const tab = getById('tabs', sender.tab.id);
+					if (tab === false) return;
+					sendResponse(startpageData(tab.zoom));
+				}
 		},
 		options : (message, sender, sendResponse) => {
 			sendResponse(options);
@@ -1639,7 +1645,9 @@ const messageHandler = {
 			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method, 'status': options.status});
 		},
 		dialog : (message, sender, sendResponse) => {
-			sendResponse({'data': status.dialogData, 'warnings': optionsShort.warnings, 'theme': optionsShort.theme});
+			const tab = getById('tabs', sender.tab.id);
+			if (tab === false) return;
+			sendResponse({'data': status.dialogData, 'warnings': optionsShort.warnings, 'theme': optionsShort.theme, 'zoom': tab.zoom});
 			status.dialogData = null;
 		}
 	},
@@ -2249,6 +2257,7 @@ const initService = {
 			brauzer.tabs.onUpdated.addListener(onUpdated);
 			brauzer.tabs.onRemoved.addListener(onRemoved);
 			brauzer.tabs.onMoved.addListener(onMoved);
+			brauzer.tabs.onZoomChange.addListener(onZoomChange);
 
 			brauzer.windows.onCreated.addListener(onWindowCreated);
 			brauzer.windows.onRemoved.addListener(onWindowRemoved);
@@ -2287,7 +2296,7 @@ const initService = {
 			setFocused(win, true);
 			status.activeWindow      = id;
 			const tab                = getById('tabs', status.activeTabsIds[id]);
-			if (tab !== false) {
+			if (tab === false) return;
 			status.activeTabsIds[id] = tab.id;
 			tab.readed               = true;
 			closeIframe();
@@ -2295,8 +2304,7 @@ const initService = {
 			reInit(tab.id);
 			if (options.services.startpage.value === true)
 				if (tab.url === config.extensionStartPage)
-					send('startpage', 'reInit', 'page', startpageData());
-			}
+					send('startpage', 'reInit', 'page', startpageData(tab.zoom));
 		};
 
 		const setFocused = (win, focused) => {
@@ -2315,9 +2323,9 @@ const initService = {
 			if (tab === false) return;
 			send('sidebar', 'tabs', 'active', status.activeTabsIds[status.activeWindow]);
 			if (options.leftBar.method.value === 'iframe')
-				send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
+				send('leftBar', 'set', 'reInit', sideBarData('leftBar', tab.zoom));
 			if (options.rightBar.method.value === 'iframe')
-				send('rightBar', 'set', 'reInit', sideBarData('rightBar'));
+				send('rightBar', 'set', 'reInit', sideBarData('rightBar', tab.zoom));
 			send('content', 'reInit', 'sideBar', {
 				leftBar  : optionsShort.leftBar,
 				rightBar : optionsShort.rightBar,
@@ -2386,7 +2394,7 @@ const initService = {
 			reInit(tabInfo.tabId);
 			if (options.services.startpage.value === true)
 				if (tab.url === config.extensionStartPage)
-					send('startpage', 'reInit', 'page', startpageData());
+					send('startpage', 'reInit', 'page', startpageData(tab.zoom));
 		};
 
 		const onUpdated         = (id, info, tab) => {
@@ -2490,6 +2498,30 @@ const initService = {
 			send('sidebar', 'tabs', 'moved', {'id': id, 'oldIndex': moveInfo.fromIndex, 'newIndex': moveInfo.toIndex, 'isFolder': false, 'window': tab.windowId});
 		};
 
+		const onZoomChange      = info => {
+			const tab = getById('tabs', info.tabId);
+			if (tab === false) return;
+			if (tab.zoom === info.newZoomFactor) return;
+			tab.zoom = info.newZoomFactor;
+			sendZoom(tab.id, tab.zoom);
+		};
+
+		const getZoom           = (id, aTab = false) => {
+			const tab = aTab === false ? getById('tabs', id) : aTab;
+			if (tab === false) return;
+			execMethod(brauzer.tabs.getZoom, zoom => {tab.zoom = zoom; sendZoom(tab.id, zoom)}, id);
+		};
+
+		const sendZoom          = (id, zoom) => {
+			send('content', 'set', 'zoom', zoom);
+			if (options.leftBar.method.value === 'iframe')
+				send('leftBar', 'set', 'zoom', zoom);
+			if (options.rightBar.method.value === 'iframe')
+				send('rightBar', 'set', 'zoom', zoom);
+			if (options.services.startpage.value === true)
+				send('startpage', 'set', 'zoom', zoom);
+		}
+
 		const getWindows        = windows => {
 			for (let i = windows.length - 1; i >= 0; i--) {
 				const win   = createWindow(windows[i]);
@@ -2522,6 +2554,8 @@ const initService = {
 				newItem.discarded  = item.discarded;
 				newItem.windowId   = item.windowId;
 				newItem.activated  = false;
+				newItem.zoom       = 1;
+				getZoom(newItem.id, newItem);
 				updateFolder.tabs(newItem, domain);
 				if (status.init.tabs === true)
 					makeTimeStamp('tabs');
@@ -2643,10 +2677,16 @@ const initService = {
 			brauzer.bookmarks.onRemoved.addListener(onRemoved);
 
 			if (start === 'reInit') {
+				let zoom = 1;
+				if (options.leftBar.method.value === 'iframe' || options.rightBar.method.value === 'iframe') {
+					const tab = getById('tabs', status.activeTabsIds[status.activeWindow]);
+					if (tab !== false)
+						zoom = tab.zoom;
+				}
 				if (options.leftBar.mode.value === 'bookmarks')
-					send('leftBar', 'set', 'reInit', sideBarData('leftBar'));
+					send('leftBar', 'set', 'reInit', sideBarData('leftBar', zoom));
 				if (options.rightBar.mode.value === 'bookmarks')
-					send('rightBar', 'set', 'reInit', sideBarData('rightBar'));
+					send('rightBar', 'set', 'reInit', sideBarData('rightBar', zoom));
 			}
 
 			status.init.bookmarks = true;
@@ -4716,7 +4756,7 @@ function initWindow() {
 		createSidebarWindow('rightBar');
 }
 
-function sideBarData(side) {
+function sideBarData(side, zoom = 1) {
 	if (status.timeStamp[`${side}Cache`].data !== status.timeStamp[options[side].mode.value]) {
 		status.timeStamp[`${side}Cache`].data = status.timeStamp[options[side].mode.value];
 		data[side].data             = modeData[options[side].mode.value]();
@@ -4772,10 +4812,11 @@ function sideBarData(side) {
 		data[side].data            = modeData[options[side].mode.value]();
 		data[side].timeStamp       = status.timeStamp;
 	}
+	data[side].zoom = zoom;
 	return data[side];
 }
 
-function startpageData() {
+function startpageData(zoom = 1) {
 	if (options.services.startpage.value === true) {
 		if (status.timeStamp.startpageCache.data !== status.timeStamp.startpage) {
 			status.timeStamp.startpageCache.data = status.timeStamp.startpage;
@@ -4800,6 +4841,7 @@ function startpageData() {
 			data.startpageData.searchQuery    = data.spSearchQuery;
 			data.startpageData.timeStamp      = status.timeStamp.startpageCache;
 		}
+		data.startpageData.zoom = zoom;
 		return data.startpageData;
 	}
 	else

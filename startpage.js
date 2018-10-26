@@ -17,7 +17,8 @@ const status  = {
 		options : 0,
 		search  : 0
 	},
-	titles              : {}
+	titles              : {},
+	zoom                : 1
 };
 
 const data    = {
@@ -66,6 +67,7 @@ function init(response) {
 	options                  = response.options;
 	i18n                     = response.i18n;
 	status.timeStamp         = response.timeStamp;
+	status.zoom              = response.zoom;
 
 	const siteStyle          = dce('style', document.head);
 	search                   = dcea('header', document.body, ['id', 'search']);
@@ -578,6 +580,12 @@ const messageHandler = {
 				status.timeStamp.data = info.timeStamp.data;
 			}
 		}
+	},
+	set     : {
+		zoom         : info => {
+			status.zoom = info;
+			setStyle();
+		}
 	}
 };
 
@@ -719,20 +727,18 @@ function setColor(colors) {
 function setStyle() {
 	doc.style.setProperty('font-size', options.theme.mainFontSize);
 	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
-	brauzer.tabs.getZoom(zoom => {
-		doc.style.setProperty('font-size', `${fontSize / zoom}px`);
-		const marginH         = options.startpage.marginH / zoom;
-		const marginV         = options.startpage.marginV / zoom;
-		const padding         = options.startpage.padding / zoom;
-		const containerHeight = window.innerHeight - (2 * padding) - (options.startpage.searchEnabled * (fontSize + padding));
-		const sectionSize     = Math.round(((containerHeight - ((options.startpage.rows + 1) * marginV)) / options.startpage.rows));
-		doc.style.setProperty('--marginH', `${marginH}px`);
-		doc.style.setProperty('--marginV', `${marginV}px`);
-		doc.style.setProperty('--padding', `${padding}px`);
-		doc.style.setProperty('--bigFont1', `${sectionSize}px`);
-		doc.style.setProperty('--rows', options.startpage.rows);
-		doc.style.setProperty('--columns', options.startpage.columns);
-	});
+	doc.style.setProperty('font-size', `${fontSize / status.zoom}px`);
+	const marginH         = options.startpage.marginH / status.zoom;
+	const marginV         = options.startpage.marginV / status.zoom;
+	const padding         = options.startpage.padding / status.zoom;
+	const containerHeight = window.innerHeight - (2 * padding) - (options.startpage.searchEnabled * (fontSize + padding));
+	const sectionSize     = Math.round(((containerHeight - ((options.startpage.rows + 1) * marginV)) / options.startpage.rows));
+	doc.style.setProperty('--marginH', `${marginH}px`);
+	doc.style.setProperty('--marginV', `${marginV}px`);
+	doc.style.setProperty('--padding', `${padding}px`);
+	doc.style.setProperty('--bigFont1', `${sectionSize}px`);
+	doc.style.setProperty('--rows', options.startpage.rows);
+	doc.style.setProperty('--columns', options.startpage.columns);
 }
 
 function setBackground(image) {

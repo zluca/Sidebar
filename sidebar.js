@@ -53,7 +53,8 @@ const status   = {
 		options : 0,
 		info    : 0
 	},
-	titles : {}
+	titles : {},
+	zoom   : 1
 };
 
 const data     = {
@@ -256,6 +257,10 @@ const messageHandler = {
 				status.scrolling = true;
 				window.scrollTo(0, info);
 			}
+		},
+		zoom        : info => {
+			status.zoom = info;
+			setFontSize();
 		}
 	},
 	info      : {
@@ -347,6 +352,7 @@ function initSidebar(response) {
 	brauzer.runtime.onMessage.removeListener(onMessage);
 
 	status.timeStamp     = response.timeStamp;
+	status.zoom          = response.zoom;
 	options              = response.options;
 	i18n.mainControls    = response.i18n.mainControls;
 	status.info          = response.info;
@@ -1551,17 +1557,12 @@ function setFixed(mode, hover) {
 }
 
 function setFontSize(newFontSize) {
-	console.log(newFontSize);
 	if (newFontSize !== undefined)
 		options.theme.fontSize = newFontSize;
 	doc.style.setProperty('font-size', options.theme.fontSize);
 	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
-	brauzer.tabs.getZoom(zoom => {
-		console.log(fontSize);
-		console.log(zoom);
-		doc.style.fontSize   = `${fontSize / zoom}px`;
-		doc.style.lineHeight = `${fontSize * 1.2 / zoom}px`;
-	});
+	doc.style.fontSize   = `${fontSize / status.zoom}px`;
+	doc.style.lineHeight = `${fontSize * 1.2 / status.zoom}px`;
 }
 
 function setColor(colors) {

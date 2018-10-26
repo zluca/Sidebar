@@ -30,6 +30,7 @@ const status  = {
 	},
 	initDone     : false,
 	docReady     : false,
+	zoom         : 1
 };
 
 cleanOldStuff();
@@ -180,6 +181,13 @@ const messageHandler = {
 	set    : {
 		rightClick : info => {
 			rightClick = true;
+		},
+		zoom       : info => {
+			status.zoom = info;
+			if (options.leftBar.method === 'iframe')
+				setSideBarWidth('leftBar');
+			if (options.rightBar.method === 'iframe')
+				setSideBarWidth('rightBar');
 		}
 	}
 };
@@ -209,6 +217,7 @@ function init() {
 		options               = response;
 		options.leftBar.open  = false;
 		options.rightBar.open = false;
+		status.zoom           = response.zoom;
 		if (status.docReady === true)
 			injectElements();
 	});
@@ -388,51 +397,49 @@ function setColor() {
 function setSideBarWidth(side, value) {
 	doc.style.setProperty('font-size', options.theme.mainFontSize);
 	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
-	brauzer.tabs.getZoom(zoom => {
-		const trueSide = side.replace('Bar', '');
-		const openWide = {
-			truetrue   : _ => {
-				doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
-				sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
-				sidebar[side].firstChild.style.removeProperty('background-color');
-				sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
-			},
-			truefalse  : _ => {
-				doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
-				sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
-				sidebar[side].firstChild.style.removeProperty('background-color');
-				sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
-			},
-			falsetrue  : _ => {
-				doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
-				sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
-				sidebar[side].firstChild.style.removeProperty('background-color');
-				sidebar[side].firstChild.style.setProperty('cursor', 'normal', 'important');
-			},
-			falsefalse : _ => {
-				doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
-				sidebar[side].style.setProperty('width', `${borderWidth}px`, 'important');
-				sidebar[side].firstChild.style.setProperty('background-color', 'transparent', 'important');
-				sidebar[side].firstChild.style.setProperty('cursor', 'pointer', 'important');
-			}
-		};
-
-        doc.style.setProperty('font-size', `${fontSize / zoom}px`);
-
-		const borderWidth = fontSize / 8 / zoom;
-		const iconWidth   = fontSize * 1.7 / zoom;
-		sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
-		if (value !== undefined)
-			options[side].width = value;
-		if (options[side].fixed === true) {
-			doc.style.setProperty(`margin-${trueSide}`, `${options[side].width}%`, 'important');
+	const trueSide = side.replace('Bar', '');
+	const openWide = {
+		truetrue   : _ => {
+			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
 			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
 			sidebar[side].firstChild.style.removeProperty('background-color');
 			sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
+		},
+		truefalse  : _ => {
+			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
+			sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+			sidebar[side].firstChild.style.removeProperty('background-color');
+			sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
+		},
+		falsetrue  : _ => {
+			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
+			sidebar[side].style.setProperty('width', `${iconWidth}px`, 'important');
+			sidebar[side].firstChild.style.removeProperty('background-color');
+			sidebar[side].firstChild.style.setProperty('cursor', 'normal', 'important');
+		},
+		falsefalse : _ => {
+			doc.style.setProperty(`margin-${trueSide}`, `${borderWidth}px`, 'important');
+			sidebar[side].style.setProperty('width', `${borderWidth}px`, 'important');
+			sidebar[side].firstChild.style.setProperty('background-color', 'transparent', 'important');
+			sidebar[side].firstChild.style.setProperty('cursor', 'pointer', 'important');
 		}
-		else
-			openWide[`${options[side].open === true}${options[side].wide === true}`]();
-	});
+	};
+
+    doc.style.setProperty('font-size', `${fontSize / status.zoom}px`);
+
+	const borderWidth = fontSize / 8 / status.zoom;
+	const iconWidth   = fontSize * 1.7 / status.zoom;
+	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
+	if (value !== undefined)
+		options[side].width = value;
+	if (options[side].fixed === true) {
+		doc.style.setProperty(`margin-${trueSide}`, `${options[side].width}%`, 'important');
+		sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
+		sidebar[side].firstChild.style.removeProperty('background-color');
+		sidebar[side].firstChild.style.setProperty('cursor', 'col-resize', 'important');
+	}
+	else
+		openWide[`${options[side].open === true}${options[side].wide === true}`]();
 }
 
 function resizeSideBar(side) {
