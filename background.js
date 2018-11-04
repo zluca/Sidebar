@@ -442,7 +442,7 @@ const options = {
 		mainFontSize: {
 			value   : 'medium',
 			type    : 'dropdown',
-			values  : ['xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large'],
+			values  : ['xxsmall', 'xsmall', 'small', 'medium', 'large', 'xlarge', 'xxlarge'],
 			targets : ['sidebar' ,'content', 'startpage']
 		},
 		backgroundColor       : {

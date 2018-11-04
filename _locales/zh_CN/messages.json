@@ -368,7 +368,7 @@
 		"message"       : "侧栏主题。",
 		"description"   : ""
 	},
-	"optThemeFontSizeLabel" : {
+	"optThemeMainFontSizeLabel" : {
 		"message"       : "侧栏字体大小",
 		"description"   : ""
 	},
@@ -406,6 +406,34 @@
 	},
 	"optThemeSidebarImageStyleText" : {
 		"message"       : "Sidebar background image style:",
+		"description"   : ""
+	},
+	"optThemeXXSmallText" :{
+		"message"       : "XX-Small",
+		"description"   : ""
+	},
+	"optThemeXSmallText" :{
+		"message"       : "X-Small",
+		"description"   : ""
+	},
+	"optThemeSmallText" :{
+		"message"       : "Small",
+		"description"   : ""
+	},
+	"optThemeMediumText" :{
+		"message"       : "Medium",
+		"description"   : ""
+	},
+	"optThemeLargeText" :{
+		"message"       : "Large",
+		"description"   : ""
+	},
+	"optThemeXLargeText" :{
+		"message"       : "X-Large",
+		"description"   : ""
+	},
+	"optThemeXXLargeText" :{
+		"message"       : "XX-Large",
 		"description"   : ""
 	},
 

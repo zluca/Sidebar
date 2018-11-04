@@ -368,7 +368,7 @@
 		"message"       : "Настройка темы.",
 		"description"   : ""
 	},
-	"optThemeFontSizeLabel" : {
+	"optThemeMainFontSizeLabel" : {
 		"message"       : "Размер шрифта боковой панели",
 		"description"   : ""
 	},
@@ -406,6 +406,34 @@
 	},
 	"optThemeSidebarImageStyleText" : {
 		"message"       : "Стиль фоновой картинки:",
+		"description"   : ""
+	},
+	"optThemeXXSmallText" :{
+		"message"       : "Ещё меньше",
+		"description"   : ""
+	},
+	"optThemeXSmallText" :{
+		"message"       : "Поменьше",
+		"description"   : ""
+	},
+	"optThemeSmallText" :{
+		"message"       : "Маленький",
+		"description"   : ""
+	},
+	"optThemeMediumText" :{
+		"message"       : "Средний",
+		"description"   : ""
+	},
+	"optThemeLargeText" :{
+		"message"       : "Побольше",
+		"description"   : ""
+	},
+	"optThemeXLargeText" :{
+		"message"       : "Ещё больше",
+		"description"   : ""
+	},
+	"optThemeXXLargeText" :{
+		"message"       : "Гиганский",
 		"description"   : ""
 	},
 

@@ -127,7 +127,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 				const dOption       = document.createElement('option');
 				dOption.id          = `${section}-${response[section][option].values[opt]}`;
 				dOption.value       = response[section][option].values[opt];
-				dOption.textContent = getI18n(`opt${dOption.value.replace('-', '')}Label`) || `"${dOption.value}"`;
+				dOption.textContent = getI18n(`opt${section}${dOption.value}Text`) || `"${dOption.value}"`;
 				if (response[section][option].values[opt] === response[section][option].value)
 				    dOption.selected = true;
 				dropdown.appendChild(dOption);

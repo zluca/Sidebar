@@ -368,7 +368,7 @@
 		"message"       : "側邊欄佈景主題。",
 		"description"   : ""
 	},
-	"optThemeFontSizeLabel" : {
+	"optThemeMainFontSizeLabel" : {
 		"message"       : "側邊欄字型大小",
 		"description"   : ""
 	},
@@ -406,6 +406,34 @@
 	},
 	"optThemeSidebarImageStyleText" : {
 		"message"       : "側邊欄背景圖片樣式：",
+		"description"   : ""
+	},
+	"optThemeXXSmallText" :{
+		"message"       : "XX-Small",
+		"description"   : ""
+	},
+	"optThemeXSmallText" :{
+		"message"       : "X-Small",
+		"description"   : ""
+	},
+	"optThemeSmallText" :{
+		"message"       : "Small",
+		"description"   : ""
+	},
+	"optThemeMediumText" :{
+		"message"       : "Medium",
+		"description"   : ""
+	},
+	"optThemeLargeText" :{
+		"message"       : "Large",
+		"description"   : ""
+	},
+	"optThemeXLargeText" :{
+		"message"       : "X-Large",
+		"description"   : ""
+	},
+	"optThemeXXLargeText" :{
+		"message"       : "XX-Large",
 		"description"   : ""
 	},
 
