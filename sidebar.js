@@ -1560,9 +1560,9 @@ function setFontSize(newFontSize) {
 	if (newFontSize !== undefined)
 		options.theme.fontSize = newFontSize;
 	doc.style.setProperty('font-size', options.theme.fontSize);
-	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
-	doc.style.fontSize   = `${fontSize / status.zoom}px`;
-	doc.style.lineHeight = `${fontSize * 1.2 / status.zoom}px`;
+	const fontSize       = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	doc.style.fontSize   = `${parseInt(fontSize / status.zoom)}px`;
+	doc.style.lineHeight = `${parseInt(fontSize * 1.2 / status.zoom)}px`;
 }
 
 function setColor(colors) {
