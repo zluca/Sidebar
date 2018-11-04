@@ -223,8 +223,8 @@ const messageHandler = {
 		fold         : info => {
 			if (info.mode !== options.sidebar.mode) return;
 			const folder = getFolderById(info.id);
-			if (folder !== false)
-				folder.classList[info.method]('folded');
+			if (folder === false) return;
+			folder.classList[info.method]('folded');
 		},
 		reInit       : info => {
 			if (info.timeStamp.options !== status.timeStamp.options)
@@ -460,8 +460,7 @@ function finishBlock(mode) {
 	}, {'passive': true});
 
 	block.addEventListener('mousedown', event => {
-		if (event.button !== 1)
-			return;
+		if (event.button !== 1) return;
 		event.stopPropagation();
 		event.preventDefault();
 		clickActions[options.clickActions[mode].middle](event);
@@ -551,14 +550,15 @@ const initBlock = {
 				insertItems([info.tab]);
 			},
 			active     : info => {
+				const newActiveTab = getById(info);
+				if (newActiveTab === false) return;
 				status.activeTabId = info;
-				if (status.activeTab !== false) {
+				if (status.activeTab) {
 					status.activeTab.classList.remove('active');
 					if (options.misc.tabsMode === 'domain')
 						status.activeTab.parentNode.parentNode.firstChild.classList.remove('active');
 				}
-				status.activeTab = getById(info);
-				if (status.activeTab === false) return;
+				status.activeTab = newActiveTab;
 				status.activeTab.classList.add('active');
 				status.activeTab.classList.remove('tab-unreaded');
 				if (options.misc.tabsMode === 'domain')
@@ -566,27 +566,27 @@ const initBlock = {
 			},
 			title      : info => {
 				const tab = getById(info.id);
-				if (tab !== false) {
-					tab.textContent   = info.title;
-					makeTitle(info.id, info.title, info.url);
-				}
+				if (tab === false) return;
+				tab.textContent   = info.title;
+				makeTitle(info.id, info.title, info.url);
 			},
 			status     : info => {
 				const tab = getById(info.id);
-				if (tab !== false)
-					tab.classList[info.loading]('loading');
+				if (tab === false) return;
+				tab.classList[info.loading]('loading');
 			},
 			urlChanged  : info => {
 				const tab = getById(info.id);
-				if (tab !== false) {
-					tab.href          = info.url;
-					makeTitle(info.id, info.title, info.url);
-				}
+				if (tab === false) return;
+				tab.href  = info.url;
+				makeTitle(info.id, info.title, info.url);
 			},
 			folderChanged : info => {
 				if (options.misc.tabsMode === 'domain') {
 					const tab = getById(info.tab.id);
-					if (tab !== false)
+					if (tab === false) return;
+					const folder = getFolderById(info.folder.id);
+					if (folder === false)
 						insertFolders([info.folder]);
 					insertItems([info.tab]);
 				}
@@ -616,12 +616,8 @@ const initBlock = {
 					}
 				};
 				const tab = getById(info.id);
-				if (status.activeTabId === info.id) {
-					status.activeTabId = -1;
-					status.activeTab   = false;
-				}
-				if (tab !== false)
-					removing[options.misc.tabsMode](tab);
+				if (tab === false) return;
+				removing[options.misc.tabsMode](tab);
 			},
 			moved           : info => {
 				if (status.moving === true)
@@ -633,13 +629,13 @@ const initBlock = {
 			},
 			pinned       : info => {
 				const tab = getById(info.id);
-				if (tab !== false)
-					tab.classList.add('pinned');
+				if (tab === false) return;
+				tab.classList.add('pinned');
 			},
 			unpinned       : info => {
 				const tab = getById(info.id);
-				if (tab !== false)
-					tab.classList.remove('pinned');
+				if (tab === false) return;
+				tab.classList.remove('pinned');
 			},
 			newFolder    : info => {
 				if (options.misc.tabsMode === 'domain')
@@ -658,8 +654,8 @@ const initBlock = {
 			},
 			folderRemoved: info => {
 				const folder = getFolderById(info);
-				if (folder !== false)
-					removeFolderById(info);
+				if (folder === false) return;
+				removeFolderById(info);
 			},
 			view         : info => {
 				checkForTree(info.items, info.folders, info.view, info.windowsFolders);
@@ -670,14 +666,14 @@ const initBlock = {
 			windowView   : info => {
 				for (let i = info.ids.length - 1; i >= 0; i--) {
 					const win = getFolderById(info.ids[i])
-					if (win !== false)
-						win.classList = `folder ${info.view}`;
+					if (win === false) return;
+					win.classList = `folder ${info.view}`;
 				}
 			},
 			windowDelete : info => {
 				const win = getFolderById(info);
-				if (win !== false)
-					removeFolderById(info);
+				if (win === false) return;
+				removeFolderById(info);
 			},
 		};
 
@@ -693,6 +689,7 @@ const initBlock = {
 						pid    = tabs[i].windowId;
 						folder = getFolderById(pid);
 					}
+					if (folder === false) return;
 					folder.lastChild.appendChild(tab);
 				},
 				domain : i => {
@@ -707,6 +704,7 @@ const initBlock = {
 				},
 				tree  : i => {
 					folder = getFolderById(tabs[i].id);
+					if (folder === false) return;
 					if (folder.lastChild.hasChildNodes())
 						folder.lastChild.insertBefore(tab, folder.lastChild.firstChild);
 					else
@@ -785,8 +783,8 @@ const initBlock = {
 			},
 			changedFolder   : info => {
 				const folde = getFolderById(info.id);
-				if (folder !== false)
-					folder.firstChild.textContent = info.title;
+				if (folder === false) return;
+				folder.firstChild.textContent = info.title;
 			},
 			createdBookmark : info => {
 				insertItems([info.item]);
@@ -867,17 +865,20 @@ const initBlock = {
 			let folder = null;
 			const insert = {
 				first : item => {
-					if (folder.lastChild.hasChildNodes())
-						folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
-					else
-						folder.lastChild.appendChild(item);
+					if (folder) {
+						if (folder.lastChild.hasChildNodes())
+							folder.lastChild.insertBefore(item, folder.lastChild.firstChild);
+						else
+							folder.lastChild.appendChild(item);
+					}
 				},
 				search : item => {
 					searchResults.lastChild.appendChild(item);
 				},
 				last : item => {
 					status.historyInfo.lastNum++;
-					folder.lastChild.appendChild(item);
+					if (folder)
+						folder.lastChild.appendChild(item);
 				}
 			};
 			for (let i = 0, l = items.length; i < l; i++) {
@@ -1092,13 +1093,13 @@ const initBlock = {
 			},
 			rssHideReaded    : info =>  {
 				const feed = getFolderById(info.id);
-				if (feed !== false)
-					feed.classList.add('hide-readed');
+				if (feed === false) return;
+				feed.classList.add('hide-readed');
 			},
 			rssShowReaded    : info =>  {
 				const feed = getFolderById(info.id);
-				if (feed !== false)
-					feed.classList.remove('hide-readed');
+				if (feed === false) return;
+				feed.classList.remove('hide-readed');
 			},
 			rssFeedChanged   : info =>  {
 				const feed = getFolderById(info.id);
@@ -1114,8 +1115,8 @@ const initBlock = {
 			},
 			update           : info => {
 				const feed = getFolderById(info.id);
-				if (feed !== false)
-					feed.firstChild.classList[info.method]('loading');
+				if (feed === false) return;
+				feed.firstChild.classList[info.method]('loading');
 			},
 			moved            : info => {
 				if (status.moving === true)
@@ -1191,7 +1192,8 @@ const initBlock = {
 					item.classList.add('item', 'rss-item', `domain-${items[i].domain}`, 'unreaded');
 					folder.classList.add('unreaded');
 				}
-				insert[`${options.misc.rssMode}${method}`](item, items[i]);
+				if (folder)
+					insert[`${options.misc.rssMode}${method}`](item, items[i]);
 			}
 		};
 
@@ -1235,13 +1237,13 @@ const initBlock = {
 			},
 			updated      : info => {
 				const pocket = getById(info.id);
-				if (pocket !== false)
-					updateItem(pocket, info);
+				if (pocket === false) return;
+				updateItem(pocket, info);
 			},
 			deleted      : info => {
 				const pocket = getById(info);
-				if (pocket !== false)
-					removeById(info);
+				if (pocket === false) return;
+				removeById(info);
 			},
 			domainCount  : info => {
 				const folder = getFolderById(info.id);
@@ -1257,8 +1259,8 @@ const initBlock = {
 			},
 			folderRemoved: info => {
 				const folder = getFolderById(info);
-				if (folder !== false)
-					removeFolderById(info);
+				if (folder === false) return;
+				removeFolderById(info);
 			},
 			view         : info => {
 				setBlockClass(info.view);
@@ -1282,13 +1284,13 @@ const initBlock = {
 			},
 			fav          : info => {
 				const pocket = getById(info);
-				if (pocket !== false)
-					pocket.classList.add('favorite');
+				if (pocket === false) return;
+				pocket.classList.add('favorite');
 			},
 			unfav        : info => {
 				const pocket = getById(info);
-				if (pocket !== false)
-					pocket.classList.remove('favorite');
+				if (pocket === false) return;
+				pocket.classList.remove('favorite');
 			},
 			archive      : info => {
 				const pocket = getById(info);
@@ -1296,8 +1298,8 @@ const initBlock = {
 				pocket.classList.add('type-archives');
 				if (options.misc.pocketMode === 'type') {
 					const archive = getFolderById('archives');
-					if (archive !== false)
-						archive.lastChild.appendChild(pocket);
+					if (archive === false) return;
+					archive.lastChild.appendChild(pocket);
 				}
 			},
 			unarchive   : info => {
@@ -1306,13 +1308,13 @@ const initBlock = {
 				pocket.classList.remove('type-archives');
 				if (options.misc.pocketMode === 'type') {
 					const folder = getFolderById(info.pid);
-					if (folder !== false)
-						folder.lastChild.appendChild(pocket);
+					if (folder === false) return;
+					folder.lastChild.appendChild(pocket);
 				}
 				else if (options.misc.pocketMode === 'domain') {
 					const folder = getFolderById(info.domain);
-					if (folder !== false)
-						folder.lastChild.appendChild(pocket);
+					if (folder === false) return;
+					folder.lastChild.appendChild(pocket);
 				}
 			},
 			update      : info => {
