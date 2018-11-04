@@ -115,6 +115,24 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 				addLabel(`${response[section][option].values[opt]}`, form);
 			}
 		},
+		dropdown  : (section, option) => {
+			const dropdown = document.createElement('select');
+			dropdown.value = response[section][option].value;
+			dropdown.dataset.type = 'dropdown';
+			dropdown.dataset.section = section;
+			dropdown.dataset.option  = option;
+			sections[section].appendChild(dropdown);
+			addLabel(`${section}${option}`, sections[section]);
+			for (const opt in response[section][option].values) {
+				const dOption       = document.createElement('option');
+				dOption.id          = `${section}-${response[section][option].values[opt]}`;
+				dOption.value       = response[section][option].values[opt];
+				dOption.textContent = getI18n(`opt${dOption.value.replace('-', '')}Label`) || `"${dOption.value}"`;
+				if (response[section][option].values[opt] === response[section][option].value)
+				    dOption.selected = true;
+				dropdown.appendChild(dOption);
+			}
+		},
 		text    : (section, option) => {
 			const input           = document.createElement('input');
 			input.dataset.section = section;
@@ -186,6 +204,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 			select   : target => target.dataset.value,
 			color    : target => target.value,
 			text     : target => target.value,
+			dropdown : target => target.value,
 			image    : target => target.checked === true ? true : '',
 			file     : target => {
 			    const reader     = new FileReader();

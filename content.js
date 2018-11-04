@@ -30,6 +30,7 @@ const status  = {
 	},
 	initDone     : false,
 	docReady     : false,
+	zoom         : 1
 };
 
 cleanOldStuff();
@@ -121,8 +122,8 @@ const messageHandler = {
 				dialog.parentNode.removeChild(dialog);
 				dialog = null;
 			}
-			if (options.theme.fontSize !== info.theme.fontSize) {
-				options.theme.fontSize = info.theme.fontSize;
+			if (options.theme.mainFontSize !== info.theme.mainFontSize) {
+				options.theme.mainFontSize = info.theme.mainFontSize;
 				if (options.leftBar.method === 'iframe')
 					setSideBarWidth('leftBar');
 				if (options.rightBar.method === 'iframe')
@@ -180,6 +181,13 @@ const messageHandler = {
 	set    : {
 		rightClick : info => {
 			rightClick = true;
+		},
+		zoom       : info => {
+			status.zoom = info;
+			if (options.leftBar.method === 'iframe')
+				setSideBarWidth('leftBar');
+			if (options.rightBar.method === 'iframe')
+				setSideBarWidth('rightBar');
 		}
 	}
 };
@@ -209,6 +217,7 @@ function init() {
 		options               = response;
 		options.leftBar.open  = false;
 		options.rightBar.open = false;
+		status.zoom           = response.zoom;
 		if (status.docReady === true)
 			injectElements();
 	});
@@ -386,6 +395,9 @@ function setColor() {
 }
 
 function setSideBarWidth(side, value) {
+	doc.style.setProperty('font-size', options.theme.mainFontSize);
+	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	const trueSide = side.replace('Bar', '');
 	const openWide = {
 		truetrue   : _ => {
 			doc.style.setProperty(`margin-${trueSide}`, `${iconWidth}px`, 'important');
@@ -413,9 +425,10 @@ function setSideBarWidth(side, value) {
 		}
 	};
 
-	const borderWidth = options.theme.fontSize / 8 / window.devicePixelRatio;
-	const iconWidth   = options.theme.fontSize * 1.7 / window.devicePixelRatio;
-	const trueSide    = side.replace('Bar', '');
+    doc.style.setProperty('font-size', `${fontSize / status.zoom}px`);
+
+	const borderWidth = fontSize / 8 / status.zoom;
+	const iconWidth   = fontSize * 1.7 / status.zoom;
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
 	if (value !== undefined)
 		options[side].width = value;

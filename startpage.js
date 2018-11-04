@@ -17,7 +17,8 @@ const status  = {
 		options : 0,
 		search  : 0
 	},
-	titles              : {}
+	titles              : {},
+	zoom                : 1
 };
 
 const data    = {
@@ -66,6 +67,7 @@ function init(response) {
 	options                  = response.options;
 	i18n                     = response.i18n;
 	status.timeStamp         = response.timeStamp;
+	status.zoom              = response.zoom;
 
 	const siteStyle          = dce('style', document.head);
 	search                   = dcea('header', document.body, ['id', 'search']);
@@ -437,8 +439,8 @@ const messageHandler = {
 			options.startpage.padding = info.value;
 			setStyle();
 		},
-		fontSize              : info => {
-			options.theme.fontSize = info.value;
+		mainFontSize              : info => {
+			options.theme.mainFontSize = info.value;
 			setStyle();
 		},
 		image                 : info => {
@@ -577,6 +579,12 @@ const messageHandler = {
 				initSites(info.sites);
 				status.timeStamp.data = info.timeStamp.data;
 			}
+		}
+	},
+	set     : {
+		zoom         : info => {
+			status.zoom = info;
+			setStyle();
 		}
 	}
 };
@@ -717,13 +725,14 @@ function setColor(colors) {
 }
 
 function setStyle() {
-	const fontSize        = options.theme.fontSize  / window.devicePixelRatio;
-	const marginH         = options.startpage.marginH / window.devicePixelRatio;
-	const marginV         = options.startpage.marginV / window.devicePixelRatio;
-	const padding         = options.startpage.padding / window.devicePixelRatio;
+	doc.style.setProperty('font-size', options.theme.mainFontSize);
+	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	doc.style.setProperty('font-size', `${fontSize / status.zoom}px`);
+	const marginH         = options.startpage.marginH / status.zoom;
+	const marginV         = options.startpage.marginV / status.zoom;
+	const padding         = options.startpage.padding / status.zoom;
 	const containerHeight = window.innerHeight - (2 * padding) - (options.startpage.searchEnabled * (fontSize + padding));
 	const sectionSize     = Math.round(((containerHeight - ((options.startpage.rows + 1) * marginV)) / options.startpage.rows));
-	doc.style.fontSize    = fontSize;
 	doc.style.setProperty('--marginH', `${marginH}px`);
 	doc.style.setProperty('--marginV', `${marginV}px`);
 	doc.style.setProperty('--padding', `${padding}px`);

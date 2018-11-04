@@ -53,7 +53,8 @@ const status   = {
 		options : 0,
 		info    : 0
 	},
-	titles : {}
+	titles : {},
+	zoom   : 1
 };
 
 const data     = {
@@ -143,7 +144,7 @@ const messageHandler = {
 		pocketDelete       : info => {
 			options.warnings.pocketDelete = info.value;
 		},
-		fontSize           : info => {
+		mainFontSize           : info => {
 			setFontSize(info.value);
 		},
 		backgroundColor       : info => {
@@ -256,6 +257,10 @@ const messageHandler = {
 				status.scrolling = true;
 				window.scrollTo(0, info);
 			}
+		},
+		zoom        : info => {
+			status.zoom = info;
+			setFontSize();
 		}
 	},
 	info      : {
@@ -347,11 +352,12 @@ function initSidebar(response) {
 	brauzer.runtime.onMessage.removeListener(onMessage);
 
 	status.timeStamp     = response.timeStamp;
+	status.zoom          = response.zoom;
 	options              = response.options;
 	i18n.mainControls    = response.i18n.mainControls;
 	status.info          = response.info;
 
-	setFontSize();
+	setFontSize(options.theme.mainFontSize);
 	setColor(options.theme);
 	setImageStyle[options.theme.sidebarImageStyle]();
 
@@ -1550,11 +1556,13 @@ function setFixed(mode, hover) {
 	}
 }
 
-function setFontSize(fontSize) {
-	if (fontSize !== undefined)
-		options.theme.fontSize = fontSize;
-	doc.style.fontSize   = `${options.theme.fontSize / window.devicePixelRatio}px`;
-	doc.style.lineHeight = `${options.theme.fontSize / window.devicePixelRatio * 1.2}px`;
+function setFontSize(newFontSize) {
+	if (newFontSize !== undefined)
+		options.theme.fontSize = newFontSize;
+	doc.style.setProperty('font-size', options.theme.fontSize);
+	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	doc.style.fontSize   = `${fontSize / status.zoom}px`;
+	doc.style.lineHeight = `${fontSize * 1.2 / status.zoom}px`;
 }
 
 function setColor(colors) {
