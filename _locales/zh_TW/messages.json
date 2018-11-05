@@ -409,31 +409,31 @@
 		"description"   : ""
 	},
 	"optThemeXXSmallText" :{
-		"message"       : "XX-Small",
+		"message"       : "非常小",
 		"description"   : ""
 	},
 	"optThemeXSmallText" :{
-		"message"       : "X-Small",
+		"message"       : "很小",
 		"description"   : ""
 	},
 	"optThemeSmallText" :{
-		"message"       : "Small",
+		"message"       : "小",
 		"description"   : ""
 	},
 	"optThemeMediumText" :{
-		"message"       : "Medium",
+		"message"       : "中",
 		"description"   : ""
 	},
 	"optThemeLargeText" :{
-		"message"       : "Large",
+		"message"       : "大",
 		"description"   : ""
 	},
 	"optThemeXLargeText" :{
-		"message"       : "X-Large",
+		"message"       : "很大",
 		"description"   : ""
 	},
 	"optThemeXXLargeText" :{
-		"message"       : "XX-Large",
+		"message"       : "非常大",
 		"description"   : ""
 	},
 
