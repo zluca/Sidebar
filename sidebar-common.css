@@ -544,22 +544,6 @@ nav {
 		background-color: var(--font-color-active);
 	}
 
-.domain-default {
-	background-image: url(icons/default.svg);
-}
-.domain-startpage {
-	background-image: url(icons/startpage.svg);
-}
-.domain-system {
-	background-image: url(icons/wrench.svg);
-}
-.domain-extension {
-	background-image: url(icons/default.svg);
-}
-.domain-windows {
-	background-image: url(icons/window.svg);
-}
-
 @media (max-width: 2rem) {
 	body {
 		overflow:hidden;
