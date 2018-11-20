@@ -2436,13 +2436,14 @@ const initService = {
 					}
 				}
 				const url = info.url === 'about:blank' ? oldTab.url : info.url;
-				const newDomain = `${oldTab.windowId}_${makeDomain('tabs', url)}`;
+				const newDomain = makeDomain('tabs', url);
+				newDomain.pid   = `${oldTab.windowId}_${newDomain.id}`;
 				oldTab.url      = info.url;
 				closeIframe();
-				if (newDomain.id !== oldFolder.id) {
+				if (newDomain.pid !== oldFolder.id) {
 					removeFromFolder('tabs', oldTab);
 					oldTab.domain   = newDomain.id;
-					oldTab.pid      = newDomain.id;
+					oldTab.pid      = newDomain.pid;
 					const newFolder = updateFolder.tabs(oldTab, newDomain);
 					send('sidebar', 'tabs', 'folderChanged', {'tab': oldTab, 'folder': newFolder});
 					if (newFolder.folded === true)
