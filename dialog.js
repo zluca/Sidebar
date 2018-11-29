@@ -95,12 +95,18 @@ function makeDialogWindow(data, warnings, theme) {
 			main.appendChild(input);
 			return input;
 		},
-		checkbox : (inputType, checked, reverse = false) => {
+		checkbox : (inputType, checked, reverse = false, icon = false) => {
 			const label       = document.createElement('label');
 			label.textContent = getI18n(`dialog${inputType}Label`);
+			label.classList.add('icon');
+			if (icon === true) {
+				label.style.backgroundImage = `url(icons/${inputType}.svg)`;
+				label.style.paddingLeft     = '2.8rem';
+			}
 			const input       = document.createElement('input');
 			input.type        = 'checkbox';
 			input.checked     = checked;
+			input.dataset.id  = inputType;
 			if (reverse === false) {
 				label.addEventListener('click', event => {
 					event.stopPropagation();
@@ -119,33 +125,6 @@ function makeDialogWindow(data, warnings, theme) {
 				main.appendChild(label);
 			}
 			return input;
-		},
-		togglers : (type, options, prefix, select = false) => {
-			const label         = document.createElement('label');
-			label.textContent   = getI18n(`type${type}`);
-			label.classList.add('options-section');
-			label.dataset.id    = type;
-			const section = document.createElement('div');
-			section.classList.add('options-section');
-			if (select === true) {
-				section.classList.add('active');
-				label.classList.add('active');
-			}
-			if (prefix === 'searchEngine') {
-				label.style.backgroundImage = `url(icons/${type}.svg)`;
-				label.style.paddingLeft     = '2.8rem';
-			}
-			for (let option in options) {
-				const optionIcon        = document.createElement('span');
-				optionIcon.classList    = `option ${options[option] === true ? ' selected' : ''}`;
-				optionIcon.style.backgroundImage = `url(icons/${option}.svg)`;
-				optionIcon.dataset.id   = option;
-				optionIcon.dataset.type = type;
-				optionIcon.title        = getI18n(`${prefix}${option}`);
-				section.appendChild(optionIcon);
-			}
-			main.appendChild(label);
-			main.appendChild(section);
 		},
 		selectors : (type, options) => {
 			const label         = document.createElement('label');
@@ -655,39 +634,22 @@ function makeDialogWindow(data, warnings, theme) {
 		searchSelect : _ => {
 
 			let options = {};
-			let type    = data.type;
-
 			setHeader();
-			for (let type in data.searchTypes) {
-				options[type] = {};
-				for (let i = 0, l = data.searchTypes[type].length; i < l; i++)
-					options[type][data.searchTypes[type][i]] = data.options[data.searchTypes[type][i]];
-				addInputRow.togglers(type, options[type], 'searchEngine', data.options.type === type);
+			for (let i = 0, l = data.searchTypes.length; i < l; i++) {
+				options[data.searchTypes[i]] = data.options[data.searchTypes[i]];
+				addInputRow.checkbox(data.searchTypes[i], options[data.searchTypes[i]], true, true);
 			}
 			addButton('save', _ => {
-				for (let type in options)
-					for (let option in options[type])
-						if (options[type][option] !== data.options[option])
-							send('background', 'options', 'handler', {'section': data.target, 'option': option, 'value': options[type][option]});
-				if (type !== data.type)
-					send('background', 'options', 'handler', {'section': data.target, 'option': 'type', 'value': type});
+				for (let option in options)
+					if (options[option] !== data.options[option])
+						send('background', 'options', 'handler', {'section': data.target, 'option': option, 'value': options[option]});
 				removeDialogWindow();
 			});
 			addButton('cancel');
 
 			main.addEventListener('click', event => {
-				if (event.target.nodeName === 'SPAN') {
-					event.target.classList.toggle('selected');
-					options[event.target.dataset.type][event.target.dataset.id] = !options[event.target.dataset.type][event.target.dataset.id];
-				}
-				else if (event.target.nodeName === 'LABEL') {
-					const active = document.getElementsByClassName('active');
-					active[1].classList.remove('active');
-					active[0].classList.remove('active');
-					event.target.classList.add('active');
-					event.target.nextElementSibling.classList.add('active');
-					type = event.target.dataset.id;
-				}
+				if (event.target.nodeName === 'INPUT')
+					options[event.target.dataset.id] = !options[event.target.dataset.id];
 			});
 		},
 

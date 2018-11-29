@@ -15,12 +15,7 @@ const config = {
 	rssIcon            : 'icons/rss.svg',
 	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034',
 	searchLength       : 30,
-	searchTypes        : {
-		general   : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo'],
-		video     : ['youtube', 'dailymotion', 'vimeo'],
-		dev       : ['wikipedia', 'mdn', 'stackoverflow'],
-		buy       : ['amazon', 'aliexpress', 'ebay', 'yandexMarket']
-	}
+	searchTypes        : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo','wikipedia']
 };
 
 const i18n = {
@@ -710,12 +705,6 @@ const options = {
 	},
 	search: {
 		hidden    : {},
-		type       : {
-			value   : 'general',
-			type    : 'select',
-			values  : ['general', 'dev', 'social', 'buy'],
-			targets : ['sidebar']
-		},
 		duckduckgo : {
 			value   : true,
 			type    : 'boolean',
@@ -751,85 +740,16 @@ const options = {
 			targets : [],
 			handler : 'searchEngine'
 		},
-		youtube   : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'video',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		dailymotion: {
-			value   : false,
-			type    : 'boolean',
-			mode    : 'video',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		vimeo      : {
-			value   : false,
-			type    : 'boolean',
-			mode    : 'video',
-			targets : [],
-			handler : 'searchEngine'
-		},
 		wikipedia  : {
 			value   : true,
 			type    : 'boolean',
 			mode    : 'dev',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		mdn        : {
-			value   : false,
-			type    : 'boolean',
-			mode    : 'dev',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		stackoverflow : {
-			value   : false,
-			type    : 'boolean',
-			mode    : 'dev',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		amazon     : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'buy',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		ebay       : {
-			value   : false,
-			type    : 'boolean',
-			mode    : 'buy',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		aliexpress : {
-			value   : false,
-			type    : 'boolean',
-			mode    : 'buy',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		yandexMarket : {
-			value   : false,
-			type    : 'boolean',
-			mode    : 'buy',
 			targets : [],
 			handler : 'searchEngine'
 		}
 	},
 	spSearch: {
 		hidden    : {},
-		type       : {
-			value   : 'general',
-			type    : 'select',
-			values  : ['general', 'dev', 'social', 'buy'],
-			targets : ['startpage']
-		},
 		duckduckgo : {
 			value   : true,
 			type    : 'boolean',
@@ -865,73 +785,10 @@ const options = {
 			targets : [],
 			handler : 'searchEngine'
 		},
-		youtube   : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'video',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		dailymotion: {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'video',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		vimeo      : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'video',
-			targets : [],
-			handler : 'searchEngine'
-		},
 		wikipedia  : {
 			value   : true,
 			type    : 'boolean',
 			mode    : 'dev',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		mdn        : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'dev',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		stackoverflow : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'dev',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		amazon     : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'buy',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		ebay       : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'buy',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		aliexpress : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'buy',
-			targets : [],
-			handler : 'searchEngine'
-		},
-		yandexMarket : {
-			value   : true,
-			type    : 'boolean',
-			mode    : 'buy',
 			targets : [],
 			handler : 'searchEngine'
 		}
@@ -2105,7 +1962,8 @@ const initService = {
 				addNewSiteTitle      : getI18n('startpageAddNewSiteTitle'),
 				editButtonTitle      : getI18n('startpageEditButtonTitle'),
 				searchButtonTitle    : getI18n('startpageSearchButtonTitle'),
-				clearSearchTitle     : getI18n('searchClearSearchTitle')
+				clearSearchTitle     : getI18n('searchClearSearchTitle'),
+				searchOptions        : getI18n('searchOptions')
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, ['startpage', 'speadDial']);
 			if (status.init.tabs === true)
@@ -4255,16 +4113,7 @@ const initService = {
 				yandex          : query => `https://yandex.com/search/?text=${query}&p=${page}`,
 				bing            : query => `https://www.bing.com/search?q=${query}&first=${1 + page * 10}`,
 				yahoo           : query => `https://search.yahoo.com/search?p=${query}&b=${1 + page * 10}`,
-				youtube         : query => `https://www.google.com/search?&q=${query} site:www.youtube.com&start=${page * 10}`,
-				dailymotion     : query => `https://duckduckgo.com/html/?q=${query} site:dailymotion.com`,
-				vimeo           : query => `https://yandex.com/search/?text=${query} site:vimeo.com&p=${page}`,
-				wikipedia       : query => `https://${options.misc.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1&limit=50`,
-				mdn             : query => `https://developer.mozilla.org/en/search?q=${query}&page=${1 + page}`,
-				stackoverflow   : query => `https://stackoverflow.com/search?q=${query}&page=${1 + page}`,
-				amazon          : query => `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${query}&page=${1 + page}`,
-				ebay            : query => `https://www.ebay.com/sch/i.html?_nkw=${query}&_pgn=${1 + page}`,
-				aliexpress      : query => `https://www.aliexpress.com/wholesale?SearchText=${query}&page=${1 + page}`,
-				yandexMarket    : query => `https://market.yandex.com/search?text=${query}&page=${1 + page}`
+				wikipedia       : query => `https://${options.misc.wikiSearchLang.value}.wikipedia.org/w/index.php?search=${query}&profile=default&fulltext=1&limit=50`
 			};
 
 			const resultsSelectors = {
@@ -4273,13 +4122,7 @@ const initService = {
 				yandex          : '.serp-item',
 				bing            : '.b_algo',
 				yahoo           : '.dd.algo',
-				wikipedia       : '.searchresults li',
-				mdn             : 'li',
-				stackoverflow   : '.search-result',
-				amazon          : '.s-item-container',
-				ebay            : 'li.lvresult',
-				aliexpress      : 'li.list-item',
-				yandexMarket    : 'div.n-snippet-card2'
+				wikipedia       : '.searchresults li'
 			};
 
 			const noResultsSelectors = {
@@ -4288,13 +4131,7 @@ const initService = {
 				yandex          : '.misspell__message',
 				bing            : '#b_results',
 				yahoo           : '.dd.zrp',
-				wikipedia       : '.searchresults',
-				mdn             : '#search-results-close-container',
-				stackoverflow   : '.empty-seach-results',
-				amazon          : '#noResultsTitle',
-				ebay            : '.srp-search-tips',
-				aliexpress      : '.ui-notice',
-				yandexMarket    : '.n-noresult__title'
+				wikipedia       : '.searchresults'
 			};
 
 			const makeItem    = {
@@ -4392,100 +4229,6 @@ const initService = {
 						item.description  = body.textContent;
 					item.pid          = 'wikipedia';
 					return item;
-				},
-				mdn        : result => {
-					const item        = {};
-					const title       = result.querySelector('h4>a');
-					if (title === null)
-						return false;
-					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
-					item.url          = title.href;
-					const body        = title.parentNode.nextElementSibling;
-					if (body !== null)
-						item.description  = body.textContent;
-					item.pid          = 'mdn';
-					return item;
-				},
-				stackoverflow: result => {
-					const item        = {};
-					const title       = result.querySelector('.result-link>span>a');
-					if (title === null)
-						return false;
-					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
-					item.url          = `https://stackoverflow.com/${title.getAttribute('href')}`;
-					const body        = title.parentNode.parentNode.nextElementSibling;
-					if (body !== null)
-						item.description = body.textContent;
-					item.pid          = 'stackoverflow';
-					return item;
-				},
-				amazon     : result => {
-					const item        = {};
-					const title       = result.querySelector('.s-item-container a>h2');
-					if (title === null)
-						return false;
-					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
-					item.url          = title.parentNode.href;
-					const img         = result.querySelector('a>img');
-					if (img !== null)
-						item.img = img.dataset.src;
-					let price = result.querySelector('.a-row+.a-row .a-size-base.a-color-base');
-					if (price === null)
-						return false;
-					item.price = price.textContent;
-					item.pid          = 'amazon';
-					return item;
-				},
-				ebay       : result => {
-					const item        = {};
-					const title       = result.querySelector('h3.lvtitle>a');
-					if (title === null)
-						return false;
-					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
-					item.url          = title.href;
-					const img         = result.querySelector('a>img');
-					if (img !== null)
-						item.img = img.dataset.src;
-					const price       = result.querySelector('span.prRange, li.lvprice');
-					if (price === null)
-						return false;
-					item.price        = price.textContent.trim();
-					item.pid          = 'ebay';
-					return item;
-				},
-				yandexMarket : result => {
-					const item        = {};
-					const title       = result.querySelector('.n-snippet-card2__part_type_center .n-snippet-card2__title');
-					if (title === null)
-						return false;
-					item.title        = makeCleanTitle(title.innerHTML, '<strong>', '</strong>');
-					item.url          = `https://market.yandex.com${title.firstChild.getAttribute('href')}`;
-					const img         = result.querySelector('.n-snippet-card2__part_type_left img');
-					if (img !== null)
-						item.img = `http:${img.dataset.src}`;
-					const price       = result.querySelector('.n-snippet-card2__part_type_right .n-snippet-card2__main-price');
-					if (price === null)
-						return false;
-					item.price        = price.textContent;
-					item.pid          = 'yandexMarket';
-					return item;
-				},
-				aliexpress : result => {
-					const item        = {};
-					const title       = result.querySelector('.info>h3>a,.detail>h3>a');
-					if (title === null)
-						return false;
-					item.title        = makeCleanTitle(title.innerHTML, '<b>', '</b>');
-					item.url          = `https:${title.getAttribute('href')}`;
-					const img         = result.querySelector('.pic>a>img,.img>a>img');
-					if (img !== null)
-						item.img = `https:${img.dataset.src}`;
-					const price       = result.querySelector('.price>.value');
-					if (price === null)
-						return false;
-					item.price        = price.textContent;
-					item.pid          = 'aliexpress';
-					return item;
 				}
 			};
 
@@ -4494,16 +4237,6 @@ const initService = {
 					return item;
 				return false;
 			};
-
-			resultsSelectors.youtube       = resultsSelectors.google;
-			resultsSelectors.dailymotion   = resultsSelectors.duckduckgo;
-			resultsSelectors.vimeo         = resultsSelectors.yandex;
-			noResultsSelectors.youtube     = noResultsSelectors.google;
-			noResultsSelectors.dailymotion = noResultsSelectors.duckduckgo;
-			noResultsSelectors.vimeo       = noResultsSelectors.yandex;
-			makeItem.youtube               = result => checkUrl(makeItem.google(result), /https?:\/\/www.youtube/);
-			makeItem.dailymotion           = result => checkUrl(makeItem.duckduckgo(result), /https?:\/\/www.dailymotion/);
-			makeItem.vimeo                 = result => checkUrl(makeItem.yandex(result), /https?:\/\/vimeo.com/);
 
 			const makeCleanTitle = (string, openTag, closeTag) => {
 				const l1   = openTag.length;
@@ -4560,9 +4293,7 @@ const initService = {
 
 			const noResults   = (searchLink, subType) => {
 				const item = {
-					id          : `${type}-${subType}`,
-					type        : type,
-					pid         : type,
+					id          : subType,
 					url         : searchLink,
 					title       : [i18n.search[`${subType}Title`]],
 					description : i18n.search[`${subType}Description`]
@@ -4598,17 +4329,17 @@ const initService = {
 							item.type  = type;
 							items.push(createById(mode, item, 'last'));
 						}
-						if (items.length > 0) {
-							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type, 'clean': page === 0});
-							if (page < 4)
-								if (items.length * (1 + page) < config.searchLength)
-									if (type !== 'duckduckgo')
-										if (type !== 'wikipedia')
-											search(type, query, 1 + page);
-						}
-						else if (page === 0) {
-							send(target, 'search', 'newItems', {'items': noResults(searchLink,  doc.querySelector(noResultsSelectors[type]) === null ? 'captcha' : 'noResults'), 'searchLink': searchLink, 'target': type, 'clean': true});
-						}
+						// if (items.length > 0) {
+						send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type});
+						if (page < 4)
+							if (items.length * (1 + page) < config.searchLength)
+								if (type !== 'duckduckgo')
+									if (type !== 'wikipedia')
+										search(type, query, 1 + page);
+						// }
+						// else if (page === 0) {
+						// 	send(target, 'search', 'newItems', {'items': noResults(searchLink,  doc.querySelector(noResultsSelectors[type]) === null ? 'captcha' : 'noResults'), 'searchLink': searchLink, 'target': type, 'clean': true});
+						// }
 					}
 					makeTimeStamp(mode);
 					send(target, 'search', 'update', {'method': 'remove', 'target': type});
@@ -4623,17 +4354,17 @@ const initService = {
 			data[`${mode}Folders`]   = [];
 			data[`${mode}FoldersId`] = [];
 			if (shutdown === false)
-				for (let type in config.searchTypes)
-					for (let i = 0, l = config.searchTypes[type].length; i < l; i++)
-						updateFolder[mode]({'type': type, 'pid': config.searchTypes[type][i]});
+				for (let i = 0, l = config.searchTypes.length; i < l; i++)
+					updateFolder[mode]({'pid': config.searchTypes[i]});
 		};
 
-		const clearSearch = type => {
+		const clearSearch = _ => {
 			data[`${mode}Query`]     = '';
 			data[mode]               = [];
 			data[`${mode}Id`]        = [];
 			for(let i = data[`${mode}Folders`].length - 1; i >= 0; i--)
 				data[`${mode}Folders`][i].itemsId = [];
+			send(target, 'search', 'clearSearch');
 		};
 
 		if (start === true) {
@@ -4643,11 +4374,9 @@ const initService = {
 				newItem.description = item.description;
 				newItem.title       = item.title;
 				newItem.url         = item.url;
-				newItem.viewed      = false;
-				newItem.price       = item.price || 0;
-				newItem.img         = item.img || '';
-				newItem.domain      = domain.id;
 				newItem.type        = item.type;
+				newItem.viewed      = false;
+				newItem.domain      = domain.id;
 				updateFolder[mode](item);
 				return newItem;
 			};
@@ -4656,12 +4385,12 @@ const initService = {
 				let folder = getFolderById(mode, item.pid);
 				if (folder !== false)
 					folder.itemsId.push(item.id);
-				else {
+				else if (options.search.hasOwnProperty(item.pid)) {
 					folder            = createFolderById(mode, item.pid);
 					folder.pid        = 0;
 					folder.title      = i18n.search[folder.id];
 					folder.domain     = item.pid;
-					folder.view       = item.type === 'general' ? 'type' : 'domain';
+					folder.view       = 'type';
 					folder.mode       = item.type;
 					folder.hidden     = !options[mode][folder.id].value;
 					folder.searchLink = '';
@@ -4670,34 +4399,19 @@ const initService = {
 			};
 
 			i18n.search             = {
-				typegeneral          : getI18n('typeGeneral'),
-				typevideo            : getI18n('typeVideo'),
-				typedev              : getI18n('typeDev'),
-				typebuy              : getI18n('typeBuy'),
-				duckduckgo           : getI18n('searchEngineDuckDuckGo'),
-				google               : getI18n('searchEngineGoogle'),
-				yandex               : getI18n('searchEngineYandex'),
-				bing                 : getI18n('searchEngineBing'),
-				yahoo                : getI18n('searchEngineYahoo'),
-				youtube              : getI18n('searchEngineYoutube'),
-				dailymotion          : getI18n('searchEngineDailymotion'),
-				vimeo                : getI18n('searchEngineVimeo'),
-				wikipedia            : getI18n('searchEngineWikipedia'),
-				mdn                  : getI18n('searchEngineMdn'),
-				stackoverflow        : getI18n('searchEngineStackoverflow'),
-				amazon               : getI18n('searchEngineAmazon'),
-				ebay                 : getI18n('searchEngineEbay'),
-				aliexpress           : getI18n('searchEngineAliexpress'),
-				yandexMarket         : getI18n('searchEngineYandexMarket'),
-				generalPlaceholder   : getI18n('searchGeneralPlaceholder'),
-				videoPlaceholder     : getI18n('searchVideoPlaceholder'),
-				devPlaceholder       : getI18n('searchGeneralPlaceholder'),
-				buyPlaceholder       : getI18n('searchBuyPlaceholder'),
+				duckduckgo           : getI18n('dialogDuckDuckGoLabel'),
+				google               : getI18n('dialogGoogleLabel'),
+				yandex               : getI18n('dialogYandexLabel'),
+				bing                 : getI18n('dialogBingLabel'),
+				yahoo                : getI18n('dialogYahooLabel'),
+				wikipedia            : getI18n('dialogWikipediaLabel'),
+				searchPlaceholder    : getI18n('searchPlaceholder'),
 				captchaTitle         : getI18n('searchCaptchaTitle'),
 				captchaDescription   : getI18n('searchCaptchaDescription'),
 				noResultsTitle       : getI18n('searchNoResultsTitle'),
 				noResultsDescription : getI18n('searchNoResultsDescription'),
-				clearSearchTitle     : getI18n('searchClearSearchTitle')
+				clearSearchTitle     : getI18n('searchClearSearchTitle'),
+				searchOptions        : getI18n('searchOptions')
 			};
 
 			messageHandler[mode]    = {
@@ -4706,11 +4420,11 @@ const initService = {
 					if (mode === 'spSearch')
 						if (options.startpage.mode.value === 'sites')
 							setOption('startpage', 'mode', 'search', true);
-					clearSearch(options[mode].type.value);
+					clearSearch();
 					data[`${mode}Query`] = message.data;
-					for (let i = config.searchTypes[options[mode].type.value].length - 1; i >= 0; i--)
-						if (options[mode][config.searchTypes[options[mode].type.value][i]].value === true)
-							search(config.searchTypes[options[mode].type.value][i], data[`${mode}Query`]);
+					for (let i = config.searchTypes.length - 1; i >= 0; i--)
+						if (options[mode][config.searchTypes[i]].value === true)
+							search(config.searchTypes[i], data[`${mode}Query`]);
 				},
 				changeQuery : (message, sender, sendResponse) => {
 					makeTimeStamp(mode);
@@ -4718,6 +4432,10 @@ const initService = {
 					if (mode === 'spSearch')
 						if (message.data === '')
 							setOption('startpage', 'mode', 'sites', true);
+					send(target, 'search', 'changeQuery', message.data);
+				},
+				clearSearch: (message, sender, sendResponse) => {
+					clearSearch();
 				},
 				move   : (message, sender, sendResponse) => {
 					const oldIndex = data.searchFoldersId.indexOf(message.data.id);

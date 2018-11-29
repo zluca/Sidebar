@@ -688,79 +688,11 @@
 		"message"       : "清除搜尋",
 		"description"   : ""
 	},
-	"searchGeneralPlaceholder" : {
+	"searchPlaceholder" : {
 		"message"       : "搜尋",
 		"description"   : ""
 	},
-	"searchVideoPlaceholder" : {
-		"message"       : "搜尋影片",
-		"description"   : ""
-	},
-	"searchBuyPlaceholder" : {
-		"message"       : "購買",
-		"description"   : ""
-	},
 
-	"searchEngineDuckDuckGo" : {
-		"message"       : "DuckDuckGo",
-		"description"   : ""
-	},
-	"searchEngineGoogle" : {
-		"message"       : "Google",
-		"description"   : ""
-	},
-	"searchEngineYandex" : {
-		"message"       : "Yandex",
-		"description"   : ""
-	},
-	"searchEngineBing" : {
-		"message"       : "Bing",
-		"description"   : ""
-	},
-	"searchEngineYahoo" : {
-		"message"       : "Yahoo",
-		"description"   : ""
-	},
-	"searchEngineYoutube" : {
-		"message"       : "Youtube",
-		"description"   : ""
-	},
-	"searchEngineDailymotion" : {
-		"message"       : "Dailymotion",
-		"description"   : ""
-	},
-	"searchEngineVimeo" : {
-		"message"       : "Vimeo",
-		"description"   : ""
-	},
-	"searchEngineWikipedia" : {
-		"message"       : "維基百科",
-		"description"   : ""
-	},
-	"searchEngineMdn" : {
-		"message"       : "MDN",
-		"description"   : ""
-	},
-	"searchEngineStackoverflow" : {
-		"message"       : "stackOverflow",
-		"description"   : ""
-	},
-	"searchEngineAmazon" : {
-		"message"       : "亞馬遜",
-		"description"   : ""
-	},
-	"searchEngineEbay" : {
-		"message"       : "Ebay",
-		"description"   : ""
-	},
-	"searchEngineAliexpress" : {
-		"message"       : "AliExpress",
-		"description"   : ""
-	},
-	"searchEngineYandexMarket" : {
-		"message"       : "Yandex Market",
-		"description"   : ""
-	},
 	"searchCaptchaTitle" : {
 		"message"       : "偵測到 Captcha",
 		"description"   : ""
@@ -775,6 +707,10 @@
 	},
 	"searchNoResultsDescription" : {
 		"message"       : "找不到東西",
+		"description"   : ""
+	},
+	"searchOptions" : {
+		"message"       : "Configure search",
 		"description"   : ""
 	},
 
@@ -838,6 +774,31 @@
 	},
 	"dialogDescriptionLabel" : {
 		"message"       : "描述：",
+		"description"   : ""
+	},
+
+	"dialogDuckDuckGoLabel" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"dialogGoogleLabel" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"dialogYandexLabel" : {
+		"message"       : "Yandex",
+		"description"   : ""
+	},
+	"dialogBingLabel" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"dialogYahooLabel" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"dialogWikipediaLabel" : {
+		"message"       : "維基百科",
 		"description"   : ""
 	},
 
@@ -1092,22 +1053,6 @@
 		"description"   : ""
 	},
 
-	"typeGeneral" : {
-		"message"       : "一般",
-		"description"   : ""
-	},
-	"typeVideo" : {
-		"message"       : "影片",
-		"description"   : ""
-	},
-	"typeDev" : {
-		"message"       : "開發",
-		"description"   : ""
-	},
-	"typeBuy" : {
-		"message"       : "商店",
-		"description"   : ""
-	},
 	"typeHoverActions" : {
 		"message"       : "滑鼠游標停在其上時的動作",
 		"description"   : ""

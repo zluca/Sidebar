@@ -61,7 +61,7 @@ function tryToInit() {
 
 function init(response) {
 
-	// console.log(response);
+	console.log(response);
 	let lastSearch           = '';
 	let hoveredItem          = null;
 	options                  = response.options;
@@ -71,9 +71,9 @@ function init(response) {
 
 	const siteStyle          = dce('style', document.head);
 	search                   = dcea('header', document.body, ['id', 'search']);
-	searchOptions            = dcea('span', search, ['id', 'search-options']);
-	dcea('span', searchOptions, ['classList', 'search-icon']);
-	searchField              = dcea('input', search, ['id', 'search-field']);
+	searchOptions            = dceam('span', search, [['id', 'search-options'], ['title', i18n.searchOptions]]);
+	dce('span', searchOptions);
+	searchField              = dceam('input', search, [['id', 'search-field'], ['placeholder', i18n.searchPlaceholder]]);
 	const clearSearch        = dceam('span', search, [['id', 'clear-search'], ['title', i18n.clearSearchTitle]]);
 	dce('span', clearSearch);
 	const letsSearch         = dceam('span', search, [['id', 'lets-search'], ['title', i18n.searchButtonTitle]]);
@@ -327,9 +327,10 @@ function insertFinisher() {
 }
 
 function insertSearchItems(info, clean) {
+	// console.log(info);
 	let folder         = null;
 	let pid            = -1;
-	let alreadyCleaned = [];
+	// let alreadyCleaned = [];
 
 	const makeSearchItemText    = (target, title) => {
 		const l = title.length;
@@ -341,42 +342,13 @@ function insertSearchItems(info, clean) {
 			i = i + 2;
 		}
 	};
-	const makeItem     = {
-		general : item => {
-			const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item ${item.viewed ? 'viewed' : ''}`]], [['url', item.url], ['domain', item.domain]]);
-			searchItem.dataset.id  = item.id;
-			data.search.push(searchItem);
-			data.searchId.push(item.id);
-			status.titles[item.id] = {'active': false, 'title': `${item.description}\n\n${item.url}`};
-			makeSearchItemText(searchItem, item.title);
-		},
-		dev     : item => {
-			const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item ${item.viewed ? 'viewed' : ''}`]], [['url', item.url], ['domain', item.domain]]);
-			searchItem.dataset.id  = item.id;
-			data.search.push(searchItem);
-			data.searchId.push(item.id);
-			status.titles[item.id] = {'active': false, 'title': item.description};
-			makeSearchItemText(searchItem, item.title);
-		},
-		video   : item => {
-			const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item ${item.viewed ? 'viewed' : ''}`]], [['url', item.url], ['domain', item.domain]]);
-			searchItem.dataset.id  = item.id;
-			data.search.push(searchItem);
-			data.searchId.push(item.id);
-			status.titles[item.id] = {'active': false, 'title': item.description};
-			makeSearchItemText(searchItem, item.title);
-		},
-		buy     : item => {
-			const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item ${item.viewed ? 'viewed' : ''}`]], [['url', item.url], ['domain', item.domain]]);
-			searchItem.dataset.id  = item.id;
-			data.search.push(searchItem);
-			data.searchId.push(item.id);
-			searchItem.style.backgroundImage = `url(${item.img}`;
-			status.titles[item.id] = {'active': false, 'title': `${item.price}\n\n${item.title.join('')}`};
-			dcea('b', searchItem, ['textContent', item.price]);
-			const p  = dce('p', searchItem);
-			makeSearchItemText(p, item.title);
-		}
+	const makeItem     =  item => {
+		const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item ${item.viewed ? 'viewed' : ''}`]], [['url', item.url], ['domain', item.domain]]);
+		searchItem.dataset.id  = item.id;
+		data.search.push(searchItem);
+		data.searchId.push(item.id);
+		status.titles[item.id] = {'active': false, 'title': `${item.description}\n\n${item.url}`};
+		makeSearchItemText(searchItem, item.title);
 	};
 
 	for (let i = 0, l = info.length; i < l; i++) {
@@ -385,14 +357,14 @@ function insertSearchItems(info, clean) {
 			if (index === -1) continue;
 			pid         = data.searchFoldersId[index];
 			folder      = data.searchFolders[index];
-			if (clean === true)
-				if (alreadyCleaned.indexOf(pid) === -1) {
-					alreadyCleaned.push(pid);
-					while (folder.hasChildNodes())
-						folder.removeChild(folder.firstChild);
-				}
+			// if (clean === true)
+			// 	if (alreadyCleaned.indexOf(pid) === -1) {
+			// 		alreadyCleaned.push(pid);
+			// 		while (folder.hasChildNodes())
+			// 			folder.removeChild(folder.firstChild);
+			// 	}
 		}
-		makeItem[options.search.type](info[i]);
+		makeItem(info[i]);
 	}
 }
 
@@ -453,9 +425,6 @@ const messageHandler = {
 			setMode(info.value);
 			setPageTitle(searchField.value);
 		},
-		type                  : info => {
-			setSearchType(info.value);
-		},
 		searchEnabled         : info => {
 			options.startpage.searchEnabled = info.value;
 			if (info.value === true)
@@ -511,6 +480,11 @@ const messageHandler = {
 			const index = data.searchFoldersId.indexOf(info.target);
 			if (index === -1) return;
 			data.searchFolders[index].classList[info.method]('loading');
+		},
+		clearSearch : info => {
+			for (let i = data.searchFolders.length - 1; i >= 0; i--)
+			while (data.searchFolders[i].hasChildNodes())
+				data.searchFolders[i].removeChild(data.searchFolders[i].firstChild);
 		},
 		newItems    : info => {
 			const index = data.searchFoldersId.indexOf(info.target);
@@ -599,7 +573,7 @@ function initSites(sites) {
 }
 
 function initSearch(folders, query = '') {
-
+	console.log(folders);
 	while (searchResults.hasChildNodes()) {
 		searchResults.removeChild(searchResults.firstChild);
 		searchNav.removeChild(searchNav.firstChild);
@@ -619,14 +593,13 @@ function initSearch(folders, query = '') {
 
 	for (let i = 0, l = folders.length; i < l; i++) {
 		data.searchFoldersId.push(folders[i].id);
-		data.searchFolders.push(dcea('ul', searchResults, ['classList', `search-folder mode-${folders[i].mode} ${folders[i].hidden ? 'hidden' : ''}`]));
-		data.searchHeaders.push(dcea('h2', searchNav, ['classList', `mode-${folders[i].mode} ${folders[i].hidden ? 'hidden' : ''}`]));
+		data.searchFolders.push(dcea('ul', searchResults, ['classList', `search-folder ${folders[i].hidden ? 'hidden' : ''} ${folders[i].id}`]));
+		data.searchHeaders.push(dcea('h2', searchNav, ['classList', `${folders[i].hidden ? 'hidden' : ''}`]));
 		dceam('a', data.searchHeaders[i], [['href', folders[i].searchLink || ''], ['classList', `domain-${folders[i].id}`], ['textContent', folders[i].title]]);
 		if (!folders[i].hidden && folders[i].mode === options.search.type)
 			status.activeFolders++;
 	}
 	setSearchWidth();
-	setSearchType();
 }
 
 function setPageTitle(query) {
@@ -663,20 +636,6 @@ const setDomainsStyles = {
 		}
 	}
 };
-
-function setSearchType(type) {
-	if (type !== undefined)
-		options.search.type = type;
-	searchOptions.title       = i18n[`type${options.search.type}`];
-	searchField.placeholder   = i18n[`${options.search.type}Placeholder`];
-	document.body.classList   = options.search.type;
-	status.activeFolders      = 0;
-	for (let i = data.searchFolders.length - 1; i >= 0; i--)
-		if (data.searchFolders[i].classList.contains(`mode-${options.search.type}`))
-			if (!data.searchFolders[i].classList.contains('hidden'))
-				status.activeFolders++;
-	setSearchWidth();
-}
 
 function setSearchWidth() {
 	switch (status.activeFolders) {

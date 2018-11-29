@@ -123,7 +123,7 @@ body {
 		.options-section.active {
 			border-color: var(--border-color-active);
 		}
-		label.options-section {
+		label.icon {
 			cursor: pointer;
 			text-align: left;
 			white-space: nowrap;
@@ -132,9 +132,6 @@ body {
 			background-size: 2rem 2rem;
 			background-position: 0 .3rem;
 			font-size: 1.5rem;
-		}
-		label.options-section.active {
-			background-color: var(--background-color-active);
 		}
 			.option {
 				cursor: pointer;

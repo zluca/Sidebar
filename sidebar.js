@@ -341,7 +341,7 @@ function tryToInit() {
 function initSidebar(response) {
 	// console.log(response);
 	const onMessage = (message, sender, sendResponse) => {
-		// console.log(message);
+		console.log(message);
 		if (message.hasOwnProperty('target'))
 			if (message.target === 'sidebar' || message.target === status.side)
 				if (messageHandler.hasOwnProperty(message.subject))
@@ -1375,52 +1375,25 @@ const initBlock = {
 	},
 
 	search    : info => {
-
+		console.log(info);
 		const updateItem      = (item, info) => {
-
-			const makeSearchText    = (target, title) => {
-				const l = title.length;
-				let i   = 1;
-				target.appendChild(document.createTextNode(title[0]));
-				while (i < l) {
-					dcea('b', target, [['textContent', title[i]]]);
-					target.appendChild(document.createTextNode(title[i + 1]));
-					i = i + 2;
-				}
-			};
-
-			const types = {
-				general : _ => {
-					makeSearchText(item, info.title);
-					makeTitle(info.id, info.description, info.url);
-				},
-				dev : _ => {
-					makeSearchText(item, info.title);
-					makeTitle(info.id, info.description, info.url);
-				},
-				video : _ => {
-					makeSearchText(item, info.title);
-					makeTitle(info.id, info.description, info.url);
-				},
-				buy     : _ => {
-					dcea('b', item, [['textContent', info.price]]);
-					const p  = dce('p');
-					item.appendChild(p);
-					makeSearchText(p, info.title);
-					makeTitle(info.id, info.price, info.title.join(''));
-					item.style.backgroundImage = `url(${info.img})`;
-				}
-			};
-
+			const l          = info.title.length;
+			let i            = 1;
 			item.href        = info.url;
 			item.dataset.url = info.url;
-			item.classList   = `search item domain-${info.domain} type-${info.type} ${info.viewed ? 'viewed' : ''}`;
-			types[options.search.type]();
+			item.classList   = `search item domain-${info.domain} ${info.type} ${info.viewed ? 'viewed' : ''}`;
+			item.appendChild(document.createTextNode(info.title[0]));
+			while (i < l) {
+				dcea('b', item, [['textContent', info.title[i]], ['href', info.url]]);
+				item.appendChild(document.createTextNode(info.title[i + 1]));
+				i = i + 2;
+			}
+			makeTitle(info.id, info.description, info.url);
 		};
 
 		i18n.search           = info.i18n;
 		prepareBlock('search');
-		setBlockClass(undefined, `${options.search.type} ${options.misc.searchAtTop ? 'search-at-top' : ''}`);
+		setBlockClass(undefined, `${options.misc.searchAtTop ? 'search-at-top' : ''}`);
 		setDomainStyle.rewrite(info.domains);
 		status.timeStamp.mode = info.timeStamp;
 
@@ -1433,15 +1406,15 @@ const initBlock = {
 			newItems   : info => {
 				const folder = getFolderById(info.target);
 				if (folder === false) return;
-				if (info.clean === true) {
-					status.titles = {};
-					while (data.itemId.length > 0)
-						removeById(data.itemId[0]);
-				}
 				insertItems(info.items);
 			},
+			clearSearch: info => {
+				status.titles = {};
+				for (let i = data.itemId.length - 1; i >= 0; i--)
+					removeById(data.itemId[i]);
+			},
 			changeQuery: info => {
-				search.value = info;
+				insertSearchItems([], info);
 			},
 			showFolder : info => {
 				const folder = getFolderById(info.id);
@@ -1464,12 +1437,6 @@ const initBlock = {
 			}
 		};
 
-		messageHandler.options.type =  info => {
-			options.search.type = info.value;
-			searchIcon.title    = i18n.search[`type${options.search.type}`];
-			setBlockClass(undefined, `${info.value} ${options.misc.searchAtTop ? 'search-at-top' : ''}`);
-		},
-
 		insertItems           = (items, position = 'last') => {
 			let pid    = 0;
 			let folder = rootFolder;
@@ -1485,34 +1452,11 @@ const initBlock = {
 			}
 		};
 
+		makeSearch('search');
 		status.lastSearch = '';
-		const search      = dcea('input', controls.bottom, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n.search[`${options.search.type}Placeholder`]], ['value', info.query]]);
-		const searchIcon  = dcea('span', controls.bottom, [['classList', `search-icon ${options.search.type}`], ['title', i18n.search[`type${options.search.type}`]]]);
-
-		searchIcon.addEventListener('click', event => {
-			send('background', 'dialog', 'searchSelect', '');
-		}, {'passive': true});
-
-		search.addEventListener('keydown', event => {
-			if (event.key === 'Enter') {
-				const value = search.value;
-				if (value.length > 3)
-					send('background', 'search', 'query', value);
-			}
-			else {
-				setTimeout(_ => {
-					const subject = search.value;
-					if (subject !== status.lastSearch) {
-						status.lastSearch = subject;
-						send('background', 'search', 'changeQuery', subject);
-					}
-				}, 10);
-			}
-		}, {'passive': true});
 
 		insertFolders(info.searchFolders);
-		insertItems(info.search);
-
+		insertSearchItems(info.search, info.query);
 		finishBlock('search');
 	}
 };
@@ -2017,18 +1961,31 @@ function makeSearch(mode) {
 	}
 	status.lastSearch = '';
 	const search      = dcea('input', target, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
-	dcea('span', target, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
+	if (mode !== 'search')
+		dcea('span', target, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
+	else
+		dcea('span', target, [['classList', 'search-options'], ['title', i18n.search.searchOptions]]).addEventListener('click', event => {
+				send('background', 'dialog', 'searchSelect', '');
+		});
 	const clearSearch = dcea('span', target, [['classList', 'clear-search'], ['title', i18n[mode].clearSearchTitle]]);
 
-	insertSearchItems = (items, searchTerm) => {
-		while (searchResults.lastChild.firstChild)
-			searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
-		insertItems(items, 'search');
-		if (searchTerm !== undefined)
-			search.value = searchTerm;
-		clearSearch.style.setProperty('display', 'inline-block');
-		searchActive(true);
-	};
+	if (mode !== 'search')
+		insertSearchItems = (items, searchTerm) => {
+			while (searchResults.lastChild.firstChild)
+				searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
+			insertItems(items, 'search');
+			if (searchTerm !== undefined)
+				search.value = searchTerm;
+			clearSearch.style.setProperty('display', 'inline-block');
+			searchActive(true);
+		};
+	else
+		insertSearchItems = (items, searchTerm) => {
+			insertItems(items);
+			if (searchTerm !== undefined)
+				search.value = searchTerm;
+			clearSearch.style.setProperty('display', 'inline-block');
+		}
 
 	searchActive = isIt => {
 		if (isIt === true) {
@@ -2046,8 +2003,15 @@ function makeSearch(mode) {
 
 	search.addEventListener('keyup', event => {
 		const value = search.value;
-		if (value.length > 0)
+		if (value.length > 0) {
 			clearSearch.style.setProperty('display', 'inline-block');
+			if (mode === 'search') {
+				if (event.key === 'Enter')
+					send('background', 'search', 'query', value);
+				else
+					send('background', 'search', 'changeQuery', value);
+			}
+		}
 		else
 			clearSearch.click();
 		if (value.length > 2) {
@@ -2060,6 +2024,8 @@ function makeSearch(mode) {
 
 	clearSearch.addEventListener('click', event => {
 		send('background', mode, 'clearSearch');
+		if (mode !== 'search')
+			send('background', 'search', 'changeQuery', '');
 	}, {'passive': true});
 }
 

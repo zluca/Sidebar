@@ -688,79 +688,11 @@
 		"message"       : "Clear search",
 		"description"   : ""
 	},
-	"searchGeneralPlaceholder" : {
+	"searchPlaceholder" : {
 		"message"       : "Procurar",
 		"description"   : ""
 	},
-	"searchVideoPlaceholder" : {
-		"message"       : "Search video",
-		"description"   : ""
-	},
-	"searchBuyPlaceholder" : {
-		"message"       : "Comprar",
-		"description"   : ""
-	},
 
-	"searchEngineDuckDuckGo" : {
-		"message"       : "DuckDuckGo",
-		"description"   : ""
-	},
-	"searchEngineGoogle" : {
-		"message"       : "Google",
-		"description"   : ""
-	},
-	"searchEngineYandex" : {
-		"message"       : "Yandex",
-		"description"   : ""
-	},
-	"searchEngineBing" : {
-		"message"       : "Bing",
-		"description"   : ""
-	},
-	"searchEngineYahoo" : {
-		"message"       : "Yahoo",
-		"description"   : ""
-	},
-	"searchEngineYoutube" : {
-		"message"       : "Youtube",
-		"description"   : ""
-	},
-	"searchEngineDailymotion" : {
-		"message"       : "Dailymotion",
-		"description"   : ""
-	},
-	"searchEngineVimeo" : {
-		"message"       : "Vimeo",
-		"description"   : ""
-	},
-	"searchEngineWikipedia" : {
-		"message"       : "Wikipedia",
-		"description"   : ""
-	},
-	"searchEngineMdn" : {
-		"message"       : "MDN",
-		"description"   : ""
-	},
-	"searchEngineStackoverflow" : {
-		"message"       : "stackOverflow",
-		"description"   : ""
-	},
-	"searchEngineAmazon" : {
-		"message"       : "Amazon",
-		"description"   : ""
-	},
-	"searchEngineEbay" : {
-		"message"       : "Ebay",
-		"description"   : ""
-	},
-	"searchEngineAliexpress" : {
-		"message"       : "AliExpress",
-		"description"   : ""
-	},
-	"searchEngineYandexMarket" : {
-		"message"       : "Yandex Market",
-		"description"   : ""
-	},
 	"searchCaptchaTitle" : {
 		"message"       : "Captcha detected",
 		"description"   : ""
@@ -775,6 +707,10 @@
 	},
 	"searchNoResultsDescription" : {
 		"message"       : "Nothing found",
+		"description"   : ""
+	},
+	"searchOptions" : {
+		"message"       : "Configure search",
 		"description"   : ""
 	},
 
@@ -838,6 +774,31 @@
 	},
 	"dialogDescriptionLabel" : {
 		"message"       : "Descrição:",
+		"description"   : ""
+	},
+
+	"dialogDuckDuckGoLabel" : {
+		"message"       : "DuckDuckGo",
+		"description"   : ""
+	},
+	"dialogGoogleLabel" : {
+		"message"       : "Google",
+		"description"   : ""
+	},
+	"dialogYandexLabel" : {
+		"message"       : "Yandex",
+		"description"   : ""
+	},
+	"dialogBingLabel" : {
+		"message"       : "Bing",
+		"description"   : ""
+	},
+	"dialogYahooLabel" : {
+		"message"       : "Yahoo",
+		"description"   : ""
+	},
+	"dialogWikipediaLabel" : {
+		"message"       : "Wikipedia",
 		"description"   : ""
 	},
 
@@ -1092,22 +1053,6 @@
 		"description"   : ""
 	},
 
-	"typeGeneral" : {
-		"message"       : "General",
-		"description"   : ""
-	},
-	"typeVideo" : {
-		"message"       : "Video",
-		"description"   : ""
-	},
-	"typeDev" : {
-		"message"       : "Development",
-		"description"   : ""
-	},
-	"typeBuy" : {
-		"message"       : "Shop",
-		"description"   : ""
-	},
 	"typeHoverActions" : {
 		"message"       : "Hover actions",
 		"description"   : ""

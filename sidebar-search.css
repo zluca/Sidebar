@@ -21,80 +21,18 @@
 .domain-yahoo {
 	background-image: url("icons/yahoo.svg");
 }
-.domain-youtube {
-	background-image: url("icons/youtube.svg");
-}
-.domain-dailymotion {
-	background-image: url("icons/dailymotion.svg");
-}
-.domain-vimeo {
-	background-image: url("icons/vimeo.svg");
-}
 .domain-wikipedia {
 	background-image: url("icons/wikipedia.svg");
 }
-.domain-mdn {
-	background-image: url("icons/mdn.svg");
-}
-.domain-stackoverflow {
-	background-image: url("icons/stackoverflow.svg");
-}
-.domain-amazon {
-	background-image: url("icons/amazon.svg");
-}
-.domain-ebay {
-	background-image: url("icons/ebay.svg");
-}
-.domain-aliexpress {
-	background-image: url("icons/aliexpress.svg");
-}
-.domain-yandexmarket {
-	background-image: url("icons/yandex.svg");
-}
 
-.general .search-icon {
-	-webkit-mask-image: url(icons/general.svg);
-	mask-image: url(icons/general.svg);
-}
-.video .search-icon {
-	-webkit-mask-image: url(icons/video.svg);
-	mask-image: url(icons/video.svg);
-}
-.dev .search-icon {
-	-webkit-mask-image: url(icons/dev.svg);
-	mask-image: url(icons/dev.svg);
-}
-.buy .search-icon {
-	-webkit-mask-image: url(icons/buy.svg);
-	mask-image: url(icons/buy.svg);
-}
-
-.folder,
-.search-folder,
-h2 {
-	display: none;
-}
-.general .folder.mode-general,
-.video .folder.mode-video,
-.dev .folder.mode-dev,
-.buy .folder.mode-buy {
-	display: block;
-}
-body.general .mode-general,
-body.video .mode-video,
-body.dev .mode-dev,
-body.buy .mode-buy {
+.search-folder {
 	display: table-cell;
 }
-
-.fixed .buy .search.item {
-	height: 2rem;
-	background-size: 2rem 2rem;
-	padding-left: 3rem;
-	word-wrap: break-word;
-}
-.video #search-results .search.item,
-.dev #search-results .search.item {
-	padding-left: .6rem;
-	background-image: none;
-}
+	.search-folder.wikipedia>a {
+		background-image: none;
+		padding-left: .1rem;
+	}
+	#search-folder-wikipedia>div>a {
+		background-image: none;
+		padding-left: .3rem;
+	}
