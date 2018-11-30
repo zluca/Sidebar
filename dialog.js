@@ -126,6 +126,29 @@ function makeDialogWindow(data, warnings, theme) {
 			}
 			return input;
 		},
+		togglers : (type, options, prefix, select = false) => {
+			const label         = document.createElement('label');
+			label.textContent   = getI18n(`type${type}`);
+			label.classList.add('options-section');
+			label.dataset.id    = type;
+			const section = document.createElement('div');
+			section.classList.add('options-section');
+			if (select === true) {
+				section.classList.add('active');
+				label.classList.add('active');
+			}
+			for (let option in options) {
+				const optionIcon        = document.createElement('span');
+				optionIcon.classList    = `option ${options[option] === true ? ' selected' : ''}`;
+				optionIcon.style.backgroundImage = `url(icons/${option}.svg)`;
+				optionIcon.dataset.id   = option;
+				optionIcon.dataset.type = type;
+				optionIcon.title        = getI18n(`${prefix}${option}`);
+				section.appendChild(optionIcon);
+			}
+			main.appendChild(label);
+			main.appendChild(section);
+		},
 		selectors : (type, options) => {
 			const label         = document.createElement('label');
 			label.textContent   = getI18n(`type${type}`);
