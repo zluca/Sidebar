@@ -741,7 +741,7 @@ const options = {
 			handler : 'searchEngine'
 		},
 		wikipedia  : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			mode    : 'dev',
 			targets : [],
