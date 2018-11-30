@@ -61,7 +61,6 @@ function tryToInit() {
 
 function init(response) {
 
-	console.log(response);
 	let lastSearch           = '';
 	let hoveredItem          = null;
 	options                  = response.options;
@@ -327,10 +326,9 @@ function insertFinisher() {
 }
 
 function insertSearchItems(info, clean) {
-	// console.log(info);
+
 	let folder         = null;
 	let pid            = -1;
-	// let alreadyCleaned = [];
 
 	const makeSearchItemText    = (target, title) => {
 		const l = title.length;
@@ -357,12 +355,6 @@ function insertSearchItems(info, clean) {
 			if (index === -1) continue;
 			pid         = data.searchFoldersId[index];
 			folder      = data.searchFolders[index];
-			// if (clean === true)
-			// 	if (alreadyCleaned.indexOf(pid) === -1) {
-			// 		alreadyCleaned.push(pid);
-			// 		while (folder.hasChildNodes())
-			// 			folder.removeChild(folder.firstChild);
-			// 	}
 		}
 		makeItem(info[i]);
 	}
@@ -573,7 +565,7 @@ function initSites(sites) {
 }
 
 function initSearch(folders, query = '') {
-	console.log(folders);
+
 	while (searchResults.hasChildNodes()) {
 		searchResults.removeChild(searchResults.firstChild);
 		searchNav.removeChild(searchNav.firstChild);

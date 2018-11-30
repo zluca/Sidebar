@@ -341,7 +341,7 @@ function tryToInit() {
 function initSidebar(response) {
 	// console.log(response);
 	const onMessage = (message, sender, sendResponse) => {
-		console.log(message);
+		// console.log(message);
 		if (message.hasOwnProperty('target'))
 			if (message.target === 'sidebar' || message.target === status.side)
 				if (messageHandler.hasOwnProperty(message.subject))
@@ -1375,7 +1375,7 @@ const initBlock = {
 	},
 
 	search    : info => {
-		console.log(info);
+
 		const updateItem      = (item, info) => {
 			const l          = info.title.length;
 			let i            = 1;
