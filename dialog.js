@@ -13,7 +13,7 @@ send('background', 'request', 'dialog', {needResponse: true}, response => {
 });
 
 function setFontSize(mainfontSize) {
-	doc.style.setProperty('font-size', mainfontSize);
+	doc.style.setProperty('font-size', 'medium');
 	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
 	brauzer.tabs.getZoom(zoom => {
 		doc.style.fontSize   = `${fontSize / zoom}px`;

@@ -60,7 +60,7 @@ body {
 	header {
 		white-space: nowrap;
 		text-align: center;
-		font-size: 2.4rem;
+		font-size: 1.8rem;
 	}
 	main {
 		margin: 1rem 0 2rem 0;
@@ -69,7 +69,7 @@ body {
 		grid-row-gap: 1rem;
 		grid-column-gap: 0.8rem;
 		align-items: center;
-		font-size: 1.8rem;
+		font-size: 1rem;
 	}
 		main>p {
 			grid-column-start: 1;
@@ -79,7 +79,8 @@ body {
 		}
 		main>label {
 			padding: 0.3rem;
-			font-size: 1.8rem;
+			white-space: nowrap;
+			font-size: 1.2rem;
 		}
 		main>label {
 			text-align: right;
@@ -163,7 +164,7 @@ body {
 				margin-bottom: .5rem;
 			}
 				select {
-					font-size: 1.4rem;
+					font-size: 1rem;
 					display: block;
 					border-width: .1rem;
 				}
@@ -175,7 +176,7 @@ body {
 						}
 
 	footer {
-		font-size: 1.6rem;
+		font-size: 1.2rem;
 		display: grid;
 		grid-template-columns: 1fr auto;
 	}
