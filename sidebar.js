@@ -1982,9 +1982,14 @@ function makeSearch(mode) {
 	else
 		insertSearchItems = (items, searchTerm) => {
 			insertItems(items);
-			if (searchTerm !== undefined)
+			if (typeof searchTerm === 'string' && searchTerm !== '') {
+				clearSearch.style.setProperty('display', 'inline-block');
 				search.value = searchTerm;
-			clearSearch.style.setProperty('display', 'inline-block');
+			}
+			else {
+				clearSearch.style.setProperty('display', 'none');
+				search.value = '';
+			}
 		}
 
 	searchActive = isIt => {
@@ -2001,30 +2006,37 @@ function makeSearch(mode) {
 		}
 	}
 
-	search.addEventListener('keyup', event => {
-		const value = search.value;
-		if (value.length > 0) {
-			clearSearch.style.setProperty('display', 'inline-block');
-			if (mode === 'search') {
+	if (mode === 'search')
+		search.addEventListener('keyup', event => {
+			const value = search.value;
+			if (value.length > 0) {
+				clearSearch.style.setProperty('display', 'inline-block');
 				if (event.key === 'Enter')
 					send('background', 'search', 'query', value);
 				else
 					send('background', 'search', 'changeQuery', value);
 			}
-		}
-		else
-			clearSearch.click();
-		if (value.length > 2) {
-			if (status.lastSearch !== value) {
-				status.lastSearch = value;
-				send('background', mode, 'search', {'request': value});
+			else
+				clearSearch.click();
+		}, {'passive': true});
+	else
+		search.addEventListener('keyup', event => {
+			const value = search.value;
+			if (value.length > 0)
+				clearSearch.style.setProperty('display', 'inline-block');
+			else
+				return clearSearch.click();
+			if (value.length > 2) {
+				if (status.lastSearch !== value) {
+					status.lastSearch = value;
+					send('background', mode, 'search', {'request': value});
+				}
 			}
-		}
-	}, {'passive': true});
+		}, {'passive': true});
 
 	clearSearch.addEventListener('click', event => {
 		send('background', mode, 'clearSearch');
-		if (mode !== 'search')
+		if (mode === 'search')
 			send('background', 'search', 'changeQuery', '');
 	}, {'passive': true});
 }
