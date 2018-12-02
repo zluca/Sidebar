@@ -553,7 +553,7 @@ const initBlock = {
 				const newActiveTab = getById(info);
 				if (newActiveTab === false) return;
 				status.activeTabId = info;
-				if (status.activeTab) {
+				if (status.activeTab && status.activeTab.parentNode) {
 					status.activeTab.classList.remove('active');
 					if (options.misc.tabsMode === 'domain')
 						status.activeTab.parentNode.parentNode.firstChild.classList.remove('active');
