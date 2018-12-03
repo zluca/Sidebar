@@ -4735,6 +4735,7 @@ function createDialogWindow(type, dialogData) {
 	status.dialogType = type;
 	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 	if (activeTab === false) return;
+	status.dialogData.zoom = activeTab.zoom;
 	if (tabIsProtected(activeTab) === false)
 		if (activeTab.status !== 'loading')
 			return sendToTab(status.activeTabsIds[status.activeWindow], 'content', 'dialog', 'create', type);

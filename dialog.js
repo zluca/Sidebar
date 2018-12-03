@@ -12,16 +12,15 @@ send('background', 'request', 'dialog', {needResponse: true}, response => {
 	makeDialogWindow(response.data, response.warnings, response.theme);
 });
 
-function setFontSize(mainfontSize) {
-	doc.style.setProperty('font-size', 'medium');
-	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
-	brauzer.tabs.getZoom(zoom => {
-		doc.style.fontSize   = `${fontSize / zoom}px`;
-		doc.style.lineHeight = `${fontSize * 1.2 / zoom}px`;
-	});
-}
 
 function makeDialogWindow(data, warnings, theme) {
+
+	const setFontSize = mainfontSize => {
+		doc.style.setProperty('font-size', 'medium');
+		const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+		doc.style.fontSize   = `${fontSize / data.zoom}px`;
+		doc.style.lineHeight = `${fontSize * 1.2 / data.zoom}px`;
+	};
 
 	setFontSize();
 	window.onresize = _ => {setFontSize(theme.mainFontSize);};
