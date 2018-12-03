@@ -3347,7 +3347,7 @@ const initService = {
 		};
 
 		const makeRssDomain = (link, url) => {
-			return link !== null ? makeDomain('rss', `${guidFromUrl(url)}.rss`, link.textContent.trim()) : makeDomain('rss', url);
+			return link !== null ? makeDomain('rss', guidFromUrl(url), link.textContent.trim()) : makeDomain('rss', url);
 		};
 
 		const createRssFeed = (url, title) => {
@@ -3389,7 +3389,7 @@ const initService = {
 						feed.title       = rssTitle;
 						feed.view        = 'domain';
 						feed.description = desc;
-						feed.domainUrl   = fav !== null ? `${guid}.rss` : rssUrl;
+						feed.domainUrl   = rssDomain.fav !== null ? guid : rssUrl;
 						feed.domain      = rssDomain.id;
 						feed.url         = rssUrl;
 						feed.status      = 'complete';
@@ -5034,8 +5034,7 @@ function getFolded(id) {
 function domainFromUrl(url) {
 	if (url === undefined || url === '')
 		return 'default';
-	let domain = /\/\//.test(url) ? url.split('//') : url;
-	domain     = domain[domain.length > 0 ? 1 : 0];
+	let domain = /\/\//.test(url) ? url.split('//')[1] : url;
 	domain     = domain.split('/')[0];
 	domain     = domain.match(/^([\da-z\.-]+)(\.([a-z\.]{2,6}))?/i);
 	if (domain !== null)
