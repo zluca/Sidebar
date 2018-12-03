@@ -438,6 +438,7 @@ function setSideBarWidth(side, value) {
 	}
 	else
 		openWide[`${options[side].open === true}${options[side].wide === true}`]();
+	doc.style.removeProperty('font-size');
 }
 
 function resizeSideBar(side) {
