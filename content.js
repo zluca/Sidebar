@@ -425,8 +425,6 @@ function setSideBarWidth(side, value) {
 		}
 	};
 
-    doc.style.setProperty('font-size', `${fontSize / status.zoom}px`);
-
 	const borderWidth = fontSize / 8 / status.zoom;
 	const iconWidth   = fontSize * 1.7 / status.zoom;
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
