@@ -2142,6 +2142,7 @@ const initService = {
 		};
 
 		const setWindowsView    = _ => {
+			if (data.windowsFolders.length === 0) return;
 			status.windowsShow = data.windowsFolders.length > 1;
 			for (let i = data.windowsFolders.length - 1; i >= 0; i--)
 				data.windowsFolders[i].view = status.windowsShow ? 'type' : 'hidden';
