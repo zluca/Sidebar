@@ -17,7 +17,7 @@ function makeDialogWindow(data, warnings, theme) {
 
 	const setFontSize = mainfontSize => {
 		doc.style.setProperty('font-size', 'medium');
-		const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+		const fontSize       = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
 		doc.style.fontSize   = `${fontSize / data.zoom}px`;
 		doc.style.lineHeight = `${fontSize * 1.2 / data.zoom}px`;
 	};
