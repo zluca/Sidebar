@@ -514,6 +514,10 @@
 		"message"       : "刪除 Pocket 資料夾",
 		"description"   : ""
 	},
+	"optWarningsHistoryFolderDeleteLabel" : {
+		"message"       : "Delete history folder",
+		"description"   : ""
+	},
 
 	"optStartPageButton" : {
 		"message"       : "首頁",

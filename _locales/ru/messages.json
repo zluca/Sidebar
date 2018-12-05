@@ -514,6 +514,10 @@
 		"message"       : "Удалением папки из Pocket",
 		"description"   : ""
 	},
+	"optWarningsHistoryFolderDeleteLabel" : {
+		"message"       : "Удалением папки из истории",
+		"description"   : ""
+	},
 
 	"optStartPageButton" : {
 		"message"       : "Стартовая страница",

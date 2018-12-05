@@ -514,6 +514,10 @@
 		"message"       : "Delete pocket folder",
 		"description"   : ""
 	},
+	"optWarningsHistoryFolderDeleteLabel" : {
+		"message"       : "Delete history folder",
+		"description"   : ""
+	},
 
 	"optStartPageButton" : {
 		"message"       : "Página Inicial",
