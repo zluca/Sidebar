@@ -1294,13 +1294,13 @@ const sidebarAction =
 			null;
 
 const modeData = {
-	tabs      : null,
-	bookmarks : null,
-	history   : null,
-	downloads : null,
-	rss       : null,
-	pocket    : null,
-	search    : null
+	tabs      : _ => {},
+	bookmarks : _ => {},
+	history   : _ => {},
+	downloads : _ => {},
+	rss       : _ => {},
+	pocket    : _ => {},
+	search    : _ => {}
 };
 
 const optionsHandler = {
