@@ -136,9 +136,9 @@ body {
 			.option {
 				cursor: pointer;
 				display: inline-block;
-				width: 2.2rem;
-				height: 2.2rem;
-				background-size: 1.8rem 1.8rem;
+				width: 1.6rem;
+				height: 1.6rem;
+				background-size: 1.2rem 1.2rem;
 				background-repeat: no-repeat;
 				background-position: .2rem .2rem;
 				margin: 0 .5rem .3rem .5rem;
@@ -167,12 +167,6 @@ body {
 					display: block;
 					border-width: .1rem;
 				}
-					optgroup {
-						font-size: 1.2rem;
-					}
-						option {
-							padding: .2rem .3rem;
-						}
 
 	footer {
 		font-size: 1rem;
