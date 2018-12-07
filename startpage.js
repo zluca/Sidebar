@@ -677,7 +677,7 @@ function setColor(colors) {
 
 function setStyle() {
 	doc.style.setProperty('font-size', options.theme.mainFontSize);
-	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	const fontSize        = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
 	doc.style.setProperty('font-size', `${fontSize / status.zoom}px`);
 	const marginH         = options.startpage.marginH / status.zoom;
 	const marginV         = options.startpage.marginV / status.zoom;

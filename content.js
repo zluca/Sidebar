@@ -395,9 +395,11 @@ function setColor() {
 }
 
 function setSideBarWidth(side, value) {
-	const oldSize  = doc.style.getPropertyValue('font-size');
-	doc.style.setProperty('font-size', options.theme.mainFontSize);
-	const fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+	const temp     = document.createElement('temp');
+	document.body.appendChild(temp);
+	temp.style.setProperty('font-size', options.theme.mainFontSize);
+	const fontSize = parseInt(window.getComputedStyle(temp).getPropertyValue('font-size'));
+	doc.body.removeChild(temp);
 	const trueSide = side.replace('Bar', '');
 	const openWide = {
 		truetrue   : _ => {
@@ -439,7 +441,6 @@ function setSideBarWidth(side, value) {
 	}
 	else
 		openWide[`${options[side].open === true}${options[side].wide === true}`]();
-	doc.style.setProperty('font-size', oldSize);
 }
 
 function resizeSideBar(side) {
