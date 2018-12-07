@@ -183,7 +183,8 @@ const messageHandler = {
 			rightClick = true;
 		},
 		zoom       : info => {
-			status.zoom = info;
+			if (info.id !== status.id) return;
+			status.zoom = info.zoom;
 			if (options.leftBar.method === 'iframe')
 				setSideBarWidth('leftBar');
 			if (options.rightBar.method === 'iframe')
@@ -217,6 +218,7 @@ function init() {
 		options               = response;
 		options.leftBar.open  = false;
 		options.rightBar.open = false;
+		status.id             = response.id;
 		status.zoom           = response.zoom;
 		if (status.docReady === true)
 			injectElements();
@@ -395,11 +397,19 @@ function setColor() {
 }
 
 function setSideBarWidth(side, value) {
-	const temp     = document.createElement('temp');
-	document.body.appendChild(temp);
-	temp.style.setProperty('font-size', options.theme.mainFontSize);
-	const fontSize = parseInt(window.getComputedStyle(temp).getPropertyValue('font-size'));
-	document.body.removeChild(temp);
+	let fontSize;
+	if (document.body) {
+		const temp     = document.createElement('temp');
+		document.body.appendChild(temp);
+		temp.style.setProperty('font-size', options.theme.mainFontSize);
+		fontSize = parseInt(window.getComputedStyle(temp).getPropertyValue('font-size'));
+		document.body.removeChild(temp);
+	}
+	else {
+		doc.style.setProperty('font-size', options.theme.mainFontSize);
+		fontSize = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
+		doc.style.removeProperty('font-size');
+	}
 	const trueSide = side.replace('Bar', '');
 	const openWide = {
 		truetrue   : _ => {

@@ -213,6 +213,8 @@ const data = {
 		'timeStamp': null
 		},
 	startpageData      : {
+		'id'            : -1,
+		'zoom'          : 1,
 		'sites'         : null,
 		'search'        : null,
 		'searchFolders' : null,
@@ -1438,9 +1440,10 @@ const messageHandler = {
 			const tab = getById('tabs', sender.tab.id);
 			if (tab === false) return;
 			sendResponse({
+				'id'       : tab.id,
+				'zoom'     : tab.zoom,
 				'leftBar'  : optionsShort.leftBar,
 				'rightBar' : optionsShort.rightBar,
-				'zoom'     : tab.zoom,
 				'theme'    : {
 					'mainFontSize'      : optionsShort.theme.mainFontSize,
 					'borderColor'       : optionsShort.theme.borderColor,
@@ -1457,7 +1460,7 @@ const messageHandler = {
 			const handler = {
 				window: side => {
 					status[side].tabId  = sender.tab.id;
-					sendResponse(sideBarData(side));
+					sendResponse(sideBarData(side, {'id': -1, 'zoom': 1}));
 				},
 				native: side => {
 					status.nativeActive = true;
@@ -1473,13 +1476,13 @@ const messageHandler = {
 							else
 								optionsHandler.method(options.status.nativeSbPosition.value, 'method', 'native');
 					}
-					sendResponse(sideBarData(trueSide));
+					sendResponse(sideBarData(trueSide, {'id': -1, 'zoom': 1}));
 				},
 				iframe: side => {
 					const tab = getById('tabs', sender.tab.id);
 					if (tab === false) return;
 					tab.activated = true;
-					sendResponse(sideBarData(side, tab.zoom));
+					sendResponse(sideBarData(side, tab));
 				}
 			};
 			if (status.init[options[message.data.side].mode.value] === true)
@@ -1491,7 +1494,7 @@ const messageHandler = {
 				if (options.services.startpage.value === true) {
 					const tab = getById('tabs', sender.tab.id);
 					if (tab === false) return;
-					sendResponse(startpageData(tab.zoom));
+					sendResponse(startpageData(tab));
 				}
 		},
 		options : (message, sender, sendResponse) => {
@@ -2163,7 +2166,7 @@ const initService = {
 			reInit(tab.id);
 			if (options.services.startpage.value === true)
 				if (tab.url === config.extensionStartPage)
-					send('startpage', 'reInit', 'page', startpageData(tab.zoom));
+					send('startpage', 'reInit', 'page', startpageData(tab));
 		};
 
 		const setFocused = (win, focused) => {
@@ -2182,9 +2185,9 @@ const initService = {
 			if (tab === false) return;
 			send('sidebar', 'tabs', 'active', status.activeTabsIds[status.activeWindow]);
 			if (options.leftBar.method.value === 'iframe')
-				send('leftBar', 'set', 'reInit', sideBarData('leftBar', tab.zoom));
+				send('leftBar', 'set', 'reInit', sideBarData('leftBar', tab));
 			if (options.rightBar.method.value === 'iframe')
-				send('rightBar', 'set', 'reInit', sideBarData('rightBar', tab.zoom));
+				send('rightBar', 'set', 'reInit', sideBarData('rightBar', tab));
 			send('content', 'reInit', 'sideBar', {
 				leftBar  : optionsShort.leftBar,
 				rightBar : optionsShort.rightBar,
@@ -2253,7 +2256,7 @@ const initService = {
 			reInit(tabInfo.tabId);
 			if (options.services.startpage.value === true)
 				if (tab.url === config.extensionStartPage)
-					send('startpage', 'reInit', 'page', startpageData(tab.zoom));
+					send('startpage', 'reInit', 'page', startpageData(tab));
 		};
 
 		const onUpdated         = (id, info, tab) => {
@@ -2363,23 +2366,23 @@ const initService = {
 			if (tab === false) return;
 			if (tab.zoom === info.newZoomFactor) return;
 			tab.zoom = info.newZoomFactor;
-			sendZoom(tab.id, tab.zoom);
+			sendZoom(tab);
 		};
 
 		const getZoom           = (id, aTab = false) => {
 			const tab = aTab === false ? getById('tabs', id) : aTab;
 			if (tab === false) return;
-			execMethod(brauzer.tabs.getZoom, zoom => {tab.zoom = zoom; sendZoom(tab.id, zoom)}, id);
+			execMethod(brauzer.tabs.getZoom, zoom => {tab.zoom = zoom; sendZoom(tab)}, id);
 		};
 
-		const sendZoom          = (id, zoom) => {
-			send('content', 'set', 'zoom', zoom);
+		const sendZoom          = (tab) => {
+			send('content', 'set', 'zoom', {'id': tab.id, 'zoom': tab.zoom});
 			if (options.leftBar.method.value === 'iframe')
-				send('leftBar', 'set', 'zoom', zoom);
+				send('leftBar', 'set', 'zoom', {'id': tab.id, 'zoom': tab.zoom});
 			if (options.rightBar.method.value === 'iframe')
-				send('rightBar', 'set', 'zoom', zoom);
+				send('rightBar', 'set', 'zoom', {'id': tab.id, 'zoom': tab.zoom});
 			if (options.services.startpage.value === true)
-				send('startpage', 'set', 'zoom', zoom);
+				send('startpage', 'set', 'zoom', {'id': tab.id, 'zoom': tab.zoom});
 		}
 
 		const getWindows        = windows => {
@@ -2537,16 +2540,16 @@ const initService = {
 			brauzer.bookmarks.onRemoved.addListener(onRemoved);
 
 			if (start === 'reInit') {
-				let zoom = 1;
+				let fakeTab = {'id': -1, 'zoom': 1};
 				if (options.leftBar.method.value === 'iframe' || options.rightBar.method.value === 'iframe') {
 					const tab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 					if (tab !== false)
-						zoom = tab.zoom;
+						fakeTab = tab;
 				}
 				if (options.leftBar.mode.value === 'bookmarks')
-					send('leftBar', 'set', 'reInit', sideBarData('leftBar', zoom));
+					send('leftBar', 'set', 'reInit', sideBarData('leftBar', fakeTab));
 				if (options.rightBar.mode.value === 'bookmarks')
-					send('rightBar', 'set', 'reInit', sideBarData('rightBar', zoom));
+					send('rightBar', 'set', 'reInit', sideBarData('rightBar', fakeTab));
 			}
 
 			status.init.bookmarks = true;
@@ -4474,7 +4477,7 @@ function initWindow() {
 		createSidebarWindow('rightBar');
 }
 
-function sideBarData(side, zoom = 1) {
+function sideBarData(side, tab) {
 	if (status.timeStamp[`${side}Cache`].data !== status.timeStamp[options[side].mode.value]) {
 		status.timeStamp[`${side}Cache`].data = status.timeStamp[options[side].mode.value];
 		data[side].data             = modeData[options[side].mode.value]();
@@ -4530,11 +4533,12 @@ function sideBarData(side, zoom = 1) {
 		data[side].data            = modeData[options[side].mode.value]();
 		data[side].timeStamp       = status.timeStamp;
 	}
-	data[side].zoom = zoom;
+	data[side].id   = tab.id;
+	data[side].zoom = tab.zoom;
 	return data[side];
 }
 
-function startpageData(zoom = 1) {
+function startpageData(tab) {
 	if (options.services.startpage.value === true) {
 		if (status.timeStamp.startpageCache.data !== status.timeStamp.startpage) {
 			status.timeStamp.startpageCache.data = status.timeStamp.startpage;
@@ -4559,7 +4563,8 @@ function startpageData(zoom = 1) {
 			data.startpageData.searchQuery    = data.spSearchQuery;
 			data.startpageData.timeStamp      = status.timeStamp.startpageCache;
 		}
-		data.startpageData.zoom = zoom;
+		data.startpageData.id   = tab.id;
+		data.startpageData.zoom = tab.zoom;
 		return data.startpageData;
 	}
 	else
@@ -4736,6 +4741,7 @@ function createDialogWindow(type, dialogData) {
 	status.dialogType = type;
 	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 	if (activeTab === false) return;
+	status.dialogData.id   = activeTab.id;
 	status.dialogData.zoom = activeTab.zoom;
 	if (tabIsProtected(activeTab) === false)
 		if (activeTab.status !== 'loading')

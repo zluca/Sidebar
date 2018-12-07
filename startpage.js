@@ -66,6 +66,7 @@ function init(response) {
 	options                  = response.options;
 	i18n                     = response.i18n;
 	status.timeStamp         = response.timeStamp;
+	status.id                = response.id;
 	status.zoom              = response.zoom;
 
 	const siteStyle          = dce('style', document.head);
@@ -549,7 +550,8 @@ const messageHandler = {
 	},
 	set     : {
 		zoom         : info => {
-			status.zoom = info;
+			if (info.id !== status.id) return;
+			status.zoom = info.zoom;
 			setStyle();
 		}
 	}

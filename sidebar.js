@@ -54,6 +54,7 @@ const status   = {
 		info    : 0
 	},
 	titles : {},
+	id     : -1,
 	zoom   : 1
 };
 
@@ -259,6 +260,7 @@ const messageHandler = {
 			}
 		},
 		zoom        : info => {
+			if (info.id !== status.id) return;
 			status.zoom = info;
 			setFontSize();
 		}
@@ -352,6 +354,7 @@ function initSidebar(response) {
 	brauzer.runtime.onMessage.removeListener(onMessage);
 
 	status.timeStamp     = response.timeStamp;
+	status.id            = response.id;
 	status.zoom          = response.zoom;
 	options              = response.options;
 	i18n.mainControls    = response.i18n.mainControls;
