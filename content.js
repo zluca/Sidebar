@@ -399,7 +399,7 @@ function setSideBarWidth(side, value) {
 	document.body.appendChild(temp);
 	temp.style.setProperty('font-size', options.theme.mainFontSize);
 	const fontSize = parseInt(window.getComputedStyle(temp).getPropertyValue('font-size'));
-	doc.body.removeChild(temp);
+	document.body.removeChild(temp);
 	const trueSide = side.replace('Bar', '');
 	const openWide = {
 		truetrue   : _ => {
