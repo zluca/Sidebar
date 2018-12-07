@@ -79,7 +79,6 @@ body {
 		}
 		main>label {
 			padding: 0.3rem;
-			white-space: nowrap;
 			font-size: 1.2rem;
 		}
 		main>label {
@@ -183,7 +182,8 @@ body {
 		footer>div:first-child {
 			display: flex;
 			flex-flow: row;
-			align-items: middle;
+			align-items: center;
+			white-space: nowrap;
 		}
 			footer>div>span {
 				margin: 0.5rem 0 0.5rem 1rem;
