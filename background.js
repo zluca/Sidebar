@@ -415,6 +415,12 @@ const options = {
 			targets : [],
 			handler : 'clickActions'
 		},
+		windowClose    : {
+			value   : true,
+			type    : 'boolean',
+			targets : [],
+			handler : 'clickActions'
+		},
 		pocketDelete         : {
 			value   : true,
 			type    : 'boolean',
@@ -1565,12 +1571,15 @@ const messageHandler = {
 		siteDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
 		},
+		windowClose: (message, sender, sendResponse) => {
+			const folder = getFolderById('windows', parseInt(message.data.id))
+			if (folder === false) return;
+			createDialogWindow(message.action, {id: message.data.id, title: folder.title});
+		},
 		domainFolderClose : (message, sender, sendResponse) => {
-			let folder = getFolderById('tabs', message.data.id);
-			if (folder === false)
-				folder = getFolderById('windows', parseInt(message.data.id))
-			if (folder !== false)
-				createDialogWindow(message.action, {id: message.data.id, title: folder.title});
+			const folder = getFolderById('tabs', message.data.id);
+			if (folder === false) return;
+			createDialogWindow(message.action, {id: message.data.id, title: folder.title});
 		},
 		bookmarkDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
@@ -2020,18 +2029,16 @@ const initService = {
 				},
 				domainFolderClose: (message, sender, sendResponse) => {
 					const folder = getFolderById('tabs', message.data.id);
-					if (folder !== false) {
-						let toClose = [];
-						for (let i = folder.itemsId.length - 1; i >= 0; i--)
-							toClose.push(folder.itemsId[i]);
-						brauzer.tabs.remove(toClose);
-					}
-					else {
-						const win = getFolderById('windows', parseInt(message.data.id))
-						if (win !== false)
-							brauzer.windows.remove(win.id);
-
-					}
+					if (folder === false) return;
+					let toClose = [];
+					for (let i = folder.itemsId.length - 1; i >= 0; i--)
+						toClose.push(folder.itemsId[i]);
+					brauzer.tabs.remove(toClose);
+				},
+				windowClose : (message, sender, sendResponse) => {
+					const win = getFolderById('windows', parseInt(message.data.id))
+					if (win === false) return;
+					brauzer.windows.remove(win.id);
 				},
 				move : (message, sender, sendResponse) => {
 					const id = parseInt(message.data.id);

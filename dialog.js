@@ -413,6 +413,17 @@ function makeDialogWindow(data, warnings, theme) {
 			addButton('cancel');
 		},
 
+		windowClose : _ => {
+
+			setHeader();
+			addAlert();
+			addWarning();
+			addButton('confirm', _ => {
+				send('background', 'tabs', 'windowClose', {'id': data.id});
+				removeDialogWindow();
+			});
+			addButton('cancel');
+		},
 		bookmarkDelete : _ => {
 
 			setHeader();

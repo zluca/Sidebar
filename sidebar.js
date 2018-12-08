@@ -2132,10 +2132,18 @@ const buttonsEvents = {
 			send('background', 'tabs', 'removeById', {'idList': [parseInt(controls.item.parentNode.dataset.id)]});
 		},
 		closeAll: event => {
-			if (options.warnings.domainFolderClose === true)
-				send('background', 'dialog', 'domainFolderClose', {'id': controls.item.parentNode.dataset.id});
-			else
-				send('background', 'tabs', 'domainFolderClose', {'id': controls.item.parentNode.dataset.id});
+			if (controls.item.parentNode.classList.contains('domain-windows')) {
+				if (options.warnings.windowClose === true)
+					send('background', 'dialog', 'windowClose', {'id': controls.item.parentNode.dataset.id});
+				else
+					send('background', 'tabs', 'windowClose', {'id': controls.item.parentNode.dataset.id});
+			}
+			else {
+				if (options.warnings.domainFolderClose === true)
+					send('background', 'dialog', 'domainFolderClose', {'id': controls.item.parentNode.dataset.id});
+				else
+					send('background', 'tabs', 'domainFolderClose', {'id': controls.item.parentNode.dataset.id});
+			}
 		},
 		new: event => {
 			send('background', 'tabs', 'new', {'url': ''});

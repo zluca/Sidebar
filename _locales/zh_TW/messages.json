@@ -506,6 +506,10 @@
 		"message"       : "關閉多個分頁",
 		"description"   : ""
 	},
+	"optWarningsWindowCloseLabel" : {
+		"message"       : "Close window",
+		"description"   : ""
+	},
 	"optWarningsPocketDeleteLabel" : {
 		"message"       : "從 Pocket 中刪除",
 		"description"   : ""
@@ -841,6 +845,19 @@
 	},
 	"dialogDomainFolderCloseAlert" : {
 		"message"       : "關閉所有 \"$name$\" 網域的分頁嗎？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogWindowCloseHeader" : {
+		"message"       : "Close window",
+		"description"   : ""
+	},
+	"dialogWindowCloseAlert" : {
+		"message"       : "Close \"$name$\"?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

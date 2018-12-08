@@ -506,6 +506,10 @@
 		"message"       : "关闭多个标签页",
 		"description"   : ""
 	},
+	"optWarningsWindowCloseLabel" : {
+		"message"       : "Close window",
+		"description"   : ""
+	},
 	"optWarningsPocketDeleteLabel" : {
 		"message"       : "Delete from Pocket",
 		"description"   : ""
@@ -841,6 +845,19 @@
 	},
 	"dialogDomainFolderCloseAlert" : {
 		"message"       : "关闭“$name$”域名的所有标签页？",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogWindowCloseHeader" : {
+		"message"       : "Close window",
+		"description"   : ""
+	},
+	"dialogWindowCloseAlert" : {
+		"message"       : "Close \"$name$\"?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

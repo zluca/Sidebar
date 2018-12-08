@@ -506,6 +506,10 @@
 		"message"       : "Close multiple tabs",
 		"description"   : ""
 	},
+	"optWarningsWindowCloseLabel" : {
+		"message"       : "Close window",
+		"description"   : ""
+	},
 	"optWarningsPocketDeleteLabel" : {
 		"message"       : "Delete from Pocket",
 		"description"   : ""
@@ -841,6 +845,19 @@
 	},
 	"dialogDomainFolderCloseAlert" : {
 		"message"       : "Close all tabs in \"$name$\" domain?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogWindowCloseHeader" : {
+		"message"       : "Close window",
+		"description"   : ""
+	},
+	"dialogWindowCloseAlert" : {
+		"message"       : "Close \"$name$\"?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

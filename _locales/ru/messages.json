@@ -506,6 +506,10 @@
 		"message"       : "Закрытием множества вкладок",
 		"description"   : ""
 	},
+	"optWarningsWindowCloseLabel" : {
+		"message"       : "Закрытием окна",
+		"description"   : ""
+	},
 	"optWarningsPocketDeleteLabel" : {
 		"message"       : "Удалением из Pocket",
 		"description"   : ""
@@ -841,6 +845,19 @@
 	},
 	"dialogDomainFolderCloseAlert" : {
 		"message"       : "Закрыть все вкладки в домене \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogWindowCloseHeader" : {
+		"message"       : "Закрыть окно",
+		"description"   : ""
+	},
+	"dialogWindowCloseAlert" : {
+		"message"       : "Закрыть \"$name$\"?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {

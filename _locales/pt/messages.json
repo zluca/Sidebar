@@ -506,6 +506,10 @@
 		"message"       : "Fechar multiplos separadores",
 		"description"   : ""
 	},
+	"optWarningsWindowCloseLabel" : {
+		"message"       : "Close window",
+		"description"   : ""
+	},
 	"optWarningsPocketDeleteLabel" : {
 		"message"       : "Apagar do Pocket",
 		"description"   : ""
@@ -841,6 +845,19 @@
 	},
 	"dialogDomainFolderCloseAlert" : {
 		"message"       : "Fechar todos os separadores do dominio \"$name$\" ?",
+		"description"   : "",
+		"placeholders" : {
+			"name" : {
+				"content": "$1"
+			}
+		}
+	},
+	"dialogWindowCloseHeader" : {
+		"message"       : "Close window",
+		"description"   : ""
+	},
+	"dialogWindowCloseAlert" : {
+		"message"       : "Close \"$name$\"?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {
