@@ -507,7 +507,7 @@
 		"description"   : ""
 	},
 	"optWarningsWindowCloseLabel" : {
-		"message"       : "Close window",
+		"message"       : "關閉視窗",
 		"description"   : ""
 	},
 	"optWarningsPocketDeleteLabel" : {
@@ -853,11 +853,11 @@
 		}
 	},
 	"dialogWindowCloseHeader" : {
-		"message"       : "Close window",
+		"message"       : "關閉視窗",
 		"description"   : ""
 	},
 	"dialogWindowCloseAlert" : {
-		"message"       : "Close \"$name$\"?",
+		"message"       : "關閉 \"$name$\"?",
 		"description"   : "",
 		"placeholders" : {
 			"name" : {
