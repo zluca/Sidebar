@@ -1572,14 +1572,14 @@ const messageHandler = {
 			createDialogWindow(message.action, message.data);
 		},
 		windowClose: (message, sender, sendResponse) => {
-			const folder = getFolderById('windows', parseInt(message.data.id))
+			const folder = getFolderById('windows', parseInt(message.data.id));
 			if (folder === false) return;
-			createDialogWindow(message.action, {id: message.data.id, title: folder.title});
+			createDialogWindow(message.action, {'id': message.data.id, 'title': folder.title});
 		},
 		domainFolderClose : (message, sender, sendResponse) => {
 			const folder = getFolderById('tabs', message.data.id);
 			if (folder === false) return;
-			createDialogWindow(message.action, {id: message.data.id, title: folder.title});
+			createDialogWindow(message.action, {'id': message.data.id, 'title': folder.title});
 		},
 		bookmarkDelete : (message, sender, sendResponse) => {
 			createDialogWindow(message.action, message.data);
@@ -2160,14 +2160,12 @@ const initService = {
 		}
 
 		const onFocusChanged    = id => {
-			const win                = getFolderById('windows', id);
+			const win   = getFolderById('windows', id);
 			if (win === false) return;
-			setFocused(win, true);
-			status.activeWindow      = id;
-			const tab                = getById('tabs', status.activeTabsIds[id]);
+			const tab   = getById('tabs', status.activeTabsIds[id]);
 			if (tab === false) return;
-			status.activeTabsIds[id] = tab.id;
-			tab.readed               = true;
+			setFocused(win);
+			tab.readed  = true;
 			closeIframe();
 			makeTimeStamp('tabs');
 			reInit(tab.id);
@@ -2176,15 +2174,11 @@ const initService = {
 					send('startpage', 'reInit', 'page', startpageData(tab));
 		};
 
-		const setFocused = (win, focused) => {
-			if (focused) {
-				for (let i = data.windowsFolders.length - 1; i >= 0; i--)
-					data.windowsFolders[i].focused = false;
-				win.focused         = true;
-				status.activeWindow = win.id;
-			}
-			else
-				win.focused = false;
+		const setFocused = (win) => {
+			for (let i = data.windowsFolders.length - 1; i >= 0; i--)
+				data.windowsFolders[i].focused = false;
+			win.focused         = true;
+			status.activeWindow = win.id;
 		};
 
 		const reInit            = id => {
@@ -2235,8 +2229,8 @@ const initService = {
 			win.pid     = 0;
 			win.focused = item.focused;
 			if (win.focused)
-				setFocused(win, true);
-			win.title   = `${i18n.domains.windows} #${data.windowsFoldersId.indexOf(item.id) + 1}`;
+				setFocused(win);
+			win.title   = `${i18n.domains.windows} #${item.id}`;
 			return win;
 		};
 
@@ -4540,8 +4534,8 @@ function sideBarData(side, tab) {
 		data[side].data            = modeData[options[side].mode.value]();
 		data[side].timeStamp       = status.timeStamp;
 	}
-	data[side].id   = tab.id;
-	data[side].zoom = tab.zoom;
+	data[side].tabId = tab.id;
+	data[side].zoom  = tab.zoom;
 	return data[side];
 }
 
@@ -4570,8 +4564,8 @@ function startpageData(tab) {
 			data.startpageData.searchQuery    = data.spSearchQuery;
 			data.startpageData.timeStamp      = status.timeStamp.startpageCache;
 		}
-		data.startpageData.id   = tab.id;
-		data.startpageData.zoom = tab.zoom;
+		data.startpageData.tabId = tab.id;
+		data.startpageData.zoom  = tab.zoom;
 		return data.startpageData;
 	}
 	else
@@ -4748,8 +4742,8 @@ function createDialogWindow(type, dialogData) {
 	status.dialogType = type;
 	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 	if (activeTab === false) return;
-	status.dialogData.id   = activeTab.id;
-	status.dialogData.zoom = activeTab.zoom;
+	status.dialogData.tabId = activeTab.id;
+	status.dialogData.zoom  = activeTab.zoom;
 	if (tabIsProtected(activeTab) === false)
 		if (activeTab.status !== 'loading')
 			return sendToTab(status.activeTabsIds[status.activeWindow], 'content', 'dialog', 'create', type);

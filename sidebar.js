@@ -354,7 +354,7 @@ function initSidebar(response) {
 	brauzer.runtime.onMessage.removeListener(onMessage);
 
 	status.timeStamp     = response.timeStamp;
-	status.id            = response.id;
+	status.id            = response.tabId;
 	status.zoom          = response.zoom;
 	options              = response.options;
 	i18n.mainControls    = response.i18n.mainControls;

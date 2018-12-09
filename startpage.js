@@ -66,7 +66,7 @@ function init(response) {
 	options                  = response.options;
 	i18n                     = response.i18n;
 	status.timeStamp         = response.timeStamp;
-	status.id                = response.id;
+	status.id                = response.tabId;
 	status.zoom              = response.zoom;
 
 	const siteStyle          = dce('style', document.head);

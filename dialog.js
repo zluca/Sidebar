@@ -414,7 +414,6 @@ function makeDialogWindow(data, warnings, theme) {
 		},
 
 		windowClose : _ => {
-
 			setHeader();
 			addAlert();
 			addWarning();
