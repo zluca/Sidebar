@@ -99,6 +99,7 @@ const status = {
 	activeWindow         : -1,
 	activeTabsIds        : {},
 	nativeActive         : false,
+	nativeCount          : 0,
 	dialogData           : null,
 	dialogType           : '',
 	toSave               : {},
@@ -1857,12 +1858,16 @@ const initService = {
 						setOption('leftBar', 'method', 'native', false);
 						optionsHandler.method('leftBar', 'method', 'native');
 					}
+					status.nativeCount++;
 					port = p;
 					port.onDisconnect.addListener(_ => {
-						if (options.leftBar.method.value === 'native')
-							optionsHandler.method('leftBar', 'method', 'disabled');
-						else if (options.rightBar.method.value === 'native')
-							optionsHandler.method('rightBar', 'method', 'disabled');
+						status.nativeCount--;
+						if (status.nativeCount < 1) {
+							if (options.leftBar.method.value === 'native')
+								optionsHandler.method('leftBar', 'method', 'disabled');
+							else if (options.rightBar.method.value === 'native')
+								optionsHandler.method('rightBar', 'method', 'disabled');
+						}
 					});
 				});
 				if (firefox) {
