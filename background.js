@@ -356,7 +356,7 @@ const options = {
 			handler : 'service'
 		},
 		downloads : {
-			value   : true,
+			value   : false,
 			type    : 'boolean',
 			targets : [],
 			handler : 'service'
