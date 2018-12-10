@@ -261,7 +261,7 @@ const messageHandler = {
 		},
 		zoom        : info => {
 			if (info.id !== status.id) return;
-			status.zoom = info;
+			status.zoom = info.zoom;
 			setFontSize();
 		}
 	},
