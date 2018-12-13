@@ -2392,9 +2392,9 @@ const initService = {
 		}
 
 		const getWindows        = windows => {
-			for (let i = windows.length - 1; i >= 0; i--) {
+			for (let i = 0, l = windows.length; i < l; i++) {
 				const win   = createWindow(windows[i]);
-				for (let j = windows[i].tabs.length - 1; j >= 0; j--)
+				for (let j = 0, l = windows[i].tabs.length; j < l; j++)
 					createTab(windows[i].tabs[j], true);
 			}
 			setWindowsView();
