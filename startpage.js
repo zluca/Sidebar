@@ -517,6 +517,10 @@ const messageHandler = {
 	},
 	reInit  : {
 		page : info => {
+			if (info.zoom !== status.zoom) {
+				status.zoom = info.zoom;
+				setStyle();
+			}
 			if (info.timeStamp.options !== status.timeStamp.options) {
 				for (let option in info.options.theme)
 					if (info.options.theme[option] !== options.theme[option])
@@ -680,7 +684,7 @@ function setColor(colors) {
 function setStyle() {
 	doc.style.setProperty('font-size', options.theme.mainFontSize);
 	const fontSize        = parseInt(window.getComputedStyle(doc).getPropertyValue('font-size'));
-	doc.style.setProperty('font-size', `${fontSize / status.zoom}px`);
+	doc.style.setProperty('font-size', `${fontSize    / status.zoom}px`);
 	const marginH         = options.startpage.marginH / status.zoom;
 	const marginV         = options.startpage.marginV / status.zoom;
 	const padding         = options.startpage.padding / status.zoom;

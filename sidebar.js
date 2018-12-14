@@ -243,6 +243,9 @@ const messageHandler = {
 				info.timeStamp.favs = status.timeStamp.info.favs;
 				setDomainStyle.update(info.data.domains);
 			}
+			if (status.zoom !== info.zoom)
+				status.zoom = info.zoom;
+			setFontSize();
 		},
 		side        : info => {
 			if (status.method === 'native')
@@ -383,7 +386,6 @@ function initSidebar(response) {
 		status.side = response.side;
 	if (status.method === 'iframe') {
 		doc.classList.remove('fixed');
-		window.onresize = _ => {setFontSize();};
 		if (controls.iframe === null) {
 			controls.iframe = dcea('div', controls.main, [['id', 'controls-iframe'], ['classList', 'controls']]);
 			makeButton('pin', 'mainControls', 'iframe');

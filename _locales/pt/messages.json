@@ -408,11 +408,11 @@
 		"message"       : "Sidebar background image style:",
 		"description"   : ""
 	},
-	"optThemeXXSmallText" :{
+	"optThemeXX_SmallText" :{
 		"message"       : "XX-Small",
 		"description"   : ""
 	},
-	"optThemeXSmallText" :{
+	"optThemeX_SmallText" :{
 		"message"       : "X-Small",
 		"description"   : ""
 	},
@@ -428,11 +428,11 @@
 		"message"       : "Large",
 		"description"   : ""
 	},
-	"optThemeXLargeText" :{
+	"optThemeX_LargeText" :{
 		"message"       : "X-Large",
 		"description"   : ""
 	},
-	"optThemeXXLargeText" :{
+	"optThemeXX_LargeText" :{
 		"message"       : "XX-Large",
 		"description"   : ""
 	},

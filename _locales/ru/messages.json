@@ -408,11 +408,11 @@
 		"message"       : "Стиль фоновой картинки:",
 		"description"   : ""
 	},
-	"optThemeXXSmallText" :{
+	"optThemeXX_SmallText" :{
 		"message"       : "Ещё меньше",
 		"description"   : ""
 	},
-	"optThemeXSmallText" :{
+	"optThemeX_SmallText" :{
 		"message"       : "Поменьше",
 		"description"   : ""
 	},
@@ -428,11 +428,11 @@
 		"message"       : "Побольше",
 		"description"   : ""
 	},
-	"optThemeXLargeText" :{
+	"optThemeX_LargeText" :{
 		"message"       : "Ещё больше",
 		"description"   : ""
 	},
-	"optThemeXXLargeText" :{
+	"optThemeXX_LargeText" :{
 		"message"       : "Гиганский",
 		"description"   : ""
 	},

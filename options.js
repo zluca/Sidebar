@@ -13,7 +13,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 	const changes = {};
 
 	const getI18n = (message, subs) => {
-		return brauzer.i18n.getMessage(message, subs);
+		return brauzer.i18n.getMessage(message.replace('-', '_'), subs);
 	};
 
 	const header   = document.createElement('header');

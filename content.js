@@ -438,7 +438,9 @@ function setSideBarWidth(side, value) {
 		}
 	};
 
+	// const borderWidth = fontSize / 8;
 	const borderWidth = fontSize / 8 / status.zoom;
+	// const iconWidth   = fontSize * 1.7;
 	const iconWidth   = fontSize * 1.7 / status.zoom;
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
 	if (value !== undefined)

@@ -8,6 +8,10 @@ const brauzer = firefox ? browser : chrome;
 
 brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: 'popup', data: {needResponse: true}}, response => {
 
+	const fontSize                            = parseInt(window.getComputedStyle(document.documentElement).getPropertyValue('font-size'));
+	document.documentElement.style.fontSize   = `${fontSize / response.zoom}px`;
+	document.documentElement.style.lineHeight = `${fontSize * 1.2 / response.zoom}px`;
+
 	const status = {
 		leftBar  : response.leftBar.value,
 		rightBar : response.rightBar.value

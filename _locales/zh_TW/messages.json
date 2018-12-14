@@ -408,11 +408,11 @@
 		"message"       : "側邊欄背景圖片樣式：",
 		"description"   : ""
 	},
-	"optThemeXXSmallText" :{
+	"optThemeXX_SmallText" :{
 		"message"       : "非常小",
 		"description"   : ""
 	},
-	"optThemeXSmallText" :{
+	"optThemeX_SmallText" :{
 		"message"       : "很小",
 		"description"   : ""
 	},
@@ -428,11 +428,11 @@
 		"message"       : "大",
 		"description"   : ""
 	},
-	"optThemeXLargeText" :{
+	"optThemeX_LargeText" :{
 		"message"       : "很大",
 		"description"   : ""
 	},
-	"optThemeXXLargeText" :{
+	"optThemeXX_LargeText" :{
 		"message"       : "非常大",
 		"description"   : ""
 	},

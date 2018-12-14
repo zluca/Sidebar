@@ -1,6 +1,33 @@
 :root {
-	font-size: 10px;
+	font-size   : 'medium';
+	line-height : 1.2rem;
 }
+
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Regular.woff2);
+	font-style: normal;
+	font-weight: normal;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Italic.woff2);
+	font-style: italic;
+	font-weight: normal;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Bold.woff2);
+	font-style: normal;
+	font-weight: bold;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-BoldItalic.woff2);
+	font-style: italic;
+	font-weight: bold;
+}
+
 body {
 	margin: 0;
 	padding: 1rem;
@@ -27,6 +54,8 @@ main {
 	}
 		input {
 			margin: 0;
+			font-size: 1rem;
+			border-image-width: 0.1rem;
 		}
 		label {
 			user-select: none;

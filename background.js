@@ -445,7 +445,7 @@ const options = {
 		mainFontSize: {
 			value   : 'medium',
 			type    : 'dropdown',
-			values  : ['xxsmall', 'xsmall', 'small', 'medium', 'large', 'xlarge', 'xxlarge'],
+			values  : ['xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large'],
 			targets : ['sidebar' ,'content', 'startpage']
 		},
 		backgroundColor       : {
@@ -1508,7 +1508,11 @@ const messageHandler = {
 			sendResponse(options);
 		},
 		popup : (message, sender, sendResponse) => {
-			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method, 'status': options.status});
+			let zoom  = 1;
+			const tab = getById('tabs', status.activeTabsIds[status.activeWindow]);
+			if (tab !== false)
+				zoom = tab.zoom;
+			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method, 'status': options.status, 'zoom': tab.zoom});
 		},
 		dialog : (message, sender, sendResponse) => {
 			const tab = getById('tabs', sender.tab.id);

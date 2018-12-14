@@ -1,4 +1,6 @@
 :root {
+	font-size: 'medium';
+	line-height: 1.2rem;
 	--font-color: #444;
 	--font-color-active: #000;
 	--font-color-inactive: #999;
