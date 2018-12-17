@@ -84,6 +84,10 @@ const messageHandler = {
 		borderColorActive : info => {
 			options.theme.borderColorActive = info.value;
 			setColor();
+		},
+		hideInFullscreen : info => {
+			options.misc.hideInFullscreen = info.value;
+			setFullscreen();
 		}
 	},
 	iframe: {
@@ -147,6 +151,10 @@ const messageHandler = {
 					setSideBarWidth('rightBar');
 					setEventListeners('rightBar');
 				}
+			}
+			if (options.misc.hideInFullscreen !== info.misc.hideInFullscreen) {
+				options.misc.hideInFullscreen = info.misc.hideInFullscreen;
+				setFullscreen();
 			}
 		}
 	},
@@ -261,10 +269,30 @@ function injectElements() {
 	if (options.rightBar.method === 'iframe')
 		injectIframe('rightBar');
 	doc.appendChild(mask);
-	window.addEventListener('resize', event => {
-		if (options.leftBar.method  === 'iframe') setSideBarWidth('leftBar');
-		if (options.rightBar.method === 'iframe') setSideBarWidth('rightBar');
-	});
+	setFullscreen();
+}
+
+function setFullscreen () {
+
+	const detector = event => {
+		if (document.fullscreen) {
+			if (sidebar.leftBar !== null)
+				sidebar.leftBar.style.setProperty('display', 'none', 'important');
+			if (sidebar.rightBar !== null)
+				sidebar.rightBar.style.setProperty('display', 'none', 'important');
+		}
+		else {
+			if (sidebar.leftBar !== null)
+				sidebar.leftBar.style.setProperty('display', 'block');
+			if (sidebar.rightBar !== null)
+				sidebar.rightBar.style.setProperty('display', 'block');
+		}
+	};
+
+	if (options.misc.hideInFullscreen)
+		document.addEventListener('fullscreenchange', detector);
+	else
+		document.removeEventListener('fullscreenchange', detector);
 }
 
 function makeIframe(side) {
@@ -287,7 +315,7 @@ function makeIframe(side) {
 }
 
 function setOpen(side, open) {
-	send('background', 'options', 'handler', {'section': side, 'option': 'open', 'value': open});
+	send('background', 'options', 'handler', {'section': side, 'option': 'open', 'value': open, 'id': status.id});
 }
 
 function setSideBarFixed(side, value) {

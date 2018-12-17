@@ -477,6 +477,10 @@
 		"message"       : "Maximum depth of tabs tree",
 		"description"   : ""
 	},
+	"optMiscHideInFullscreenLabel" : {
+		"message"       : "Hide iframe Sidebars when tab in fullscreen",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "警告",

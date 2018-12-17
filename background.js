@@ -584,6 +584,11 @@ const options = {
 			value   : false,
 			type    : 'boolean',
 			targets : ['sidebar']
+		},
+		hideInFullscreen : {
+			value   : true,
+			type    : 'boolean',
+			targets : ['content']
 		}
 	},
 	startpage: {
@@ -1457,7 +1462,8 @@ const messageHandler = {
 					'borderColorActive' : optionsShort.theme.borderColorActive
 				},
 				'misc'     : {
-					'manualSwitch'      : optionsShort.misc.manualSwitch
+					'manualSwitch'      : optionsShort.misc.manualSwitch,
+					'hideInFullscreen'  : optionsShort.misc.hideInFullscreen
 				}
 			});
 			if (status.dialogData !== null)

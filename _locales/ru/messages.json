@@ -477,6 +477,10 @@
 		"message"       : "Максимальная глубина дерева вкладок",
 		"description"   : ""
 	},
+	"optMiscHideInFullscreenLabel" : {
+		"message"       : "Скрывать боковую панель когда вкладка развёрнута на весь экран",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "Предупреждения",

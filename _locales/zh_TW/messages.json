@@ -477,6 +477,10 @@
 		"message"       : "分頁樹的最大深度",
 		"description"   : ""
 	},
+	"optMiscHideInFullscreenLabel" : {
+		"message"       : "Hide iframe Sidebars when tab in fullscreen",
+		"description"   : ""
+	},
 
 	"optWarningsButton" : {
 		"message"       : "警告",
