@@ -478,7 +478,7 @@
 		"description"   : ""
 	},
 	"optMiscHideInFullscreenLabel" : {
-		"message"       : "Hide iframe Sidebars when tab in fullscreen",
+		"message"       : "當分頁處於全螢幕模式時隱藏 iframe 側邊欄",
 		"description"   : ""
 	},
 
