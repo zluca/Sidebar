@@ -2040,6 +2040,14 @@ const initService = {
 					brauzer.tabs.reload(message.data.id);
 				},
 				removeById : (message, sender, sendResponse) => {
+					if (options.services.startpage.value === true)
+						for (let i = message.data.idList.length - 1; i >= 0; i--) {
+							const tab = getById('tabs', message.data.idList[i]);
+							if (tab === false) continue;
+							if (tab.url === config.extensionStartPage)
+								if (options.startpage.mode.value === 'search')
+									messageHandler.spSearch.changeQuery({'data': ''});
+						}
 					brauzer.tabs.remove(message.data.idList);
 				},
 				domainFolderClose: (message, sender, sendResponse) => {
