@@ -489,7 +489,8 @@ const messageHandler = {
 			}
 		},
 		changeQuery  : info => {
-			searchField.value = info;
+			if (searchField !== document.activeElement)
+				searchField.value = info;
 		},
 		showFolder   : info => {
 			const index = data.searchFoldersId.indexOf(info.id);
