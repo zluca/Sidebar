@@ -2575,7 +2575,7 @@ const initService = {
 				if (options.rightBar.mode.value === 'bookmarks')
 					send('rightBar', 'set', 'reInit', sideBarData('rightBar', fakeTab));
 			}
-
+			makeTimeStamp('bookmarks');
 			status.init.bookmarks = true;
 		};
 
