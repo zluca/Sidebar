@@ -1853,6 +1853,8 @@ function moveItem(mode, eventTarget) {
 			doc.removeEventListener('mousedown', getIndex);
 			doc.removeEventListener('mousedown', getSiblings);
 			item.classList.remove('moved');
+			if (href)
+				item.href = href;
 			rootFolder.classList.remove('moving');
 		}, 200);
 	};
@@ -1917,6 +1919,8 @@ function moveItem(mode, eventTarget) {
 	const isFolder = item.classList.contains('folder') && (options.sidebar.mode !== 'tabs' || options.misc.tabsMode !== 'tree');
 	const id       = item.dataset.id;
 	const folder   = item.parentNode;
+	const href     = item.href;
+	item.removeAttribute('href');
 	let   oldIndex = -1;
 	status.moving  = true;
 	for (let i = 0, l = folder.children.length; i < l; i++)
