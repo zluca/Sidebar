@@ -5071,7 +5071,7 @@ function domainFromUrl(url) {
 		return 'default';
 	let domain = /\/\//.test(url) ? url.split('//')[1] : url;
 	domain     = domain.split('/')[0];
-	domain     = domain.match(/^([\da-z\.-]+)(\.([a-z\.]{2,6}))?/i);
+	domain     = domain.match(/^([\da-zа-я\.-]+)(\.([a-zа-я\.]{2,6}))?/i);
 	if (domain !== null)
 		return domain[0];
 	return 'default';
