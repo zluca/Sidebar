@@ -2296,6 +2296,8 @@ const initService = {
 				send('sidebar', 'tabs', info.pinned === true ? 'pinned' : 'unpinned', {'id': id});
 			}
 			if (info.hasOwnProperty('url')) {
+				if (info.url === oldTab.url) return;
+				if (info.url === 'about:blank') return;
 				if (status.activeTabsIds[status.activeWindow] === id)
 					reInit(id);
 				if (options.services.startpage.value === true)
@@ -2323,8 +2325,7 @@ const initService = {
 						send('startpage', 'search', 'viewed', {'idList': idList});
 					}
 				}
-				const url = info.url === 'about:blank' ? oldTab.url : info.url;
-				const newDomain = makeDomain('tabs', url);
+				const newDomain = makeDomain('tabs', info.url);
 				newDomain.pid   = `${oldTab.windowId}_${newDomain.id}`;
 				oldTab.url      = info.url;
 				closeIframe();
