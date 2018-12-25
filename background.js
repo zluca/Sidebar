@@ -4640,7 +4640,9 @@ function send(target, subject, action, dataToSend) {
 			sendToTab(status.activeTabsIds[status.activeWindow], 'startpage', subject, action, dataToSend);
 		},
 		content   : _ => {
-			sendToTab(status.activeTabsIds[status.activeWindow], 'content', subject, action, dataToSend);
+			for (let i = data.windowsFoldersId.length - 1; i >= 0; i--)
+				if (status.activeTabsIds.hasOwnProperty(data.windowsFoldersId[i]))
+					sendToTab(status.activeTabsIds[data.windowsFoldersId[i]], 'content', subject, action, dataToSend);
 		}
 	};
 

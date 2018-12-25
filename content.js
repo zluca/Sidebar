@@ -339,8 +339,7 @@ function setEventListeners(side) {
 		timer[which] = 0;
 	};
 
-	const mouseOver = event => {
-		const realSide = (window.innerWidth >> 1) - event.screenX > 0 ? 'leftBar' : 'rightBar';
+	const mouseOver  = realSide => {
 		rightClick = false;
 		if (status[realSide].over === true)
 			return;
@@ -360,13 +359,9 @@ function setEventListeners(side) {
 			}, 50);
 	};
 
-	const mouseLeave = event => {
+	const mouseLeave = realSide => {
 		if (rightClick)
 			return;
-		if (event.target !== sidebar.leftBar && event.target !== sidebar.rightBar)
-			return;
-		event.stopPropagation();
-		const realSide = (window.innerWidth >> 1) - event.screenX > 0 ? 'leftBar' : 'rightBar';
 		if (status[realSide].over === false || status[realSide].resize === true)
 			return;
 		status[realSide].over = false;
@@ -405,8 +400,8 @@ function setEventListeners(side) {
 		cleanTimer('over');
 	}
 	else {
-		sidebar[side].onmouseover        = mouseOver;
-		sidebar[side].onmouseleave       = mouseLeave;
+		sidebar[side].onmouseover        = event => {mouseOver(side)};
+		sidebar[side].onmouseleave       = event => {mouseLeave(side)};
 		sidebar[side].firstChild.onclick = borderClick;
 	}
 }
