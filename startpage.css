@@ -209,6 +209,9 @@ main {
 		moz-user-select: none;
 		cursor: pointer;
 	}
+	section:hover {
+		box-shadow: 0 0 .8rem .05rem var(--font-color);
+	}
 	.site {
 		background-clip: content-box;
 		color: var(--background-color);
@@ -236,9 +239,6 @@ main {
 	.lines-6 {
 		font-size: var(--bigFont6);
 		line-height: var(--bigFont6);
-	}
-	.site:hover {
-		color: var(--background-color-active);
 	}
 	.site.draggable {
 		position: fixed;
