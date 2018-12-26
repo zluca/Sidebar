@@ -452,6 +452,7 @@ const messageHandler = {
 			for (let i = 0, sites = siteContainer.children, l = sites.length; i < l; i++) {
 				sites[i].dataset.index = i;
 				sites[i].id            = `site-${i}`;
+				data.sites[i]          = sites[i];
 			}
 		},
 		remove        : _ => {
