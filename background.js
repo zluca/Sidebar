@@ -4871,18 +4871,18 @@ function setIcon() {
 function createNewTab(url = config.extensionStartPage, newWindow = false, active = true) {
 	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 	if (activeTab === false) return;
-	for (let i = data.tabs.length - 1; i >=0 ; i--)
-		if (data.tabs[i].windowsId === status.activeWindow)
+	for (let i = data.tabs.length - 1; i >= 0 ; i--)
+		if (data.tabs[i].windowId === status.activeWindow)
 			if (data.tabs[i].url === url)
 				if (activeTab.url !== url)
-					return brauzer.tabs.update(data.tabs[i].id, {active: true});
+					return brauzer.tabs.update(data.tabs[i].id, {'active': true});
 	if (newWindow !== false)
 		brauzer.windows.get(status.activeWindow, win => {
 			const newTab = {
-				truetrue   : {'url': config.extensionStartPage, width: win.width, height: win.height, left: win.left, top: win.top},
-				truefalse  : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top},
-				falsetrue  : {width: win.width, height: win.height, left: win.left, top: win.top},
-				falsefalse : {'url': url, width: win.width, height: win.height, left: win.left, top: win.top}
+				truetrue   : {'url': config.extensionStartPage, 'width': win.width, 'height': win.height, 'left': win.left, 'top': win.top},
+				truefalse  : {'url': url, 'width': win.width, 'height': win.height, 'left': win.left, 'top': win.top},
+				falsetrue  : {'width': win.width, 'height': win.height, 'left': win.left, 'top': win.top},
+				falsefalse : {'url': url, 'width': win.width, 'height': win.height, 'left': win.left, 'top': win.top}
 			};
 			brauzer.windows.create(newTab[`${options.services.startpage.value}${url === config.extensionStartPage}`]);
 		});
