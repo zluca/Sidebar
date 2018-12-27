@@ -2290,7 +2290,7 @@ const initService = {
 			const oldTab = getById('tabs', id);
 			if (oldTab === false)
 				return createTab(tab);
-			const oldFolder = getFolderById('tabs', oldTab.domain);
+			const oldFolder = getFolderById('tabs', oldTab.pid);
 			if (info.hasOwnProperty('pinned')) {
 				oldTab.pinned = info.pinned;
 				send('sidebar', 'tabs', info.pinned === true ? 'pinned' : 'unpinned', {'id': id});
