@@ -32,6 +32,7 @@ const i18n = {
 	},
 	domains: {
 		default   : getI18n('domainsDefault'),
+		file      : getI18n('domainsFile'),
 		startpage : getI18n('domainsStartPage'),
 		system    : getI18n('domainsSystem'),
 		extension : getI18n('domainsExtension'),
@@ -4716,6 +4717,8 @@ function makeDomain(mode, url, fav) {
 		id = 'default';
 	else if (url === 'chrome://startpage/extensions')
 		id = 'system';
+	else if (/^file:/.test(url))
+		id = 'file';
 	else if (url.includes(config.defaultStartPage))
 		id = 'startpage';
 	else if (url.includes(config.extensionStartPage) || config.extensionStartPage.includes(url))

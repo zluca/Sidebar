@@ -55,6 +55,9 @@
 .domain-default {
 	background-image: url(icons/default.svg);
 }
+.domain-file {
+	background-image: url(icons/folder.svg);
+}
 .domain-startpage {
 	background-image: url(icons/startpage.svg);
 }

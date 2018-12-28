@@ -1061,6 +1061,10 @@
 		"message"       : "Unknown",
 		"description"   : ""
 	},
+	"domainsFile" : {
+		"message"       : "Local files",
+		"description"   : ""
+	},
 	"domainsStartPage" : {
 		"message"       : "Startpage",
 		"description"   : ""

@@ -1061,6 +1061,10 @@
 		"message"       : "Не известно",
 		"description"   : ""
 	},
+	"domainsFile" : {
+		"message"       : "Файлы на диске",
+		"description"   : ""
+	},
 	"domainsStartPage" : {
 		"message"       : "Старт",
 		"description"   : ""

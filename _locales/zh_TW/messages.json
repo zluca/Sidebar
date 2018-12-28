@@ -1061,6 +1061,10 @@
 		"message"       : "未知",
 		"description"   : ""
 	},
+	"domainsFile" : {
+		"message"       : "Local files",
+		"description"   : ""
+	},
 	"domainsStartPage" : {
 		"message"       : "首頁",
 		"description"   : ""
