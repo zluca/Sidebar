@@ -58,6 +58,9 @@
 .domain-file {
 	background-image: url(icons/folder.svg);
 }
+.domain-ftp {
+	background-image: url(icons/ftp.svg);
+}
 .domain-startpage {
 	background-image: url(icons/startpage.svg);
 }

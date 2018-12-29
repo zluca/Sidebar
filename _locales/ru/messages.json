@@ -1065,6 +1065,10 @@
 		"message"       : "Файлы на диске",
 		"description"   : ""
 	},
+	"domainsFtp" : {
+		"message"       : "FTP сервер",
+		"description"   : ""
+	},
 	"domainsStartPage" : {
 		"message"       : "Старт",
 		"description"   : ""

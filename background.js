@@ -33,6 +33,7 @@ const i18n = {
 	domains: {
 		default   : getI18n('domainsDefault'),
 		file      : getI18n('domainsFile'),
+		ftp       : getI18n('domainsFtp'),
 		startpage : getI18n('domainsStartPage'),
 		system    : getI18n('domainsSystem'),
 		extension : getI18n('domainsExtension'),
@@ -4719,6 +4720,8 @@ function makeDomain(mode, url, fav) {
 		id = 'system';
 	else if (/^file:/.test(url))
 		id = 'file';
+	else if (/^ftp:/.test(url))
+		id = 'ftp';
 	else if (url.includes(config.defaultStartPage))
 		id = 'startpage';
 	else if (url.includes(config.extensionStartPage) || config.extensionStartPage.includes(url))

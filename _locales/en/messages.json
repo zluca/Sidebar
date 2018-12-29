@@ -1065,6 +1065,10 @@
 		"message"       : "Local files",
 		"description"   : ""
 	},
+	"domainsFtp" : {
+		"message"       : "FTP server",
+		"description"   : ""
+	},
 	"domainsStartPage" : {
 		"message"       : "Startpage",
 		"description"   : ""
