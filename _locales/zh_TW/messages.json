@@ -1062,11 +1062,11 @@
 		"description"   : ""
 	},
 	"domainsFile" : {
-		"message"       : "Local files",
+		"message"       : "本機檔案",
 		"description"   : ""
 	},
 	"domainsFtp" : {
-		"message"       : "FTP server",
+		"message"       : "FTP 伺服器",
 		"description"   : ""
 	},
 	"domainsStartPage" : {
