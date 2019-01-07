@@ -2275,10 +2275,13 @@ const initService = {
 		};
 
 		const onActivated       = tabInfo => {
-			const tab = getById('tabs', tabInfo.tabId);
+			const tab    = getById('tabs', tabInfo.tabId);
 			if (tab === false) return;
 			status.activeTabsIds[tabInfo.windowId] = tabInfo.tabId;
-			tab.readed = true;
+			tab.readed   = true;
+			const folder = getFolderById('tabs', tab.pid);
+			if (folder.folded === true)
+				messageHandler.set.fold({'data' : {'mode': 'tabs', 'id': folder.id, 'folded': false}});
 			closeIframe();
 			makeTimeStamp('tabs');
 			reInit(tabInfo.tabId);
