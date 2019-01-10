@@ -2157,9 +2157,6 @@ const initService = {
 
 
 			status.init.tabs = true;
-			for (let i = data.tabs.length - 1; i >= 0; i--)
-				if (data.tabs[i].url === config.extensionStartPage) return;
-			createNewTab();
 		};
 
 		const onWindowRemoved   = id => {
