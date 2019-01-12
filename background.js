@@ -1715,7 +1715,7 @@ const messageHandler = {
 
 const execMethod  = firefox ?
 (method, callback, options) => {
-	return method(options).then(callback);
+	return options === undefined ? method().then(callback) : method(options).then(callback);
 } :
 (method, callback, options) => {
 	return options === undefined ? method(callback) : method(options, callback);
