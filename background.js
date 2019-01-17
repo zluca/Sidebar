@@ -1560,7 +1560,7 @@ const messageHandler = {
 			}
 			folder.folded = message.data.folded;
 			makeTimeStamp(mode);
-			send('sidebar', 'set', 'fold', {'mode': mode === 'windows' ? 'tabs' : mode, 'id': message.data.id, 'folded': message.data.folded, 'method': message.data.method});
+			send('sidebar', 'set', 'fold', {'mode': mode === 'windows' ? 'tabs' : mode, 'id': message.data.id, 'folded': message.data.folded, 'method': message.data.folded ? 'add' : 'remove'});
 		},
 		rightClick : (message, sender, sendResponse) => {
 			send('content', 'set', 'rightClick', '');
@@ -2277,8 +2277,9 @@ const initService = {
 			status.activeTabsIds[tabInfo.windowId] = tabInfo.tabId;
 			tab.readed   = true;
 			const folder = getFolderById('tabs', tab.pid);
-			if (folder.folded === true)
-				messageHandler.set.fold({'data' : {'mode': 'tabs', 'id': folder.id, 'folded': false}});
+			if (folder !== false)
+				if (folder.folded === true)
+					messageHandler.set.fold({'data' : {'mode': 'tabs', 'id': folder.id, 'folded': false}});
 			closeIframe();
 			makeTimeStamp('tabs');
 			reInit(tabInfo.tabId);
