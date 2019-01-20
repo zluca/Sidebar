@@ -1743,24 +1743,25 @@ const initExtension = res => {
 	};
 
 	const setDefaults = _ => {
-		for (let service of ['tabs', 'bookmarks', 'history', 'downloads']) {
-			if (!brauzer.hasOwnProperty(service)) {
-				options.services[service].value  = false;
-				options.services[service].hidden = true;
+		brauzer.windows.getCurrent({}, win => {
+			for (let service of ['tabs', 'bookmarks', 'history', 'downloads']) {
+				if (!brauzer.hasOwnProperty(service)) {
+					options.services[service].value  = false;
+					options.services[service].hidden = true;
+				}
 			}
-		}
-
-		options.startpage.rows.value           = Math.ceil(window.screen.height / 400);
-		options.startpage.columns.value        = Math.ceil(window.screen.width  / 400);
-		const top = topSites => {
-			for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
-				data.startpage.push(makeSite(i, topSites[i]));
-			saveNow('version');
-			saveNow('options');
-			saveNow('startpage');
-			starter();
-		};
-		execMethod(brauzer.topSites.get, top);
+			options.startpage.rows.value           = Math.ceil(win.height / 400);
+			options.startpage.columns.value        = Math.ceil(win.width  / 400);
+			const top = topSites => {
+				for (let i = 0, l = options.startpage.rows.range[1] * options.startpage.columns.range[1] - 1; i < l; i++)
+					data.startpage.push(makeSite(i, topSites[i]));
+				saveNow('version');
+				saveNow('options');
+				saveNow('startpage');
+				starter();
+			};
+			execMethod(brauzer.topSites.get, top);
+		});
 	};
 
 	if (res.hasOwnProperty('version')) {
@@ -4807,10 +4808,10 @@ function tabIsProtected(tab) {
 
 function createSidebarWindow(side) {
 	brauzer.windows.getCurrent({}, win => {
-		const width  = Math.ceil(options[side].width.value * screen.width / 100);
+		const width  = Math.ceil(options[side].width.value * win.width / 100);
 		if (side === 'rightBar')
 			if (options.rightBar.left.value === -1)
-				setOption('rightBar', 'left', screen.width - width);
+				setOption('rightBar', 'left', win.width - width);
 		const params = {
 			'url'        : `sidebar.html#${side}-window`,
 			'top'        : options[side].top.value,
