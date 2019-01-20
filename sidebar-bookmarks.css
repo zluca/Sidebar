@@ -9,3 +9,6 @@
 #root-folder>div>.folder>.folder-name>.controls {
 	display: none;
 }
+.domain-bookmarks {
+	background-image: url(icons/bookmarks.svg);
+}

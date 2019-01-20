@@ -449,10 +449,6 @@
 		"message"       : "Maximum history entries showed at once",
 		"description"   : ""
 	},
-	"optMiscLimitBookmarksLabel" : {
-		"message"       : "Maximum bookmarks showed at once",
-		"description"   : ""
-	},
 	"optMiscMaxSavedRssPerFeedLabel" : {
 		"message"       : "Maximum saved RSS items",
 		"description"   : ""

@@ -449,10 +449,6 @@
 		"message"       : "一次最多顯示的歷史項目數",
 		"description"   : ""
 	},
-	"optMiscLimitBookmarksLabel" : {
-		"message"       : "一次最多顯示的書籤數",
-		"description"   : ""
-	},
 	"optMiscMaxSavedRssPerFeedLabel" : {
 		"message"       : "最大儲存 RSS 項目數",
 		"description"   : ""

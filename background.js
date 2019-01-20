@@ -14,6 +14,7 @@ const config = {
 	sidebarIcon        : 'icons/sidebar-icon-64.png',
 	rssIcon            : 'icons/rss.svg',
 	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034',
+	bookmarksLimit     : 999,
 	searchLength       : 30,
 	searchTypes        : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo','wikipedia']
 };
@@ -108,6 +109,7 @@ const status = {
 	saverActive          : false,
 	sendTimer            : {},
 	pocketCode           : '',
+	tooManyBookmarks     : false,
 	timeStamp            : {
 		options          : 0,
 		info             : 0,
@@ -435,12 +437,6 @@ const options = {
 			type    : 'boolean',
 			targets : [],
 			handler : 'clickActions'
-		},
-		tooManyBookmarks     : {
-			value   : true,
-			type    : 'boolean',
-			hidden  : true,
-			targets : []
 		}
 	},
 	theme: {
@@ -506,13 +502,6 @@ const options = {
 			range   : [10, 999],
 			targets : [],
 			handler : 'clickActions'
-		},
-		limitBookmarks     : {
-			value   : 1999,
-			type    : 'integer',
-			range   : [99, 9999],
-			targets : [],
-			handler : 'restartBookmarks'
 		},
 		maxSavedRssPerFeed : {
 			value   : 99,
@@ -1411,9 +1400,6 @@ const optionsHandler = {
 			if (data.tabs[i].url === config.extensionStartPage)
 				brauzer.tabs.reload(data.tabs[i].id);
 		}
-	},
-	restartBookmarks : (section, option, newValue) => {
-		initService.bookmarks('reInit');
 	},
 	scroll           : (section, option, newValue) => {
 		if (options.leftBar.mode.value === option)
@@ -2617,24 +2603,9 @@ const initService = {
 		};
 
 		const getRecent     = bookmarks => {
-			if (bookmarks.length < options.misc.limitBookmarks.value) {
-				setOption('misc', 'bookmarksMode', 'tree', false);
-				execMethod(brauzer.bookmarks.getTree, parseTree);
-				if (options.warnings.tooManyBookmarks.value === false) {
-					brauzer.notifications.create('switch-to-tree', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkSwitchToTreeText});
-					setOption('warnings', 'tooManyBookmarks', true, false);
-				}
-			}
-			else {
-				setOption('misc', 'bookmarksMode', 'plain', false);
-				for (let i = 0, l = bookmarks.length; i < l; i++)
-					createById('bookmarks', bookmarks[i], 'last');
-				if (options.warnings.tooManyBookmarks.value === true) {
-					brauzer.notifications.create('too-many-bookmarks', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.bookmarksTitle, 'message':  i18n.notification.bkTooManyBookmarksText});
-					setOption('warnings', 'tooManyBookmarks', false, false);
-				}
-				return initBookmarks();
-			}
+			if (bookmarks.length >= config.bookmarksLimit)
+				status.tooManyBookmarks = true;
+			execMethod(brauzer.bookmarks.getTree, parseTree);
 		};
 
 		const onCreated     = (id, bookmark) => {
@@ -2734,7 +2705,7 @@ const initService = {
 		if (start === true) {
 			updateItem.bookmarks = (newItem, item) => {
 				newItem.pid     = item.parentId;
-				newItem.domain  = makeDomain('bookmarks', item.url).id;
+				newItem.domain  = status.tooManyBookmarks ? 'bookmarks' : makeDomain('bookmarks', item.url).id;
 				newItem.title   = item.title;
 				newItem.index   = item.index;
 				newItem.url     = item.url;
@@ -2764,7 +2735,7 @@ const initService = {
 				return newFolder;
 			};
 
-			execMethod(brauzer.bookmarks.getRecent, getRecent, options.misc.limitBookmarks.value);
+			execMethod(brauzer.bookmarks.getRecent, getRecent, config.bookmarksLimit);
 		}
 		else if (start === 'reInit') {
 			data.bookmarks           = [];
@@ -2774,7 +2745,7 @@ const initService = {
 			data.bookmarksSearch     = [];
 			data.bookmarksSearchTerm = '';
 			makeTimeStamp('bookmarks');
-			execMethod(brauzer.bookmarks.getRecent, getRecent, options.misc.limitBookmarks.value);
+			execMethod(brauzer.bookmarks.getRecent, getRecent, config.bookmarksLimit);
 		}
 		else {
 			i18n.bookmarks           = null;

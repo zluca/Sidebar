@@ -449,10 +449,6 @@
 		"message"       : "Número máximo de entradas do Histórico mostradas de uma vez",
 		"description"   : ""
 	},
-	"optMiscLimitBookmarksLabel" : {
-		"message"       : "Número máximo de Marcadores mostrados de uma vez",
-		"description"   : ""
-	},
 	"optMiscMaxSavedRssPerFeedLabel" : {
 		"message"       : "Número máximo de itens RSS guardados",
 		"description"   : ""

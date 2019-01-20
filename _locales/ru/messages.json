@@ -449,10 +449,6 @@
 		"message"       : "Максимум истории подгружаемой за один раз",
 		"description"   : ""
 	},
-	"optMiscLimitBookmarksLabel" : {
-		"message"       : "Максимальное число отображаемых закладок",
-		"description"   : ""
-	},
 	"optMiscMaxSavedRssPerFeedLabel" : {
 		"message"       : "Максимум статей хранящихся в одном RSS канале",
 		"description"   : ""

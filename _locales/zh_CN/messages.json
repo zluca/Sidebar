@@ -449,10 +449,6 @@
 		"message"       : "一次最多显示历史记录项",
 		"description"   : ""
 	},
-	"optMiscLimitBookmarksLabel" : {
-		"message"       : "Maximum bookmarks showed at once",
-		"description"   : ""
-	},
 	"optMiscMaxSavedRssPerFeedLabel" : {
 		"message"       : "最多保存 RSS 项",
 		"description"   : ""
