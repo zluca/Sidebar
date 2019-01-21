@@ -12,3 +12,9 @@
 .domain-bookmarks {
 	background-image: url(icons/bookmarks.svg);
 }
+@media (min-width: 2.01rem) {
+	.domain-bookmarks {
+		background-image: none;
+		padding-left: 0.4rem;
+	}
+}
