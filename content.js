@@ -51,7 +51,7 @@ let initTimer  = -1;
 init();
 
 const checkDocumentReady = function(mutationsList, observer) {
-	if (document.body) {
+	if (document.readyState === 'interactive' || document.readyState === 'complete') {
 		observer.disconnect();
 		status.docReady = true;
 		if (options.hasOwnProperty('theme'))
