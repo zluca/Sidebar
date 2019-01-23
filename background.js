@@ -4358,7 +4358,7 @@ const initService = {
 										search(type, query, 1 + page);
 					}
 					makeTimeStamp(mode);
-					send(target, 'search', 'update', {'method': 'remove', 'target': type});
+					send(target, 'search', 'update', {'method': 'remove', 'target': type, 'query': query});
 				}
 			};
 		};

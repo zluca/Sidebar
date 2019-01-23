@@ -474,6 +474,8 @@ const messageHandler = {
 			const index = data.searchFoldersId.indexOf(info.target);
 			if (index === -1) return;
 			data.searchFolders[index].classList[info.method]('loading');
+			if (info.hasOwnProperty('query'))
+				document.title = info.query;
 		},
 		clearSearch : info => {
 			for (let i = data.searchFolders.length - 1; i >= 0; i--)
