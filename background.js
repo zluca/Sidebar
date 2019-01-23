@@ -76,7 +76,8 @@ const status = {
 		downloadStatus  : 'idle',
 		downloadsCount  : 0,
 		bookmarksSearch : false,
-		historySearch   : false
+		historySearch   : false,
+		undoTab         : {}
 	},
 	init               : {
 		'data'      : false,
@@ -2013,8 +2014,12 @@ const initService = {
 				new : (message, sender, sendResponse) => {
 					createNewTab(message.data.url === '' ? config.extensionStartPage : message.data.url, message.data.newWindow, message.data.active);
 				},
+				undo : (message, sender, sendResponse) => {
+					if (status.info.undoTab.hasOwnProperty('url'))
+						createNewTab(status.info.undoTab.url, false, status.info.undoTab.active);
+				},
 				update : (message, sender, sendResponse) => {
-					for (let i = data.tabs.length - 1; i >=0 ; i--)
+					for (let i = data.tabs.length - 1; i >= 0 ; i--)
 						if (data.tabs[i].url === message.data.url)
 							return brauzer.tabs.update(data.tabs[i].id, {'active': true});
 					brauzer.tabs.update(status.activeTabsIds[status.activeWindow], {'url': message.data.url});
@@ -2105,6 +2110,7 @@ const initService = {
 
 			i18n.tabs = {
 				new        : getI18n('tabsNew'),
+				undo       : getI18n('tabsUndo'),
 				fav        : getI18n('tabsControlsFav'),
 				move       : getI18n('tabsControlsMove'),
 				reload     : getI18n('tabsControlsReload'),
@@ -2250,6 +2256,11 @@ const initService = {
 				status.sidebarWindowCreating = false;
 				return false;
 			}
+			if (tab.url === status.info.undoTab.url) {
+				delete status.info.undoTab.url;
+				delete status.info.undoTab.title;
+				send('sidebar', 'tabs', 'undo', {'url': '', 'title': ''});
+			}
 			if (options.services.startpage.value === true)
 				if (checkStartPage(tab) === true)
 					brauzer.tabs.update(tab.id, {'url': config.extensionStartPage});
@@ -2362,7 +2373,11 @@ const initService = {
 			makeTimeStamp('tabs');
 			const tab = getById('tabs', id);
 			if (tab === false) return;
-			const newOpenerId = tab.opener;
+			status.info.undoTab.url    = tab.url;
+			status.info.undoTab.title  = tab.title;
+			status.info.undoTab.active = status.activeTabsIds[status.activeWindow] === id;
+			send('sidebar', 'tabs', 'undo', {'url': tab.url, 'title': tab.title});
+			const newOpenerId         = tab.opener;
 			removeFromFolder('tabs', tab, true);
 			for (let i = data.tabs.length - 1; i >= 0; i--)
 				if (data.tabs[i].opener === id)

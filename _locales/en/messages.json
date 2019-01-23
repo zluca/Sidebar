@@ -65,6 +65,10 @@
 		"message"       : "Create new tab",
 		"description"   : ""
 	},
+	"tabsUndo" : {
+		"message"       : "Undo close tab",
+		"description"   : ""
+	},
 	"tabsControlsFav" : {
 		"message"       : "Make bookmark",
 		"description"   : ""

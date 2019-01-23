@@ -65,6 +65,10 @@
 		"message"       : "Criar novo separador",
 		"description"   : ""
 	},
+	"tabsUndo" : {
+		"message"       : "Undo close tab",
+		"description"   : ""
+	},
 	"tabsControlsFav" : {
 		"message"       : "Make bookmark",
 		"description"   : ""

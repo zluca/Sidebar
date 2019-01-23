@@ -65,6 +65,10 @@
 		"message"       : "Новая вкладка",
 		"description"   : ""
 	},
+	"tabsUndo" : {
+		"message"       : "Отменить закрытие вкладки",
+		"description"   : ""
+	},
 	"tabsControlsFav" : {
 		"message"       : "Сделать закладку",
 		"description"   : ""

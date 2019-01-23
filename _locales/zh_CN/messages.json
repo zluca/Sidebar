@@ -65,6 +65,10 @@
 		"message"       : "创建新标签页",
 		"description"   : ""
 	},
+	"tabsUndo" : {
+		"message"       : "Undo close tab",
+		"description"   : ""
+	},
 	"tabsControlsFav" : {
 		"message"       : "Make bookmark",
 		"description"   : ""

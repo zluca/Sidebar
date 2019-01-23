@@ -65,6 +65,10 @@
 		"message"       : "建立新分頁",
 		"description"   : ""
 	},
+	"tabsUndo" : {
+		"message"       : "Undo close tab",
+		"description"   : ""
+	},
 	"tabsControlsFav" : {
 		"message"       : "加入書籤",
 		"description"   : ""

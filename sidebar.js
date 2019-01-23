@@ -554,6 +554,13 @@ const initBlock = {
 					insertFolders([fakeFolder(info.tab)], true);
 				insertItems([info.tab]);
 			},
+			undo       : info => {
+				status.info.undoTab.title = info.title;
+				status.info.undoTab.url   = info.url;
+				undoButton.title  = status.info.undoTab.hasOwnProperty('url') ?
+					`${i18n.tabs.undo}\n\n${status.info.undoTab.title}\n${status.info.undoTab.url}` :
+					i18n.tabs.undo;
+			},
 			active     : info => {
 				const newActiveTab = getById(info);
 				if (newActiveTab === false) return;
@@ -738,6 +745,11 @@ const initBlock = {
 		};
 
 		makeButton('new', 'tabs', 'button');
+		const undoButton = makeButton('undo', 'tabs', 'button');
+		console.log(status.info);
+		undoButton.title = status.info.undoTab.hasOwnProperty('url') ?
+			`${i18n.tabs.undo}\n\n${status.info.undoTab.title}\n${status.info.undoTab.url}` :
+			i18n.tabs.undo;
 		makeButton('new', 'tabs', 'bottom');
 		makeButton('plain', 'tabs', 'bottom');
 		makeButton('domain', 'tabs', 'bottom');
@@ -2153,6 +2165,9 @@ const buttonsEvents = {
 		},
 		new: event => {
 			send('background', 'tabs', 'new', {'url': ''});
+		},
+		undo: event => {
+			send('background', 'tabs', 'undo', '');
 		},
 		plain: event => {
 			if (options.misc.tabsMode !== 'plain')
