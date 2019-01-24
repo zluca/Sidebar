@@ -39,6 +39,19 @@
 	font-style: italic;
 }
 
+#tabs-undo {
+	cursor: default;
+}
+#tabs-undo.undo-active {
+	cursor: pointer;
+}
+	#tabs-undo>span {
+		background-color: var(--font-color-inactive)!important;
+	}
+	#tabs-undo.undo-active>span {
+		background-color: var(--font-color-active)!important;
+	}
+
 .plain .item.pinned #tabs-unpin,
 .plain .item #tabs-move,
 .domain .item #tabs-move,

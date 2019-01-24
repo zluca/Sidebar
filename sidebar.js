@@ -541,6 +541,17 @@ const initBlock = {
 			}
 		};
 
+		const setUndoButton =  _ => {
+			if (status.info.undoTab.hasOwnProperty('url'))
+				if (status.info.undoTab.url !== '') {
+					undoButton.title = `${i18n.tabs.undo}\n\n${status.info.undoTab.title}\n${status.info.undoTab.url}`;
+					undoButton.classList.add('undo-active');
+					return;
+				}
+			undoButton.title = i18n.tabs.undo;
+			undoButton.classList.remove('undo-active');
+		};
+
 		i18n.tabs             = info.i18n;
 		prepareBlock('tabs');
 		setBlockClass();
@@ -557,9 +568,7 @@ const initBlock = {
 			undo       : info => {
 				status.info.undoTab.title = info.title;
 				status.info.undoTab.url   = info.url;
-				undoButton.title  = status.info.undoTab.hasOwnProperty('url') ?
-					`${i18n.tabs.undo}\n\n${status.info.undoTab.title}\n${status.info.undoTab.url}` :
-					i18n.tabs.undo;
+				setUndoButton();
 			},
 			active     : info => {
 				const newActiveTab = getById(info);
@@ -746,10 +755,7 @@ const initBlock = {
 
 		makeButton('new', 'tabs', 'button');
 		const undoButton = makeButton('undo', 'tabs', 'button');
-		console.log(status.info);
-		undoButton.title = status.info.undoTab.hasOwnProperty('url') ?
-			`${i18n.tabs.undo}\n\n${status.info.undoTab.title}\n${status.info.undoTab.url}` :
-			i18n.tabs.undo;
+		setUndoButton();
 		makeButton('new', 'tabs', 'bottom');
 		makeButton('plain', 'tabs', 'bottom');
 		makeButton('domain', 'tabs', 'bottom');
