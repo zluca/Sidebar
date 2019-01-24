@@ -2299,6 +2299,11 @@ const initService = {
 			if (info.hasOwnProperty('url')) {
 				if (info.url === oldTab.url) return;
 				if (info.url === 'about:blank') return;
+				if (tab.url === status.info.undoTab.url) {
+					delete status.info.undoTab.url;
+					delete status.info.undoTab.title;
+					send('sidebar', 'tabs', 'undo', {'url': '', 'title': ''});
+				}
 				if (status.activeTabsIds[status.activeWindow] === id)
 					reInit(id);
 				if (options.services.startpage.value === true)
