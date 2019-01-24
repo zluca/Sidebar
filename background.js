@@ -115,6 +115,7 @@ const status = {
 	sendTimer            : {},
 	pocketCode           : '',
 	tooManyBookmarks     : false,
+	firstInit            : false,
 	timeStamp            : {
 		options          : 0,
 		info             : 0,
@@ -1734,6 +1735,7 @@ const initExtension = res => {
 	};
 
 	const setDefaults = _ => {
+		status.firstInit = true;
 		brauzer.windows.getCurrent({}, win => {
 			for (let service of ['tabs', 'bookmarks', 'history', 'downloads']) {
 				if (!brauzer.hasOwnProperty(service)) {
@@ -2154,6 +2156,10 @@ const initService = {
 
 
 			status.init.tabs = true;
+			if (firefox === false)
+				if (opera === false)
+					if (status.firstInit)
+						createNewTab();
 		};
 
 		const onWindowRemoved   = id => {
