@@ -66,7 +66,7 @@
 		"description"   : ""
 	},
 	"tabsUndo" : {
-		"message"       : "Undo close tab",
+		"message"       : "復原關閉分頁",
 		"description"   : ""
 	},
 	"tabsControlsFav" : {
