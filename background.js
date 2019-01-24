@@ -77,7 +77,11 @@ const status = {
 		downloadsCount  : 0,
 		bookmarksSearch : false,
 		historySearch   : false,
-		undoTab         : {}
+		undoTab         : {
+			url    : '',
+			title  : '',
+			active : false
+		}
 	},
 	init               : {
 		'data'      : false,
@@ -2257,8 +2261,8 @@ const initService = {
 				return false;
 			}
 			if (tab.url === status.info.undoTab.url) {
-				delete status.info.undoTab.url;
-				delete status.info.undoTab.title;
+				status.info.undoTab.url   = '';
+				status.info.undoTab.title = '';
 				send('sidebar', 'tabs', 'undo', {'url': '', 'title': ''});
 			}
 			if (options.services.startpage.value === true)
@@ -2300,8 +2304,8 @@ const initService = {
 				if (info.url === oldTab.url) return;
 				if (info.url === 'about:blank') return;
 				if (tab.url === status.info.undoTab.url) {
-					delete status.info.undoTab.url;
-					delete status.info.undoTab.title;
+					status.info.undoTab.url   = '';
+					status.info.undoTab.title = '';
 					send('sidebar', 'tabs', 'undo', {'url': '', 'title': ''});
 				}
 				if (status.activeTabsIds[status.activeWindow] === id)
