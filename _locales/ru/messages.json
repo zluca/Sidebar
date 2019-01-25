@@ -1061,6 +1061,10 @@
 		"message"       : "Не известно",
 		"description"   : ""
 	},
+	"domainsPdf" : {
+		"message"       : "PDF",
+		"description"   : ""
+	},
 	"domainsFile" : {
 		"message"       : "Файлы на диске",
 		"description"   : ""

@@ -1061,6 +1061,10 @@
 		"message"       : "未知",
 		"description"   : ""
 	},
+	"domainsPdf" : {
+		"message"       : "PDF",
+		"description"   : ""
+	},
 	"domainsFile" : {
 		"message"       : "本機檔案",
 		"description"   : ""

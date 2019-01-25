@@ -1061,6 +1061,10 @@
 		"message"       : "Desconhecido",
 		"description"   : ""
 	},
+	"domainsPdf" : {
+		"message"       : "PDF",
+		"description"   : ""
+	},
 	"domainsFile" : {
 		"message"       : "Local files",
 		"description"   : ""

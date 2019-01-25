@@ -33,6 +33,7 @@ const i18n = {
 	},
 	domains: {
 		default   : getI18n('domainsDefault'),
+		pdf       : getI18n('domainsPdf'),
 		file      : getI18n('domainsFile'),
 		ftp       : getI18n('domainsFtp'),
 		startpage : getI18n('domainsStartPage'),
@@ -4721,6 +4722,8 @@ function makeDomain(mode, url, fav) {
 		id = 'default';
 	else if (url === 'chrome://startpage/extensions')
 		id = 'system';
+	else if (/\.pdf$/.test(url))
+		id = 'pdf';
 	else if (/^file:/.test(url))
 		id = 'file';
 	else if (/^ftp:/.test(url))
@@ -4794,6 +4797,8 @@ function tabIsProtected(tab) {
 		return false;
 	if (firefox) {
 		if (/^https:\/\/addons.mozilla.org/.test(tab.url))
+			return true;
+		if (/\.pdf$/.test(tab.url))
 			return true;
 	}
 	else if (opera) {

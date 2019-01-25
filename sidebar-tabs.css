@@ -68,6 +68,9 @@
 .domain-default {
 	background-image: url(icons/default.svg);
 }
+.domain-pdf {
+	background-image: url(icons/pdf.svg);
+}
 .domain-file {
 	background-image: url(icons/folder.svg);
 }
