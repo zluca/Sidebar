@@ -16,7 +16,7 @@ WebExtension that imprement Sidebar into browser.
 ### Install from store
 
 **Chrome:**
-[download](https://chrome.google.com/webstore/detail/sidebar%20/dnafkfkoknddnkdajibiigkopoelnhei)
+Removed by Google
 
 **Firefox:**
 [download](https://addons.mozilla.org/en-US/firefox/addon/sidebar_plus/)
