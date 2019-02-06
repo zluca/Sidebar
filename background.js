@@ -2436,8 +2436,11 @@ const initService = {
 		const getWindows        = windows => {
 			for (let i = 0, l = windows.length; i < l; i++) {
 				const win   = createWindow(windows[i]);
-				for (let j = 0, l = windows[i].tabs.length; j < l; j++)
-					createTab(windows[i].tabs[j], true);
+				for (let j = 0, l = windows[i].tabs.length; j < l; j++) {
+					const tab = createTab(windows[i].tabs[j], true);
+					if (tab.url === config.extensionStartPage)
+						brauzer.tabs.reload(tab.id);
+				}
 			}
 			setWindowsView();
 			initTabs();
