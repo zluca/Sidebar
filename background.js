@@ -3465,7 +3465,6 @@ const initService = {
 						const parser    = new DOMParser();
 						const xmlDoc    = parser.parseFromString(xhttp.responseText, 'text/xml');
 						feed.lastUpdate = Date.now();
-						makeRssDomain(xmlDoc.querySelector('channel image>url, feed image>url'), feed.url);
 						injectRss(xmlDoc, feed);
 						rssSetUpdate(feed, options.misc.rssUpdatePeriod.value);
 						saveNow('rssFolders');
