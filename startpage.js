@@ -233,6 +233,17 @@ function init(response) {
 		}
 	});
 
+	window.addEventListener('keydown', event => {
+		const key = parseInt(event.key);
+		if (isNaN(key) === false) {
+			if (key === 0 && data.sites.length > 9)
+				data.sites[10].firstChild.click();
+			else if (data.sites.length >= key - 1) {
+				data.sites[key - 1].firstChild.click();
+			}
+		}
+	}, {'passive': true});
+
 	editButton.addEventListener('click', event => {
 		event.stopPropagation();
 		event.preventDefault();
