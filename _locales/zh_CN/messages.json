@@ -113,6 +113,10 @@
 		"message"       : "以树视图管理标签页",
 		"description"   : ""
 	},
+	"tabsSearchButton" : {
+		"message"       : "Switch into search mode",
+		"description"   : ""
+	},
 	"bookmarksControlsBookmarkThis" : {
 		"message"       : "将此标签页加入书签",
 		"description"   : ""
@@ -141,10 +145,6 @@
 		"message"       : "Open all bookmarks",
 		"description"   : ""
 	},
-	"bookmarksSearchPlaceholder" : {
-		"message"       : "搜索",
-		"description"   : ""
-	},
 
 	"historyControlsDelete" : {
 		"message"       : "Delete entry",
@@ -160,10 +160,6 @@
 	},
 	"historyGetMoreTitle" : {
 		"message"       : "显示更多历史记录",
-		"description"   : ""
-	},
-	"historySearchPlaceholder" : {
-		"message"       : "搜索",
 		"description"   : ""
 	},
 

@@ -76,6 +76,8 @@ const status = {
 		rssUpdatedCount : 0,
 		downloadStatus  : 'idle',
 		downloadsCount  : 0,
+		tabsSearchBar   : false,
+		tabsSearch      : false,
 		bookmarksSearch : false,
 		historySearch   : false,
 		undoTab         : {
@@ -156,6 +158,8 @@ const data = {
 	windowsFoldersId   : [],
 	tabsDomains        : [],
 	tabsDomainsId      : [],
+	tabsSearch         : [],
+	tabsSearchTerm     : '',
 	bookmarks          : [],
 	bookmarksId        : [],
 	bookmarksFolders   : [],
@@ -1920,12 +1924,14 @@ const initService = {
 			brauzer.runtime.onMessage.addListener((message, sender, sendResponse) => {
 				// console.log(message);
 				if (message.hasOwnProperty('target'))
-					if (message.target === 'background') {
-						messageHandler[message.subject][message.action](message, sender, sendResponse);
-						if (message.hasOwnProperty('data'))
-							if (message.data.hasOwnProperty('needResponse'))
-								return true;
-					}
+					if (message.target === 'background')
+						if (messageHandler.hasOwnProperty(message.subject))
+							if (messageHandler[message.subject].hasOwnProperty(message.action)) {
+								messageHandler[message.subject][message.action](message, sender, sendResponse);
+								if (message.hasOwnProperty('data'))
+									if (message.data.hasOwnProperty('needResponse'))
+										return true;
+							}
 			});
 
 			initWindow();
@@ -2112,23 +2118,49 @@ const initService = {
 				},
 				duplicate : (message, sender, sendResponse) => {
 					brauzer.tabs.duplicate(message.data.id);
+				},
+				showSearchBar : (message, sender, sendResponse) => {
+					status.info.tabsSearchBar = message.data;
+					send('sidebar', 'tabs', 'showSearchBar', status.info.tabsSearchBar);
+				},
+				search : (message, sender, sendResponse) => {
+					status.info.tabsSearch    = true;
+					status.info.tabsSearchBar = true;
+					data.tabsSearch           = [];
+					data.tabsSearchTerm       = message.data.request;
+					for (let i = 0, l = data.tabsId.length; i < l; i++) {
+						if (Array.isArray(data.tabs[i].title.toLowerCase().match(data.tabsSearchTerm)))
+							data.tabsSearch.push(data.tabs[i]);
+						else if (Array.isArray(data.tabs[i].url.match(data.tabsSearchTerm)))
+							data.tabsSearch.push(data.tabs[i]);
+					}
+					send('sidebar', 'tabs', 'search', {'search': data.tabsSearch, 'searchTerm': data.tabsSearchTerm});
+				},
+				clearSearch : (message, sender, sendResponse) => {
+					status.info.tabsSearch    = false;
+					data.tabsSearch           = [];
+					data.tabsSearchTerm       = '';
+					send('sidebar', 'tabs', 'clearSearch', {'value': false});
 				}
 			};
 
 			i18n.tabs = {
-				new        : getI18n('tabsNew'),
-				undo       : getI18n('tabsUndo'),
-				fav        : getI18n('tabsControlsFav'),
-				move       : getI18n('tabsControlsMove'),
-				reload     : getI18n('tabsControlsReload'),
-				pin        : getI18n('tabsControlsPin'),
-				unpin      : getI18n('tabsControlsUnpin'),
-				duplicate  : getI18n('tabsControlsDuplicate'),
-				close      : getI18n('tabsControlsClose'),
-				closeAll   : getI18n('tabsControlsCloseAll'),
-				plain      : getI18n('tabsPlainModeButton'),
-				domain     : getI18n('tabsDomainModeButton'),
-				tree       : getI18n('tabsTreeModeButton')
+				new                : getI18n('tabsNew'),
+				undo               : getI18n('tabsUndo'),
+				fav                : getI18n('tabsControlsFav'),
+				move               : getI18n('tabsControlsMove'),
+				reload             : getI18n('tabsControlsReload'),
+				pin                : getI18n('tabsControlsPin'),
+				unpin              : getI18n('tabsControlsUnpin'),
+				duplicate          : getI18n('tabsControlsDuplicate'),
+				close              : getI18n('tabsControlsClose'),
+				closeAll           : getI18n('tabsControlsCloseAll'),
+				plain              : getI18n('tabsPlainModeButton'),
+				domain             : getI18n('tabsDomainModeButton'),
+				tree               : getI18n('tabsTreeModeButton'),
+				search             : getI18n('tabsSearchButton'),
+				searchPlaceholder  : getI18n('searchPlaceholder'),
+				clearSearchTitle   : getI18n('searchClearSearchTitle')
 			};
 
 			modeData.tabs = _ => {
@@ -2568,7 +2600,7 @@ const initService = {
 				delete             : getI18n('bookmarksControlsDelete'),
 				folderDelete       : getI18n('bookmarksControlsFolderDelete'),
 				openAll            : getI18n('bookmarksControlsOpenAll'),
-				searchPlaceholder  : getI18n('bookmarksSearchPlaceholder'),
+				searchPlaceholder  : getI18n('searchPlaceholder'),
 				clearSearchTitle   : getI18n('searchClearSearchTitle')
 			};
 
@@ -2840,7 +2872,7 @@ const initService = {
 				folderDelete       : getI18n('historyControlsFolderDelete'),
 				getMoreText        : getI18n('historyGetMoreText'),
 				getMore            : getI18n('historyGetMoreTitle'),
-				searchPlaceholder  : getI18n('historySearchPlaceholder'),
+				searchPlaceholder  : getI18n('searchPlaceholder'),
 				clearSearchTitle   : getI18n('searchClearSearchTitle')
 			};
 

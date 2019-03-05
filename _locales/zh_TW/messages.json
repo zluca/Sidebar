@@ -113,6 +113,10 @@
 		"message"       : "以樹形檢視組織分頁",
 		"description"   : ""
 	},
+	"tabsSearchButton" : {
+		"message"       : "Switch into search mode",
+		"description"   : ""
+	},
 	"bookmarksControlsBookmarkThis" : {
 		"message"       : "將此分頁加入書籤",
 		"description"   : ""
@@ -141,10 +145,6 @@
 		"message"       : "開啟所有書籤",
 		"description"   : ""
 	},
-	"bookmarksSearchPlaceholder" : {
-		"message"       : "搜尋",
-		"description"   : ""
-	},
 
 	"historyControlsDelete" : {
 		"message"       : "刪除項目",
@@ -160,10 +160,6 @@
 	},
 	"historyGetMoreTitle" : {
 		"message"       : "顯示更多歷史項目",
-		"description"   : ""
-	},
-	"historySearchPlaceholder" : {
-		"message"       : "搜尋",
 		"description"   : ""
 	},
 

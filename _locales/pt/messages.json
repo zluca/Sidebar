@@ -113,6 +113,10 @@
 		"message"       : "Organizar separadores em Vista de Árvore",
 		"description"   : ""
 	},
+	"tabsSearchButton" : {
+		"message"       : "Switch into search mode",
+		"description"   : ""
+	},
 	"bookmarksControlsBookmarkThis" : {
 		"message"       : "Adicionar este separador aos marcadores",
 		"description"   : ""
@@ -141,10 +145,6 @@
 		"message"       : "Open all bookmarks",
 		"description"   : ""
 	},
-	"bookmarksSearchPlaceholder" : {
-		"message"       : "Procurar",
-		"description"   : ""
-	},
 
 	"historyControlsDelete" : {
 		"message"       : "Delete entry",
@@ -160,10 +160,6 @@
 	},
 	"historyGetMoreTitle" : {
 		"message"       : "Mostrar mais entradas do histórico",
-		"description"   : ""
-	},
-	"historySearchPlaceholder" : {
-		"message"       : "Procurar",
 		"description"   : ""
 	},
 

@@ -113,6 +113,10 @@
 		"message"       : "Отображать вкладки в виде дерева",
 		"description"   : ""
 	},
+	"tabsSearchButton" : {
+		"message"       : "Переключиться в режим поиска",
+		"description"   : ""
+	},
 	"bookmarksControlsBookmarkThis" : {
 		"message"       : "Сделать закладку",
 		"description"   : ""
@@ -141,10 +145,6 @@
 		"message"       : "Открыть все закладки",
 		"description"   : ""
 	},
-	"bookmarksSearchPlaceholder" : {
-		"message"       : "Искать",
-		"description"   : ""
-	},
 
 	"historyControlsDelete" : {
 		"message"       : "Удалить",
@@ -160,10 +160,6 @@
 	},
 	"historyGetMoreTitle" : {
 		"message"       : "Показать предыдущюю историю",
-		"description"   : ""
-	},
-	"historySearchPlaceholder" : {
-		"message"       : "Искать",
 		"description"   : ""
 	},
 

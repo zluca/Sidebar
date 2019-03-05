@@ -696,9 +696,18 @@ const initBlock = {
 				if (win === false) return;
 				removeFolderById(info);
 			},
+			showSearchBar : info => {
+				block.classList[info ? 'add' : 'remove']('search-show-input');
+			},
+			search       : info => {
+				insertSearchItems(info.search, info.searchTerm);
+			},
+			clearSearch   : info => {
+				searchActive(false);
+			}
 		};
 
-		insertItems = tabs => {
+		insertItems = (tabs, searchMode = '') => {
 			let pid         = 0;
 			let tab         = null;
 			let folder      = rootFolder;
@@ -730,7 +739,10 @@ const initBlock = {
 						folder.lastChild.insertBefore(tab, folder.lastChild.firstChild);
 					else
 						folder.lastChild.appendChild(tab);
-				}
+				},
+				search : item => {
+					searchResults.lastChild.appendChild(tab);
+				},
 			};
 
 			for (let i = 0, l = tabs.length; i < l; i++) {
@@ -749,7 +761,7 @@ const initBlock = {
 				classList += tabs[i].discarded ? ' discarded' : '';
 				classList += tabs[i].readed    ? '' : ' tab-unreaded';
 				tab.classList = classList;
-				postProcess[options.misc.tabsMode](i);
+				postProcess[searchMode === 'search' ? 'search' : options.misc.tabsMode](i);
 			}
 		};
 
@@ -760,6 +772,8 @@ const initBlock = {
 		makeButton('plain', 'tabs', 'bottom');
 		makeButton('domain', 'tabs', 'bottom');
 		makeButton('tree', 'tabs', 'bottom');
+		makeButton('search', 'tabs', 'bottom');
+		makeSearch('tabs');
 
 		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode, info.windowsFolders);
 		finishBlock('tabs');
@@ -1987,14 +2001,15 @@ function makeSearch(mode) {
 		controls.top.appendChild(button.sidebarActions);
 	}
 	status.lastSearch = '';
-	const search      = dcea('input', target, [['id', 'search'], ['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
+	const search      = dcea('div', target, [['id', 'search-container']]);
+	const searchInput = dcea('input', search, [['classList', 'search-input'], ['type', 'text'], ['placeholder', i18n[mode].searchPlaceholder]]);
 	if (mode !== 'search')
-		dcea('span', target, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
+		dcea('span', search, [['classList', 'search-icon'], ['title', i18n[mode].searchPlaceholder]]);
 	else
-		dcea('span', target, [['classList', 'search-options'], ['title', i18n.search.searchOptions]]).addEventListener('click', event => {
+		dcea('span', search, [['classList', 'search-options'], ['title', i18n.search.searchOptions]]).addEventListener('click', event => {
 				send('background', 'dialog', 'searchSelect', '');
 		});
-	const clearSearch = dcea('span', target, [['classList', 'clear-search'], ['title', i18n[mode].clearSearchTitle]]);
+	const clearSearch = dcea('span', search, [['classList', 'clear-search'], ['title', i18n[mode].clearSearchTitle]]);
 
 	if (mode !== 'search')
 		insertSearchItems = (items, searchTerm) => {
@@ -2002,7 +2017,7 @@ function makeSearch(mode) {
 				searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
 			insertItems(items, 'search');
 			if (searchTerm !== undefined)
-				search.value = searchTerm;
+				searchInput.value = searchTerm;
 			clearSearch.style.setProperty('display', 'inline-block');
 			searchActive(true);
 		};
@@ -2011,11 +2026,11 @@ function makeSearch(mode) {
 			insertItems(items);
 			if (typeof searchTerm === 'string' && searchTerm !== '') {
 				clearSearch.style.setProperty('display', 'inline-block');
-				search.value = searchTerm;
+				searchInput.value = searchTerm;
 			}
 			else {
 				clearSearch.style.setProperty('display', 'none');
-				search.value = '';
+				searchInput.value = '';
 			}
 		}
 
@@ -2027,15 +2042,15 @@ function makeSearch(mode) {
 		else {
 			block.classList.remove('search-active');
 			clearSearch.style.setProperty('display', 'none');
-			search.value        = '';
+			searchInput.value        = '';
 			status.searchActive = false;
 			window.scrollTo(0, options.scroll[options.sidebar.mode]);
 		}
 	}
 
 	if (mode === 'search')
-		search.addEventListener('keyup', event => {
-			const value = search.value;
+		searchInput.addEventListener('keyup', event => {
+			const value = searchInput.value;
 			if (value.length > 0) {
 				clearSearch.style.setProperty('display', 'inline-block');
 				if (event.key === 'Enter')
@@ -2047,10 +2062,12 @@ function makeSearch(mode) {
 				clearSearch.click();
 		}, {'passive': true});
 	else
-		search.addEventListener('keyup', event => {
-			const value = search.value;
+		searchInput.addEventListener('keyup', event => {
+			const value = searchInput.value;
 			if (value.length > 0)
 				clearSearch.style.setProperty('display', 'inline-block');
+			else if (mode === 'tabs')
+				send('background', 'tabs', 'clearSearch');
 			else
 				return clearSearch.click();
 			if (value.length > 2) {
@@ -2063,7 +2080,9 @@ function makeSearch(mode) {
 
 	clearSearch.addEventListener('click', event => {
 		send('background', mode, 'clearSearch');
-		if (mode === 'search')
+		if (mode === 'tabs')
+			send('background', 'tabs', 'showSearchBar', false);
+		else if (mode === 'search')
 			send('background', 'search', 'changeQuery', '');
 	}, {'passive': true});
 }
@@ -2186,6 +2205,9 @@ const buttonsEvents = {
 		tree: event => {
 			if (options.misc.tabsMode !== 'tree')
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'tabsMode', 'value': 'tree'});
+		},
+		search: event => {
+			send('background', 'tabs', 'showSearchBar', true);
 		}
 	},
 	bookmarks : {

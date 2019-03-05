@@ -52,6 +52,24 @@
 		background-color: var(--font-color-active)!important;
 	}
 
+#search-container {
+	display: none;
+}
+.search-active #search-container,
+.search-show-input #search-container {
+	display: block;
+}
+.search-show-input #controls-bottom #tabs-new,
+.search-show-input #tabs-plain,
+.search-show-input #tabs-domain,
+.search-show-input #tabs-tree,
+.search-show-input #tabs-search {
+	display: none!important;
+}
+.search-show-input .clear-search {
+	display: inline-block!important;
+}
+
 .plain .item.pinned #tabs-unpin,
 .plain .item #tabs-move,
 .domain .item #tabs-move,

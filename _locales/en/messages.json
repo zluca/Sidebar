@@ -113,6 +113,10 @@
 		"message"       : "Organize tabs in tree view",
 		"description"   : ""
 	},
+	"tabsSearchButton" : {
+		"message"       : "Switch into search mode",
+		"description"   : ""
+	},
 	"bookmarksControlsBookmarkThis" : {
 		"message"       : "Bookmark this tab",
 		"description"   : ""
@@ -141,10 +145,6 @@
 		"message"       : "Open all bookmarks",
 		"description"   : ""
 	},
-	"bookmarksSearchPlaceholder" : {
-		"message"       : "Search",
-		"description"   : ""
-	},
 
 	"historyControlsDelete" : {
 		"message"       : "Delete entry",
@@ -160,10 +160,6 @@
 	},
 	"historyGetMoreTitle" : {
 		"message"       : "Show more history entries",
-		"description"   : ""
-	},
-	"historySearchPlaceholder" : {
-		"message"       : "Search",
 		"description"   : ""
 	},
 

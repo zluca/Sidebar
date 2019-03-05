@@ -485,85 +485,89 @@ nav {
 .search-active #controls-button {
 	display: none;
 }
-	.search-input {
-		height: 1.6rem;
+	#search-container {
+		position: relative;
 		width: 100%;
-		text-indent: 1.6rem;
-		background-color: var(--background-color-active);
-		border-style: solid;
-		border-color: var(--border-color);
-		border-width: .05rem;
-		margin: 0 .2rem;
-		color: var(--font-color-active);
 	}
-	.search-input::placeholder {
-		color: var(--font-color-inactive);
-	}
-	.search-icon {
-		display: inline-block;
-		width: 1.2rem;
-		height: 1.2rem;
-		position: absolute;
-		z-index: 99;
-		left: .6rem;
-		top: .6rem;
-		background-color: var(--font-color-inactive);
-		-webkit-mask-repeat: no-repeat;
-		-webkit-mask-size: 100% 100%;
-		-webkit-mask-position: center;
-		-webkit-mask-mode: alpha;
-		-webkit-mask-image: url(icons/search.svg);
-		mask-repeat: no-repeat;
-		mask-size: 100% 100%;
-		mask-position: center;
-		mask-mode: alpha;
-		mask-image: url(icons/search.svg);
-	}
-	.search-options {
-		width: 1.2rem;
-		height: 1.2rem;
-		position: absolute;
-		z-index: 99;
-		left: .55rem;
-		top: .6rem;
-		margin-left: .1rem;
-		background-color: var(--font-color-inactive);
-		display: inline-block;
-		-webkit-mask-repeat: no-repeat;
-		-webkit-mask-size: 100% 100%;
-		-webkit-mask-position: center;
-		-webkit-mask-mode: alpha;
-		mask-repeat: no-repeat;
-		mask-size: 100% 100%;
-		mask-position: center;
-		mask-mode: alpha;
-		-webkit-mask-image: url('icons/options.svg');
-		mask-image: url('icons/options.svg');
-	}
-	.clear-search {
-		display: none;
-		width: 1.2rem;
-		height: 1.2rem;
-		position: absolute;
-		z-index: 99;
-		right: 1.4rem;
-		top: .6rem;
-		background-color: var(--font-color-inactive);
-		-webkit-mask-repeat: no-repeat;
-		-webkit-mask-size: 100% 100%;
-		-webkit-mask-position: center;
-		-webkit-mask-mode: alpha;
-		-webkit-mask-image: url(icons/close.svg);
-		mask-repeat: no-repeat;
-		mask-size: 100% 100%;
-		mask-position: center;
-		mask-mode: alpha;
-		mask-image: url(icons/close.svg);
-	}
+		.search-input {
+			height: 1.6rem;
+			width: calc(100% - .4rem);
+			text-indent: 1.8rem;
+			background-color: var(--background-color-active);
+			border-style: solid;
+			border-color: var(--border-color);
+			border-width: .05rem;
+			margin: 0 .2rem;
+			color: var(--font-color-active);
+		}
+		.search-input::placeholder {
+			color: var(--font-color-inactive);
+		}
+		.search-icon {
+			display: inline-block;
+			width: 1.2rem;
+			height: 1.2rem;
+			position: absolute;
+			z-index: 99;
+			left: .4rem;
+			top: .2rem;
+			background-color: var(--font-color-inactive);
+			-webkit-mask-repeat: no-repeat;
+			-webkit-mask-size: 100% 100%;
+			-webkit-mask-position: center;
+			-webkit-mask-mode: alpha;
+			-webkit-mask-image: url(icons/search.svg);
+			mask-repeat: no-repeat;
+			mask-size: 100% 100%;
+			mask-position: center;
+			mask-mode: alpha;
+			mask-image: url(icons/search.svg);
+		}
+		.search-options {
+			width: 1.2rem;
+			height: 1.2rem;
+			position: absolute;
+			z-index: 99;
+			left: .4rem;
+			top: .2rem;
+			margin-left: .1rem;
+			background-color: var(--font-color-inactive);
+			display: inline-block;
+			-webkit-mask-repeat: no-repeat;
+			-webkit-mask-size: 100% 100%;
+			-webkit-mask-position: center;
+			-webkit-mask-mode: alpha;
+			mask-repeat: no-repeat;
+			mask-size: 100% 100%;
+			mask-position: center;
+			mask-mode: alpha;
+			-webkit-mask-image: url('icons/options.svg');
+			mask-image: url('icons/options.svg');
+		}
+		.clear-search {
+			display: none;
+			width: 1.2rem;
+			height: 1.2rem;
+			position: absolute;
+			z-index: 99;
+			right: .4rem;
+			top: .2rem;
+			background-color: var(--font-color-inactive);
+			-webkit-mask-repeat: no-repeat;
+			-webkit-mask-size: 100% 100%;
+			-webkit-mask-position: center;
+			-webkit-mask-mode: alpha;
+			-webkit-mask-image: url(icons/close.svg);
+			mask-repeat: no-repeat;
+			mask-size: 100% 100%;
+			mask-position: center;
+			mask-mode: alpha;
+			mask-image: url(icons/close.svg);
+		}
 
-	.search .search-icon:hover {
-		background-color: var(--font-color-active);
-	}
+		.search .search-icon:hover {
+			background-color: var(--font-color-active);
+		}
 
 @media (max-width: 2rem) {
 	body {
