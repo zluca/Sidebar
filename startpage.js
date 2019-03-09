@@ -234,6 +234,8 @@ function init(response) {
 	});
 
 	window.addEventListener('keydown', event => {
+		if (document.activeElement === searchField) return;
+		if (options.startpage.mode === 'search') return;
 		const key = parseInt(event.key);
 		if (isNaN(key) === false) {
 			if (key === 0 && data.sites.length > 9)
@@ -722,7 +724,7 @@ function setBackground(image) {
 function setMode(value) {
 	if (value !== undefined)
 		options.startpage.mode = value;
-	doc.classList     = options.startpage.mode;
+	doc.classList = options.startpage.mode;
 }
 
 const setImageStyle = {
