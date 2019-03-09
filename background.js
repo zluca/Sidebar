@@ -2347,6 +2347,7 @@ const initService = {
 					status.info.undoTab.title = '';
 					send('sidebar', 'tabs', 'undo', {'url': '', 'title': ''});
 				}
+				getZoom(id, oldTab);
 				if (status.activeTabsIds[status.activeWindow] === id)
 					reInit(id);
 				if (options.services.startpage.value === true)
