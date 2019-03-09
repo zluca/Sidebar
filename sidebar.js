@@ -2390,25 +2390,25 @@ const buttonsEvents = {
 
 const clickActions = {
 	open            : event => {
-		if (!event.target.hasOwnProperty('href')) return;
+		if (typeof event.target.href !== 'string') return;
 		send('background', 'tabs', 'update', {'url': event.target.href});
 		if (options.sidebar.mode === 'rss')
 			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 	},
 	openInNewTab    : event => {
-		if (!event.target.hasOwnProperty('href')) return;
+		if (typeof event.target.href !== 'string') return;
 		send('background', 'tabs', 'new', {'url': event.target.href});
 		if (options.sidebar.mode === 'rss')
 			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 	},
 	openInNewInactiveTab  : event => {
-		if (!event.target.hasOwnProperty('href')) return;
+		if (typeof event.target.href !== 'string') return;
 		send('background', 'tabs', 'new', {'url': event.target.href, 'active': false});
 		if (options.sidebar.mode === 'rss')
 			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
 	},
 	openInNewWindow : event => {
-		if (!event.target.hasOwnProperty('href')) return;
+		if (typeof event.target.href !== 'string') return;
 		send('background', 'tabs', 'new', {'url': event.target.href, 'newWindow': true});
 		if (options.sidebar.mode === 'rss')
 			send('background', 'rss', 'rssReaded', {'id': event.target.dataset.id});
