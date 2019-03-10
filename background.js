@@ -212,6 +212,8 @@ const data = {
 	favsFoldersId      : [],
 	startpage          : [],
 	foldedId           : [],
+	tabsWithOpeners    : [],
+	tabsWithOpenersId  : [],
 	leftBar        : {
 		'side'     : 'leftBar',
 		'options'  : null,
@@ -1845,6 +1847,11 @@ const initService = {
 			}
 			if (Array.isArray(res.foldedId))
 				data.foldedId      = res.foldedId;
+			if (Array.isArray(res.tabsWithOpeners)) {
+				data.tabsWithOpeners   = res.tabsWithOpeners;
+				for (let i = data.tabsWithOpeners.length - 1; i >= 0; i--)
+					data.tabsWithOpenersId[i] = 0;
+			}
 
 			for (let service in options.services)
 				if (options.services[service].value === true) {
@@ -1942,7 +1949,7 @@ const initService = {
 			return;
 		status.init.data = true;
 
-		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId']);
+		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId', 'tabsWithOpeners']);
 	},
 
 	startpage : start => {
@@ -2348,6 +2355,13 @@ const initService = {
 					send('sidebar', 'tabs', 'undo', {'url': '', 'title': ''});
 				}
 				getZoom(id, oldTab);
+				for (let i = data.tabsWithOpeners.length - 1; i >= 0; i--) {
+					if (data.tabsWithOpeners[i].url === oldTab.url)
+						data.tabsWithOpeners[i].url = info.url;
+					if (data.tabsWithOpeners[i].openerUrl === oldTab.url)
+						data.tabsWithOpeners[i].openerUrl = info.url;
+				}
+				saveNow('openers', true);
 				if (status.activeTabsIds[status.activeWindow] === id)
 					reInit(id);
 				if (options.services.startpage.value === true)
@@ -2428,9 +2442,21 @@ const initService = {
 			send('sidebar', 'tabs', 'undo', {'url': tab.url, 'title': tab.title});
 			const newOpenerId         = tab.opener;
 			removeFromFolder('tabs', tab, true);
-			for (let i = data.tabs.length - 1; i >= 0; i--)
-				if (data.tabs[i].opener === id)
-					data.tabs[i].opener = newOpenerId;
+			const index               = data.tabsWithOpenersId.indexOf(id);
+			if (index !== -1) {
+				data.tabsWithOpenersId.splice(index, 1);
+				data.tabsWithOpeners.splice(index, 1);
+			}
+			if (newOpenerId !== 0) {
+				for (let i = data.tabs.length - 1; i >= 0; i--)
+					if (data.tabs[i].opener === id) {
+						data.tabs[i].opener = newOpenerId;
+						const index         = data.tabsWithOpenersId.indexOf(data.tabs[i].id);
+						if (index !== -1)
+							data.tabsWithOpeners[index].opener = newOpenerId;
+					}
+			}
+			saveNow('openers', true);
 			send('sidebar', 'tabs', 'removed', {'id': id});
 		};
 
@@ -2474,7 +2500,25 @@ const initService = {
 					if (tab.url === config.extensionStartPage)
 						brauzer.tabs.reload(tab.id);
 				}
+				for (let i = data.tabsId.length - 1; i >= 0; i--)
+					for (let j = data.tabsWithOpeners.length - 1; j >= 0; j--) {
+						if (data.tabsWithOpeners[j].url === data.tabs[i].url) {
+							data.tabsWithOpenersId[j] = data.tabs[i].id;
+							for (let k = data.tabsId.length - 1; k >= 0; k--)
+								if (data.tabs[k].url === data.tabsWithOpeners[j].openerUrl) {
+									data.tabs[i].opener              = data.tabsId[k];
+									data.tabsWithOpeners[j].openerId = data.tabsId[k];
+								}
+						}
+					}
+				for (let i = 0, l = data.tabsWithOpenersId.length; i < l; i++)
+					if (data.tabsWithOpenersId[i] === 0) {
+						data.tabsWithOpenersId.splice[i, 1];
+						data.tabsWithOpeners.splice[i, 1];
+						i--;
+					}
 			}
+			saveNow('openers', true);
 			setWindowsView();
 			initTabs();
 		};
@@ -2494,8 +2538,17 @@ const initService = {
 				newItem.opener     = 0;
 				if (item.url !== config.extensionStartPage)
 					if (item.url !== config.defaultStartPage)
-						if (item.hasOwnProperty('openerTabId'))
-							newItem.opener = item.openerTabId
+						if (item.hasOwnProperty('openerTabId')) {
+							const openerTab = getById('tabs', item.openerTabId);
+							newItem.opener  = item.openerTabId;
+							data.tabsWithOpenersId.push(item.id);
+							data.tabsWithOpeners.push({
+								'url'       : item.url,
+								'openerId'  : item.openerTabId,
+								'openerUrl' : openerTab.url
+							});
+							saveNow('openers', true);
+						}
 				newItem.url        = url;
 				newItem.title      = item.title || '_';
 				newItem.discarded  = item.discarded;
@@ -5204,15 +5257,17 @@ function saveNow(what, noStamp = false) {
 		pocketFolders : {'pocketFolders': data.pocketFolders, 'pocketFoldersId': data.pocketFoldersId},
 		startpage     : {'startpage': data.startpage},
 		version       : {'version': config.version},
-		foldedId      : {'foldedId': data.foldedId}
+		foldedId      : {'foldedId': data.foldedId},
+		openers       : {'tabsWithOpeners': data.tabsWithOpeners}
 	};
 	brauzer.storage.local.set(dataToSave[what]);
 	if (noStamp === false)
 		makeTimeStamp(what.replace('Folders', ''));
 }
 
-function saveLater(what) {
-	makeTimeStamp(what);
+function saveLater(what, noStamp = false) {
+	if (noStamp !== false)
+		makeTimeStamp(what);
 	if (status.toSave.hasOwnProperty(what))
 		return;
 	status.toSave[what] = true;

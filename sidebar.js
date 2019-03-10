@@ -521,9 +521,15 @@ const initBlock = {
 		};
 
 		const fakeFolder    = tab => {
-			return {
+			return tab.opener === 0 ? {
 				id     : tab.id,
-				pid    : tab.opener === 0 ? tab.windowId : tab.opener,
+				pid    : tab.windowId,
+				view   : 'hidden',
+				folded : false
+			} :
+			{
+				id     : tab.id,
+				pid    : tab.opener,
 				view   : 'tree',
 				folded : false
 			};
@@ -628,10 +634,11 @@ const initBlock = {
 							folder.firstChild.classList.remove('active');
 					},
 					tree   : tab => {
-						const folder = tab.parentNode;
-						for (let i = 0, l = folder.children.length; i < l; i++)
-							if (folder.children[i].classList.contains('folder'))
-								folder.parentNode.insertBefore(folder.children[i], folder);
+						const content = tab.parentNode;
+						const folder  = content.parentNode;
+						for (let i = 0, l = content.children.length; i < l; i++)
+							if (content.children[i].classList.contains('folder'))
+								folder.parentNode.insertBefore(content.children[i], folder);
 						folder.parentNode.removeChild(folder);
 						removeById(info.id);
 					}
