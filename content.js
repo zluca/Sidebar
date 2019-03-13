@@ -47,8 +47,7 @@ let rightClick = false;
 makeIframe('leftBar');
 makeIframe('rightBar');
 
-let initTimer  = -1;
-init();
+let initTimer = setTimeout(init, 100);
 
 const checkDocumentReady = function(mutationsList, observer) {
 	if (document.readyState === 'interactive' || document.readyState === 'complete') {
@@ -204,7 +203,7 @@ const messageHandler = {
 function init() {
 	send('background', 'request', 'content', {needResponse: true}, response => {
 		if (typeof response === 'undefined') {
-			initTimer = setTimeout(init, 200);
+			initTimer = setTimeout(init, 100);
 			return;
 		}
 
