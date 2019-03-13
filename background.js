@@ -1450,6 +1450,10 @@ const messageHandler = {
 
 	request : {
 		content : (message, sender, sendResponse) => {
+			if (status.init.tabs === false) {
+				sendResponse(undefined);
+				return;
+			}
 			const tab = getById('tabs', sender.tab.id);
 			if (tab === false) return;
 			sendResponse({
@@ -1849,8 +1853,15 @@ const initService = {
 				data.foldedId      = res.foldedId;
 			if (Array.isArray(res.tabsWithOpeners)) {
 				data.tabsWithOpeners   = res.tabsWithOpeners;
-				for (let i = data.tabsWithOpeners.length - 1; i >= 0; i--)
-					data.tabsWithOpenersId[i] = 0;
+				data.tabsWithOpenersId[res.tabsWithOpeners.length - 1] = 0;
+				for (let i = data.tabsWithOpeners.length -1 ; i >= 0; i--) {
+					if (data.tabsWithOpeners[i].url !== 'about:blank')
+						data.tabsWithOpenersId[i] = 0;
+					else {
+						data.tabsWithOpeners.splice(i, 1);
+						data.tabsWithOpenersId.splice(i, 1);
+					}
+				}
 			}
 
 			for (let service in options.services)
