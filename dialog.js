@@ -34,7 +34,7 @@ function makeDialogWindow(data, warnings, theme) {
 	doc.style.setProperty('--border-color-active', theme.borderColorActive);
 
 	let optionsChanged = false;
-	let completer, completerTimer;
+	let completer;
 	let okButton, cancelButton;
 
 	const dialog   = document.createElement('div');
@@ -86,7 +86,7 @@ function makeDialogWindow(data, warnings, theme) {
 		},
 		color : _ => {
 			const label       = document.createElement('label');
-			label.textContent = getI18n(`dialogColorLabel`);
+			label.textContent = getI18n('dialogColorLabel');
 			const input       = document.createElement('input');
 			input.type        = 'color';
 			input.value       = data.hasOwnProperty('color') ? data.color : '#006688';
@@ -334,7 +334,6 @@ function makeDialogWindow(data, warnings, theme) {
 
 		siteCreate : _ => {
 
-			let completerTimer;
 			let lastValue;
 			setHeader();
 			const inputUrl   = addInputRow.text('url');
@@ -454,7 +453,7 @@ function makeDialogWindow(data, warnings, theme) {
 			const inputTitle  = addInputRow.text('title');
 			const folder      = addSelectRow(getI18n('dialogBookmarkFoldersLabel'), data.folders);
 			addButton('save', _ => {
-				send('background', 'bookmarks', 'bookmarkNew', {'url': inputUrl.value, 'title': inputTitle.value, 'parentId': folder.value || "0"});
+				send('background', 'bookmarks', 'bookmarkNew', {'url': inputUrl.value, 'title': inputTitle.value, 'parentId': folder.value || '0'});
 				removeDialogWindow();
 			});
 			addButton('cancel');
@@ -466,7 +465,7 @@ function makeDialogWindow(data, warnings, theme) {
 			const inputTitle  = addInputRow.text('title');
 			const folder      = addSelectRow(getI18n('dialogBookmarkFoldersLabel'), data.folders);
 			addButton('save', _ => {
-				send('background', 'bookmarks', 'bookmarkFolderNew', {'title': inputTitle.value, 'parentId': folder.value || "0"});
+				send('background', 'bookmarks', 'bookmarkFolderNew', {'title': inputTitle.value, 'parentId': folder.value || '0'});
 				removeDialogWindow();
 			});
 			addButton('cancel');
@@ -532,12 +531,12 @@ function makeDialogWindow(data, warnings, theme) {
 			importInput.accept    = '.opml';
 
 			importInput.addEventListener('change', event => {
-			    const reader     = new FileReader();
-			    reader.onloadend = _ => {
-		    		send('background', 'rss', 'import', reader.result);
-		    		removeDialogWindow();
-			    };
-			    reader.readAsText(importInput.files[0]);
+				const reader     = new FileReader();
+				reader.onloadend = _ => {
+					send('background', 'rss', 'import', reader.result);
+					removeDialogWindow();
+				};
+				reader.readAsText(importInput.files[0]);
 			});
 
 			setHeader();
@@ -701,10 +700,7 @@ function makeDialogWindow(data, warnings, theme) {
 				}
 
 			setHeader();
-			for (let option in options.hoverActions) {
-				addInputRow.togglers('hoverActions', options.hoverActions, data.prefix);
-				break;
-			}
+			addInputRow.togglers('hoverActions', options.hoverActions, data.prefix);
 			addInputRow.selectors('clickActions', options.clickActions);
 
 			addButton('save', _ => {
