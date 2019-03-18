@@ -44,14 +44,13 @@ let searchResults   = null;
 let searchField     = null;
 let searchOptions   = null;
 
-let initTimer       = -1;
 tryToInit();
 
 function tryToInit() {
 	send('background', 'request', 'startpage', {needResponse: true}, response => {
 		// console.log(response);
 		if (response === undefined) {
-			initTimer = setTimeout(tryToInit, 200);
+			setTimeout(tryToInit, 200);
 			return;
 		}
 		if (response.options.startpage.empty === true) return;
@@ -117,8 +116,7 @@ function init(response) {
 
 		const makeDraggable = _ => {
 
-			let shiftX, shiftY, lastX = 0, lastY = 0, color, w, h, startPosition, placeholderPosition, newPosition;
-			const lastColumn   = options.startpage.columns - 1;
+			let shiftX, shiftY, lastX = 0, lastY = 0, w, h, startPosition, placeholderPosition, newPosition;
 			const lastRow      = options.startpage.rows - 1;
 			const dx           = 1 / options.startpage.columns;
 			const dy           = 1 / options.startpage.rows;
