@@ -214,6 +214,8 @@ const data = {
 	foldedId           : [],
 	tabsWithOpeners    : [],
 	tabsWithOpenersId  : [],
+	tabsWithOpenersFolders   : [],
+	tabsWithOpenersFoldersId : [],
 	leftBar        : {
 		'side'     : 'leftBar',
 		'options'  : null,
@@ -1721,7 +1723,7 @@ const execMethod  = firefox ?
 	return options === undefined ? method().then(callback) : method(options).then(callback);
 } :
 (method, callback, options) => {
-	return options === undefined ? method(callback) : method(options, callback);
+	return typeof options === 'undefined' ? method(callback) : method(options, callback);
 };
 
 const initExtension = res => {
@@ -1845,22 +1847,18 @@ const initService = {
 			const initLater = [];
 
 			if (Array.isArray(res.favs) && Array.isArray(res.favsId)) {
-				data.favs          = res.favs;
-				data.favsId        = res.favsId;
+				data.favs            = res.favs;
+				data.favsId          = res.favsId;
 				cleanFavs();
 			}
 			if (Array.isArray(res.foldedId))
-				data.foldedId      = res.foldedId;
+				data.foldedId        = res.foldedId;
 			if (Array.isArray(res.tabsWithOpeners)) {
-				data.tabsWithOpeners   = res.tabsWithOpeners;
-				data.tabsWithOpenersId[res.tabsWithOpeners.length - 1] = 0;
-				for (let i = data.tabsWithOpeners.length -1 ; i >= 0; i--) {
-					if (data.tabsWithOpeners[i].url !== 'about:blank')
-						data.tabsWithOpenersId[i] = 0;
-					else {
-						data.tabsWithOpeners.splice(i, 1);
-						data.tabsWithOpenersId.splice(i, 1);
-					}
+				data.tabsWithOpeners = res.tabsWithOpeners;
+				for (let i = data.tabsWithOpeners.length - 1; i >= 0; i--) {
+					data.tabsWithOpenersId[i]        = 0;
+					data.tabsWithOpeners[i].openerId = 0;
+					data.tabsWithOpeners[i].windowId = 0;
 				}
 			}
 
@@ -2084,7 +2082,7 @@ const initService = {
 					brauzer.tabs.remove(toClose);
 				},
 				windowClose : (message, sender, sendResponse) => {
-					const win = getFolderById('windows', parseInt(message.data.id))
+					const win = getFolderById('windows', parseInt(message.data.id));
 					if (win === false) return;
 					brauzer.windows.remove(win.id);
 				},
@@ -2205,7 +2203,6 @@ const initService = {
 			brauzer.windows.onRemoved.addListener(onWindowRemoved);
 			brauzer.windows.onFocusChanged.addListener(onFocusChanged);
 
-
 			status.init.tabs = true;
 			if (firefox === false)
 				if (opera === false)
@@ -2214,6 +2211,16 @@ const initService = {
 		};
 
 		const onWindowRemoved   = id => {
+			execMethod(brauzer.alarms.getAll, alarms => {
+				for (let i = alarms.length - 1; i >= 0; i--)
+					if (/removeFromOpeners\*\*/i.test(alarms[i].name)) {
+						const tabId    = parseInt(alarms[i].name.split('**').pop());
+						const tab      = getById('tabsWithOpeners', tabId);
+						if (tab === false) return;
+						if (tab.windowId !== id) return;
+						brauzer.alarms.clear(alarms[i].name);
+					}
+			});
 			if (status.activeTabsIds.hasOwnProperty(id))
 				delete status.activeTabsIds[id];
 			deleteFolderById('windows', id);
@@ -2235,7 +2242,7 @@ const initService = {
 			for (let i = data.windowsFolders.length - 1; i >= 0; i--)
 				data.windowsFolders[i].view = status.windowsShow ? 'type' : 'hidden';
 			send('sidebar', 'tabs', 'windowsView', {'view': data.windowsFolders[0].view, 'ids': data.windowsFoldersId});
-		}
+		};
 
 		const onFocusChanged    = id => {
 			const win   = getFolderById('windows', id);
@@ -2368,7 +2375,7 @@ const initService = {
 				getZoom(id, oldTab);
 				for (let i = data.tabsWithOpeners.length - 1; i >= 0; i--) {
 					if (data.tabsWithOpeners[i].url === oldTab.url)
-						data.tabsWithOpeners[i].url = info.url;
+						data.tabsWithOpeners[i].url       = info.url;
 					if (data.tabsWithOpeners[i].openerUrl === oldTab.url)
 						data.tabsWithOpeners[i].openerUrl = info.url;
 				}
@@ -2451,24 +2458,34 @@ const initService = {
 			status.info.undoTab.title  = tab.title;
 			status.info.undoTab.active = status.activeTabsIds[status.activeWindow] === id;
 			send('sidebar', 'tabs', 'undo', {'url': tab.url, 'title': tab.title});
-			const newOpenerId         = tab.opener;
+			removeFromOpenersTimer(tab);
+			send('sidebar', 'tabs', 'removed', {'id': id});
+		};
+
+		const removeFromOpenersTimer = tab => {
 			removeFromFolder('tabs', tab, true);
-			const index               = data.tabsWithOpenersId.indexOf(id);
-			if (index !== -1) {
-				data.tabsWithOpenersId.splice(index, 1);
-				data.tabsWithOpeners.splice(index, 1);
-			}
-			if (newOpenerId !== 0) {
+			brauzer.alarms.create(`removeFromOpeners**${tab.id}`, {'when': Date.now() + 1000});
+			brauzer.alarms.onAlarm.addListener(alarm => {
+				if (alarm.name === `removeFromOpeners**${tab.id}`)
+					removeFromOpeners(tab);
+			});
+		};
+
+		const removeFromOpeners = tab => {
+			const newOpenerId  = tab.opener;
+			const newOpener    = getById('tabs', newOpenerId);
+			deleteById('tabsWithOpeners', tab.id);
+			if (newOpener !== false) {
 				for (let i = data.tabs.length - 1; i >= 0; i--)
-					if (data.tabs[i].opener === id) {
+					if (data.tabs[i].opener === tab.id)
 						data.tabs[i].opener = newOpenerId;
-						const index         = data.tabsWithOpenersId.indexOf(data.tabs[i].id);
-						if (index !== -1)
-							data.tabsWithOpeners[index].opener = newOpenerId;
+				for (let i = data.tabsWithOpenersId.length - 1; i >= 0; i--)
+					if (data.tabsWithOpeners[i].openerId === tab.id) {
+						data.tabsWithOpeners[i].openerId  = newOpenerId;
+						data.tabsWithOpeners[i].openerUrl = newOpener.url;
 					}
 			}
 			saveNow('openers', true);
-			send('sidebar', 'tabs', 'removed', {'id': id});
 		};
 
 		const onMoved           = (id, moveInfo) => {
@@ -2490,7 +2507,7 @@ const initService = {
 		const getZoom           = (id, aTab = false) => {
 			const tab = aTab === false ? getById('tabs', id) : aTab;
 			if (tab === false) return;
-			execMethod(brauzer.tabs.getZoom, zoom => {tab.zoom = zoom; sendZoom(tab)}, id);
+			execMethod(brauzer.tabs.getZoom, zoom => {tab.zoom = zoom; sendZoom(tab);}, id);
 		};
 
 		const sendZoom          = (tab) => {
@@ -2501,33 +2518,52 @@ const initService = {
 				send('rightBar', 'set', 'zoom', {'id': tab.id, 'zoom': tab.zoom});
 			if (options.services.startpage.value === true)
 				send('startpage', 'set', 'zoom', {'id': tab.id, 'zoom': tab.zoom});
-		}
+		};
 
 		const getWindows        = windows => {
 			for (let i = 0, l = windows.length; i < l; i++) {
-				const win   = createWindow(windows[i]);
+				createWindow(windows[i]);
 				for (let j = 0, l = windows[i].tabs.length; j < l; j++) {
 					const tab = createTab(windows[i].tabs[j], true);
 					if (tab.url === config.extensionStartPage)
 						brauzer.tabs.reload(tab.id);
 				}
-				for (let i = data.tabsId.length - 1; i >= 0; i--)
-					for (let j = data.tabsWithOpeners.length - 1; j >= 0; j--) {
-						if (data.tabsWithOpeners[j].url === data.tabs[i].url) {
-							data.tabsWithOpenersId[j] = data.tabs[i].id;
-							for (let k = data.tabsId.length - 1; k >= 0; k--)
-								if (data.tabs[k].url === data.tabsWithOpeners[j].openerUrl) {
-									data.tabs[i].opener              = data.tabsId[k];
-									data.tabsWithOpeners[j].openerId = data.tabsId[k];
-								}
+			}
+			for (let i = data.tabsId.length - 1; i >= 0; i--)
+				for (let j = data.tabsWithOpeners.length - 1; j >= 0; j--) {
+					if (data.tabs[i].url === 'about:blank') {
+						if (data.tabsWithOpeners[j].url !== data.tabs[i].title)
+							continue;
+					}
+					else if (data.tabsWithOpeners[j].url !== data.tabs[i].url)
+						continue;
+					data.tabsWithOpenersId[j] = data.tabs[i].id;
+					for (let k = data.tabsId.length - 1; k >= 0; k--) {
+						if (data.tabs[k].url === 'about:blank') {
+							if (data.tabsWithOpeners[j].openerUrl !== data.tabs[k].title)
+								continue;
 						}
+						else if (data.tabsWithOpeners[j].openerUrl !== data.tabs[k].url)
+							continue;
+						data.tabs[i].opener              = data.tabsId[k];
+						data.tabsWithOpeners[j].openerId = data.tabsId[k];
+						data.tabsWithOpeners[j].windowId = data.tabs[k].windowId;
 					}
-				for (let i = 0, l = data.tabsWithOpenersId.length; i < l; i++)
-					if (data.tabsWithOpenersId[i] === 0) {
-						data.tabsWithOpenersId.splice[i, 1];
-						data.tabsWithOpeners.splice[i, 1];
-						i--;
-					}
+				}
+			for (let i = data.tabsWithOpenersId.length - 1; i >= 0; i--) {
+				if (data.tabsWithOpenersId[i] === 0) {
+					data.tabsWithOpenersId.splice(i, 1);
+					data.tabsWithOpeners.splice(i, 1);
+					continue;
+				}
+				let hasWindow = false;
+				for (let j = windows.length - 1; j >= 0; j--)
+					if (data.tabsWithOpeners[i].windowId === windows[j].id)
+						hasWindow = true;
+				if (!hasWindow) {
+					data.tabsWithOpenersId.splice(i, 1);
+					data.tabsWithOpeners.splice(i, 1);
+				}
 			}
 			saveNow('openers', true);
 			setWindowsView();
@@ -2549,17 +2585,25 @@ const initService = {
 				newItem.opener     = 0;
 				if (item.url !== config.extensionStartPage)
 					if (item.url !== config.defaultStartPage)
-						if (item.hasOwnProperty('openerTabId')) {
-							const openerTab = getById('tabs', item.openerTabId);
-							newItem.opener  = item.openerTabId;
-							data.tabsWithOpenersId.push(item.id);
-							data.tabsWithOpeners.push({
-								'url'       : item.url,
-								'openerId'  : item.openerTabId,
-								'openerUrl' : openerTab.url
-							});
-							saveNow('openers', true);
-						}
+						if (status.init.tabs)
+							if (item.hasOwnProperty('openerTabId')) {
+								const tabWithOpener = getById('tabsWithOpeners', item.id);
+								if (tabWithOpener === false) {
+									const openerTab = getById('tabs', item.openerTabId);
+									if (openerTab !== false)
+										if (openerTab.windowId === item.windowId) {
+											newItem.opener  = item.openerTabId;
+											data.tabsWithOpenersId.push(item.id);
+											data.tabsWithOpeners.push({
+												'url'       : item.url === 'about:blank' ? item.title : item.url,
+												'openerId'  : item.openerTabId,
+												'openerUrl' : openerTab.url,
+												'windowId'  : item.windowId
+											});
+											saveNow('openers', true);
+										}
+									}
+							}
 				newItem.url        = url;
 				newItem.title      = item.title || '_';
 				newItem.discarded  = item.discarded;
@@ -2908,7 +2952,7 @@ const initService = {
 				search     : (message, sender, sendResponse) => {
 					data.historySearchTerm    = message.data.request;
 					status.info.historySearch = true;
-					search(result => {data.historySearch = result; send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm})}, message.data.request);
+					search(result => {data.historySearch = result; send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm});}, message.data.request);
 				},
 				clearSearch : (message, sender, sendResponse) => {
 					status.info.historySearch = false;
@@ -4388,7 +4432,7 @@ const initService = {
 				}
 				result.push(string.substring(index1 + l2, undefined).replace(/\<[^>]*\>/ig, ''));
 				return result;
-			}
+			};
 
 			const cleanse     = html => {
 
@@ -4450,7 +4494,7 @@ const initService = {
 					if (xhttp.status === 200) {
 						const parser  = new DOMParser();
 						const html    = cleanse(xhttp.responseText).replace(/src=/ig, 'data-src=').replace(/image-src=/ig, 'data-src=').replace(/srcset=/ig, 'data-srcset=');
-						const doc     = parser.parseFromString(html, "text/html");
+						const doc     = parser.parseFromString(html, 'text/html');
 						let items     = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
 						const folder  = getFolderById(mode, type);
@@ -5123,8 +5167,8 @@ function deleteFolderById(mode, id, killChildrens = false) {
 	if (index === -1) return;
 	if (killChildrens === true) {
 		for (let maybeChildren = data[mode], i = maybeChildren.length - 1; i >= 0; i--)
-			if (maybeChildren.pid === id)
-				deleteById(mode, children[i]);
+			if (maybeChildren[i].pid === id)
+				deleteById(mode, maybeChildren[i].id);
 	}
 	data[`${mode}Folders`].splice(index, 1);
 	data[`${mode}FoldersId`].splice(index, 1);
