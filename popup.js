@@ -25,7 +25,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 
 	const send = (target, subject, action, data = {}) => {
 		brauzer.runtime.sendMessage({'target': target, 'subject': subject, 'action': action, 'data': data});
-	}
+	};
 
 	const createInputRow = (form, side, method) => {
 		const input          = document.createElement('input');
