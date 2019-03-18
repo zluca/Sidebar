@@ -78,7 +78,6 @@ if (status.method === 'window') {
 	window.addEventListener('blur', setWindowPosition);
 }
 
-let initTimer  = -1;
 tryToInit();
 
 let insertItems       = _ => {};
@@ -90,7 +89,6 @@ doc.classList.add(status.side);
 
 const blockStyle    = dcea('link', document.head, [['type', 'text/css'], ['rel', 'stylesheet']]);
 const treeStyle     = dcea('style', document.head, []);
-const tempContainer = dce('div');
 
 const controls      = {};
 controls.main       = dcea('nav', document.body, []);
@@ -204,7 +202,7 @@ const messageHandler = {
 		},
 		searchAtTop        : info => {
 			let target = controls.bottom;
-			let old    = contorls.top;
+			let old    = controls.top;
 			if (info.value === true) {
 				target = controls.top;
 				old    = controls.bottom;
@@ -213,7 +211,7 @@ const messageHandler = {
 			else
 				block.classList.remove('search-at-top');
 			while (old.hasChildNodes())
-				target.appendChild(old.firstChild)
+				target.appendChild(old.firstChild);
 		},
 		treeMaxDepth       : info => {
 			options.misc.treeMaxDepth = info.value;
@@ -293,12 +291,12 @@ const messageHandler = {
 function tryToInit() {
 	send('background', 'request', 'mode', {'side': status.side, 'method': status.method, needResponse: true}, response => {
 		if (response === undefined) {
-			initTimer = setTimeout(tryToInit, 200);
+			setTimeout(tryToInit, 200);
 			return;
 		}
 
 		if (status.method === 'native') {
-			const port = brauzer.runtime.connect({name: 'sidebar-alive'});
+			brauzer.runtime.connect({name: 'sidebar-alive'});
 			if (firefox) {
 				doc.addEventListener('mouseleave', event => {
 					send('background', 'sidebar', 'sideDetection', {'sender': 'sidebar', 'action': 'leave', 'side': (event.x < doc.offsetWidth) ? 'rightBar' : 'leftBar'});
@@ -693,7 +691,7 @@ const initBlock = {
 			},
 			windowView   : info => {
 				for (let i = info.ids.length - 1; i >= 0; i--) {
-					const win = getFolderById(info.ids[i])
+					const win = getFolderById(info.ids[i]);
 					if (win === false) return;
 					win.classList = `folder ${info.view}`;
 				}
@@ -718,7 +716,6 @@ const initBlock = {
 			let pid         = 0;
 			let tab         = null;
 			let folder      = rootFolder;
-			let treeFolders = [];
 
 			const postProcess = {
 				plain : i => {
@@ -826,7 +823,7 @@ const initBlock = {
 				makeTitle(info.id, info.title, info.url);
 			},
 			changedFolder   : info => {
-				const folde = getFolderById(info.id);
+				const folder = getFolderById(info.id);
 				if (folder === false) return;
 				folder.firstChild.textContent = info.title;
 			},
@@ -1013,7 +1010,7 @@ const initBlock = {
 		const insertDownload = (item, position = -1) => {
 			const down           = createById(item.id);
 			down.title           = item.url;
-			const filename       = dcea('p', down, [['textContent', item.filename]]);
+			dcea('p', down, [['textContent', item.filename]]);
 			let classList        = `download item ${item.state}`;
 			classList            += item.exists === true ? '' : ' deleted';
 			if (item.paused === true)
@@ -1703,8 +1700,8 @@ function insertFolders(items, fake = false) {
 			dcea('div', data.folders[index],
 				[
 					['title', items[i].description || items[i].title],
-				 	['classList', `folder-name domain-${items[i].domain} ${items[i].status}`],
-				 	['textContent', items[i].title || String.fromCharCode(0x00a0)]
+					['classList', `folder-name domain-${items[i].domain} ${items[i].status}`],
+					['textContent', items[i].title || String.fromCharCode(0x00a0)]
 				]
 			).dataset.id = items[i].id;
 		}
@@ -1801,7 +1798,7 @@ function moveItem(mode, eventTarget) {
 		else if (target.classList.contains('folder-name')) {
 			if (target.parentNode.classList.contains('folded'))
 				if (folderTimeout === 0)
-					folderTimeout = setTimeout(_ => {target.click()}, 1000);
+					folderTimeout = setTimeout(_ => {target.click();}, 1000);
 			else
 				target.nextElementSibling.appendChild(item);
 		}
@@ -1881,7 +1878,7 @@ function moveItem(mode, eventTarget) {
 	const stopClick = event => {
 		event.preventDefault();
 		event.stopPropagation();
-	}
+	};
 
 	const finilize = _ => {
 		setTimeout(_ => {
@@ -2039,7 +2036,7 @@ function makeSearch(mode) {
 				clearSearch.style.setProperty('display', 'none');
 				searchInput.value = '';
 			}
-		}
+		};
 
 	searchActive = isIt => {
 		if (isIt === true) {
@@ -2053,7 +2050,7 @@ function makeSearch(mode) {
 			status.searchActive = false;
 			window.scrollTo(0, options.scroll[options.sidebar.mode]);
 		}
-	}
+	};
 
 	if (mode === 'search')
 		searchInput.addEventListener('keyup', event => {
@@ -2249,7 +2246,7 @@ const buttonsEvents = {
 				send('background', 'dialog', 'bookmarkEdit', {'id': target.dataset.id});
 		},
 		openAll : event => {
-			send('background', 'bookmarks', 'openAll', controls.item.parentNode.dataset.id)
+			send('background', 'bookmarks', 'openAll', controls.item.parentNode.dataset.id);
 		}
 	},
 	history   : {
