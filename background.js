@@ -1525,7 +1525,7 @@ const messageHandler = {
 			const tab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 			if (tab !== false)
 				zoom = tab.zoom;
-			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method, 'status': options.status, 'zoom': tab.zoom});
+			sendResponse({'leftBar': options.leftBar.method, 'rightBar': options.rightBar.method, 'status': options.status, 'zoom': zoom});
 		},
 		dialog : (message, sender, sendResponse) => {
 			const tab = getById('tabs', sender.tab.id);
@@ -3465,7 +3465,7 @@ const initService = {
 						let opml = `<opml version="1.0">\n  <head>\n    <title>Sidebar+ Rss export in OPML</title>\n    <dateCreated>${now.toString()}</dateCreated>\n  </head>\n  <body>\n`;
 						for (let i = 0, l = data.rssFolders.length; i < l; i++)
 							opml += makeFeed(data.rssFolders[i]);
-						opml += `  </body>\n</opml>`;
+						opml += '  </body>\n</opml>';
 					setTimeout(_ => {createDialogWindow('rssExport', {'text': opml});}, 1000);
 					}
 				}
@@ -3538,7 +3538,7 @@ const initService = {
 					return brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssFeedExistErrorTitle, 'message':  `${i18n.notification.rssFeedExistErrorText}
 							${data.rssFolders[i].title}`});
 			const xhttp  = new XMLHttpRequest();
-			xhttp.open("GET", rssUrl, true);
+			xhttp.open('GET', rssUrl, true);
 			setUpdated(1);
 			xhttp.send();
 			xhttp.onreadystatechange = _ => {
@@ -3598,7 +3598,7 @@ const initService = {
 			if (feed === false) return;
 			setUpdated(1, feed);
 			const xhttp = new XMLHttpRequest();
-			xhttp.open("GET", feed.url, true);
+			xhttp.open('GET', feed.url, true);
 			xhttp.send();
 			xhttp.onreadystatechange = _ => {
 				if (xhttp.readyState === 4) {
@@ -4425,12 +4425,12 @@ const initService = {
 				let index2 = string.indexOf(openTag);
 				let result = [];
 				while (index2 !== -1) {
-					result.push(string.substring(index1 + l2, index2).replace(/\<[^>]*\>/ig, ''));
+					result.push(string.substring(index1 + l2, index2).replace(/<[^>]*>/ig, ''));
 					index1 = string.indexOf(closeTag, index2);
-					result.push(string.substring(index2 + l1, index1 !== -1 ? index1 : undefined).replace(/\<[^>]*\>/ig, ''));
+					result.push(string.substring(index2 + l1, index1 !== -1 ? index1 : undefined).replace(/<[^>]*>/ig, ''));
 					index2 = string.indexOf(openTag, index1);
 				}
-				result.push(string.substring(index1 + l2, undefined).replace(/\<[^>]*\>/ig, ''));
+				result.push(string.substring(index1 + l2, undefined).replace(/<[^>]*>/ig, ''));
 				return result;
 			};
 
@@ -5230,7 +5230,7 @@ function domainFromUrl(url) {
 		return 'default';
 	let domain = /\/\//.test(url) ? url.split('//')[1] : url;
 	domain     = domain.split('/')[0];
-	domain     = domain.match(/^([\da-zа-я\.-]+)(\.([a-zа-я\.]{2,6}))?/i);
+	domain     = domain.match(/^([\da-zа-я.-]+)(\.([a-zа-я.]{2,6}))?/i);
 	if (domain !== null)
 		return domain[0];
 	return 'default';
@@ -5242,7 +5242,7 @@ function colorFromUrl(url) {
 		.replace(/g|w/ig, '0').replace(/h|x|\s/ig, '1').replace(/i|y/ig, '2')
 		.replace(/j|z/ig, '3').replace(/k|\./ig, '4').replace(/l|-/ig, '5')
 		.replace(/m|\//ig, '6').replace(/n|:/ig, '7').replace(/o|v/ig, '8')
-		.replace(/p|\#/ig, '9').replace(/r|%/ig, 'a').replace(/s|~/ig, 'b')
+		.replace(/p|#/ig, '9').replace(/r|%/ig, 'a').replace(/s|~/ig, 'b')
 		.replace(/q|_/ig, 'c').replace(/r|\$/ig, 'd').replace(/t|\*/ig, 'e')
 		.replace(/u|!|\+|\(|\)|,/ig, 'f');
 
