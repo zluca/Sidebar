@@ -129,7 +129,7 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 				dOption.value       = response[section][option].values[opt];
 				dOption.textContent = getI18n(`opt${section}${dOption.value}Text`) || `"${dOption.value}"`;
 				if (response[section][option].values[opt] === response[section][option].value)
-				    dOption.selected = true;
+					dOption.selected = true;
 				dropdown.appendChild(dOption);
 			}
 		},
@@ -207,12 +207,12 @@ brauzer.runtime.sendMessage({target: 'background', subject: 'request', action: '
 			dropdown : target => target.value,
 			image    : target => target.checked === true ? true : '',
 			file     : target => {
-			    const reader     = new FileReader();
-			    reader.onloadend = _ => {
-			    	if (/^image/.test(target.files[0].type))
-			    		changes[section][option] = reader.result;
-			    };
-			    reader.readAsDataURL(target.files[0]);
+				const reader     = new FileReader();
+				reader.onloadend = _ => {
+					if (/^image/.test(target.files[0].type))
+						changes[section][option] = reader.result;
+				};
+				reader.readAsDataURL(target.files[0]);
 			}
 		};
 
