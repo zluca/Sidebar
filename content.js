@@ -47,7 +47,7 @@ let rightClick = false;
 makeIframe('leftBar');
 makeIframe('rightBar');
 
-let initTimer = setTimeout(init, 100);
+setTimeout(init, 100);
 
 const checkDocumentReady = function(mutationsList, observer) {
 	if (document.readyState === 'interactive' || document.readyState === 'complete') {
@@ -203,7 +203,7 @@ const messageHandler = {
 function init() {
 	send('background', 'request', 'content', {needResponse: true}, response => {
 		if (typeof response === 'undefined') {
-			initTimer = setTimeout(init, 100);
+			setTimeout(init, 100);
 			return;
 		}
 
@@ -399,8 +399,8 @@ function setEventListeners(side) {
 		cleanTimer('over');
 	}
 	else {
-		sidebar[side].onmouseover        = event => {mouseOver(side)};
-		sidebar[side].onmouseleave       = event => {mouseLeave(side)};
+		sidebar[side].onmouseover        = event => {mouseOver(side);};
+		sidebar[side].onmouseleave       = event => {mouseLeave(side);};
 		sidebar[side].firstChild.onclick = borderClick;
 	}
 }
@@ -478,7 +478,6 @@ function setSideBarWidth(side, value) {
 function resizeSideBar(side) {
 
 	const isFixed    = options[side].fixed;
-	const oldWidth   = options[side].width;
 	const innerWidth = window.innerWidth;
 	const inner100   = innerWidth / 100;
 	let   oldX       = 0;
