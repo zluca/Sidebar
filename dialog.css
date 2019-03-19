@@ -154,7 +154,7 @@ body {
 				mask-mode: alpha;
 			}
 			.option:hover {
-				background-size: 2rem 2rem;
+				background-size: 1.4rem 1.4rem;
 				background-position: .1rem .1rem;
 			}
 			.selected.option {
