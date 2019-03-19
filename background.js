@@ -4305,15 +4305,6 @@ const initService = {
 				wikipedia       : '.searchresults li'
 			};
 
-			const noResultsSelectors = {
-				duckduckgo      : '.no-results',
-				google          : '.med.card-section',
-				yandex          : '.misspell__message',
-				bing            : '#b_results',
-				yahoo           : '.dd.zrp',
-				wikipedia       : '.searchresults'
-			};
-
 			const makeItem    = {
 				duckduckgo : result => {
 					const item        = {};
@@ -4412,13 +4403,8 @@ const initService = {
 				}
 			};
 
-			const checkUrl    = (item, url) => {
-				if (url.test(item.url))
-					return item;
-				return false;
-			};
-
 			const makeCleanTitle = (string, openTag, closeTag) => {
+				if (typeof string === 'undefined') return '';
 				const l1   = openTag.length;
 				const l2   = closeTag.length;
 				let index1 = -l2;
@@ -4473,10 +4459,11 @@ const initService = {
 
 			const noResults   = (searchLink, subType) => {
 				const item = {
-					id          : subType,
-					url         : searchLink,
-					title       : [i18n.search[`${subType}Title`]],
-					description : i18n.search[`${subType}Description`]
+					id          : `${subType}-00`,
+					url         : `domain-${subType}`,
+					type        : subType,
+					title       : [i18n.search.noResultsTitle],
+					description : i18n.search.noResultsDescription
 				};
 				return [createById(mode, item, 'last')];
 			};
@@ -4497,24 +4484,29 @@ const initService = {
 						const doc     = parser.parseFromString(html, 'text/html');
 						let items     = [];
 						const results = doc.querySelectorAll(resultsSelectors[type]);
+						const l       = results.length;
 						const folder  = getFolderById(mode, type);
-						for (let i = 0, l = results.length; i < l; i++) {
-							const realId = `${page}${i}`;
-							const item = makeItem[type](results[i]);
-							if (folder.itemsId.length >= config.searchLength)
-								break;
-							if (item === false)
-								continue;
-							item.id    = `${type}-${realId}`;
-							item.type  = type;
-							items.push(createById(mode, item, 'last'));
+						if (l > 0) {
+							for (let i = 0; i < l; i++) {
+								const realId = `${page}${i}`;
+								const item = makeItem[type](results[i]);
+								if (folder.itemsId.length >= config.searchLength)
+									break;
+								if (item === false)
+									continue;
+								item.id    = `${type}-${realId}`;
+								item.type  = type;
+								items.push(createById(mode, item, 'last'));
+							}
+							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type});
+							if (page < 4)
+								if (items.length * (1 + page) < config.searchLength)
+									if (type !== 'duckduckgo')
+										if (type !== 'wikipedia')
+											search(type, query, 1 + page);
 						}
-						send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type});
-						if (page < 4)
-							if (items.length * (1 + page) < config.searchLength)
-								if (type !== 'duckduckgo')
-									if (type !== 'wikipedia')
-										search(type, query, 1 + page);
+						else
+							send(target, 'search', 'newItems', {'items': noResults(searchLink, type), 'searchLink': searchLink, 'target': type});
 					}
 					makeTimeStamp(mode);
 					send(target, 'search', 'update', {'method': 'remove', 'target': type, 'query': query});
