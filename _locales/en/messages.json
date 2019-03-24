@@ -691,6 +691,10 @@
 		"message"       : "Start",
 		"description"   : ""
 	},
+	"startpageSitesViewButtonTitle" : {
+		"message"       : "Switch back to sites view",
+		"description"   : ""
+	},
 
 	"searchClearSearchTitle" : {
 		"message"       : "Clear search",

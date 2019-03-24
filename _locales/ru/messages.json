@@ -691,6 +691,10 @@
 		"message"       : "Начать",
 		"description"   : ""
 	},
+	"startpageSitesViewButtonTitle" : {
+		"message"       : "Назад к сайтам",
+		"description"   : ""
+	},
 
 	"searchClearSearchTitle" : {
 		"message"       : "Очистить поиск",

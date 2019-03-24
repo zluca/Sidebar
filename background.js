@@ -2009,7 +2009,8 @@ const initService = {
 				editButtonTitle      : getI18n('startpageEditButtonTitle'),
 				searchButtonTitle    : getI18n('startpageSearchButtonTitle'),
 				clearSearchTitle     : getI18n('searchClearSearchTitle'),
-				searchOptions        : getI18n('searchOptions')
+				searchOptions        : getI18n('searchOptions'),
+				modeSites            : getI18n('startpageSitesViewButtonTitle')
 			};
 			execMethod(brauzer.storage.local.get, gettingStorage, ['startpage', 'speadDial']);
 			if (status.init.tabs === true)
@@ -2067,9 +2068,6 @@ const initService = {
 						for (let i = message.data.idList.length - 1; i >= 0; i--) {
 							const tab = getById('tabs', message.data.idList[i]);
 							if (tab === false) continue;
-							if (tab.url === config.extensionStartPage)
-								if (options.startpage.mode.value === 'search')
-									messageHandler.spSearch.changeQuery({'data': ''});
 						}
 					brauzer.tabs.remove(message.data.idList);
 				},
@@ -2458,6 +2456,9 @@ const initService = {
 			status.info.undoTab.title  = tab.title;
 			status.info.undoTab.active = status.activeTabsIds[status.activeWindow] === id;
 			send('sidebar', 'tabs', 'undo', {'url': tab.url, 'title': tab.title});
+			if (tab.url === config.extensionStartPage)
+				if (options.startpage.mode.value === 'search')
+					messageHandler.spSearch.changeQuery({'data': ''});
 			removeFromOpenersTimer(tab);
 			send('sidebar', 'tabs', 'removed', {'id': id});
 		};

@@ -691,6 +691,10 @@
 		"message"       : "開始",
 		"description"   : ""
 	},
+	"startpageSitesViewButtonTitle" : {
+		"message"       : "Switch back to sites view",
+		"description"   : ""
+	},
 
 	"searcgClearSearchTitle" : {
 		"message"       : "清除搜尋",

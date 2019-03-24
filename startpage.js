@@ -18,7 +18,8 @@ const status  = {
 		search  : 0
 	},
 	titles              : {},
-	zoom                : 1
+	zoom                : 1,
+	searchQuery         : ''
 };
 
 const data    = {
@@ -77,6 +78,8 @@ function init(response) {
 	dce('span', clearSearch);
 	const letsSearch         = dceam('span', search, [['id', 'lets-search'], ['title', i18n.searchButtonTitle]]);
 	dce('span', letsSearch);
+	const modeSites          = dceam('span', search, [['id', 'mode-sites'], ['title', i18n.modeSites]]);
+	dce('span', modeSites);
 	siteContainer            = dcea('main', document.body, ['id', 'site-container']);
 	searchContainer          = dcea('main', document.body, ['id', 'search-container']);
 	searchNav                = dce('nav', searchContainer);
@@ -87,8 +90,7 @@ function init(response) {
 
 	initSites(response.sites);
 	initSearch(response.searchFolders, response.searchQuery);
-	if (options.startpage.mode === 'search')
-		insertSearchItems(response.search, true);
+	insertSearchItems(response.search, true);
 	setStyle();
 	setColor(options.theme);
 	setBackground();
@@ -250,23 +252,30 @@ function init(response) {
 		send('background', 'dialog', 'siteChange', {index: editButton.parentNode.dataset.index});
 	});
 
+	modeSites.addEventListener('click', event => {
+		send('background', 'options', 'handler', {'section': 'startpage', 'option': 'mode', 'value': 'sites'});
+	}, {'passive': true});
+
 	searchOptions.addEventListener('click', event => {
 		send('background', 'dialog', 'spSearchSelect', '');
 	}, {'passive': true});
 
 	letsSearch.addEventListener('click', event => {
 		const subject    = searchField.value;
-		if (subject !== '') {
-			lastSearch = subject;
+		if (subject === '')
+			send('background', 'spSearch', 'changeQuery', '');
+		else if (status.searchQuery === subject)
+			send('background', 'options', 'handler', {'section': 'startpage', 'option': 'mode', 'value': 'search'});
+		else {
+			lastSearch         = subject;
+			status.searchQuery = subject;
 			send('background', 'spSearch', 'query', subject);
 		}
-		else
-			send('background', 'spSearch', 'changeQuery', subject);
 	}, {'passive': true});
 
 	clearSearch.addEventListener('click', event => {
 		send('background', 'spSearch', 'changeQuery', '');
-	});
+	}, {'passive': true});
 
 	searchField.addEventListener('keyup', event => {
 		if (event.key === 'Enter')
@@ -503,8 +512,10 @@ const messageHandler = {
 			}
 		},
 		changeQuery  : info => {
-			if (searchField !== document.activeElement)
-				searchField.value = info;
+			if (searchField !== document.activeElement) {
+				status.searchQuery = info;
+				searchField.value  = info;
+			}
 		},
 		showFolder   : info => {
 			const index = data.searchFoldersId.indexOf(info.id);
@@ -557,8 +568,7 @@ const messageHandler = {
 			}
 			if (info.timeStamp.search !== status.timeStamp.search) {
 				initSearch(info.searchFolders, info.searchQuery);
-				if (options.startpage.mode === 'search')
-					insertSearchItems(info.search, true);
+				insertSearchItems(info.search, true);
 				status.timeStamp.search = info.timeStamp.search;
 			}
 			if (info.timeStamp !== status.timeStamp.data) {
@@ -586,6 +596,7 @@ function initSites(sites) {
 }
 
 function initSearch(folders, query = '') {
+	status.searchQuery = query;
 
 	while (searchResults.hasChildNodes()) {
 		searchResults.removeChild(searchResults.firstChild);
@@ -616,14 +627,8 @@ function initSearch(folders, query = '') {
 }
 
 function setPageTitle(query) {
-	if (options.startpage.mode === 'search') {
-		searchField.value = query;
-		document.title    = query;
-	}
-	else {
-		searchField.value = '';
-		document.title    = i18n.pageTitle;
-	}
+	searchField.value = query;
+	document.title    = options.startpage.mode === 'search' ? query : i18n.pageTitle;
 }
 
 function setDomainStyle(item) {

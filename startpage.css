@@ -90,32 +90,6 @@ main {
 	width: 100%;
 	margin: 0 auto;
 }
-	.search-options {
-		display: inline-block;
-		width: 1.2rem;
-		height: 1.2rem;
-		position: absolute;
-		z-index: 99;
-		left: .55rem;
-		top: .6rem;
-	}
-		.search-options>span {
-			width: 1.2rem;
-			height: 1.2rem;
-			margin-left: .1rem;
-			background-color: var(--font-color-inactive);
-			display: inline-block;
-			-webkit-mask-repeat: no-repeat;
-			-webkit-mask-size: 100% 100%;
-			-webkit-mask-position: center;
-			-webkit-mask-mode: alpha;
-			mask-repeat: no-repeat;
-			mask-size: 100% 100%;
-			mask-position: center;
-			mask-mode: alpha;
-			-webkit-mask-image: url('icons/options.svg');
-			mask-image: url('icons/options.svg');
-		}
 	#search-results {
 		display: table-row;
 		width: auto;
@@ -305,18 +279,46 @@ main {
 	grid-template-columns: 1.9rem auto 1.9rem;
 }
 .search #search {
-	grid-template-columns: 1.9rem auto 1.9rem 1.9rem;
+	grid-template-columns: 1.9rem auto 1.9rem 1.9rem 1.9rem;
 }
+	.search-options {
+		display: inline-block;
+		width: 1.2rem;
+		height: 1.2rem;
+		position: absolute;
+		z-index: 99;
+		left: .55rem;
+		top: .6rem;
+	}
+		.search-options>span {
+			width: 1.2rem;
+			height: 1.2rem;
+			margin-left: .1rem;
+			background-color: var(--font-color-inactive);
+			display: inline-block;
+			-webkit-mask-repeat: no-repeat;
+			-webkit-mask-size: 100% 100%;
+			-webkit-mask-position: center;
+			-webkit-mask-mode: alpha;
+			mask-repeat: no-repeat;
+			mask-size: 100% 100%;
+			mask-position: center;
+			mask-mode: alpha;
+			-webkit-mask-image: url('icons/options.svg');
+			mask-image: url('icons/options.svg');
+		}
 	#lets-search,
 	#clear-search,
-	#search-options {
+	#search-options,
+	#mode-sites {
 		display: inline-block;
 		cursor: pointer;
 		height: 100%;
 		width: 1.9rem;
 		align-self: stretch;
 	}
-	.sites #clear-search {
+	.sites #clear-search,
+	.sites #mode-sites {
 		display: none;
 	}
 	#search-field {
@@ -336,7 +338,8 @@ main {
 	#edit-button>span,
 	#clear-search>span,
 	#lets-search>span,
-	#search-options>span {
+	#search-options>span,
+	#mode-sites>span {
 		background-color: var(--font-color-inactive);
 		display: inline-block;
 		-webkit-mask-repeat: no-repeat;
@@ -348,22 +351,24 @@ main {
 		mask-position: center;
 		mask-mode: alpha;
 	}
-	#search-options>span {
-		-webkit-mask-image: url('icons/options.svg');
-		mask-image: url('icons/options.svg');
-	}
 	#edit-button:hover>span,
 	#search-options:hover>span,
 	#clear-search:hover>span,
-	#lets-search:hover>span {
+	#lets-search:hover>span,
+	#mode-sites:hover>span {
 		background-color: var(--font-color);
 	}
 	#clear-search>span,
-	#lets-search>span {
+	#lets-search>span,
+	#mode-sites>span {
 		width: 1.2rem;
 		height: 1.2rem;
 		margin-top: .2rem;
 		margin-left: .32rem;
+	}
+	#search-options>span {
+		-webkit-mask-image: url(icons/options.svg);
+		mask-image: url(icons/options.svg);
 	}
 	#lets-search>span {
 		-webkit-mask-image: url(icons/search.svg);
@@ -372,6 +377,10 @@ main {
 	#clear-search>span {
 		-webkit-mask-image: url(icons/close.svg);
 		mask-image: url(icons/close.svg);
+	}
+	#mode-sites>span {
+		-webkit-mask-image: url(icons/startpage.svg);
+		mask-image: url(icons/startpage.svg);
 	}
 	#edit-button>span {
 		position: absolute;
