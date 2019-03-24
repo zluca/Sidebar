@@ -1536,7 +1536,7 @@ const messageHandler = {
 	},
 
 	options : {
-		handler: (message, sender, sendResponse) => {
+		handler: message => {
 			const section  = message.data.section;
 			const option   = message.data.option;
 			const value    = message.data.value;
@@ -1547,7 +1547,7 @@ const messageHandler = {
 	},
 
 	set : {
-		fold : (message, sender, sendResponse) => {
+		fold : message => {
 			const mode   = message.data.mode;
 			const folder = getFolderById(mode, message.data.id);
 			if (folder === false) return;
@@ -1567,16 +1567,16 @@ const messageHandler = {
 			makeTimeStamp(mode);
 			send('sidebar', 'set', 'fold', {'mode': mode === 'windows' ? 'tabs' : mode, 'id': message.data.id, 'folded': message.data.folded, 'method': message.data.folded ? 'add' : 'remove'});
 		},
-		rightClick : (message, sender, sendResponse) => {
+		rightClick : message => {
 			send('content', 'set', 'rightClick', '');
 		}
 	},
 
 	dialog : {
-		siteCreate : (message, sender, sendResponse) => {
+		siteCreate : message => {
 			createDialogWindow(message.action, message.data);
 		},
-		siteChange : (message, sender, sendResponse) => {
+		siteChange : message => {
 			const site = data.startpage[message.data.index];
 			if (site === undefined) return;
 			createDialogWindow(message.action, {
@@ -1586,26 +1586,26 @@ const messageHandler = {
 				color : site.color
 			});
 		},
-		siteDelete : (message, sender, sendResponse) => {
+		siteDelete : message => {
 			createDialogWindow(message.action, message.data);
 		},
-		windowClose: (message, sender, sendResponse) => {
+		windowClose: message => {
 			const folder = getFolderById('windows', parseInt(message.data.id));
 			if (folder === false) return;
 			createDialogWindow(message.action, {'id': message.data.id, 'title': folder.title});
 		},
-		domainFolderClose : (message, sender, sendResponse) => {
+		domainFolderClose : message => {
 			const folder = getFolderById('tabs', message.data.id);
 			if (folder === false) return;
 			createDialogWindow(message.action, {'id': message.data.id, 'title': folder.title});
 		},
-		bookmarkDelete : (message, sender, sendResponse) => {
+		bookmarkDelete : message => {
 			createDialogWindow(message.action, message.data);
 		},
-		bookmarkFolderDelete : (message, sender, sendResponse) => {
+		bookmarkFolderDelete : message => {
 			createDialogWindow(message.action, message.data);
 		},
-		bookmarkNew : (message, sender, sendResponse) => {
+		bookmarkNew : message => {
 			const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 			if (activeTab === false) return;
 			const dataToSend = {
@@ -1616,10 +1616,10 @@ const messageHandler = {
 			};
 			createDialogWindow(message.action, dataToSend);
 		},
-		bookmarkFolderNew : (message, sender, sendResponse) => {
+		bookmarkFolderNew : message => {
 			createDialogWindow(message.action, {'folders': data.bookmarksFolders});
 		},
-		bookmarkTab : (message, sender, sendResponse) => {
+		bookmarkTab : message => {
 			const tab = getById('tabs', message.data.id);
 			if (tab === false) return;
 			const dataToSend = {
@@ -1630,45 +1630,45 @@ const messageHandler = {
 			};
 			createDialogWindow('bookmarkNew', dataToSend);
 		},
-		bookmarkEdit : (message, sender, sendResponse) => {
+		bookmarkEdit : message => {
 			const bookmark = getById('bookmarks', message.data.id);
 			if (bookmark === false) return;
 			createDialogWindow('bookmarkEdit', {'id': message.data.id, 'url': bookmark.url,'title': bookmark.title});
 		},
-		bookmarkFolderEdit : (message, sender, sendResponse) => {
+		bookmarkFolderEdit : message => {
 			const folder = getFolderById('bookmarks', message.data.id);
 			if (folder === false) return;
 			createDialogWindow('bookmarkFolderEdit', {'id': message.data.id, 'title': folder.title});
 		},
-		historyFolderDelete : (message, sender, sendResponse) => {
+		historyFolderDelete : message => {
 			createDialogWindow(message.action, message.data);
 		},
-		rssNew : (message, sender, sendResponse) => {
+		rssNew : message => {
 			const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 			if (activeTab !== false)
 				if (tabIsProtected(activeTab) === false)
 					return send('content', 'dialog', 'checkRss', '');
 			createDialogWindow(message.action, message.data);
 		},
-		rssImportExport : (message, sender, sendResponse) => {
+		rssImportExport : message => {
 			createDialogWindow(message.action, message.data);
 		},
-		rssUrlConfirmed : (message, sender, sendResponse) => {
+		rssUrlConfirmed : message => {
 			createDialogWindow('rssNew', message.data);
 		},
-		rssFeedEdit : (message, sender, sendResponse) => {
+		rssFeedEdit : message => {
 			createDialogWindow(message.action, message.data);
 		},
-		rssFeedDelete : (message, sender, sendResponse) => {
+		rssFeedDelete : message => {
 			createDialogWindow(message.action, message.data);
 		},
-		downloadDelete : (message, sender, sendResponse) => {
+		downloadDelete : message => {
 			createDialogWindow(message.action, message.data);
 		},
 		remove : (message, sender, sendResponse) => {
 			sendToTab(sender.tab.id, 'content', 'dialog', 'remove');
 		},
-		pocketNew : (message, sender, sendResponse) => {
+		pocketNew : message => {
 			const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
 			if (activeTab !== false)
 				createDialogWindow(message.action, {
@@ -1676,31 +1676,31 @@ const messageHandler = {
 					'title' : activeTab.title
 				});
 		},
-		pocketDelete: (message, sender, sendResponse) => {
+		pocketDelete: message => {
 			const pocket = getById('pocket', message.data);
 			if (pocket === false) return;
 			createDialogWindow(message.action, {'id': pocket.id, 'title': pocket.title});
 		},
-		pocketFolderDelete: (message, sender, sendResponse) => {
+		pocketFolderDelete: message => {
 			const folder = getFolderById('pocket', message.data);
 			if (folder === false) return;
 			createDialogWindow(message.action, {'id': folder.id, 'title': folder.title});
 		},
-		searchSelect: (message, sender, sendResponse) => {
+		searchSelect: message => {
 			createDialogWindow('searchSelect', {
 				'target'      : 'search',
 				'options'     : optionsShort.search,
 				'searchTypes' : config.searchTypes
 			});
 		},
-		spSearchSelect: (message, sender, sendResponse) => {
+		spSearchSelect: message => {
 			createDialogWindow('searchSelect', {
 				'target'      : 'spSearch',
 				'options'     : optionsShort.spSearch,
 				'searchTypes' : config.searchTypes
 			});
 		},
-		actions     : (message, sender, sendResponse) => {
+		actions     : message => {
 			createDialogWindow(message.action, {'type': message.data, 'clickActions': options[`${message.data}ClickActions`], 'prefix': `${message.data}Controls`,'hoverActions': optionsShort[`${message.data}HoverActions`]});
 		}
 	},
@@ -1902,7 +1902,7 @@ const initService = {
 					status.sideDetection.sidebar = '';
 					status.sideDetection.content = '';
 					messageHandler.sidebar       = {
-						sideDetection: (message, sender, sendResponse) => {
+						sideDetection: message => {
 							const setSide = (sender, side) => {
 								status.sideDetection[sender] = side;
 								setTimeout(_ => {status.sideDetection[sender] = '';}, 100);
@@ -1976,7 +1976,7 @@ const initService = {
 		if (start === true) {
 			setOption('startpage', 'mode', 'sites');
 			messageHandler.startpage = {
-				change : (message, sender, sendResponse) => {
+				change : message => {
 					const site = data.startpage[message.data.index];
 					if (site !== undefined) {
 						site.text  = message.data.text;
@@ -1986,17 +1986,17 @@ const initService = {
 						send('startpage', 'site', 'changed', {'index': message.data.index, 'site': site});
 					}
 				},
-				delete : (message, sender, sendResponse) => {
+				delete : message => {
 					makeSite(message.data.index);
 					saveNow('startpage');
 					send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
 				},
-				create : (message, sender, sendResponse) => {
+				create : message => {
 					makeSite(message.data.index, message.data);
 					saveNow('startpage');
 					send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
 				},
-				move : (message, sender, sendResponse) => {
+				move : message => {
 					const movedSite = data.startpage.splice(message.data.from, 1)[0];
 					data.startpage.splice(message.data.to, 0, movedSite);
 					saveNow('startpage');
@@ -2041,29 +2041,29 @@ const initService = {
 
 		const initTabs = _ => {
 			messageHandler.tabs = {
-				new : (message, sender, sendResponse) => {
+				new : message => {
 					createNewTab(message.data.url === '' ? config.extensionStartPage : message.data.url, message.data.newWindow, message.data.active);
 				},
-				undo : (message, sender, sendResponse) => {
+				undo : message => {
 					if (status.info.undoTab.hasOwnProperty('url'))
 						createNewTab(status.info.undoTab.url, false, status.info.undoTab.active);
 				},
-				update : (message, sender, sendResponse) => {
+				update : message => {
 					for (let i = data.tabs.length - 1; i >= 0 ; i--)
 						if (data.tabs[i].url === message.data.url)
 							return brauzer.tabs.update(data.tabs[i].id, {'active': true});
 					brauzer.tabs.update(status.activeTabsIds[status.activeWindow], {'url': message.data.url});
 				},
-				setActive : (message, sender, sendResponse) => {
+				setActive : message => {
 					const tab = getById('tabs', message.data.id);
 					if (tab === false) return;
 					brauzer.tabs.update(message.data.id, {'active': true});
 					brauzer.windows.update(tab.windowId, {'focused': true});
 				},
-				reload : (message, sender, sendResponse) => {
+				reload : message => {
 					brauzer.tabs.reload(message.data.id);
 				},
-				removeById : (message, sender, sendResponse) => {
+				removeById : message => {
 					if (options.services.startpage.value === true)
 						for (let i = message.data.idList.length - 1; i >= 0; i--) {
 							const tab = getById('tabs', message.data.idList[i]);
@@ -2071,7 +2071,7 @@ const initService = {
 						}
 					brauzer.tabs.remove(message.data.idList);
 				},
-				domainFolderClose: (message, sender, sendResponse) => {
+				domainFolderClose: message => {
 					const folder = getFolderById('tabs', message.data.id);
 					if (folder === false) return;
 					let toClose = [];
@@ -2079,12 +2079,12 @@ const initService = {
 						toClose.push(folder.itemsId[i]);
 					brauzer.tabs.remove(toClose);
 				},
-				windowClose : (message, sender, sendResponse) => {
+				windowClose : message => {
 					const win = getFolderById('windows', parseInt(message.data.id));
 					if (win === false) return;
 					brauzer.windows.remove(win.id);
 				},
-				move : (message, sender, sendResponse) => {
+				move : message => {
 					const id = parseInt(message.data.id);
 					const handler = {
 						plain  : _ => {
@@ -2124,20 +2124,20 @@ const initService = {
 
 					handler[options.misc.tabsMode.value]();
 				},
-				pin : (message, sender, sendResponse) => {
+				pin : message => {
 					brauzer.tabs.update(message.data.id, {'pinned': true});
 				},
-				unpin : (message, sender, sendResponse) => {
+				unpin : message => {
 					brauzer.tabs.update(message.data.id, {'pinned': false});
 				},
-				duplicate : (message, sender, sendResponse) => {
+				duplicate : message => {
 					brauzer.tabs.duplicate(message.data.id);
 				},
-				showSearchBar : (message, sender, sendResponse) => {
+				showSearchBar : message => {
 					status.info.tabsSearchBar = message.data;
 					send('sidebar', 'tabs', 'showSearchBar', status.info.tabsSearchBar);
 				},
-				search : (message, sender, sendResponse) => {
+				search : message => {
 					status.info.tabsSearch    = true;
 					status.info.tabsSearchBar = true;
 					data.tabsSearch           = [];
@@ -2150,7 +2150,7 @@ const initService = {
 					}
 					send('sidebar', 'tabs', 'search', {'search': data.tabsSearch, 'searchTerm': data.tabsSearchTerm});
 				},
-				clearSearch : (message, sender, sendResponse) => {
+				clearSearch : message => {
 					status.info.tabsSearch    = false;
 					data.tabsSearch           = [];
 					data.tabsSearchTerm       = '';
@@ -2645,28 +2645,28 @@ const initService = {
 
 		const initBookmarks = _ => {
 			messageHandler.bookmarks = {
-				bookmarkDelete : (message, sender, sendResponse) => {
+				bookmarkDelete : message => {
 					brauzer.bookmarks.remove(message.data.id);
 				},
-				bookmarkFolderDelete : (message, sender, sendResponse) => {
+				bookmarkFolderDelete : message => {
 					brauzer.bookmarks.removeTree(message.data.id);
 				},
-				bookmarkNew : (message, sender, sendResponse) => {
+				bookmarkNew : message => {
 					brauzer.bookmarks.create(message.data);
 				},
-				bookmarkFolderNew : (message, sender, sendResponse) => {
+				bookmarkFolderNew : message => {
 					brauzer.bookmarks.create(message.data);
 				},
-				bookmarkEdit :(message, sender, sendResponse) => {
+				bookmarkEdit :message => {
 					brauzer.bookmarks.update(message.data.id, message.data.changes);
 				},
-				bookmarkFolderEdit :(message, sender, sendResponse) => {
+				bookmarkFolderEdit :message => {
 					brauzer.bookmarks.update(message.data.id, message.data.changes);
 				},
-				move : (message, sender, sendResponse) => {
+				move : message => {
 					brauzer.bookmarks.move(message.data.id, {'parentId': message.data.pid, 'index': message.data.newIndex});
 				},
-				search : (message, sender, sendResponse) => {
+				search : message => {
 					const onFulfilled = bookmarkItems => {
 						const l      = bookmarkItems.length < options.misc.limitBookmarks.value ?
 							bookmarkItems.length : options.misc.limitBookmarks.value;
@@ -2687,11 +2687,11 @@ const initService = {
 					execMethod(brauzer.bookmarks.search, onFulfilled, {'query': message.data.request});
 					return true;
 				},
-				clearSearch : (message, sender, sendResponse) => {
+				clearSearch : message => {
 					status.info.bookmarksSearch = false;
 					send('sidebar', 'bookmarks', 'clearSearch');
 				},
-				openAll : (message, sender, sendResponse) => {
+				openAll : message => {
 					const folder = getFolderById('bookmarks', message.data);
 					if (folder === false) return;
 					for (let i = folder.itemsId.length - 1; i >= 0; i--) {
@@ -2947,25 +2947,25 @@ const initService = {
 
 		const initHistory = _ => {
 			messageHandler.history = {
-				getMore    : (message, sender, sendResponse) => {
+				getMore    : message => {
 					searchMore(true);
 				},
-				search     : (message, sender, sendResponse) => {
+				search     : message => {
 					data.historySearchTerm    = message.data.request;
 					status.info.historySearch = true;
 					search(result => {data.historySearch = result; send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm});}, message.data.request);
 				},
-				clearSearch : (message, sender, sendResponse) => {
+				clearSearch : message => {
 					status.info.historySearch = false;
 					send('sidebar', 'history', 'clearSearch');
 				},
 				searchSite  : (message, sender, sendResponse) => {
 					search(sendResponse, message.data.request, message.data.maxResults);
 				},
-				delete      : (message, sender, sendResponse) => {
+				delete      : message => {
 					brauzer.history.deleteUrl({url: message.data.url});
 				},
-				historyFolderDelete: (message, sender, sendResponse) => {
+				historyFolderDelete: message => {
 					const folder = getFolderById('history', message.data.id);
 					if (folder === false) return;
 					const year      = folder.date.getFullYear();
@@ -3155,24 +3155,24 @@ const initService = {
 
 		const initDownloads = _ => {
 			messageHandler.downloads = {
-				pause : (message, sender, sendResponse) => {
+				pause : message => {
 					brauzer.downloads.pause(message.data.id);
 				},
-				resume : (message, sender, sendResponse) => {
+				resume : message => {
 					brauzer.downloads.resume(message.data.id);
 				},
-				cancel : (message, sender, sendResponse) => {
+				cancel : message => {
 					brauzer.downloads.cancel(message.data.id);
 				},
-				reload : (message, sender, sendResponse) => {
+				reload : message => {
 					const down = getById('downloads', message.data.id);
 					if (down === false) return;
 					brauzer.downloads.download({'url': down.url, 'conflictAction': 'uniquify'});
 				},
-				erase : (message, sender, sendResponse) => {
+				erase : message => {
 					brauzer.downloads.erase({'id': message.data.id});
 				},
-				removeFile : (message, sender, sendResponse) => {
+				removeFile : message => {
 					const down = getById('downloads', message.data.id);
 					if (down === false) return;
 					if (down.exists === false) return;
@@ -3379,40 +3379,40 @@ const initService = {
 
 		const initRss = _ => {
 			messageHandler.rss = {
-				rssReaded : (message, sender, sendResponse) => {
+				rssReaded : message => {
 					const rssItem = getById('rss', message.data.id);
 					if (rssItem === false) return;
 					rssSetReaded('rssItem', rssItem);
 				},
-				rssReadedAll : (message, sender, sendResponse) => {
+				rssReadedAll : message => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed === false) return;
 					rssSetReaded('feed', feed, 'save');
 				},
-				rssReadedAllFeeds : (message, sender, sendResponse) => {
+				rssReadedAllFeeds : message => {
 					rssSetReaded('all');
 				},
-				rssHideReaded : (message, sender, sendResponse) => {
+				rssHideReaded : message => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed === false) return;
 					feed.hideReaded = true;
 					saveNow('rssFolders');
 					send('sidebar', 'rss', 'rssHideReaded', {'id': message.data.id});
 				},
-				rssShowReaded : (message, sender, sendResponse) => {
+				rssShowReaded : message => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed === false) return;
 					feed.hideReaded = false;
 					saveNow('rssFolders');
 					send('sidebar', 'rss', 'rssShowReaded', {'id': message.data.id});
 				},
-				rssNew : (message, sender, sendResponse) => {
+				rssNew : message => {
 					createRssFeed(message.data.url, message.data.title);
 				},
-				rssItemDelete : (message, sender, sendResponse) => {
+				rssItemDelete : message => {
 					deleteRssItem(message.data.id);
 				},
-				rssFeedEdit : (message, sender, sendResponse) => {
+				rssFeedEdit : message => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed === false) return;
 					feed.title = message.data.title;
@@ -3420,7 +3420,7 @@ const initService = {
 					saveNow('rssFolders');
 					send('sidebar', 'rss', 'rssFeedChanged', {'id': message.data.id, 'title': message.data.title, 'description': message.data.description});
 				},
-				rssFeedDelete : (message, sender, sendResponse) => {
+				rssFeedDelete : message => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed === false) return;
 					rssSetReaded('feed', feed, 'kill');
@@ -3430,32 +3430,32 @@ const initService = {
 					saveNow('rssFolders');
 					send('sidebar', 'rss', 'rssFeedDeleted', {'id': message.data.id});
 				},
-				updateFeed   : (message, sender, sendResponse) => {
+				updateFeed   : message => {
 					const feed = getFolderById('rss', message.data.id);
 					if (feed === false) return;
 					brauzer.alarms.clear(`rss-update**${feed.id}`);
 					updateRssFeed(message.data.id);
 				},
-				updateAll    : (message, sender, sendResponse) => {
+				updateAll    : message => {
 					status.info.rssUpdated = 0;
 					brauzer.alarms.clearAll();
 					for (let i = data.rssFoldersId.length - 1; i >= 0; i--)
 						updateRssFeed(data.rssFoldersId[i]);
 				},
-				move         : (message, sender, sendResponse) => {
+				move         : message => {
 					const oldIndex = data.rssFoldersId.indexOf(message.data.id);
 					if (oldIndex === -1) return;
 					moveFromTo('rssFolders', oldIndex, message.data.newIndex);
 					send('sidebar', 'rss', 'moved', {'id': message.data.id, 'newIndex': message.data.newIndex, 'oldIndex': oldIndex, 'isFolder': true});
 				},
-				import       : (message, sender, sendResponse) => {
+				import       : message => {
 					const parser = new DOMParser();
 					const xmlDoc = parser.parseFromString(message.data, 'text/xml');
 					const feeds  = xmlDoc.querySelectorAll('outline[type="rss"]');
 					for (let i = 0, l = feeds.length; i < l; i++)
 						createRssFeed(feeds[i].getAttribute('xmlUrl'), feeds[i].getAttribute('title'));
 				},
-				export       : (message, sender, sendResponse) => {
+				export       : message => {
 					if (data.rssFolders.length === 0)
 						brauzer.notifications.create('rss-error', {'type': 'basic', 'iconUrl': config.sidebarIcon, 'title': i18n.notification.rssNothingToExportTitle, 'message':  i18n.notification.rssNothingToExportText});
 					else {
@@ -4201,46 +4201,46 @@ const initService = {
 			};
 
 			messageHandler.pocket = {
-				login     : (message, sender, sendResponse) => {
+				login     : message => {
 					pocketRequest('request');
 				},
-				logout    : (message, sender, sendResponse) => {
+				logout    : message => {
 					logout();
 				},
-				add       : (message, sender, sendResponse) => {
+				add       : message => {
 					pocketRequest('add', message.data);
 				},
-				fav       : (message, sender, sendResponse) => {
+				fav       : message => {
 					pocketRequest('fav', message.data);
 				},
-				unfav     : (message, sender, sendResponse) => {
+				unfav     : message => {
 					pocketRequest('unfav', message.data);
 				},
-				archive   : (message, sender, sendResponse) => {
+				archive   : message => {
 					pocketRequest('archive', message.data);
 				},
-				folderArchive : (message, sender, sendResponse) => {
+				folderArchive : message => {
 					const domain = getFolderById('pocket', message.data);
 					if (domain === false) return;
 					for (let i = domain.itemsId.length - 1; i >= 0; i--)
 						pocketRequest('archive', domain.itemsId[i]);
 				},
-				unarchive : (message, sender, sendResponse) => {
+				unarchive : message => {
 					pocketRequest('unarchive', message.data);
 				},
-				delete    : (message, sender, sendResponse) => {
+				delete    : message => {
 					pocketRequest('delete', message.data);
 				},
-				folderDelete : (message, sender, sendResponse) => {
+				folderDelete : message => {
 					const domain = getFolderById('pocket', message.data);
 					if (domain === false) return;
 					for (let i = domain.itemsId.length - 1; i >= 0; i--)
 						pocketRequest('delete', domain.itemsId[i]);
 				},
-				reloadAll : (message, sender, sendResponse) => {
+				reloadAll : message => {
 					pocketRequest('sync');
 				},
-				move      : (message, sender, sendResponse) => {
+				move      : message => {
 					const oldIndex = data.pocketFoldersId.indexOf(message.data.id);
 					if (oldIndex === -1) return;
 					moveFromTo('pocketFolders', oldIndex, message.data.newIndex);
@@ -4583,7 +4583,7 @@ const initService = {
 			};
 
 			messageHandler[mode]    = {
-				query   : (message, sender, sendResponse) => {
+				query   : message => {
 					makeTimeStamp(mode);
 					if (mode === 'spSearch')
 						if (options.startpage.mode.value === 'sites')
@@ -4594,7 +4594,7 @@ const initService = {
 						if (options[mode][config.searchTypes[i]].value === true)
 							search(config.searchTypes[i], data[`${mode}Query`]);
 				},
-				changeQuery : (message, sender, sendResponse) => {
+				changeQuery : message => {
 					makeTimeStamp(mode);
 					data[`${mode}Query`] = message.data;
 					if (mode === 'spSearch')
@@ -4602,10 +4602,10 @@ const initService = {
 							setOption('startpage', 'mode', 'sites', true);
 					send(target, 'search', 'changeQuery', message.data);
 				},
-				clearSearch: (message, sender, sendResponse) => {
+				clearSearch: message => {
 					clearSearch();
 				},
-				move   : (message, sender, sendResponse) => {
+				move   : message => {
 					const oldIndex = data.searchFoldersId.indexOf(message.data.id);
 					if (oldIndex === -1) return;
 					moveFromTo('searchFolders', oldIndex, message.data.newIndex);
