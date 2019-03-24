@@ -514,7 +514,7 @@ const messageHandler = {
 		changeQuery  : info => {
 			if (searchField !== document.activeElement) {
 				status.searchQuery = info;
-				searchField.value  = info;
+				setPageTitle(info);
 			}
 		},
 		showFolder   : info => {
