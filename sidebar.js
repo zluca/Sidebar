@@ -2021,7 +2021,8 @@ function makeSearch(mode) {
 				searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
 			insertItems(items, 'search');
 			if (searchTerm !== undefined)
-				searchInput.value = searchTerm;
+				if (searchInput !== document.activeElement)
+					searchInput.value = searchTerm;
 			clearSearch.style.setProperty('display', 'inline-block');
 			searchActive(true);
 		};
@@ -2030,7 +2031,8 @@ function makeSearch(mode) {
 			insertItems(items);
 			if (typeof searchTerm === 'string' && searchTerm !== '') {
 				clearSearch.style.setProperty('display', 'inline-block');
-				searchInput.value = searchTerm;
+				if (searchInput !== document.activeElement)
+					searchInput.value = searchTerm;
 			}
 			else {
 				clearSearch.style.setProperty('display', 'none');
