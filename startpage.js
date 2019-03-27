@@ -495,9 +495,10 @@ const messageHandler = {
 			if (index === -1) return;
 			data.searchFolders[index].classList[info.method]('loading');
 			if (info.hasOwnProperty('query'))
-				document.title = info.query;
+				setPageTitle(info.query);
 		},
 		clearSearch : info => {
+			setPageTitle('');
 			for (let i = data.searchFolders.length - 1; i >= 0; i--)
 			while (data.searchFolders[i].hasChildNodes())
 				data.searchFolders[i].removeChild(data.searchFolders[i].firstChild);
@@ -629,6 +630,7 @@ function initSearch(folders, query = '') {
 function setPageTitle(query) {
 	searchField.value = query;
 	document.title    = options.startpage.mode === 'search' ? query : i18n.pageTitle;
+	setMode();
 }
 
 function setDomainStyle(item) {
@@ -727,6 +729,9 @@ function setBackground(image) {
 function setMode(value) {
 	if (value !== undefined)
 		options.startpage.mode = value;
+	if (options.startpage.mode === 'sites')
+		if (searchField.value !== '')
+			return doc.classList = 'sites-with-search';
 	doc.classList = options.startpage.mode;
 }
 

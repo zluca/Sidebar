@@ -167,7 +167,8 @@ main {
 				background-size: 1.2rem 1.2rem;
 				background-image: url('icons/loader.svg')!important;
 			}
-.sites #site-container {
+.sites #site-container,
+.sites-with-search #site-container {
 	display: grid;
 	width: auto;
 	grid-template-columns: repeat(var(--columns), 1fr);
@@ -278,6 +279,10 @@ main {
 	margin-bottom: var(--padding);
 	grid-template-columns: 1.9rem auto 1.9rem;
 }
+.sites-with-search #search {
+	margin-bottom: var(--padding);
+	grid-template-columns: 1.9rem auto 1.9rem 1.9rem;
+}
 .search #search {
 	grid-template-columns: 1.9rem auto 1.9rem 1.9rem 1.9rem;
 }
@@ -318,7 +323,8 @@ main {
 		align-self: stretch;
 	}
 	.sites #clear-search,
-	.sites #mode-sites {
+	.sites #mode-sites,
+	.sites-with-search #mode-sites {
 		display: none;
 	}
 	#search-field {
