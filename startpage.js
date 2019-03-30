@@ -90,7 +90,7 @@ function init(response) {
 
 	initSites(response.sites);
 	initSearch(response.searchFolders, response.searchQuery);
-	insertSearchItems(response.search, true);
+	insertSearchItems(response.search);
 	setStyle();
 	setColor(options.theme);
 	setBackground();
@@ -346,8 +346,7 @@ function insertFinisher() {
 	status.initDone = true;
 }
 
-function insertSearchItems(info, clean) {
-
+function insertSearchItems(info) {
 	let folder         = null;
 	let pid            = -1;
 
@@ -361,12 +360,13 @@ function insertSearchItems(info, clean) {
 			i = i + 2;
 		}
 	};
+
 	const makeItem     =  item => {
-		const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain}-domain search item ${item.viewed ? 'viewed' : ''}`]], [['url', item.url], ['domain', item.domain]]);
+		const searchItem = dceamd('a', folder, [['href', item.url], ['classList', `${item.domain} search item ${item.viewed ? 'viewed' : ''}`]], [['url', item.url], ['domain', item.domain]]);
 		searchItem.dataset.id  = item.id;
 		data.search.push(searchItem);
 		data.searchId.push(item.id);
-		status.titles[item.id] = {'active': false, 'title': `${item.description}\n\n${item.url}`};
+		status.titles[item.id] = {'active': false, 'title': item.description};
 		makeSearchItemText(searchItem, item.title);
 	};
 
@@ -490,15 +490,9 @@ const messageHandler = {
 		}
 	},
 	search  : {
-		update      : info => {
-			const index = data.searchFoldersId.indexOf(info.target);
-			if (index === -1) return;
-			data.searchFolders[index].classList[info.method]('loading');
-			if (info.hasOwnProperty('query'))
-				setPageTitle(info.query);
-		},
 		clearSearch : info => {
-			setPageTitle('');
+			if (info === true)
+				setPageTitle('');
 			for (let i = data.searchFolders.length - 1; i >= 0; i--)
 			while (data.searchFolders[i].hasChildNodes())
 				data.searchFolders[i].removeChild(data.searchFolders[i].firstChild);
@@ -506,11 +500,11 @@ const messageHandler = {
 		newItems    : info => {
 			const index = data.searchFoldersId.indexOf(info.target);
 			if (index === -1) return;
-			insertSearchItems(info.items, info.clean);
-			if (info.clean) {
-				setPageTitle(searchField.value);
-				data.searchHeaders[index].firstChild.href = info.searchLink;
+			if (info.newSearch === true) {
+				while (data.searchFolders[index].hasChildNodes())
+					data.searchFolders[index].removeChild(data.searchFolders[index].firstChild);
 			}
+			insertSearchItems(info.items);
 		},
 		changeQuery  : info => {
 			if (searchField !== document.activeElement) {
@@ -562,14 +556,14 @@ const messageHandler = {
 						if (info.options.search[option] !== options.search[option]) {
 							options.search = info.options.search;
 							initSearch(info.searchFolders, info.searchQuery);
-							insertSearchItems(info.search, true);
+							insertSearchItems(info.search);
 							break;
 						}
 				status.timeStamp.options = info.timeStamp.options;
 			}
 			if (info.timeStamp.search !== status.timeStamp.search) {
 				initSearch(info.searchFolders, info.searchQuery);
-				insertSearchItems(info.search, true);
+				insertSearchItems(info.search);
 				status.timeStamp.search = info.timeStamp.search;
 			}
 			if (info.timeStamp !== status.timeStamp.data) {

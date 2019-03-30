@@ -4458,14 +4458,18 @@ const initService = {
 				return body;
 			};
 
-			const noResults   = (searchLink, subType) => {
+			const specialItem = (folder, itemType) => {
+				deleteById(mode, `${type}-00`);
+				folder.itemsId = [];
 				const item = {
-					id          : `${subType}-00`,
-					url         : `domain-${subType}`,
-					type        : subType,
-					title       : [i18n.search.noResultsTitle],
-					description : i18n.search.noResultsDescription
+					id          : `${folder.id}-00`,
+					url         : `domain-${itemType}`,
+					forceDomain : true,
+					type        : folder.id,
+					title       : [i18n.search[`${itemType}Title`]],
+					description : i18n.search[`${itemType}Description`]
 				};
+				makeTimeStamp(mode);
 				return [createById(mode, item, 'last')];
 			};
 
@@ -4473,10 +4477,12 @@ const initService = {
 			const searchLink  = links[type](query);
 			const folder      = getFolderById(mode, type);
 			if (folder === false) return;
-			folder.searchLink = searchLink;
+			if (page === 0) {
+				folder.searchLink = searchLink;
+				send(target, 'search', 'newItems', {'items': specialItem(folder, 'loading'), 'searchLink': searchLink, 'target': type, 'newSearch': true});
+			}
 			xhttp.open('GET', searchLink, true);
 			xhttp.send();
-			send(target, 'search', 'update', {'method': 'add', 'target': type});
 			xhttp.onreadystatechange = _ => {
 				if (xhttp.readyState === 4) {
 					if (xhttp.status === 200) {
@@ -4488,6 +4494,8 @@ const initService = {
 						const l       = results.length;
 						const folder  = getFolderById(mode, type);
 						if (l > 0) {
+							if (page === 0)
+								deleteById(mode, `${type}-00`);
 							for (let i = 0; i < l; i++) {
 								const realId = `${page}${i}`;
 								const item = makeItem[type](results[i]);
@@ -4499,18 +4507,19 @@ const initService = {
 								item.type  = type;
 								items.push(createById(mode, item, 'last'));
 							}
-							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type});
+							makeTimeStamp(mode);
+							send(target, 'search', 'newItems', {'items': items, 'searchLink': searchLink, 'target': type, 'newSearch': page === 0});
 							if (page < 4)
 								if (items.length * (1 + page) < config.searchLength)
 									if (type !== 'duckduckgo')
 										if (type !== 'wikipedia')
 											search(type, query, 1 + page);
 						}
-						else
-							send(target, 'search', 'newItems', {'items': noResults(searchLink, type), 'searchLink': searchLink, 'target': type});
+						else if (page === 0)
+							send(target, 'search', 'newItems', {'items': specialItem(folder, 'noResults'), 'searchLink': searchLink, 'target': type, 'newSearch': true});
 					}
-					makeTimeStamp(mode);
-					send(target, 'search', 'update', {'method': 'remove', 'target': type, 'query': query});
+					else
+						send(target, 'search', 'newItems', {'items': specialItem(folder, 'networkError'), 'searchLink': searchLink, 'target': type, 'newSearch': true});
 				}
 			};
 		};
@@ -4526,25 +4535,32 @@ const initService = {
 					updateFolder[mode]({'pid': config.searchTypes[i]});
 		};
 
-		const clearSearch = _ => {
-			data[`${mode}Query`]     = '';
-			data[mode]               = [];
-			data[`${mode}Id`]        = [];
+		const clearSearch = (clearQuery = false) => {
+			if (clearQuery)
+				data[`${mode}Query`] = '';
+			data[mode]        = [];
+			data[`${mode}Id`] = [];
 			for(let i = data[`${mode}Folders`].length - 1; i >= 0; i--)
 				data[`${mode}Folders`][i].itemsId = [];
-			send(target, 'search', 'clearSearch');
+			send(target, 'search', 'clearSearch', clearQuery);
 		};
 
 		if (start === true) {
 
 			updateItem[mode]     = (newItem, item) => {
-				const domain        = makeDomain(mode, item.url);
-				newItem.description = item.description;
+				if (item.hasOwnProperty('forceDomain')) {
+					newItem.domain      = item.url;
+					newItem.description = item.description;
+				}
+				else {
+					const domain        = makeDomain(mode, item.url);
+					newItem.domain      = `${domain.id}-domain`;
+					newItem.description = `${item.description}\n\n${item.url}`;
+				}
 				newItem.title       = item.title;
 				newItem.url         = item.url;
 				newItem.type        = item.type;
 				newItem.viewed      = false;
-				newItem.domain      = domain.id;
 				updateFolder[mode](item);
 				return newItem;
 			};
@@ -4559,7 +4575,6 @@ const initService = {
 					folder.title      = i18n.search[folder.id];
 					folder.domain     = item.pid;
 					folder.view       = 'type';
-					folder.mode       = item.type;
 					folder.hidden     = !options[mode][folder.id].value;
 					folder.searchLink = '';
 					folder.itemsId    = [];
@@ -4567,19 +4582,23 @@ const initService = {
 			};
 
 			i18n.search             = {
-				duckduckgo           : getI18n('dialogDuckDuckGoLabel'),
-				google               : getI18n('dialogGoogleLabel'),
-				yandex               : getI18n('dialogYandexLabel'),
-				bing                 : getI18n('dialogBingLabel'),
-				yahoo                : getI18n('dialogYahooLabel'),
-				wikipedia            : getI18n('dialogWikipediaLabel'),
-				searchPlaceholder    : getI18n('searchPlaceholder'),
-				captchaTitle         : getI18n('searchCaptchaTitle'),
-				captchaDescription   : getI18n('searchCaptchaDescription'),
-				noResultsTitle       : getI18n('searchNoResultsTitle'),
-				noResultsDescription : getI18n('searchNoResultsDescription'),
-				clearSearchTitle     : getI18n('searchClearSearchTitle'),
-				searchOptions        : getI18n('searchOptions')
+				duckduckgo              : getI18n('dialogDuckDuckGoLabel'),
+				google                  : getI18n('dialogGoogleLabel'),
+				yandex                  : getI18n('dialogYandexLabel'),
+				bing                    : getI18n('dialogBingLabel'),
+				yahoo                   : getI18n('dialogYahooLabel'),
+				wikipedia               : getI18n('dialogWikipediaLabel'),
+				searchPlaceholder       : getI18n('searchPlaceholder'),
+				captchaTitle            : getI18n('searchCaptchaTitle'),
+				captchaDescription      : getI18n('searchCaptchaDescription'),
+				noResultsTitle          : getI18n('searchNoResultsTitle'),
+				noResultsDescription    : getI18n('searchNoResultsDescription'),
+				loadingTitle            : getI18n('searchLoadingTitle'),
+				loadingDescription      : getI18n('searchLoadingDescription'),
+				networkErrorTitle       : getI18n('searchNetworkErrorTitle'),
+				networkErrorDescription : getI18n('searchNetworkErrorDescription'),
+				clearSearchTitle        : getI18n('searchClearSearchTitle'),
+				searchOptions           : getI18n('searchOptions')
 			};
 
 			messageHandler[mode]    = {

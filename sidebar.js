@@ -1422,14 +1422,17 @@ const initBlock = {
 			let i            = 1;
 			item.href        = info.url;
 			item.dataset.url = info.url;
-			item.classList   = `search item domain-${info.domain} ${info.type} ${info.viewed ? 'viewed' : ''}`;
+			item.classList   = `search item ${info.domain} ${info.type} ${info.viewed ? 'viewed' : ''}`;
 			item.appendChild(document.createTextNode(info.title[0]));
 			while (i < l) {
 				dcea('b', item, [['textContent', info.title[i]], ['href', info.url]]);
 				item.appendChild(document.createTextNode(info.title[i + 1]));
 				i = i + 2;
 			}
-			makeTitle(info.id, info.description, info.url);
+			status.titles[info.id] = {
+				active : false,
+				title  : info.description
+			};
 		};
 
 		i18n.search           = info.i18n;
@@ -1439,15 +1442,10 @@ const initBlock = {
 		status.timeStamp.mode = info.timeStamp;
 
 		messageHandler.search = {
-			update     : info => {
-				const folder = getFolderById(info.target);
-				if (folder !== false)
-					folder.classList[info.method]('loading');
-			},
-			newItems   : info => {
-				const folder = getFolderById(info.target);
+			newItems   : infoN => {
+				const folder = getFolderById(infoN.target);
 				if (folder === false) return;
-				insertItems(info.items);
+				insertSearchItems(infoN.items, info.query, infoN.newSearch);
 			},
 			clearSearch: info => {
 				status.titles = {};
@@ -1455,7 +1453,6 @@ const initBlock = {
 					removeById(data.itemId[i]);
 			},
 			changeQuery: info => {
-				insertSearchItems([], info);
 			},
 			showFolder : info => {
 				const folder = getFolderById(info.id);
@@ -1482,7 +1479,9 @@ const initBlock = {
 			let pid    = 0;
 			let folder = rootFolder;
 			for (let i = 0, l = items.length; i < l; i++) {
-				const item = createById(items[i].id);
+				let item = getById(items[i].id);
+				if (item !== false) return;
+				item     = createById(items[i].id);
 				updateItem(item, items[i]);
 				if (items[i].type !== pid) {
 					pid    = items[i].type;
@@ -1495,7 +1494,6 @@ const initBlock = {
 
 		makeSearch('search');
 		status.lastSearch = '';
-
 		insertFolders(info.searchFolders);
 		insertSearchItems(info.search, info.query);
 		finishBlock('search');
@@ -2027,8 +2025,15 @@ function makeSearch(mode) {
 			searchActive(true);
 		};
 	else
-		insertSearchItems = (items, searchTerm) => {
+		insertSearchItems = (items, searchTerm, newSearch = false) => {
+			if (newSearch)
+				for (let i = data.itemId.length - 1; i >= 0; i--)
+					removeById(data.itemId[i]);
 			insertItems(items);
+			messageHandler.search.changeQuery = info => {
+				if (searchInput !== document.activeElement)
+					searchInput.value = info;
+			}
 			if (typeof searchTerm === 'string' && searchTerm !== '') {
 				clearSearch.style.setProperty('display', 'inline-block');
 				if (searchInput !== document.activeElement)

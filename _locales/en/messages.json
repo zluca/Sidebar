@@ -721,6 +721,22 @@
 		"message"       : "Nothing found",
 		"description"   : ""
 	},
+	"searchLoadingTitle" : {
+		"message"       : "Loading ...",
+		"description"   : ""
+	},
+	"searchLoadingDescription" : {
+		"message"       : "Your content are loading now",
+		"description"   : ""
+	},
+	"searchNetworkErrorTitle" : {
+		"message"       : "Network error",
+		"description"   : ""
+	},
+	"searchNetworkErrorDescription" : {
+		"message"       : "Please check your connection to internet",
+		"description"   : ""
+	},
 	"searchOptions" : {
 		"message"       : "Configure search",
 		"description"   : ""

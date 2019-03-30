@@ -24,6 +24,15 @@
 .domain-wikipedia {
 	background-image: url("icons/wikipedia.svg");
 }
+.domain-loading {
+	background-image: url("icons/loader.svg");
+}
+.domain-noResults {
+	background-image: url("icons/close.svg");
+}
+.domain-networkError {
+	background-image: url("icons/close.svg");
+}
 
 .search-folder {
 	display: table-cell;

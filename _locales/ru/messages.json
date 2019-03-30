@@ -721,6 +721,22 @@
 		"message"       : "Ничего не найдено",
 		"description"   : ""
 	},
+	"searchLoadingTitle" : {
+		"message"       : "Загрузка ...",
+		"description"   : ""
+	},
+	"searchLoadingDescription" : {
+		"message"       : "Загружаем результаты поиска",
+		"description"   : ""
+	},
+	"searchNetworkErrorTitle" : {
+		"message"       : "Ошибка сети",
+		"description"   : ""
+	},
+	"searchNetworkErrorDescription" : {
+		"message"       : "Пожалуйста, проверьте соединение с сетью интернет",
+		"description"   : ""
+	},
 	"searchOptions" : {
 		"message"       : "Настроить поиск",
 		"description"   : ""

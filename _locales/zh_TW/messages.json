@@ -721,6 +721,22 @@
 		"message"       : "找不到東西",
 		"description"   : ""
 	},
+	"searchLoadingTitle" : {
+		"message"       : "Loading ...",
+		"description"   : ""
+	},
+	"searchLoadingDescription" : {
+		"message"       : "Your content are loading now",
+		"description"   : ""
+	},
+	"searchNetworkErrorTitle" : {
+		"message"       : "Network error",
+		"description"   : ""
+	},
+	"searchNetworkErrorDescription" : {
+		"message"       : "Please check your connection to internet",
+		"description"   : ""
+	},
 	"searchOptions" : {
 		"message"       : "設定搜尋",
 		"description"   : ""
