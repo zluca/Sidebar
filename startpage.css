@@ -70,11 +70,6 @@ body {
 	display: none!important;
 }
 
-@keyframes spin {
-	100% {
-		transform:rotate(360deg);
-	}
-}
 p {
 	margin: 0;
 }
@@ -150,22 +145,6 @@ main {
 				background-repeat: no-repeat;
 				padding-left: 1.6rem;
 				font-size: 1.5rem;
-			}
-			.loading h2>a::before {
-				padding: 0!important;
-				animation: spin 1.8s linear infinite;
-				transform-origin: 50% 50%;
-				content: '';
-				position: absolute;
-				right: -1.5rem;
-				top: 0;
-				margin-top: .06rem;
-				width: 1.2rem;
-				height: 1.2rem;
-				background-repeat: no-repeat;
-				background-position: 0 0;
-				background-size: 1.2rem 1.2rem;
-				background-image: url('icons/loader.svg')!important;
 			}
 .sites #site-container,
 .sites-with-search #site-container {
