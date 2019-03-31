@@ -722,19 +722,19 @@
 		"description"   : ""
 	},
 	"searchLoadingTitle" : {
-		"message"       : "Loading ...",
+		"message"       : "正在載入……",
 		"description"   : ""
 	},
 	"searchLoadingDescription" : {
-		"message"       : "Your content are loading now",
+		"message"       : "現在正在載入您的內容",
 		"description"   : ""
 	},
 	"searchNetworkErrorTitle" : {
-		"message"       : "Network error",
+		"message"       : "網路錯誤",
 		"description"   : ""
 	},
 	"searchNetworkErrorDescription" : {
-		"message"       : "Please check your connection to internet",
+		"message"       : "請檢查您的網路連線",
 		"description"   : ""
 	},
 	"searchOptions" : {
