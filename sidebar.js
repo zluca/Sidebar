@@ -2026,9 +2026,13 @@ function makeSearch(mode) {
 		};
 	else
 		insertSearchItems = (items, searchTerm, newSearch = false) => {
-			if (newSearch)
+			if (newSearch) {
+				const folder = getFolderById(items[0].type);
+				if (folder === false) return;
 				for (let i = data.itemId.length - 1; i >= 0; i--)
-					removeById(data.itemId[i]);
+					if (data.item[i].parentNode.parentNode === folder)
+						removeById(data.itemId[i]);
+			}
 			insertItems(items);
 			messageHandler.search.changeQuery = info => {
 				if (searchInput !== document.activeElement)
