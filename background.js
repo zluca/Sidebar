@@ -2668,8 +2668,8 @@ const initService = {
 				},
 				search : message => {
 					const onFulfilled = bookmarkItems => {
-						const l      = bookmarkItems.length < options.misc.limitBookmarks.value ?
-							bookmarkItems.length : options.misc.limitBookmarks.value;
+						const l      = bookmarkItems.length < config.bookmarksLimit ?
+							bookmarkItems.length : config.bookmarksLimit;
 						for (let i = 0; i < l; i++) {
 							if (bookmarkItems[i].hasOwnProperty('url'))
 								if (bookmarkItems[i].url !== '')
