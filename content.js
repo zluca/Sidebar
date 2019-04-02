@@ -206,7 +206,6 @@ function init() {
 			setTimeout(init, 100);
 			return;
 		}
-
 		brauzer.runtime.onMessage.addListener(message => {
 			if (message.hasOwnProperty('target'))
 				if (message.target === 'content')
@@ -465,7 +464,9 @@ function setSideBarWidth(side, value) {
 	sidebar[side].firstChild.style.setProperty('width', `${borderWidth}px`, 'important');
 	if (value !== undefined)
 		options[side].width = value;
-	if (options[side].fixed === true) {
+	if (options[side].method !== 'iframe')
+		doc.style.setProperty(`margin-${trueSide}`, 0, 'important');
+	else if (options[side].fixed === true) {
 		doc.style.setProperty(`margin-${trueSide}`, `${options[side].width}%`, 'important');
 		sidebar[side].style.setProperty('width', `${options[side].width}%`, 'important');
 		sidebar[side].firstChild.style.removeProperty('background-color');
