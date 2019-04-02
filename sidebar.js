@@ -745,7 +745,9 @@ const initBlock = {
 						folder.lastChild.appendChild(tab);
 				},
 				search : item => {
-					searchResults.lastChild.appendChild(tab);
+					const clone = tab.cloneNode(true);
+					clone.id    = clone.id.replace('tabs', 'tabs-search');
+					searchResults.lastChild.appendChild(clone);
 				},
 			};
 
@@ -856,41 +858,45 @@ const initBlock = {
 			let pid    = 0;
 
 			const checkPid =
-				method === 'search' ?
+				options.misc.bookmarksMode === 'tree' ?
 					item => {
-						folder = searchResults;
+						if (item.pid !== pid) {
+							pid    = item.pid;
+							folder = getFolderById(pid);
+							if (folder === false)
+								folder = rootFolder;
+							count  = folder.lastChild.children.length - 1;
+						}
+						count++;
 					} :
-					options.misc.bookmarksMode === 'tree' ?
-						item => {
-							if (item.pid !== pid) {
-								pid    = item.pid;
-								folder = getFolderById(pid);
-								if (folder === false)
-									folder = rootFolder;
-								count  = folder.lastChild.children.length - 1;
-							}
-							count++;
-						} :
-						item => {};
+					item => {};
 
-			for (let i = 0, l = items.length; i < l; i++) {
-				checkPid(items[i]);
-				const bookmark         = createById(items[i].id, true);
-				bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
-				makeTitle(items[i].id, items[i].title, items[i].url);
-				bookmark.href          = items[i].url;
-				bookmark.textContent   = items[i].title;
-				if (count > items[i].index - 1)
-					folder.lastChild.insertBefore(bookmark, folder.lastChild.children[items[i].index]);
-				else
-					folder.lastChild.appendChild(bookmark);
-			}
+			if (method === 'search')
+				for (let i = 0, l = items.length; i < l; i++) {
+					const bookmark = getById(items[i].id);
+					if (bookmark === false) return;
+					const clone    = bookmark.cloneNode(true);
+					clone.id       = clone.id.replace('bookmark', 'bookmark-search');
+					searchResults.lastChild.appendChild(clone);
+				}
+			else
+				for (let i = 0, l = items.length; i < l; i++) {
+					checkPid(items[i]);
+					const bookmark         = createById(items[i].id);
+					bookmark.classList.add('bookmark', `domain-${items[i].domain}`, `${items[i].hidden === true ? 'hidden' : 'item'}`);
+					makeTitle(items[i].id, items[i].title, items[i].url);
+					bookmark.href          = items[i].url;
+					bookmark.textContent   = items[i].title;
+					if (count > items[i].index - 1)
+						folder.lastChild.insertBefore(bookmark, folder.lastChild.children[items[i].index]);
+					else
+						folder.lastChild.appendChild(bookmark);
+				}
 		};
 
 		makeButton('new', 'bookmarks', 'button');
 		makeButton('folderNew', 'bookmarks', 'button');
 		makeSearch('bookmarks');
-
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders(info.bookmarksFolders);
 		insertItems(info.bookmarks, 'last');
@@ -902,8 +908,8 @@ const initBlock = {
 	history   : info => {
 
 		insertItems    = (items, method) => {
-			let pid    = -1;
-			let folder = null;
+			let pid      = -1;
+			let folder   = null;
 			const insert = {
 				first : item => {
 					if (folder) {
@@ -914,7 +920,9 @@ const initBlock = {
 					}
 				},
 				search : item => {
-					searchResults.lastChild.appendChild(item);
+					const clone = item.cloneNode(true);
+					clone.id    = clone.id.replace('history', 'history-search');
+					searchResults.lastChild.appendChild(clone);
 				},
 				last : item => {
 					status.historyInfo.lastNum++;
@@ -2037,7 +2045,7 @@ function makeSearch(mode) {
 			messageHandler.search.changeQuery = info => {
 				if (searchInput !== document.activeElement)
 					searchInput.value = info;
-			}
+			};
 			if (typeof searchTerm === 'string' && searchTerm !== '') {
 				clearSearch.style.setProperty('display', 'inline-block');
 				if (searchInput !== document.activeElement)
@@ -2057,7 +2065,7 @@ function makeSearch(mode) {
 		else {
 			block.classList.remove('search-active');
 			clearSearch.style.setProperty('display', 'none');
-			searchInput.value        = '';
+			searchInput.value   = '';
 			status.searchActive = false;
 			window.scrollTo(0, options.scroll[options.sidebar.mode]);
 		}
