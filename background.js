@@ -2683,6 +2683,7 @@ const initService = {
 						}
 						data.bookmarksSearchTerm    = message.data.request;
 						status.info.bookmarksSearch = true;
+						makeTimeStamp('bookmarks');
 						send('sidebar', 'bookmarks', 'search', {'search': data.bookmarksSearch, 'searchTerm': data.bookmarksSearchTerm});
 					};
 					execMethod(brauzer.bookmarks.search, onFulfilled, {'query': message.data.request});
@@ -2954,7 +2955,11 @@ const initService = {
 				search     : message => {
 					data.historySearchTerm    = message.data.request;
 					status.info.historySearch = true;
-					search(result => {data.historySearch = result; send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm});}, message.data.request);
+					search(result => {
+						data.historySearch = result;
+						makeTimeStamp('history');
+						send('sidebar', 'history', 'search', {'search': data.historySearch, 'searchTerm' : data.historySearchTerm});
+					}, message.data.request);
 				},
 				clearSearch : message => {
 					status.info.historySearch = false;

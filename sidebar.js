@@ -83,6 +83,7 @@ tryToInit();
 let insertItems       = _ => {};
 let insertSearchItems = _ => {};
 let searchActive      = _ => {};
+let changeQuery       = _ => {};
 
 document.title      = status.method;
 doc.classList.add(status.side);
@@ -706,7 +707,8 @@ const initBlock = {
 				searchInput.focus();
 			},
 			search       : info => {
-				insertSearchItems(info.search, info.searchTerm);
+				insertSearchItems(info.search);
+				changeQuery(info.searchTerm);
 			},
 			clearSearch   : info => {
 				searchActive(false);
@@ -845,7 +847,8 @@ const initBlock = {
 					moveBook(getFolderById(info.id) , getFolderById(info.pid), info.newIndex);
 			},
 			search     : info => {
-				insertSearchItems(info.search, info.searchTerm);
+				insertSearchItems(info.search);
+				changeQuery(info.searchTerm);
 			},
 			clearSearch : info => {
 				status.info.bookmarksSearch = false;
@@ -897,12 +900,15 @@ const initBlock = {
 
 		makeButton('new', 'bookmarks', 'button');
 		makeButton('folderNew', 'bookmarks', 'button');
-		makeSearch('bookmarks');
+		const searchInput = makeSearch('bookmarks');
 		if (options.misc.bookmarksMode === 'tree')
 			insertFolders(info.bookmarksFolders);
 		insertItems(info.bookmarks, 'last');
-		if (status.info.bookmarksSearch === true)
+		if (status.info.bookmarksSearch === true) {
 			insertSearchItems(info.search, info.searchTerm);
+			changeQuery(info.searchTerm);
+		}
+		setTimeout(_ => {searchInput.focus();}, 200);
 		finishBlock('bookmarks');
 	},
 
@@ -990,7 +996,8 @@ const initBlock = {
 				makeTitle(info.id, info.title, info.url);
 			},
 			search     : info => {
-				insertSearchItems(info.search, info.searchTerm);
+				insertSearchItems(info.search);
+				changeQuery(info.searchTerm);
 			},
 			clearSearch : info => {
 				status.info.historySearch = false;
@@ -1003,14 +1010,17 @@ const initBlock = {
 
 		const getMoreButton         = makeButton('getMore', 'history', 'button');
 
-		makeSearch('history');
+		const searchInput = makeSearch('history');
 
 		insertFolders(info.historyFolders);
 		insertItems(info.history, 'last');
 		if (info.historyEnd === true)
 			getMoreButton.classList.add('hidden');
-		if (status.info.historySearch === true)
-			insertSearchItems(info.search, info.searchTerm);
+		if (status.info.historySearch === true) {
+			insertSearchItems(info.search);
+			changeQuery(info.searchTerm);
+		}
+		setTimeout(_ => {searchInput.focus();}, 200);
 		finishBlock('history');
 	},
 
@@ -1451,10 +1461,10 @@ const initBlock = {
 		status.timeStamp.mode = info.timeStamp;
 
 		messageHandler.search = {
-			newItems   : infoN => {
-				const folder = getFolderById(infoN.target);
+			newItems   : info => {
+				const folder = getFolderById(info.target);
 				if (folder === false) return;
-				insertSearchItems(infoN.items, info.query, infoN.newSearch);
+				insertSearchItems(info.items, info.newSearch);
 			},
 			clearSearch : info => {
 				status.titles = {};
@@ -1462,15 +1472,7 @@ const initBlock = {
 					removeById(data.itemId[i]);
 			},
 			changeQuery : info => {
-				if (typeof info === 'string' && info !== '') {
-					searchInput.nextElementSibling.nextElementSibling.style.setProperty('display', 'inline-block');
-					if (searchInput !== document.activeElement)
-						searchInput.value = info;
-				}
-				else {
-					searchInput.nextElementSibling.nextElementSibling.style.setProperty('display', 'none');
-					searchInput.value = '';
-				}
+				changeQuery(info);
 			},
 			showFolder : info => {
 				const folder = getFolderById(info.id);
@@ -1514,7 +1516,8 @@ const initBlock = {
 		messageHandler.search.changeQuery(info.query);
 		status.lastSearch = '';
 		insertFolders(info.searchFolders);
-		insertSearchItems(info.search, info.query);
+		insertSearchItems(info.search);
+		setTimeout(_ => {searchInput.focus();}, 200);
 		finishBlock('search');
 	}
 };
@@ -2033,18 +2036,14 @@ function makeSearch(mode) {
 	const clearSearch = dcea('span', search, [['classList', 'clear-search'], ['title', i18n[mode].clearSearchTitle]]);
 
 	if (mode !== 'search')
-		insertSearchItems = (items, searchTerm) => {
+		insertSearchItems = items => {
 			while (searchResults.lastChild.firstChild)
 				searchResults.lastChild.removeChild(searchResults.lastChild.firstChild);
 			insertItems(items, 'search');
-			if (searchTerm !== undefined)
-				if (searchInput !== document.activeElement)
-					searchInput.value = searchTerm;
-			clearSearch.style.setProperty('display', 'inline-block');
 			searchActive(true);
 		};
 	else
-		insertSearchItems = (items, searchTerm, newSearch = false) => {
+		insertSearchItems = (items, newSearch = false) => {
 			if (newSearch) {
 				const folder = getFolderById(items[0].type);
 				if (folder === false) return;
@@ -2066,6 +2065,18 @@ function makeSearch(mode) {
 			searchInput.value   = '';
 			status.searchActive = false;
 			window.scrollTo(0, options.scroll[options.sidebar.mode]);
+		}
+	};
+
+	changeQuery = query => {
+		if (typeof query === 'string' && query !== '') {
+			clearSearch.style.setProperty('display', 'inline-block');
+			if (searchInput !== document.activeElement)
+				searchInput.value = query;
+		}
+		else {
+			clearSearch.style.setProperty('display', 'none');
+			searchInput.value = '';
 		}
 	};
 
