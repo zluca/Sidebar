@@ -703,6 +703,7 @@ const initBlock = {
 			},
 			showSearchBar : info => {
 				block.classList[info ? 'add' : 'remove']('search-show-input');
+				searchInput.focus();
 			},
 			search       : info => {
 				insertSearchItems(info.search, info.searchTerm);
@@ -779,7 +780,7 @@ const initBlock = {
 		makeButton('domain', 'tabs', 'bottom');
 		makeButton('tree', 'tabs', 'bottom');
 		makeButton('search', 'tabs', 'bottom');
-		makeSearch('tabs');
+		const searchInput = makeSearch('tabs');
 
 		checkForTree(info.tabs, info.tabsFolders, options.misc.tabsMode, info.windowsFolders);
 		finishBlock('tabs');
@@ -2108,6 +2109,7 @@ function makeSearch(mode) {
 		else if (mode === 'search')
 			send('background', 'search', 'changeQuery', '');
 	}, {'passive': true});
+	return searchInput;
 }
 
 function makeTitle(id, title, url){
