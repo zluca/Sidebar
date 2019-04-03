@@ -1456,12 +1456,21 @@ const initBlock = {
 				if (folder === false) return;
 				insertSearchItems(infoN.items, info.query, infoN.newSearch);
 			},
-			clearSearch: info => {
+			clearSearch : info => {
 				status.titles = {};
 				for (let i = data.itemId.length - 1; i >= 0; i--)
 					removeById(data.itemId[i]);
 			},
-			changeQuery: info => {
+			changeQuery : info => {
+				if (typeof info === 'string' && info !== '') {
+					searchInput.nextElementSibling.nextElementSibling.style.setProperty('display', 'inline-block');
+					if (searchInput !== document.activeElement)
+						searchInput.value = info;
+				}
+				else {
+					searchInput.nextElementSibling.nextElementSibling.style.setProperty('display', 'none');
+					searchInput.value = '';
+				}
 			},
 			showFolder : info => {
 				const folder = getFolderById(info.id);
@@ -1501,7 +1510,8 @@ const initBlock = {
 			}
 		};
 
-		makeSearch('search');
+		const searchInput = makeSearch('search');
+		messageHandler.search.changeQuery(info.query);
 		status.lastSearch = '';
 		insertFolders(info.searchFolders);
 		insertSearchItems(info.search, info.query);
@@ -2043,19 +2053,6 @@ function makeSearch(mode) {
 						removeById(data.itemId[i]);
 			}
 			insertItems(items);
-			messageHandler.search.changeQuery = info => {
-				if (searchInput !== document.activeElement)
-					searchInput.value = info;
-			};
-			if (typeof searchTerm === 'string' && searchTerm !== '') {
-				clearSearch.style.setProperty('display', 'inline-block');
-				if (searchInput !== document.activeElement)
-					searchInput.value = searchTerm;
-			}
-			else {
-				clearSearch.style.setProperty('display', 'none');
-				searchInput.value = '';
-			}
 		};
 
 	searchActive = isIt => {
