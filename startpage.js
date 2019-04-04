@@ -269,6 +269,7 @@ function init(response) {
 		else {
 			lastSearch         = subject;
 			status.searchQuery = subject;
+			send('background', 'spSearch', 'changeQuery', subject);
 			send('background', 'spSearch', 'query', subject);
 		}
 	}, {'passive': true});
@@ -280,15 +281,6 @@ function init(response) {
 	searchField.addEventListener('keyup', event => {
 		if (event.key === 'Enter')
 			letsSearch.click();
-		else if (searchField.value === '')
-			send('background', 'spSearch', 'changeQuery', '');
-		else {
-			const subject = searchField.value;
-			if (subject !== lastSearch) {
-				lastSearch = subject;
-				send('background', 'spSearch', 'changeQuery', subject);
-			}
-		}
 	}, {'passive': true});
 
 	searchResults.addEventListener('mouseover', event => {
@@ -507,10 +499,8 @@ const messageHandler = {
 			insertSearchItems(info.items);
 		},
 		changeQuery  : info => {
-			if (searchField !== document.activeElement) {
-				status.searchQuery = info;
-				setPageTitle(info);
-			}
+			status.searchQuery = info;
+			setPageTitle(info);
 		},
 		showFolder   : info => {
 			const index = data.searchFoldersId.indexOf(info.id);
