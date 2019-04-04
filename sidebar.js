@@ -908,7 +908,6 @@ const initBlock = {
 			insertSearchItems(info.search, info.searchTerm);
 			changeQuery(info.searchTerm);
 		}
-		setTimeout(_ => {searchInput.focus();}, 200);
 		finishBlock('bookmarks');
 	},
 
@@ -1020,7 +1019,6 @@ const initBlock = {
 			insertSearchItems(info.search);
 			changeQuery(info.searchTerm);
 		}
-		setTimeout(_ => {searchInput.focus();}, 200);
 		finishBlock('history');
 	},
 
@@ -1517,7 +1515,6 @@ const initBlock = {
 		status.lastSearch = '';
 		insertFolders(info.searchFolders);
 		insertSearchItems(info.search);
-		setTimeout(_ => {searchInput.focus();}, 200);
 		finishBlock('search');
 	}
 };
