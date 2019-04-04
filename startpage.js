@@ -234,6 +234,10 @@ function init(response) {
 	});
 
 	window.addEventListener('keydown', event => {
+		if (event.key === 'Enter')
+			if (options.startpage.searchEnabled === true)
+				if (document.activeElement !== searchField)
+					searchField.focus();
 		if (document.activeElement === searchField) return;
 		if (options.startpage.mode === 'search') return;
 		const key = parseInt(event.key);
