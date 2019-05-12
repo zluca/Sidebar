@@ -13,9 +13,35 @@
 	margin: 0;
 	padding: 0;
 }
+
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Regular.woff2);
+	font-style: normal;
+	font-weight: normal;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Italic.woff2);
+	font-style: italic;
+	font-weight: normal;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-Bold.woff2);
+	font-style: normal;
+	font-weight: bold;
+}
+@font-face {
+	font-family: "Roboto";
+	src: url(./Roboto-BoldItalic.woff2);
+	font-style: italic;
+	font-weight: bold;
+}
+
 body {
 	margin: 0;
-	font-family: "DejaVu Sans", "Arial", "Helvetica", "Verdana", sans-serif;
+	font-family: "Roboto";
 	overflow-y: scroll;
 	overflow-x: hidden;
 	background-color: var(--background-color);
