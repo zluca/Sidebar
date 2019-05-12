@@ -38,7 +38,11 @@
 	],
 	"web_accessible_resources": [
 		"sidebar.html",
-		"dialog.html"
+		"dialog.html",
+		"Roboto-BoldItalic.woff2",
+		"Roboto-Bold.woff2",
+		"Roboto-Italic.woff2",
+		"Roboto-Regular.woff2"
 	],
 	// "sidebar_action": {
 	// 	"default_icon"  : "icons/sidebar-icon-64.png",
