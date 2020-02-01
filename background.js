@@ -3682,6 +3682,8 @@ const initService = {
 				}
 				if (item.title === '')
 					item.title = item.description.substring(0, 40);
+				if (item.id === '')
+					item.id = guidFromUrl(item.link);
 				if (!feed.itemsId.includes(item.id))
 					newItems.push(createById('rss', item, 'date'));
 			}
