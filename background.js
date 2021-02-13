@@ -354,7 +354,8 @@ const options = {
 			value   : true,
 			type    : 'boolean',
 			targets : [],
-			handler : 'startpage'
+			hidden  : true
+			// handler : 'startpage'
 		},
 		tabs      : {
 			value   : true,
@@ -1961,7 +1962,7 @@ const initService = {
 		execMethod(brauzer.storage.local.get, gettingStorage, ['favs', 'favsId', 'foldedId', 'tabsWithOpeners']);
 	},
 
-	startpage : start => {
+	startpage : _ => {
 
 		const gettingStorage = res => {
 				if (res.hasOwnProperty('startpage'))
@@ -1973,68 +1974,47 @@ const initService = {
 			status.init.startpage = true;
 		};
 
-		if (start === true) {
-			setOption('startpage', 'mode', 'sites');
-			messageHandler.startpage = {
-				change : message => {
-					const site = data.startpage[message.data.index];
-					if (site !== undefined) {
-						site.text  = message.data.text;
-						site.url   = message.data.url;
-						site.color = message.data.color;
-						saveNow('startpage');
-						send('startpage', 'site', 'changed', {'index': message.data.index, 'site': site});
-					}
-				},
-				delete : message => {
-					makeSite(message.data.index);
+		setOption('startpage', 'mode', 'sites');
+		messageHandler.startpage = {
+			change : message => {
+				const site = data.startpage[message.data.index];
+				if (site !== undefined) {
+					site.text  = message.data.text;
+					site.url   = message.data.url;
+					site.color = message.data.color;
 					saveNow('startpage');
-					send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
-				},
-				create : message => {
-					makeSite(message.data.index, message.data);
-					saveNow('startpage');
-					send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
-				},
-				move : message => {
-					const movedSite = data.startpage.splice(message.data.from, 1)[0];
-					data.startpage.splice(message.data.to, 0, movedSite);
-					saveNow('startpage');
-					send('startpage', 'site', 'moved', {'from': message.data.from, 'to': message.data.to});
+					send('startpage', 'site', 'changed', {'index': message.data.index, 'site': site});
 				}
-			};
-			i18n.startpage = {
-				pageTitle            : getI18n('startpagePageTitle'),
-				addNewSiteTitle      : getI18n('startpageAddNewSiteTitle'),
-				editButtonTitle      : getI18n('startpageEditButtonTitle'),
-				searchButtonTitle    : getI18n('startpageSearchButtonTitle'),
-				clearSearchTitle     : getI18n('searchClearSearchTitle'),
-				searchOptions        : getI18n('searchOptions'),
-				modeSites            : getI18n('startpageSitesViewButtonTitle')
-			};
-			execMethod(brauzer.storage.local.get, gettingStorage, ['startpage', 'speadDial']);
-			if (status.init.tabs === true)
-				for (let i = data.tabs.length - 1; i >= 0; i--)
-					if (data.tabs[i].url === config.defaultStartPage)
-						brauzer.tabs.update(data.tabs[i].id, {'url': config.extensionStartPage});
-			if (options.startpage.searchEnabled.value === true)
-				initService.search(true, 'spSearch');
-		}
-		else {
-			if (status.init.spSearch === true)
-				initService.search(false, 'spSearch');
-			i18n.startpage           = null;
-			messageHandler.startpage = null;
-			data.startpage           = [];
-			for (let i = data.tabs.length - 1; i >= 0; i--)
-				if (data.tabs[i].url === config.extensionStartPage) {
-					if (firefox)
-						brauzer.tabs.remove(data.tabs[i].id);
-					else
-						brauzer.tabs.update(data.tabs[i].id, {'url': config.defaultStartPage});
-				}
-			status.init.startpage = false;
-		}
+			},
+			delete : message => {
+				makeSite(message.data.index);
+				saveNow('startpage');
+				send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
+			},
+			create : message => {
+				makeSite(message.data.index, message.data);
+				saveNow('startpage');
+				send('startpage', 'site', 'changed', {'index': message.data.index, 'site': data.startpage[message.data.index]});
+			},
+			move : message => {
+				const movedSite = data.startpage.splice(message.data.from, 1)[0];
+				data.startpage.splice(message.data.to, 0, movedSite);
+				saveNow('startpage');
+				send('startpage', 'site', 'moved', {'from': message.data.from, 'to': message.data.to});
+			}
+		};
+		i18n.startpage = {
+			pageTitle            : getI18n('startpagePageTitle'),
+			addNewSiteTitle      : getI18n('startpageAddNewSiteTitle'),
+			editButtonTitle      : getI18n('startpageEditButtonTitle'),
+			searchButtonTitle    : getI18n('startpageSearchButtonTitle'),
+			clearSearchTitle     : getI18n('searchClearSearchTitle'),
+			searchOptions        : getI18n('searchOptions'),
+			modeSites            : getI18n('startpageSitesViewButtonTitle')
+		};
+		execMethod(brauzer.storage.local.get, gettingStorage, ['startpage', 'speadDial']);
+		if (options.startpage.searchEnabled.value === true)
+			initService.search(true, 'spSearch');
 	},
 
 	tabs      : start => {
@@ -2042,11 +2022,11 @@ const initService = {
 		const initTabs = _ => {
 			messageHandler.tabs = {
 				new : message => {
-					createNewTab(message.data.url === '' ? config.extensionStartPage : message.data.url, message.data.newWindow, message.data.active);
+					brauzer.tabs.create({'url': message.data.url === '' ? config.extensionStartPage : message.data.url, 'windowId': status.activeWindow, 'active': message.data.active});
 				},
 				undo : message => {
 					if (status.info.undoTab.hasOwnProperty('url'))
-						createNewTab(status.info.undoTab.url, false, status.info.undoTab.active);
+						brauzer.tabs.create({'url': status.info.undoTab.url, 'active': status.info.undoTab.active});
 				},
 				update : message => {
 					for (let i = data.tabs.length - 1; i >= 0 ; i--)
@@ -2205,7 +2185,7 @@ const initService = {
 			if (firefox === false)
 				if (opera === false)
 					if (status.firstInit)
-						createNewTab();
+						brauzer.tabs.create({'active': true});
 		};
 
 		const onWindowRemoved   = id => {
@@ -2286,8 +2266,6 @@ const initService = {
 			});
 		};
 
-		const checkStartPage    = tab => tab.url === config.defaultStartPage;
-
 		const closeIframe       = _ => {
 			if (options.leftBar.method.value === 'iframe')
 				if (options.leftBar.fixed.value === false)
@@ -2327,9 +2305,6 @@ const initService = {
 				status.info.undoTab.title = '';
 				send('sidebar', 'tabs', 'undo', {'url': '', 'title': ''});
 			}
-			if (options.services.startpage.value === true)
-				if (checkStartPage(tab) === true)
-					brauzer.tabs.update(tab.id, {'url': config.extensionStartPage});
 			const newTab = createById('tabs', tab, 'last');
 			send('sidebar', 'tabs', 'created', {'tab': newTab});
 			return newTab;
@@ -2380,9 +2355,6 @@ const initService = {
 				saveNow('openers', true);
 				if (status.activeTabsIds[status.activeWindow] === id)
 					reInit(id);
-				if (options.services.startpage.value === true)
-					if (checkStartPage(tab) === true)
-						return brauzer.tabs.update(tab.id, {'url': config.extensionStartPage});
 				if (options.services.search.value === true) {
 					let idList = [];
 					for (let matched = getByUrl('search', info.url), i = matched.length - 1; i >= 0; i--) {
@@ -2699,7 +2671,7 @@ const initService = {
 					for (let i = folder.itemsId.length - 1; i >= 0; i--) {
 						const bookmark = getById('bookmarks', folder.itemsId[i]);
 						if (bookmark === false) continue;
-						createNewTab(bookmark.url, false, false);
+						brauzer.tabs.create({'url': bookmark.url, 'windowId': status.activeWindow, 'active': false});
 					}
 				}
 			};
@@ -3986,7 +3958,7 @@ const initService = {
 					if (response.hasOwnProperty('username'))
 						setOption('pocket', 'username', response.username, false);
 					setOption('pocket', 'auth', true, false);
-					// 
+					//
 					send('sidebar', 'pocket', 'login', {'username': options.pocket.username.value});
 					pocketRequest('get');
 				},
@@ -4950,7 +4922,7 @@ function createDialogWindow(type, dialogData) {
 	if (tabIsProtected(activeTab) === false)
 		if (activeTab.status !== 'loading')
 			return sendToTab(status.activeTabsIds[status.activeWindow], 'content', 'dialog', 'create', type);
-	brauzer.tabs.create({'url': config.extensionStartPage, 'windowId': status.activeWindow});
+	brauzer.tabs.create({'active': true});
 }
 
 function tabIsProtected(tab) {
@@ -5043,35 +5015,6 @@ function setIcon() {
 		},
 	};
 	set[`${options.leftBar.method.value !== 'disabled'}${options.rightBar.method.value !== 'disabled'}`]();
-}
-
-function createNewTab(url = config.extensionStartPage, newWindow = false, active = true) {
-	const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
-	if (activeTab === false) return;
-	for (let i = data.tabs.length - 1; i >= 0 ; i--)
-		if (data.tabs[i].windowId === status.activeWindow)
-			if (data.tabs[i].url === url)
-				if (activeTab.url !== url)
-					return brauzer.tabs.update(data.tabs[i].id, {'active': true});
-	if (newWindow !== false)
-		brauzer.windows.get(status.activeWindow, win => {
-			const newTab = {
-				truetrue   : {'url': config.extensionStartPage, 'width': win.width, 'height': win.height, 'left': win.left, 'top': win.top},
-				truefalse  : {'url': url, 'width': win.width, 'height': win.height, 'left': win.left, 'top': win.top},
-				falsetrue  : {'width': win.width, 'height': win.height, 'left': win.left, 'top': win.top},
-				falsefalse : {'url': url, 'width': win.width, 'height': win.height, 'left': win.left, 'top': win.top}
-			};
-			brauzer.windows.create(newTab[`${options.services.startpage.value}${url === config.extensionStartPage}`]);
-		});
-	else {
-		const newTab = {
-			truetrue   : {'url': config.extensionStartPage, 'windowId': status.activeWindow, 'active': active},
-			truefalse  : {'url': url, 'windowId': status.activeWindow, 'active': active},
-			falsetrue  : {'windowId': status.activeWindow, 'active': active},
-			falsefalse : {'url': url, 'windowId': status.activeWindow, 'active': active}
-		};
-		brauzer.tabs.create(newTab[`${options.services.startpage.value}${url === config.extensionStartPage}`]);
-	}
 }
 
 function createById(mode, item, position) {

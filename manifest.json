@@ -1,7 +1,7 @@
 {
 	"manifest_version"   : 2,
 	"name"               : "__MSG_extName__",
-	"version"            : "0.6.8",
+	"version"            : "0.6.10",
 	"description"        : "__MSG_extDescription__",
 	"author"             : "zluka",
 	// "developer"          : {
@@ -14,6 +14,9 @@
 		"32": "icons/sidebar-icon-32.png",
 		"64": "icons/sidebar-icon-64.png"
   	},
+	"chrome_url_overrides" : {
+	  "newtab": "startpage.html"
+	},
 	"permissions": [
 		"<all_urls>",
 		"alarms",

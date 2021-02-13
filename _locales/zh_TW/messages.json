@@ -327,10 +327,6 @@
 		"message"       : "停用未使用的服務以取得更好的效能。",
 		"description"   : ""
 	},
-	"optServicesStartPageLabel" : {
-		"message"       : "使用自訂首頁",
-		"description"   : ""
-	},
 	"optServicesTabsLabel" : {
 		"message"       : "分頁",
 		"description"   : ""

@@ -327,10 +327,6 @@
 		"message"       : "Отключите неиспользуемые сервисы для лучшего быстродействия.",
 		"description"   : ""
 	},
-	"optServicesStartpageLabel" : {
-		"message"       : "Стартовая страница",
-		"description"   : ""
-	},
 	"optServicesTabsLabel" : {
 		"message"       : "Вкладки",
 		"description"   : ""
