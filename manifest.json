@@ -1,13 +1,13 @@
 {
 	"manifest_version"   : 2,
 	"name"               : "__MSG_extName__",
-	"version"            : "0.6.10",
+	"version"            : "0.6.12",
 	"description"        : "__MSG_extDescription__",
 	"author"             : "zluka",
-	// "developer"          : {
-	// 	"name"  : "zluka",
-	// 	"url"   : "https://github.com/zluca/Sidebar"
-	// },
+	"developer"          : {
+		"name"  : "zluka",
+		"url"   : "https://github.com/zluca/Sidebar"
+	},
 	"homepage_url"   : "https://github.com/zluca/",
 	"default_locale" : "en",
 	"icons": {
@@ -47,11 +47,11 @@
 		"Roboto-Italic.woff2",
 		"Roboto-Regular.woff2"
 	],
-	// "sidebar_action": {
-	// 	"default_icon"  : "icons/sidebar-icon-64.png",
-	// 	"default_title" : "Sidebar+",
-	// 	"default_panel" : "sidebar.html#leftBar-native"
-	// },
+	"sidebar_action": {
+		"default_icon"  : "icons/sidebar-icon-64.png",
+		"default_title" : "Sidebar+",
+		"default_panel" : "sidebar.html#leftBar-native"
+	},
 	"background": {
 		"scripts": ["background.js"]
 	},
@@ -63,13 +63,13 @@
 	},
 	"options_ui": {
 		"page"          : "options.html#services"
-	// },
-	// "commands": {
-	// 	"_execute_sidebar_action": {
-	// 		"suggested_key": {
-	// 			"default": "F8"
-	// 		}
-	// 	}
+	},
+	"commands": {
+		"_execute_sidebar_action": {
+			"suggested_key": {
+				"default": "F8"
+			}
+		}
 	}
 }
 
