@@ -10,10 +10,8 @@ const config = {
 	version            : getVersion(),
 	extensionStartPage : `${brauzer.extension.getURL('/')}startpage.html`,
 	defaultStartPage   : firefox ? 'about:newtab' : opera ? 'chrome://startpage/' : 'chrome://newtab/',
-	pocketRedirectPage : 'https://github.com/zluca/Sidebar/',
 	sidebarIcon        : 'icons/sidebar-icon-64.png',
 	rssIcon            : 'icons/rss.svg',
-	pocketConsumerKey  : '72831-08ba83947577ffe5e7738034',
 	bookmarksLimit     : 999,
 	searchLength       : 30,
 	searchTypes        : ['duckduckgo', 'google', 'yandex', 'bing', 'yahoo','wikipedia']
@@ -55,7 +53,6 @@ const i18n = {
 		history      : getI18n('optServicesHistoryLabel'),
 		downloads    : getI18n('optServicesDownloadsLabel'),
 		rss          : getI18n('optServicesRssLabel'),
-		pocket       : getI18n('optServicesPocketLabel'),
 		search       : getI18n('optServicesSearchLabel'),
 		sidebarActions : getI18n('dialogActionsHeader')
 	},
@@ -65,7 +62,6 @@ const i18n = {
 	history     : null,
 	downloads   : null,
 	rss         : null,
-	pocket      : null,
 	search      : null
 };
 
@@ -93,8 +89,7 @@ const status = {
 		'bookmarks' : false,
 		'history'   : false,
 		'downloads' : false,
-		'rss'       : false,
-		'pocket'    : false
+		'rss'       : false
 	},
 	leftBar         : {
 		windowId      : -1,
@@ -116,7 +111,6 @@ const status = {
 	toSave               : {},
 	saverActive          : false,
 	sendTimer            : {},
-	pocketCode           : '',
 	tooManyBookmarks     : false,
 	firstInit            : false,
 	timeStamp            : {
@@ -128,7 +122,6 @@ const status = {
 		history          : 0,
 		downloads        : 0,
 		rss              : 0,
-		pocket           : 0,
 		search           : 0,
 		spSearch         : 0,
 		startpageCache   : {
@@ -186,12 +179,6 @@ const data = {
 	rssFoldersId       : [],
 	rssDomains         : [],
 	rssDomainsId       : [],
-	pocket             : [],
-	pocketId           : [],
-	pocketFolders      : [],
-	pocketFoldersId    : [],
-	pocketDomains      : [],
-	pocketDomainsId    : [],
 	searchQuery        : '',
 	search             : [],
 	searchId           : [],
@@ -280,7 +267,7 @@ const options = {
 		mode   : {
 			value   : 'bookmarks',
 			type    : 'select',
-			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss', 'pocket'],
+			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss'],
 			targets : [],
 			handler : 'mode'
 		},
@@ -331,7 +318,7 @@ const options = {
 		mode   : {
 			value   : 'bookmarks',
 			type    : 'select',
-			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss', 'pocket'],
+			values  : ['tabs', 'bookmarks', 'history', 'downloads', 'rss'],
 			targets : [],
 			handler : 'mode'
 		},
@@ -387,12 +374,6 @@ const options = {
 			targets : [],
 			handler : 'service'
 		},
-		pocket    : {
-			value   : true,
-			type    : 'boolean',
-			targets : [],
-			handler : 'service'
-		},
 		search    : {
 			value   : true,
 			type    : 'boolean',
@@ -437,18 +418,6 @@ const options = {
 			handler : 'clickActions'
 		},
 		windowClose    : {
-			value   : true,
-			type    : 'boolean',
-			targets : [],
-			handler : 'clickActions'
-		},
-		pocketDelete         : {
-			value   : true,
-			type    : 'boolean',
-			targets : [],
-			handler : 'clickActions'
-		},
-		pocketFolderDelete   : {
 			value   : true,
 			type    : 'boolean',
 			targets : [],
@@ -574,14 +543,6 @@ const options = {
 			targets : [],
 			hidden  : true
 		},
-		pocketMode      : {
-			value   : 'type',
-			type    : 'select',
-			values  : ['plain', 'domain', 'type'],
-			targets : [],
-			handler : 'view',
-			hidden  : true
-		},
 		manualSwitch    : {
 			value   : false,
 			type    : 'boolean',
@@ -695,33 +656,10 @@ const options = {
 			targets : [],
 			handler : 'scroll'
 		},
-		pocket    : {
-			value   : 0,
-			targets : [],
-			handler : 'scroll'
-		},
 		search    : {
 			value   : 0,
 			targets : [],
 			handler : 'scroll'
-		}
-	},
-	pocket: {
-		hidden : {},
-		accessToken : {
-			value   : '',
-			type    : 'text',
-			targets : []
-		},
-		username    : {
-			value   : '',
-			type    : 'text',
-			targets : []
-		},
-		auth        : {
-			value   : false,
-			type    : 'boolean',
-			targets : []
 		}
 	},
 	search: {
@@ -1004,44 +942,6 @@ const options = {
 			handler : 'clickActions'
 		}
 	},
-	pocketClickActions: {
-		hidden : {},
-		normal : {
-			value   : 'open',
-			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
-			targets : [],
-			handler : 'clickActions'
-		},
-		middle : {
-			value   : 'deletePocket',
-			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
-			targets : [],
-			handler : 'clickActions'
-		},
-		alt    : {
-			value   : 'open',
-			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
-			targets : [],
-			handler : 'clickActions'
-		},
-		ctrl   : {
-			value   : 'openInNewTab',
-			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
-			targets : [],
-			handler : 'clickActions'
-		},
-		shift  : {
-			value   : 'openInNewWindow',
-			type    : 'select',
-			values  : ['open', 'openInNewTab', 'openInNewInactiveTab', 'openInNewWindow', 'deletePocket'],
-			targets : [],
-			handler : 'clickActions'
-		}
-	},
 	searchClickActions: {
 		hidden : {},
 		normal : {
@@ -1245,57 +1145,6 @@ const options = {
 			targets : []
 		}
 	},
-	pocketHoverActions: {
-		hidden  : {},
-		move: {
-			value   : true,
-			type    : 'boolean',
-			handler : 'hoverActions',
-			targets : []
-		},
-		fav: {
-			value   : true,
-			type    : 'boolean',
-			handler : 'hoverActions',
-			targets : []
-		},
-		unfav: {
-			value   : true,
-			type    : 'boolean',
-			handler : 'hoverActions',
-			targets : []
-		},
-		archive: {
-			value   : true,
-			type    : 'boolean',
-			handler : 'hoverActions',
-			targets : []
-		},
-		unarchive: {
-			value   : true,
-			type    : 'boolean',
-			handler : 'hoverActions',
-			targets : []
-		},
-		folderArchive: {
-			value   : true,
-			type    : 'boolean',
-			handler : 'hoverActions',
-			targets : []
-		},
-		delete: {
-			value   : true,
-			type    : 'boolean',
-			handler : 'hoverActions',
-			targets : []
-		},
-		folderDelete: {
-			value   : true,
-			type    : 'boolean',
-			handler : 'hoverActions',
-			targets : []
-		}
-	},
 	searchHoverActions: {
 		hidden  : {}
 	}
@@ -1320,7 +1169,6 @@ const modeData = {
 	history   : _ => {},
 	downloads : _ => {},
 	rss       : _ => {},
-	pocket    : _ => {},
 	search    : _ => {}
 };
 
@@ -1669,24 +1517,6 @@ const messageHandler = {
 		remove : (message, sender, sendResponse) => {
 			sendToTab(sender.tab.id, 'content', 'dialog', 'remove');
 		},
-		pocketNew : message => {
-			const activeTab = getById('tabs', status.activeTabsIds[status.activeWindow]);
-			if (activeTab !== false)
-				createDialogWindow(message.action, {
-					'url'   : activeTab.url,
-					'title' : activeTab.title
-				});
-		},
-		pocketDelete: message => {
-			const pocket = getById('pocket', message.data);
-			if (pocket === false) return;
-			createDialogWindow(message.action, {'id': pocket.id, 'title': pocket.title});
-		},
-		pocketFolderDelete: message => {
-			const folder = getFolderById('pocket', message.data);
-			if (folder === false) return;
-			createDialogWindow(message.action, {'id': folder.id, 'title': folder.title});
-		},
 		searchSelect: message => {
 			createDialogWindow('searchSelect', {
 				'target'      : 'search',
@@ -1807,7 +1637,6 @@ const updateItem = {
 	history    : null,
 	downloads  : null,
 	rss        : null,
-	pocket     : null,
 	search     : null,
 	spSearch   : null,
 	domains    : (newItem, item) => {
@@ -1826,7 +1655,6 @@ updateItem.tabsDomains      = updateItem.domains;
 updateItem.bookmarksDomains = updateItem.domains;
 updateItem.historyDomains   = updateItem.domains;
 updateItem.rssDomains       = updateItem.domains;
-updateItem.pocketDomains    = updateItem.domains;
 updateItem.searchDomains    = updateItem.domains;
 updateItem.spSearchDomains  = updateItem.domains;
 
@@ -1835,8 +1663,7 @@ const updateFolder = {
 	bookmarks  : null,
 	history    : null,
 	downloads  : null,
-	rss        : null,
-	pocket     : null
+	rss        : null
 };
 
 const initService = {
@@ -3817,451 +3644,6 @@ const initService = {
 		}
 	},
 
-	pocket    : start => {
-
-		const pocketRequest = (type, info = {}) => {
-
-			const links  = {
-				add       : 'https://getpocket.com/v3/add',
-				get       : 'https://getpocket.com/v3/get',
-				sync      : 'https://getpocket.com/v3/get',
-				check     : 'https://getpocket.com/v3/get',
-				fav       : 'https://getpocket.com/v3/send',
-				unfav     : 'https://getpocket.com/v3/send',
-				archive   : 'https://getpocket.com/v3/send',
-				unarchive : 'https://getpocket.com/v3/send',
-				delete    : 'https://getpocket.com/v3/send',
-				auth      : 'https://getpocket.com/v3/oauth/authorize',
-				request   : 'https://getpocket.com/v3/oauth/request'
-			};
-
-			const toSend = {
-				add      : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'url'          : info.url,
-					'title'        : info.title,
-				},
-				get      : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'detailType'   : 'complete',
-					'state'        : 'all',
-					'since'        : 0
-				},
-				sync     : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'detailType'   : 'complete',
-					'state'        : 'all',
-					'since'        : 0
-				},
-				check    : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'sort'         : 'newest',
-					'count'        : '1'
-				},
-				fav   : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'actions'      : [{'item_id': info, 'action': 'favorite', 'time': Date.now()}]
-				},
-				unfav   : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'actions'      : [{'item_id': info, 'action': 'unfavorite', 'time': Date.now()}]
-				},
-				archive : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'actions'      : [{'item_id': info, 'action': 'archive', 'time': Date.now()}]
-				},
-				unarchive : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'actions'      : [{'item_id': info, 'action': 'readd', 'time': Date.now()}]
-				},
-				delete   : {
-					'consumer_key' : config.pocketConsumerKey,
-					'access_token' : options.pocket.accessToken.value,
-					'actions'      : [{'item_id': info, 'action': 'delete', 'time': Date.now()}]
-				},
-				auth     : {
-					'consumer_key' : config.pocketConsumerKey,
-					'code'         : status.pocketCode
-				},
-				request  : {
-					'consumer_key' : config.pocketConsumerKey,
-					'redirect_uri' : config.pocketRedirectPage
-				}
-			};
-
-			const onReady = {
-				add    : response => {
-					parsePockets(response);
-					if (response.hasOwnProperty('item'))
-						pocketRequest('check', response.item.item_id);
-				},
-				get    : response => {
-					parsePockets(response);
-				},
-				sync   : response => {
-					resetPocket(true);
-					parsePockets(response);
-				},
-				check  : response => {
-					if (response.hasOwnProperty('list')) {
-						const pocket = getById('pocket', info);
-						if (pocket === false) return;
-						send('sidebar', 'pocket', 'updated', updateItem.pocket(pocket, response.list[info]));
-					}
-				},
-				fav  : response => {
-					const pocket = getById('pocket', info);
-					if (pocket === false) return;
-					pocket.favorite = true;
-					send('sidebar', 'pocket', 'fav', info);
-				},
-				unfav  : response => {
-					const pocket = getById('pocket', info);
-					if (pocket === false) return;
-					pocket.favorite = false;
-					send('sidebar', 'pocket', 'unfav', info);
-				},
-				archive : response => {
-					const pocket = getById('pocket', info);
-					if (pocket === false) return;
-					pocket.status = 1;
-					pocket.type   = 'archives';
-					send('sidebar', 'pocket', 'archive', info);
-					removeFromFolder('pocket', pocket);
-				},
-				unarchive : response => {
-					const pocket = getById('pocket', info);
-					if (pocket === false) return;
-					pocket.status = 0;
-					pocket.type   = detectType(pocket);
-					updateFolder.pocket(pocket, getById('pocketDomains', pocket.domain));
-					send('sidebar', 'pocket', 'unarchive', {'id': info, 'pid': pocket.type, 'domain': pocket.domain});
-				},
-				delete  : response => {
-					const pocket = getById('pocket', info);
-					if (pocket === false) return;
-					send('sidebar', 'pocket', 'deleted', info);
-					removeFromFolder('pocket', pocket, true);
-					saveNow('pocket');
-				},
-				auth    : response => {
-					if (!response.hasOwnProperty('access_token')) return;
-					setOption('pocket', 'accessToken', response.access_token, false);
-					if (response.hasOwnProperty('username'))
-						setOption('pocket', 'username', response.username, false);
-					setOption('pocket', 'auth', true, false);
-					//
-					send('sidebar', 'pocket', 'login', {'username': options.pocket.username.value});
-					pocketRequest('get');
-				},
-				request : response => {
-					status.pocketCode = response.code;
-					brauzer.tabs.onUpdated.addListener(redirectFromPocket);
-					brauzer.tabs.create({'url': `https://getpocket.com/auth/authorize?request_token=${status.pocketCode}&redirect_uri=${config.pocketRedirectPage}`, 'active': false});
-				},
-			};
-
-			const xhttp  = new XMLHttpRequest();
-			xhttp.open('POST', links[type], true);
-			xhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-			xhttp.setRequestHeader('X-Accept', 'application/json');
-			xhttp.send(JSON.stringify(toSend[type]));
-			send('sidebar', 'pocket', 'update', 'add');
-			xhttp.onreadystatechange = _ => {
-				if (xhttp.readyState === 4) {
-					if (xhttp.status === 200) {
-						const response = JSON.parse(xhttp.responseText);
-						if (response.hasOwnProperty('status')) {
-							if (parseInt(response.status) === 1)
-								onReady[type](response);
-						}
-						else if (type === 'auth' || type === 'request') {
-							onReady[type](response);
-							makeTimeStamp('pocket');
-						}
-					}
-					send('sidebar', 'pocket', 'update', 'remove');
-				}
-			};
-		};
-
-		const redirectFromPocket = (id, info, tab) => {
-			if (tab.url === config.pocketRedirectPage) {
-				brauzer.tabs.onUpdated.removeListener(redirectFromPocket);
-				brauzer.tabs.remove(id);
-				pocketRequest('auth');
-			}
-		};
-
-		const updatePocket = _ => {
-			if (options.pocket.auth.value === false)
-				return;
-			if (options.pocket.accessToken.value === '') {
-				setOption('pocket', 'auth', false, false);
-				return;
-			}
-			pocketRequest('get');
-		};
-
-		const parsePockets = response => {
-			const toSend = [];
-			if (response.hasOwnProperty('list'))
-				for (let list in response.list)
-					toSend.push(createPocket(response.list[list]));
-			else if (response.hasOwnProperty('item'))
-				toSend.push(createPocket(response.item));
-			if (toSend.length > 0) {
-				saveNow('pocket');
-				saveNow('pocketFolders');
-				setTimeout(_ => {send('sidebar', 'pocket', 'newItems', toSend);}, 50);
-			}
-		};
-
-		const createPocket = item => {
-			let newItem = getById('pocket', item.item_id);
-			if (newItem === false) {
-				item.id   = item.item_id;
-				item.date = item.time_added;
-				newItem   = createById('pocket', item, 'date');
-			}
-			else
-				updateItem.pocket(newItem, item);
-			return newItem;
-		};
-
-		const getPocket = res => {
-			if (res.hasOwnProperty('pocket')) {
-				data.pocket          = res.pocket;
-				data.pocketId        = res.pocketId;
-				data.pocketFolders   = res.pocketFolders;
-				data.pocketFoldersId = res.pocketFoldersId;
-				for (let i = data.pocket.length - 1; i >= 0; i--)
-					makeDomain('pocket', data.pocket[i].url);
-				updatePocket();
-			}
-			status.init.pocket     = true;
-		};
-
-		const resetPocket = (warn = false) => {
-			data.pocket          = [];
-			data.pocketId        = [];
-			data.pocketFolders   = [
-				{
-					id      : 'articles',
-					pid     : 0,
-					title   : 'Articles',
-					domain  : 'articles',
-					view    : 'type',
-					folded  : false,
-					itemsId : []
-				},
-				{
-					id      : 'videos',
-					pid     : 0,
-					title   : 'Videos',
-					domain  : 'videos',
-					view    : 'type',
-					folded  : false,
-					itemsId : []
-				},
-				{
-					id      : 'pictures',
-					pid     : 0,
-					title   : 'Pictures',
-					domain  : 'pictures',
-					view    : 'type',
-					folded  : false,
-					itemsId : []
-				},
-				{
-					id      : 'other',
-					pid     : 0,
-					title   : 'Other',
-					domain  : 'other',
-					view    : 'type',
-					folded  : false,
-					itemsId : []
-				},
-				{
-					id      : 'archives',
-					pid     : 0,
-					title   : 'Archives',
-					domain  : 'archives',
-					view    : 'type',
-					folded  : true,
-					itemsId : []
-				}
-			];
-			data.pocketFoldersId = ['articles', 'videos', 'pictures', 'other', 'archives'];
-			saveNow('pocket');
-			saveNow('pocketFolders');
-			if (warn)
-				send('sidebar', 'pocket', 'reset', {'folders': data.pocketFolders});
-		};
-
-		const logout     = _ => {
-			resetPocket();
-			setOption('pocket', 'auth', false, false);
-			setOption('pocket', 'username', '', false);
-			send('sidebar', 'pocket', 'logout', {'folders': data.pocketFolders});
-		};
-
-		const detectType = pocket => {
-			if (parseInt(pocket.status) > 0)
-				return 'archives';
-			else if (parseInt(pocket.is_article) === 1)
-				return 'articles';
-			else if (parseInt(pocket.has_image) === 2)
-				return 'images';
-			else if (parseInt(pocket.has_video) === 2)
-				return 'videos';
-			return 'other';
-		};
-
-		if (start === true) {
-
-			updateItem.pocket = (newItem, item) => {
-				const domain        = makeDomain('pocket', item.given_url || item.resolved_url);
-				newItem.description = item.hasOwnProperty('excerpt') ? item.excerpt : '';
-				newItem.title       = item.given_title || item.resolved_title || item.given_url || item.resolved_url;
-				newItem.url         = item.given_url || item.resolved_url;
-				newItem.status      = parseInt(item.status) || 0;
-				newItem.domain      = domain.id;
-				newItem.favorite    = parseInt(item.favorite) === 0 ? false : true;
-				newItem.type        = detectType(item);
-				newItem.is_article  = item.is_article;
-				newItem.has_image   = item.has_image;
-				newItem.has_video   = item.has_video;
-				if (newItem.status === 0)
-					updateFolder.pocket(newItem, domain);
-				return newItem;
-			};
-
-			updateFolder.pocket = (pocket, domain) => {
-				let folder = getFolderById('pocket', domain.id);
-				if (folder === false) {
-					folder         = createFolderById('pocket', domain.id);
-					folder.folded  = false;
-					folder.view    = 'hidden';
-					folder.title   = domain.title;
-					folder.itemsId = [pocket.id];
-					folder.domain  = domain.id;
-					folder.pid     = domain.id;
-					send('sidebar', 'pocket', 'newFolder', folder);
-					return folder;
-				}
-				return addToFolder('pocket', pocket);
-			};
-
-			i18n.pocket = {
-				loginText     : getI18n('pocketControlsLoginText'),
-				login         : getI18n('pocketControlsLoginTitle'),
-				logout        : getI18n('pocketControlsLogout'),
-				new           : getI18n('pocketControlsNew'),
-				fav           : getI18n('pocketControlsFav'),
-				unfav         : getI18n('pocketControlsUnfav'),
-				archive       : getI18n('pocketControlsArchive'),
-				folderArchive : getI18n('pocketControlsFolderArchive'),
-				unarchive     : getI18n('pocketControlsUnarchive'),
-				delete        : getI18n('pocketControlsDelete'),
-				folderDelete  : getI18n('pocketControlsFolderDelete'),
-				move          : getI18n('pocketControlsMove'),
-				plain         : getI18n('pocketPlainMode'),
-				type          : getI18n('pocketTypeMode'),
-				domain        : getI18n('pocketDomainMode'),
-				reload        : getI18n('pocketReload')
-			};
-
-			messageHandler.pocket = {
-				login     : message => {
-					pocketRequest('request');
-				},
-				logout    : message => {
-					logout();
-				},
-				add       : message => {
-					pocketRequest('add', message.data);
-				},
-				fav       : message => {
-					pocketRequest('fav', message.data);
-				},
-				unfav     : message => {
-					pocketRequest('unfav', message.data);
-				},
-				archive   : message => {
-					pocketRequest('archive', message.data);
-				},
-				folderArchive : message => {
-					const domain = getFolderById('pocket', message.data);
-					if (domain === false) return;
-					for (let i = domain.itemsId.length - 1; i >= 0; i--)
-						pocketRequest('archive', domain.itemsId[i]);
-				},
-				unarchive : message => {
-					pocketRequest('unarchive', message.data);
-				},
-				delete    : message => {
-					pocketRequest('delete', message.data);
-				},
-				folderDelete : message => {
-					const domain = getFolderById('pocket', message.data);
-					if (domain === false) return;
-					for (let i = domain.itemsId.length - 1; i >= 0; i--)
-						pocketRequest('delete', domain.itemsId[i]);
-				},
-				reloadAll : message => {
-					pocketRequest('sync');
-				},
-				move      : message => {
-					const oldIndex = data.pocketFoldersId.indexOf(message.data.id);
-					if (oldIndex === -1) return;
-					moveFromTo('pocketFolders', oldIndex, message.data.newIndex);
-					send('sidebar', 'pocket', 'moved', {'id': message.data.id, 'newIndex': message.data.newIndex, 'oldIndex': oldIndex, 'isFolder': true});
-				}
-			};
-
-			modeData.pocket    = _ => {
-				return {
-					mode             : 'pocket',
-					timeStamp        : status.timeStamp.pocket,
-					username         : optionsShort.pocket.username,
-					auth             : optionsShort.pocket.auth,
-					i18n             : i18n.pocket,
-					pocket           : data.pocket,
-					pocketFolders    : data.pocketFolders,
-					domains          : data.pocketDomains
-				};
-			};
-
-			if (options.pocket.auth.value === true)
-				execMethod(brauzer.storage.local.get, getPocket, ['pocket', 'pocketId', 'pocketFolders', 'pocketFoldersId']);
-			else {
-				resetPocket();
-				status.init.pocket = true;
-			}
-		}
-		else {
-			i18n.pocket           = null;
-			updateItem.pocket     = null;
-			updateFolder.pocket   = null;
-			messageHandler.pocket = null;
-			modeData.pocket       = null;
-			data.pocket           = [];
-			data.pocketId         = [];
-			data.pocketFolders    = [];
-			data.pocketFoldersId  = [];
-			status.init.pocket    = false;
-		}
-	},
-
 	search    : (start, mode = 'search') => {
 
 		const target = mode === 'search' ? 'sidebar' : 'startpage';
@@ -4663,7 +4045,6 @@ function sideBarData(side, tab) {
 			'warnings' : optionsShort.warnings,
 			'theme'    : optionsShort.theme,
 			'misc'     : optionsShort.misc,
-			'pocket'   : optionsShort.pocket,
 			'search'   : optionsShort.search,
 			'scroll'   : optionsShort.scroll,
 			'services' : {
@@ -4672,7 +4053,6 @@ function sideBarData(side, tab) {
 				'history'   : optionsShort.services.history,
 				'downloads' : optionsShort.services.downloads,
 				'rss'       : optionsShort.services.rss,
-				'pocket'    : optionsShort.services.pocket,
 				'search'    : optionsShort.services.search
 			},
 			'clickActions' : {
@@ -4681,7 +4061,6 @@ function sideBarData(side, tab) {
 				'history'   : optionsShort.historyClickActions,
 				'downloads' : optionsShort.downloadsClickActions,
 				'rss'       : optionsShort.rssClickActions,
-				'pocket'    : optionsShort.pocketClickActions,
 				'search'    : optionsShort.searchClickActions
 			},
 			'hoverActions' : {
@@ -4690,7 +4069,6 @@ function sideBarData(side, tab) {
 				'history'   : optionsShort.historyHoverActions,
 				'downloads' : optionsShort.downloadsHoverActions,
 				'rss'       : optionsShort.rssHoverActions,
-				'pocket'    : optionsShort.pocketHoverActions,
 				'search'    : optionsShort.searchHoverActions
 			},
 		};
@@ -4760,7 +4138,7 @@ function send(target, subject, action, dataToSend) {
 			disabled : _ => {}
 		};
 
-		if (/tabs|bookmarks|history|downloads|rss|pocket|search/.test(subject)) {
+		if (/tabs|bookmarks|history|downloads|rss|search/.test(subject)) {
 			if (subject !== options[target].mode.value)
 				return;
 			if (status.init.hasOwnProperty(subject))
@@ -4819,8 +4197,8 @@ function makeFav(id, url, favIconUrl, update = false) {
 		return `data:image/svg+xml;base64,${btoa(svg)}`;
 	};
 
-	const domainsId = ['tabsDomainsId', 'bookmarksDomainsId', 'historyDomainsId', 'rssDomainsId', 'pocketDomainsId', 'searchDomainsId', 'spSearchDomainsId'];
-	const domains   = ['tabsDomains', 'bookmarksDomains', 'historyDomains', 'rssDomains', 'pocketDomains', 'searchDomains', 'spSearchDomains'];
+	const domainsId = ['tabsDomainsId', 'bookmarksDomainsId', 'historyDomainsId', 'rssDomainsId', 'searchDomainsId', 'spSearchDomainsId'];
+	const domains   = ['tabsDomains', 'bookmarksDomains', 'historyDomains', 'rssDomains', 'searchDomains', 'spSearchDomains'];
 
 	let fav         = getById('favs', id);
 	if (fav === false)
@@ -4829,7 +4207,7 @@ function makeFav(id, url, favIconUrl, update = false) {
 		fav.fav      = favIconUrl;
 		fav.lastUsed = Date.now();
 	}
-	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'pocket', 'search', 'spSearch'], i = targets.length - 1; i >= 0; i--) {
+	for (let targets = ['tabs', 'bookmarks', 'history', 'rss', 'search', 'spSearch'], i = targets.length - 1; i >= 0; i--) {
 		if (data[`${targets[i]}Domains`].includes(id))
 			data[`${targets[i]}Domains`].fav = fav;
 		if (update === false) continue;
@@ -5271,8 +4649,6 @@ function saveNow(what, noStamp = false) {
 		favs          : {'favs': data.favs, 'favsId': data.favsId},
 		rss           : {'rss': data.rss, 'rssId': data.rssId},
 		rssFolders    : {'rssFolders': data.rssFolders, 'rssFoldersId': data.rssFoldersId},
-		pocket        : {'pocket': data.pocket, 'pocketId': data.pocketId},
-		pocketFolders : {'pocketFolders': data.pocketFolders, 'pocketFoldersId': data.pocketFoldersId},
 		startpage     : {'startpage': data.startpage},
 		version       : {'version': config.version},
 		foldedId      : {'foldedId': data.foldedId},

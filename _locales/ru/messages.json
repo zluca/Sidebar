@@ -241,71 +241,6 @@
 		"description"   : ""
 	},
 
-	"pocketControlsLoginText" : {
-		"message"       : "Войти в Pocket",
-		"description"   : ""
-	},
-	"pocketControlsLoginTitle" : {
-		"message"       : "Нажмите чтобы подключиться к вашему Pocket аккаунту",
-		"description"   : ""
-	},
-	"pocketControlsLogout" : {
-		"message"       : "Выйти",
-		"description"   : ""
-	},
-	"pocketControlsNew" : {
-		"message"       : "Добавить в Pocket",
-		"description"   : ""
-	},
-	"pocketControlsFav" : {
-		"message"       : "Добавить в избранное",
-		"description"   : ""
-	},
-	"pocketControlsUnfav" : {
-		"message"       : "Удалить из избранного",
-		"description"   : ""
-	},
-	"pocketControlsArchive" : {
-		"message"       : "Переместить в архив",
-		"description"   : ""
-	},
-	"pocketControlsFolderArchive" : {
-		"message"       : "Переместить всё в архив",
-		"description"   : ""
-	},
-	"pocketControlsUnarchive" : {
-		"message"       : "Вернуть из архива",
-		"description"   : ""
-	},
-	"pocketControlsDelete" : {
-		"message"       : "Удалить из Pocket",
-		"description"   : ""
-	},
-	"pocketControlsFolderDelete" : {
-		"message"       : "Удалить всё",
-		"description"   : ""
-	},
-	"pocketControlsMove" : {
-		"message"       : "Переместить папку",
-		"description"   : ""
-	},
-	"pocketPlainMode" : {
-		"message"       : "Не сортировать",
-		"description"   : ""
-	},
-	"pocketTypeMode" : {
-		"message"       : "Сортировать по типу",
-		"description"   : ""
-	},
-	"pocketDomainMode" : {
-		"message"       : "Сортировать по домену",
-		"description"   : ""
-	},
-	"pocketReload" : {
-		"message"       : "Синхронизироваться с Pocket",
-		"description"   : ""
-	},
-
 	"optHeaderText" : {
 		"message"       : "Настройки Sidebar+",
 		"description"   : "header of options window"
@@ -345,10 +280,6 @@
 	},
 	"optServicesRSSLabel" : {
 		"message"       : "RSS",
-		"description"   : ""
-	},
-	"optServicesPocketLabel" : {
-		"message"       : "Pocket",
 		"description"   : ""
 	},
 	"optServicesSearchLabel" : {
@@ -504,14 +435,6 @@
 	},
 	"optWarningsWindowCloseLabel" : {
 		"message"       : "Закрытием окна",
-		"description"   : ""
-	},
-	"optWarningsPocketDeleteLabel" : {
-		"message"       : "Удалением из Pocket",
-		"description"   : ""
-	},
-	"optWarningsPocketFolderDeleteLabel" : {
-		"message"       : "Удалением папки из Pocket",
 		"description"   : ""
 	},
 	"optWarningsHistoryFolderDeleteLabel" : {
@@ -1020,45 +943,6 @@
 		"description"   : ""
 	},
 
-	"dialogPocketNewHeader" : {
-		"message"       : "Добавить в Pocket",
-		"description"   : ""
-	},
-	"dialogPocketNewUrlPlaceholder" : {
-		"message"       : "Адрес",
-		"description"   : ""
-	},
-	"dialogPocketNewTitlePlaceholder" : {
-		"message"       : "Имя (не обязательно)",
-		"description"   : ""
-	},
-	"dialogPocketDeleteHeader" : {
-		"message"       : "Удалить из Pocket",
-		"description"   : ""
-	},
-	"dialogPocketDeleteAlert" : {
-		"message"       : "Удалить \"$name$\" из Pocket?",
-		"description"   : "",
-		"placeholders" : {
-			"name" : {
-				"content": "$1"
-			}
-		}
-	},
-	"dialogPocketFolderDeleteHeader" : {
-		"message"       : "Удалить папку из Pocket",
-		"description"   : ""
-	},
-	"dialogPocketFolderDeleteAlert" : {
-		"message"       : "Удалить \"$name$\" и всё её содержимое из Pocket?",
-		"description"   : "",
-		"placeholders" : {
-			"name" : {
-				"content": "$1"
-			}
-		}
-	},
-
 	"dialogSearchSelectHeader" : {
 		"message"       : "Выбор поисковых движков",
 		"description"   : ""
@@ -1159,10 +1043,6 @@
 		"description"   : ""
 	},
 	"clickActionsDeleteBookmark" : {
-		"message"       : "Удалить",
-		"description"   : ""
-	},
-	"clickActionsDeletePocket" : {
 		"message"       : "Удалить",
 		"description"   : ""
 	},

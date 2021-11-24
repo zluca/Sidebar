@@ -241,71 +241,6 @@
 		"description"   : ""
 	},
 
-	"pocketControlsLoginText" : {
-		"message"       : "登入至 Pocket",
-		"description"   : ""
-	},
-	"pocketControlsLoginTitle" : {
-		"message"       : "點選這裡以存取您的 Pocket",
-		"description"   : ""
-	},
-	"pocketControlsLogout" : {
-		"message"       : "登出",
-		"description"   : ""
-	},
-	"pocketControlsNew" : {
-		"message"       : "新增至 Pocket",
-		"description"   : ""
-	},
-	"pocketControlsFav" : {
-		"message"       : "加入最愛",
-		"description"   : ""
-	},
-	"pocketControlsUnfav" : {
-		"message"       : "從最愛中移除",
-		"description"   : ""
-	},
-	"pocketControlsArchive" : {
-		"message"       : "移動至封存",
-		"description"   : ""
-	},
-	"pocketControlsFolderArchive" : {
-		"message"       : "移動所有項目到封存",
-		"description"   : ""
-	},
-	"pocketControlsUnarchive" : {
-		"message"       : "從封存中復原",
-		"description"   : ""
-	},
-	"pocketControlsDelete" : {
-		"message"       : "從 Pocket 中刪除",
-		"description"   : ""
-	},
-	"pocketControlsFolderDelete" : {
-		"message"       : "刪除所有項目",
-		"description"   : ""
-	},
-	"pocketControlsMove" : {
-		"message"       : "移動資料夾",
-		"description"   : ""
-	},
-	"pocketPlainMode" : {
-		"message"       : "不要排序項目",
-		"description"   : ""
-	},
-	"pocketTypeMode" : {
-		"message"       : "以類型排序項目",
-		"description"   : ""
-	},
-	"pocketDomainMode" : {
-		"message"       : "以網域排序項目",
-		"description"   : ""
-	},
-	"pocketReload" : {
-		"message"       : "與 Pocket 同步",
-		"description"   : ""
-	},
-
 	"optHeaderText" : {
 		"message"       : "Sidebar+ 選項",
 		"description"   : "header of options window"
@@ -345,10 +280,6 @@
 	},
 	"optServicesRSSLabel" : {
 		"message"       : "RSS",
-		"description"   : ""
-	},
-	"optServicesPocketLabel" : {
-		"message"       : "Pocket",
 		"description"   : ""
 	},
 	"optServicesSearchLabel" : {
@@ -504,14 +435,6 @@
 	},
 	"optWarningsWindowCloseLabel" : {
 		"message"       : "關閉視窗",
-		"description"   : ""
-	},
-	"optWarningsPocketDeleteLabel" : {
-		"message"       : "從 Pocket 中刪除",
-		"description"   : ""
-	},
-	"optWarningsPocketFolderDeleteLabel" : {
-		"message"       : "刪除 Pocket 資料夾",
 		"description"   : ""
 	},
 	"optWarningsHistoryFolderDeleteLabel" : {
@@ -1020,45 +943,6 @@
 		"description"   : ""
 	},
 
-	"dialogPocketNewHeader" : {
-		"message"       : "新增至 Pocket",
-		"description"   : ""
-	},
-	"dialogPocketNewUrlPlaceholder" : {
-		"message"       : "新 Pocket 項目 URL",
-		"description"   : ""
-	},
-	"dialogPocketNewTitlePlaceholder" : {
-		"message"       : "標題（選擇性）",
-		"description"   : ""
-	},
-	"dialogPocketDeleteHeader" : {
-		"message"       : "從 Pocket 中移除",
-		"description"   : ""
-	},
-	"dialogPocketDeleteAlert" : {
-		"message"       : "從 Pocket 中移除 \"$name$\" ？",
-		"description"   : "",
-		"placeholders" : {
-			"name" : {
-				"content": "$1"
-			}
-		}
-	},
-	"dialogPocketFolderDeleteHeader" : {
-		"message"       : "從 Pocket 中移除資料夾",
-		"description"   : ""
-	},
-	"dialogPocketFolderDeleteAlert" : {
-		"message"       : "從 Pocket 中移除 \"$name$\" 及其所有內容？",
-		"description"   : "",
-		"placeholders" : {
-			"name" : {
-				"content": "$1"
-			}
-		}
-	},
-
 	"dialogSearchSelectHeader" : {
 		"message"       : "選擇搜尋引擎",
 		"description"   : ""
@@ -1159,10 +1043,6 @@
 		"description"   : ""
 	},
 	"clickActionsDeleteBookmark" : {
-		"message"       : "刪除",
-		"description"   : ""
-	},
-	"clickActionsDeletePocket" : {
 		"message"       : "刪除",
 		"description"   : ""
 	},

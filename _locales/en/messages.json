@@ -241,71 +241,6 @@
 		"description"   : ""
 	},
 
-	"pocketControlsLoginText" : {
-		"message"       : "Login to Pocket",
-		"description"   : ""
-	},
-	"pocketControlsLoginTitle" : {
-		"message"       : "Click here to access your Pocket",
-		"description"   : ""
-	},
-	"pocketControlsLogout" : {
-		"message"       : "Logout",
-		"description"   : ""
-	},
-	"pocketControlsNew" : {
-		"message"       : "Add to Pocket",
-		"description"   : ""
-	},
-	"pocketControlsFav" : {
-		"message"       : "Make favorite",
-		"description"   : ""
-	},
-	"pocketControlsUnfav" : {
-		"message"       : "Remove from favorite",
-		"description"   : ""
-	},
-	"pocketControlsArchive" : {
-		"message"       : "Move to archive",
-		"description"   : ""
-	},
-	"pocketControlsFolderArchive" : {
-		"message"       : "Move all items to archive",
-		"description"   : ""
-	},
-	"pocketControlsUnarchive" : {
-		"message"       : "Back from archive",
-		"description"   : ""
-	},
-	"pocketControlsDelete" : {
-		"message"       : "Delete from Pocket",
-		"description"   : ""
-	},
-	"pocketControlsFolderDelete" : {
-		"message"       : "Delete all items",
-		"description"   : ""
-	},
-	"pocketControlsMove" : {
-		"message"       : "Move folder",
-		"description"   : ""
-	},
-	"pocketPlainMode" : {
-		"message"       : "Do not sort items",
-		"description"   : ""
-	},
-	"pocketTypeMode" : {
-		"message"       : "Sort items by type",
-		"description"   : ""
-	},
-	"pocketDomainMode" : {
-		"message"       : "Sort items by domain",
-		"description"   : ""
-	},
-	"pocketReload" : {
-		"message"       : "Sync with Pocket",
-		"description"   : ""
-	},
-
 	"optHeaderText" : {
 		"message"       : "Sidebar+ options",
 		"description"   : "header of options window"
@@ -345,10 +280,6 @@
 	},
 	"optServicesRSSLabel" : {
 		"message"       : "RSS",
-		"description"   : ""
-	},
-	"optServicesPocketLabel" : {
-		"message"       : "Pocket",
 		"description"   : ""
 	},
 	"optServicesSearchLabel" : {
@@ -504,14 +435,6 @@
 	},
 	"optWarningsWindowCloseLabel" : {
 		"message"       : "Close window",
-		"description"   : ""
-	},
-	"optWarningsPocketDeleteLabel" : {
-		"message"       : "Delete from Pocket",
-		"description"   : ""
-	},
-	"optWarningsPocketFolderDeleteLabel" : {
-		"message"       : "Delete pocket folder",
 		"description"   : ""
 	},
 	"optWarningsHistoryFolderDeleteLabel" : {
@@ -1020,45 +943,6 @@
 		"description"   : ""
 	},
 
-	"dialogPocketNewHeader" : {
-		"message"       : "Add to Pocket",
-		"description"   : ""
-	},
-	"dialogPocketNewUrlPlaceholder" : {
-		"message"       : "New Pocket item url",
-		"description"   : ""
-	},
-	"dialogPocketNewTitlePlaceholder" : {
-		"message"       : "Title (optional)",
-		"description"   : ""
-	},
-	"dialogPocketDeleteHeader" : {
-		"message"       : "Remove from Pocket",
-		"description"   : ""
-	},
-	"dialogPocketDeleteAlert" : {
-		"message"       : "Remove \"$name$\" from Pocket?",
-		"description"   : "",
-		"placeholders" : {
-			"name" : {
-				"content": "$1"
-			}
-		}
-	},
-	"dialogPocketFolderDeleteHeader" : {
-		"message"       : "Remove folder from Pocket",
-		"description"   : ""
-	},
-	"dialogPocketFolderDeleteAlert" : {
-		"message"       : "Remove \"$name$\" and all its content from Pocket?",
-		"description"   : "",
-		"placeholders" : {
-			"name" : {
-				"content": "$1"
-			}
-		}
-	},
-
 	"dialogSearchSelectHeader" : {
 		"message"       : "Select search engines",
 		"description"   : ""
@@ -1159,10 +1043,6 @@
 		"description"   : ""
 	},
 	"clickActionsDeleteBookmark" : {
-		"message"       : "Delete",
-		"description"   : ""
-	},
-	"clickActionsDeletePocket" : {
 		"message"       : "Delete",
 		"description"   : ""
 	},

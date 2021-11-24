@@ -616,52 +616,6 @@ function makeDialogWindow(data, warnings, theme) {
 			addButton('cancel');
 		},
 
-		pocketNew : _ => {
-
-			setHeader();
-			const inputUrl   = addInputRow.text('url');
-			const inputTitle = addInputRow.text('title');
-			addButton('save', _ => {
-				if (optionsChanged === true || data.hasOwnProperty('url')) {
-					const url = inputUrl.value;
-					if (url !== '')
-						send('background', 'pocket', 'add', {'url': url, 'title': inputTitle.value});
-				}
-				removeDialogWindow();
-			});
-			addButton('cancel');
-		},
-
-		pocketDelete : _ => {
-
-			setHeader();
-
-			const alert = document.createElement('p');
-			let title = data.title;
-			if (title.length > 30)
-				title = title.substring(0, 28) + '...';
-			alert.textContent = getI18n('dialogPocketDeleteAlert', [title]);
-			main.appendChild(alert);
-			addWarning();
-			addButton('confirm', _ => {
-				send('background', 'pocket', 'delete', data.id);
-				removeDialogWindow();
-			});
-			addButton('cancel');
-		},
-
-		pocketFolderDelete : _ => {
-
-			setHeader();
-			addAlert();
-			addWarning();
-			addButton('confirm', _ => {
-				removeDialogWindow();
-				send('background', 'pocket', 'folderDelete', data.id);
-			});
-			addButton('cancel');
-		},
-
 		searchSelect : _ => {
 
 			let options = {};

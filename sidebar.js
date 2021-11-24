@@ -12,7 +12,6 @@ const element  = {
 	history   : 'a',
 	downloads : 'li',
 	rss       : 'a',
-	pocket    : 'a',
 	search    : 'a',
 	domains   : 'style'
 };
@@ -107,7 +106,6 @@ const button   = {
 	history       : null,
 	downloads     : null,
 	rss           : null,
-	pocket        : null,
 	search        : null,
 	sidebarActions: null
 };
@@ -140,9 +138,6 @@ const messageHandler = {
 		},
 		domainFolderClose  : info => {
 			options.warnings.domainFolderClose = info.value;
-		},
-		pocketDelete       : info => {
-			options.warnings.pocketDelete = info.value;
 		},
 		mainFontSize           : info => {
 			setFontSize(info.value);
@@ -182,9 +177,6 @@ const messageHandler = {
 		},
 		rssMode            : info => {
 			options.misc.rssMode = info;
-		},
-		pocketMode         : info => {
-			options.misc.pocketMode = info;
 		},
 		hoverActions       : info => {
 			if (options.hoverActions[info.mode][info.option] !== info.value) {
@@ -285,8 +277,7 @@ const messageHandler = {
 	bookmarks : null,
 	history   : null,
 	downloads : null,
-	rss       : null,
-	pocket    : null
+	rss       : null
 };
 
 function tryToInit() {
@@ -1269,169 +1260,6 @@ const initBlock = {
 		finishBlock('rss');
 	},
 
-	pocket    : info => {
-
-		const updateItem      = (pocket, info) => {
-			let classList        = `pocket item ${info.favorite === true ? 'favorite ' : ''} domain-${info.domain} type-${info.type}`;
-			pocket.href          = info.url;
-			pocket.dataset.url   = info.url;
-			pocket.textContent   = info.title;
-			pocket.classList     = classList;
-			makeTitle(info.id, info.title, info.description !== '' ? info.description : info.url);
-		};
-
-		i18n.pocket           = info.i18n;
-		prepareBlock('pocket');
-		setBlockClass(options.misc.pocketMode, options.pocket.auth === false ? 'logout' : '');
-		setDomainStyle.rewrite(info.domains);
-		status.timeStamp.mode = info.timeStamp;
-
-		messageHandler.pocket = {
-			newItems     : info =>  {
-				insertItems(info, 'first');
-			},
-			newFolder    : info => {
-				insertFolders([info]);
-			},
-			updated      : info => {
-				const pocket = getById(info.id);
-				if (pocket === false) return;
-				updateItem(pocket, info);
-			},
-			deleted      : info => {
-				const pocket = getById(info);
-				if (pocket === false) return;
-				removeById(info);
-			},
-			domainCount  : info => {
-				const folder = getFolderById(info.id);
-				if (folder === false) return;
-				if (info.view === 'hidden') {
-					folder.classList.remove('domain-view');
-					folder.classList.add('hidden-view');
-				}
-				else {
-					folder.classList.add('domain-view');
-					folder.classList.remove('hidden-view');
-				}
-			},
-			folderRemoved: info => {
-				const folder = getFolderById(info);
-				if (folder === false) return;
-				removeFolderById(info);
-			},
-			view         : info => {
-				setBlockClass(info.view);
-				setView(info.view, info.items, info.folders);
-			},
-			login        : info => {
-				options.pocket.auth = true;
-				block.classList.remove('logout');
-				i18n.pocket.usernameText             = info.username;
-				i18n.pocket.username                 = info.username;
-				controls.top.firstChild.textContent  = info.username;
-				controls.top.firstChild.title        = info.username;
-			},
-			logout       : info => {
-				options.pocket.auth = false;
-				block.classList.add('logout');
-				clearData();
-			},
-			reset        : info => {
-				setView(options.misc.pocketMode, [], info.folders);
-			},
-			fav          : info => {
-				const pocket = getById(info);
-				if (pocket === false) return;
-				pocket.classList.add('favorite');
-			},
-			unfav        : info => {
-				const pocket = getById(info);
-				if (pocket === false) return;
-				pocket.classList.remove('favorite');
-			},
-			archive      : info => {
-				const pocket = getById(info);
-				if (pocket === false) return;
-				pocket.classList.add('type-archives');
-				if (options.misc.pocketMode === 'type') {
-					const archive = getFolderById('archives');
-					if (archive === false) return;
-					archive.lastChild.appendChild(pocket);
-				}
-			},
-			unarchive   : info => {
-				const pocket = getById(info.id);
-				if (pocket === false) return;
-				pocket.classList.remove('type-archives');
-				if (options.misc.pocketMode === 'type') {
-					const folder = getFolderById(info.pid);
-					if (folder === false) return;
-					folder.lastChild.appendChild(pocket);
-				}
-				else if (options.misc.pocketMode === 'domain') {
-					const folder = getFolderById(info.domain);
-					if (folder === false) return;
-					folder.lastChild.appendChild(pocket);
-				}
-			},
-			update      : info => {
-				block.classList[info]('updated');
-			},
-			moved       : info => {
-				if (status.moving === true)
-					doc.addEventListener('mouseup', finishMoving, {'once': true});
-				else
-					moveFolder('pocket', info);
-			}
-		};
-
-		insertItems           = (items, position = 'last') => {
-			let pid    = 0;
-			let folder = rootFolder;
-			const insert = {
-				last  : pocket => {
-					folder.lastChild.appendChild(pocket);
-				},
-				first : pocket => {
-					if (folder.lastChild.hasChildNodes())
-						folder.lastChild.insertBefore(pocket, folder.lastChild.firstChild);
-					else
-						folder.lastChild.appendChild(pocket);
-				}
-			};
-			for (let i = 0, l = items.length; i < l; i++) {
-				if (items[i].status > 0 && options.misc.pocketMode !== 'type')
-					continue;
-				const pocket = createById(items[i].id);
-				updateItem(pocket, items[i]);
-				if (options.misc.pocketMode !== 'plain') {
-					if (items[i][options.misc.pocketMode] !== pid) {
-						pid    = items[i][options.misc.pocketMode];
-						folder = getFolderById(items[i][options.misc.pocketMode]);
-					}
-				}
-				if (folder !== false)
-					insert[position](pocket);
-			}
-		};
-
-		i18n.pocket.usernameText = info.username;
-		i18n.pocket.username     = info.username;
-		makeButton('username', 'pocket', 'top');
-		makeButton('login', 'pocket', 'top');
-		makeButton('logout', 'pocket', 'top');
-		makeButton('new', 'pocket', 'button');
-		makeButton('new', 'pocket', 'bottom');
-		makeButton('plain', 'pocket', 'bottom');
-		makeButton('type', 'pocket', 'bottom');
-		makeButton('domain', 'pocket', 'bottom');
-		makeButton('reload', 'pocket', 'bottom');
-
-		setView(options.misc.pocketMode, info.pocket, info.pocketFolders);
-		finishBlock('pocket');
-	},
-
 	search    : info => {
 
 		const updateItem      = (item, info) => {
@@ -1946,11 +1774,6 @@ function moveItem(mode, eventTarget) {
 			doc.addEventListener('mousedown', getIndex);
 			block.addEventListener('click', stopClick);
 		},
-		pocket : _ => {
-			block.addEventListener('mouseover', moveItemOverFolder);
-			doc.addEventListener('mousedown', getIndex);
-			block.addEventListener('click', stopClick);
-		},
 		search : _ => {
 			block.addEventListener('mouseover', moveItemOverFolder);
 			doc.addEventListener('mousedown', getIndex);
@@ -2145,10 +1968,6 @@ const buttonsEvents = {
 		rss : event => {
 			if (options.sidebar.mode !== 'rss')
 				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'rss'});
-		},
-		pocket : event => {
-			if (options.sidebar.mode !== 'pocket')
-				send('background', 'options', 'handler', {'section': status.side, 'option': 'mode', 'value': 'pocket'});
 		},
 		search : event => {
 			if (options.sidebar.mode !== 'search')
@@ -2358,62 +2177,6 @@ const buttonsEvents = {
 				send('background', 'options', 'handler', {'section': 'misc', 'option': 'rssMode', 'value': 'domain'});
 		}
 	},
-	pocket    : {
-		login : event => {
-			send('background', 'pocket', 'login');
-		},
-		logout : event => {
-			send('background', 'pocket', 'logout');
-		},
-		username : event => {
-			send('background', 'tabs', 'new', {'url': 'https://getpocket.com/a/queue/'});
-		},
-		new : event => {
-			send('background', 'dialog', 'pocketNew');
-		},
-		plain : event => {
-			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'plain'});
-		},
-		type : event => {
-			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'type'});
-		},
-		domain : event => {
-			send('background', 'options', 'handler', {'section': 'misc', 'option': 'pocketMode', 'value': 'domain'});
-		},
-		reload : event => {
-			send('background', 'pocket', 'reloadAll');
-		},
-		move: event => {
-			moveItem('pocket', controls.item.parentNode);
-		},
-		fav : event => {
-			send('background', 'pocket', 'fav', controls.item.parentNode.dataset.id);
-		},
-		unfav : event => {
-			send('background', 'pocket', 'unfav', controls.item.parentNode.dataset.id);
-		},
-		archive : event => {
-			send('background', 'pocket', 'archive', controls.item.parentNode.dataset.id);
-		},
-		folderArchive : event => {
-			send('background', 'pocket', 'folderArchive', controls.item.parentNode.dataset.id);
-		},
-		unarchive : event => {
-			send('background', 'pocket', 'unarchive', controls.item.parentNode.dataset.id);
-		},
-		delete : event => {
-			if (options.warnings.pocketDelete === true)
-				send('background', 'dialog', 'pocketDelete', controls.item.parentNode.dataset.id);
-			else
-				send('background', 'pocket', 'delete', controls.item.parentNode.dataset.id);
-		},
-		folderDelete : event => {
-			if (options.warnings.pocketFolderDelete === true)
-				send('background', 'dialog', 'pocketFolderDelete', controls.item.parentNode.dataset.id);
-			else
-				send('background', 'pocket', 'folderDelete', controls.item.parentNode.dataset.id);
-		}
-	},
 	search    : {
 	}
 };
@@ -2459,12 +2222,6 @@ const clickActions = {
 			send('background', 'dialog', 'bookmarkDelete', {'id': event.target.dataset.id, 'title': event.target.textContent});
 		else
 			send('background', 'bookmarks', 'bookmarkDelete', {'id': event.target.dataset.id});
-	},
-	deletePocket    : event => {
-		if (options.warnings.pocketDelete === true)
-			send('background', 'dialog', 'pocketDelete', event.target.dataset.id);
-		else
-			send('background', 'pocket', 'delete', event.target.dataset.id);
 	},
 	deleteFile    : event => {
 
